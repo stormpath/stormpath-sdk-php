@@ -1,0 +1,32 @@
+{
+    "name": "stormpath/sdk",
+    "type": "library",
+    "description": "A PHP wrapper for Stormpath's API",
+    "keywords": ["stormpath", "cloud", "security", "api"],
+    "homepage": "https://github.com/stormpath/stormpath-sdk-php",
+    "license": "Apache",
+    "authors": [
+        {
+            "name": "Elder Crisostomo",
+            "email": "elder@stormpath.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "pear",
+            "url": "http://pear.php.net"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Services_Stormpath": ""
+        }
+    },
+    "require": {
+        "php": ">=5.3.10"
+    },
+    "require": {
+        "php": ">=5.3.10",
+        "pear-pear/HTTP_Request2": "2.1.1"
+    }
+}
