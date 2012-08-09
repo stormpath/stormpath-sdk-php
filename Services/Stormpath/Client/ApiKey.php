@@ -12,5 +12,15 @@ class Services_Stormpath_Client_ApiKey
         $this->secret = $secret;
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getSecret()
+    {
+        return $this->secret;
+    }
+
 
 }

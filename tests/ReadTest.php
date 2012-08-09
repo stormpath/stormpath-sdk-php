@@ -26,7 +26,22 @@ class ReadTest extends PHPUnit_Framework_TestCase {
         $request->setAuth('id', 'secret');
         $response = $request->send();
 
-        echo $response->getBody();
+        echo json_decode($response->getBody())->{'href'};
+    }
+
+    public function testCreateInstance(){
+
+        $result = $this->createInstance('Request2', array('http://localhost:8080/v1?q=bla', 'bla'));
+
+        $this->assertInstanceOf('HTTP_Request2', $result);
+    }
+
+    private function createInstance($className, array $params){
+
+        $class = new ReflectionClass('HTTP_' .$className);
+
+        return $class->newInstanceArgs($params);
+
     }
 
 }
