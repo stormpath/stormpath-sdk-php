@@ -10,9 +10,7 @@ interface Services_Stormpath_DataStore_InternalDataStore
     extends Services_Stormpath_DataStore_DataStore
 {
 
-    public function instantiateWithProperties($class, array $properties);
-
-    public function create(String $parentHref,
+    public function create($parentHref,
                            Services_Stormpath_Resource_Resource $resource,
                            $returnType);
 

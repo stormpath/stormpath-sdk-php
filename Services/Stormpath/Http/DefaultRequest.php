@@ -13,12 +13,12 @@ class Services_Stormpath_Http_DefaultRequest
     private $body;
     private $contentLength;
 
-    public function __construct(String $method,
-                                String $href,
+    public function __construct($method,
+                                $href,
                                 array $query = array(),
-                                array $headers = null,
-                                String $body = null,
-                                long $contentLength = -1)
+                                array $headers = array(),
+                                $body = null,
+                                $contentLength = -1)
     {
 
 
@@ -51,7 +51,7 @@ class Services_Stormpath_Http_DefaultRequest
 
         }
 
-        $this->headers = $headers != null ? $headers : array();
+        $this->headers = $headers;
         $this->body = $body;
         $this->contentLength = $contentLength;
 
@@ -98,7 +98,7 @@ class Services_Stormpath_Http_DefaultRequest
         $this->queryString = $queryString;
     }
 
-    public function setBody(String $body, long $length)
+    public function setBody($body, $length)
     {
         $this->body = $body;
         $this->contentLength = $length;

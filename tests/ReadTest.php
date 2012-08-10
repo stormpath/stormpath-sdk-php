@@ -26,7 +26,11 @@ class ReadTest extends PHPUnit_Framework_TestCase {
         $request->setAuth('id', 'secret');
         $response = $request->send();
 
-        echo json_decode($response->getBody())->{'href'};
+        $result = json_decode($response->getBody());
+
+        $href = 'href';
+
+        echo $result->applications->$href;
     }
 
     public function testCreateInstance(){
@@ -42,6 +46,13 @@ class ReadTest extends PHPUnit_Framework_TestCase {
 
         return $class->newInstanceArgs($params);
 
+    }
+
+    public function testString() {
+
+        $url = 'http://localhost:8080/v1';
+
+        $this->assertTrue(stripos($url, 'http') == 0);
     }
 
 }
