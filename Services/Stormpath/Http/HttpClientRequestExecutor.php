@@ -29,7 +29,7 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
 
         $this->httpClient->setHeader($request->getHeaders());
 
-        $response = $request->send();
+        $response = $this->httpClient->send();
 
         return new Services_Stormpath_Http_DefaultResponse($response->getStatus(),
                                                            $response->getHeader('Content-Type'),
@@ -38,11 +38,11 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
 
     }
 
-    private function addQueryString(String $href, array $queryString)
+    private function addQueryString($href, array $queryString)
     {
-        $orderedQS = ksort($queryString);
+        ksort($queryString);
 
-        foreach($orderedQS as $pair)
+        foreach($queryString as $pair)
         {
             if (strpos($href, '?'))
             {

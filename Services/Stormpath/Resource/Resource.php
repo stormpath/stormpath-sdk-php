@@ -10,11 +10,16 @@ abstract class Services_Stormpath_Resource_Resource
 
     const HREF_PROP_NAME = "href";
 
-    public function __construct(Services_Stormpath_DataStore_DataStore $dataStore = null,
+    public function __construct(Services_Stormpath_DataStore_InternalDataStore $dataStore = null,
                                 stdClass $properties = null)
     {
         $this->dataStore = $dataStore;
         $this->properties = $properties;
+    }
+
+    public function getProperties()
+    {
+        return $this->properties;
     }
 
     public function setProperties(stdClass $properties)
@@ -54,7 +59,7 @@ abstract class Services_Stormpath_Resource_Resource
 
     public function getHref()
     {
-        $this->getProperty(self::HREF_PROP_NAME);
+        return $this->getProperty(self::HREF_PROP_NAME);
     }
 
     protected function getResourceProperty($key, $className)
@@ -107,10 +112,10 @@ abstract class Services_Stormpath_Resource_Resource
 
     protected function materialize()
     {
-        $className = get_class();
+        $className = get_class($this);
 
         $resource = $this->dataStore->getResource($this->getHref(), $className);
-        $this->properties = $resource->properties;
+        $this->properties = $resource->getProperties();
         $this->materialized = true;
     }
 
@@ -122,7 +127,7 @@ abstract class Services_Stormpath_Resource_Resource
      protected function isNew() {
 
         //we can't call getHref() in here, otherwise we'll have an infinite loop:
-        $prop = readProperty(self::HREF_PROP_NAME);
+        $prop = $this->readProperty(self::HREF_PROP_NAME);
 
          if ($prop)
          {
@@ -134,8 +139,7 @@ abstract class Services_Stormpath_Resource_Resource
 
     private function readProperty($name)
     {
-        return $this->properties->$name;
+        return $this->getProperties()->$name;
     }
-
 
 }

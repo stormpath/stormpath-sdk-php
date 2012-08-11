@@ -1,7 +1,7 @@
 <?php
 
 
-class Services_Stormpath_Resource_ResourceError extends Exception
+class Services_Stormpath_Resource_ResourceError extends RuntimeException
 {
     private $error;
 

@@ -2,13 +2,17 @@
 
 class Services_Stormpath_Client_Client
 {
-    public function __construct(Services_Stormpath_Client_ApiKey $apiKey, String $baseUrl = null) {
+    private $dataStore;
 
-
+    public function __construct(Services_Stormpath_Client_ApiKey $apiKey, $baseUrl = null)
+    {
+        $requestExecutor = new Services_Stormpath_Http_HttpClientRequestExecutor($apiKey);
+        $this->dataStore = new Services_Stormpath_DataStore_DefaultDataStore($requestExecutor, $baseUrl);
     }
 
-    public function getCurrentTenant() {
-
+    public function getCurrentTenant()
+    {
+        return $this->dataStore->getResource('/tenants/current', Services_Stormpath::TENANT);
     }
 
 }

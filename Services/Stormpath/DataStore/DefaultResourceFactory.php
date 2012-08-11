@@ -25,7 +25,7 @@ class Services_Stormpath_DataStore_DefaultResourceFactory
 
     private function qualifyClassName($className)
     {
-        if (!strpos($className, self::RESOURCE_PATH))
+        if (strpos($className, self::RESOURCE_PATH) === false)
         {
             return self::RESOURCE_PATH .$className;
         }

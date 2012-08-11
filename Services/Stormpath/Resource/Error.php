@@ -10,7 +10,7 @@ class Services_Stormpath_Resource_Error extends Services_Stormpath_Resource_Reso
 
     public function __construct(stdClass $properties)
     {
-        parent::__construct($properties);
+        parent::__construct(null, $properties);
     }
 
     public function getStatus()

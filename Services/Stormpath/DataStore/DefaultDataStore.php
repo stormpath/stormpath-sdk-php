@@ -20,7 +20,7 @@ class Services_Stormpath_DataStore_DefaultDataStore
 
         if(!$baseUrl)
         {
-            $this->baseUrl = 'https://' .= self::DEFAULT_SERVER_HOST . "/v" . self::DEFAULT_API_VERSION;
+            $this->baseUrl = 'https://' . self::DEFAULT_SERVER_HOST . "/v" . self::DEFAULT_API_VERSION;
 
         } else
         {
@@ -85,23 +85,43 @@ class Services_Stormpath_DataStore_DefaultDataStore
                            Services_Stormpath_Resource_Resource $resource,
                            $returnType)
     {
-        // TODO: Implement create() method.
+        return $this->saveResource($parentHref, $resource, $returnType);
     }
 
     public function save(Services_Stormpath_Resource_Resource $resource,
                          $returnType = null)
     {
-        // TODO: Implement save() method.
+        $href = $resource->getHref();
+
+        if (!strlen($href))
+        {
+            throw new InvalidArgumentException('save may only be called on objects that have already been persisted (i.e. they have an existing href).');
+        }
+
+        if ($this->needsToBeFullyQualified($href))
+        {
+            $href = $this->qualify($href);
+        }
+
+        $returnType = $returnType ? $returnType : get_class($resource);
+
+        $returnValue = $this->saveResource($href, $resource, $returnType);
+
+        //ensure the caller's argument is updated with what is returned from the server:
+        $resource->setProperties($returnValue->getProperties());
+
+        return $returnValue;
+
     }
 
     public function delete(Services_Stormpath_Resource_Resource $resource)
     {
-        $this->executeRequest(Services_Stormpath_Http_Request::METHOD_DELETE, $resource->getHref());
+        return $this->executeRequest(Services_Stormpath_Http_Request::METHOD_DELETE, $resource->getHref());
     }
 
     protected function needsToBeFullyQualified($href)
     {
-        return stripos($href, 'http') == 0;
+        return stripos($href, 'http') === false;
     }
 
     protected function qualify($href)
@@ -118,7 +138,13 @@ class Services_Stormpath_DataStore_DefaultDataStore
 
     private function executeRequest($httpMethod, $href, $body = '')
     {
-        $request = new Services_Stormpath_Http_DefaultRequest($httpMethod, $href, $body, strlen($body));
+        $request = new Services_Stormpath_Http_DefaultRequest(
+                       $httpMethod,
+                       $href,
+                       array(),
+                       array(),
+                       $body,
+                       strlen($body));
 
         $this->applyDefaultRequestHeaders($request);
 
@@ -136,14 +162,31 @@ class Services_Stormpath_DataStore_DefaultDataStore
 
     }
 
+    private function saveResource($href,
+                                  Services_Stormpath_Resource_Resource $resource,
+                                  $returnType)
+    {
+        if ($this->needsToBeFullyQualified($href))
+        {
+            $href = $this->qualify($href);
+        }
+
+        $response = $this->executeRequest(Services_Stormpath_Http_Request::METHOD_POST,
+                                          $href,
+                                          json_encode($resource->getProperties()));
+
+        return $this->resourceFactory->instantiate($returnType, array($response));
+    }
+
     private function applyDefaultRequestHeaders(Services_Stormpath_Http_Request $request)
     {
-        $request->getHeaders()['Accept'] = 'application/json';
-        $request->getHeaders()['User-Agent'] = 'Stormpath-PhpSDK/' .Services_Stormpath_Version::SDK_VERSION;
+        $headers = $request->getHeaders();
+        $headers['Accept'] = 'application/json';
+        $headers['User-Agent'] = 'Stormpath-PhpSDK/' .Services_Stormpath_Version::SDK_VERSION;
 
         if ($request->getBody())
         {
-            $request->getHeaders()['Content-Type'] = 'application/json';
+            $headers['Content-Type'] = 'application/json';
         }
     }
 }

@@ -10,7 +10,7 @@ class Services_Stormpath_Http_DefaultResponse
     private $contentType;
     private $contentLength;
 
-    public function __construct(int $httpStatus, String $contentType, String $body, long $contentLength)
+    public function __construct($httpStatus, $contentType, $body, $contentLength)
     {
         $this->body = $body;
         $this->contentLength = $contentLength;
@@ -51,18 +51,18 @@ class Services_Stormpath_Http_DefaultResponse
 
     public function isError()
     {
-        return isServerError() || isClientError();
+        return $this->isServerError() || $this->isClientError();
     }
 
     public function  isServerError()
     {
-        $status = getHttpStatus();
+        $status = $this->getHttpStatus();
         return ($status >= 500 && $status < 600);
     }
 
     public function isClientError()
     {
-        $status = getHttpStatus();
+        $status = $this->getHttpStatus();
         return ($status >= 400 && $status < 500);
     }
 }

@@ -10,3 +10,23 @@ function Services_Stormpath_autoload($className) {
 }
 
 spl_autoload_register('Services_Stormpath_autoload');
+
+class Services_Stormpath
+{
+    const ACCOUNT                  = 'Account';
+    const ACCOUNT_LIST             = 'AccountList';
+    const APPLICATION              = 'Application';
+    const APPLICATION_LIST         = 'ApplicationList';
+    const DIRECTORY                = 'Directory';
+    const DIRECTORY_LIST           = 'DirectoryList';
+    const EMAIL_VERIFICATION_TOKEN = 'EmailVerificationToken';
+    const PASSWORD_RESET_TOKEN     = 'PasswordResetToken';
+    const TENANT                   = 'Tenant';
+
+    const ENABLED                  = 'ENABLED';
+    const DISABLED                 = 'DISABLED';
+
+    public static $Statuses        = array(self::DISABLED => self::DISABLED,
+                                           self::ENABLED => self::ENABLED);
+
+}

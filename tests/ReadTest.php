@@ -7,52 +7,20 @@ class ReadTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
 
-        $apiKey = new Services_Stormpath_Client_ApiKey('id', 'secret');
-        $this->client = new Services_Stormpath_Client_Client($apiKey);
+        $apiKey = new Services_Stormpath_Client_ApiKey('4OCDGOGPLVQW8FZO49N5EMZE9', 'vvEIFpaxzvyiHnhejnzsbnPkXI0CyJE/Yxsrx/wBEGQ');
+        $this->client = new Services_Stormpath_Client_Client($apiKey, 'http://localhost:8080/v1');
 
     }
 
-    public function testClientInstance() {
+    public function testGetTenant() {
 
-        $className = 'Services_Stormpath_Client_Client';
-        $this->assertInstanceOf($className, $this->client);
+        $tenantClassName = 'Services_Stormpath_Resource_Tenant';
+        $tenant = $this->client->getCurrentTenant();
 
-    }
+        $this->assertInstanceOf($tenantClassName, $tenant);
+        $this->assertInternalType('string', $tenant->getName());
+        $this->assertInternalType('string', $tenant->getKey());
 
-    public function testGetRequest() {
-
-        $request = new HTTP_Request2('http://localhost:8080/v1/tenants/current');
-        $request->setMethod(HTTP_Request2::METHOD_GET);
-        $request->setAuth('id', 'secret');
-        $response = $request->send();
-
-        $result = json_decode($response->getBody());
-
-        $href = 'href';
-
-        echo $result->applications->$href;
-    }
-
-    public function testCreateInstance(){
-
-        $result = $this->createInstance('Request2', array('http://localhost:8080/v1?q=bla', 'bla'));
-
-        $this->assertInstanceOf('HTTP_Request2', $result);
-    }
-
-    private function createInstance($className, array $params){
-
-        $class = new ReflectionClass('HTTP_' .$className);
-
-        return $class->newInstanceArgs($params);
-
-    }
-
-    public function testString() {
-
-        $url = 'http://localhost:8080/v1';
-
-        $this->assertTrue(stripos($url, 'http') == 0);
     }
 
 }
