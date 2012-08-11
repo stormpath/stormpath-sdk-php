@@ -7,7 +7,7 @@ class ReadTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
 
-        $apiKey = new Services_Stormpath_Client_ApiKey('4OCDGOGPLVQW8FZO49N5EMZE9', 'vvEIFpaxzvyiHnhejnzsbnPkXI0CyJE/Yxsrx/wBEGQ');
+        $apiKey = new Services_Stormpath_Client_ApiKey('id', 'secret');
         $this->client = new Services_Stormpath_Client_Client($apiKey, 'http://localhost:8080/v1');
 
     }
