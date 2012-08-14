@@ -7,20 +7,179 @@ class ReadTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
 
-        $apiKey = new Services_Stormpath_Client_ApiKey('id', 'secret');
-        $this->client = new Services_Stormpath_Client_Client($apiKey, 'http://localhost:8080/v1');
+        $this->client = Services_Stormpath::createClient('id',
+                                                         'secret',
+                                                          'http://localhost:8080/v1');
 
     }
 
     public function testGetTenant() {
 
-        $tenantClassName = 'Services_Stormpath_Resource_Tenant';
+        $className = 'Services_Stormpath_Resource_Tenant';
         $tenant = $this->client->getCurrentTenant();
 
-        $this->assertInstanceOf($tenantClassName, $tenant);
+        $this->assertInstanceOf($className, $tenant);
         $this->assertInternalType('string', $tenant->getName());
         $this->assertInternalType('string', $tenant->getKey());
 
+        $className = 'Services_Stormpath_Resource_ApplicationList';
+        $applicationList = $tenant->getApplications();
+
+        $this->assertInstanceOf($className, $applicationList);
+
+        // checking the tenant's' applications
+        foreach($applicationList as $app)
+        {
+            // just checking that at least one
+            // application property can be read from here
+            $this->assertInternalType('string', $app->getName());
+        }
+
+        $className = 'Services_Stormpath_Resource_DirectoryList';
+        $directoryList = $tenant->getDirectories();
+
+        $this->assertInstanceOf($className, $directoryList);
+
+        // checking the tenant's' directories
+        foreach($directoryList as $dir)
+        {
+            // just checking that at least one
+            // directory property can be read from here
+            $this->assertInternalType('string', $dir->getName());
+        }
+
+    }
+
+    public function testGetApplication() {
+
+        $className = 'Services_Stormpath_Resource_Application';
+        $tenant = $this->client->getCurrentTenant();
+
+        $application = null;
+        foreach($tenant->getApplications() as $app)
+        {
+            // taking the first application that shows up
+            // to read its properties
+            $application = $app;
+            break;
+        }
+
+        $this->assertInstanceOf($className, $application);
+
+        $this->assertInternalType('string', $application->getName());
+        $this->assertInternalType('string', $application->getDescription());
+        $this->assertTrue(array_key_exists($application->getStatus(), Services_Stormpath::$Statuses));
+
+        $className = 'Services_Stormpath_Resource_Tenant';
+        $this->assertInstanceOf($className, $application->getTenant());
+
+        $className = 'Services_Stormpath_Resource_AccountList';
+        $accountList = $application->getAccounts();
+        $this->assertInstanceOf($className, $accountList);
+
+        foreach($accountList as $acc)
+        {
+            // just checking that at least one
+            // account property can be read from here
+            $this->assertInternalType('string', $acc->getUsername());
+        }
+
+        $className = 'Services_Stormpath_Resource_PasswordResetToken';
+        $this->assertInstanceOf($className, $application->getPasswordResetToken());
+
+    }
+
+    public function testGetDirectory() {
+
+        $className = 'Services_Stormpath_Resource_Directory';
+        $tenant = $this->client->getCurrentTenant();
+
+        $directory = null;
+        foreach($tenant->getDirectories() as $dir)
+        {
+            // taking the first directory that shows up
+            // to read its properties
+            $directory = $dir;
+            break;
+        }
+
+        $this->assertInstanceOf($className, $directory);
+
+        $this->assertInternalType('string', $directory->getName());
+        $this->assertInternalType('string', $directory->getDescription());
+        $this->assertTrue(array_key_exists($directory->getStatus(), Services_Stormpath::$Statuses));
+
+        $className = 'Services_Stormpath_Resource_Tenant';
+        $this->assertInstanceOf($className, $directory->getTenant());
+
+        $className = 'Services_Stormpath_Resource_AccountList';
+        $accountList = $directory->getAccounts();
+        $this->assertInstanceOf($className, $accountList);
+
+        foreach($accountList as $acc)
+        {
+            // just checking that at least one
+            // account property can be read from here
+            $this->assertInternalType('string', $acc->getUsername());
+        }
+
+        $className = 'Services_Stormpath_Resource_GroupList';
+        $groupList = $directory->getGroups();
+        $this->assertInstanceOf($className, $groupList);
+
+        foreach($groupList as $group)
+        {
+            // just checking that at least one
+            // group property can be read from here
+            $this->assertInternalType('string', $group->getName());
+        }
+    }
+
+    public function testGetGroup() {
+
+        $className = 'Services_Stormpath_Resource_Group';
+        $tenant = $this->client->getCurrentTenant();
+
+        $group = null;
+        foreach($tenant->getDirectories() as $dir)
+        {
+            $hasGroup = false;
+            foreach($dir->getGroups() as $grp)
+            {
+                // taking the first group that shows up
+                // to read its properties
+                $group = $grp;
+                $hasGroup = true;
+            }
+
+            if ($hasGroup)
+            {
+                break;
+            }
+        }
+
+        $this->assertInstanceOf($className, $group);
+
+        $this->assertInternalType('string', $group->getName());
+        $this->assertInternalType('string', $group->getDescription());
+        $this->assertTrue(array_key_exists($group->getStatus(), Services_Stormpath::$Statuses));
+
+        $className = 'Services_Stormpath_Resource_Tenant';
+        $this->assertInstanceOf($className, $group->getTenant());
+
+        $className = 'Services_Stormpath_Resource_Directory';
+        $this->assertInstanceOf($className, $group->getDirectory());
+
+        $className = 'Services_Stormpath_Resource_AccountList';
+        $accountList = $group->getAccounts();
+        $this->assertInstanceOf($className, $accountList);
+
+        foreach($accountList as $acc)
+        {
+            // just checking that at least one
+            // account property can be read from here
+            $this->assertInternalType('string', $acc->getUsername());
+        }
     }
 
 }

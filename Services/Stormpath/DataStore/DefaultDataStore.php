@@ -50,7 +50,7 @@ class Services_Stormpath_DataStore_DefaultDataStore
 
         if ($properties)
         {
-            $$propertiesArr[0] = $properties;
+            $propertiesArr[0] = $properties;
         }
 
        return $this->resourceFactory->instantiate($className, $propertiesArr);

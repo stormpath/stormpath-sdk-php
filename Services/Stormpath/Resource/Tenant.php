@@ -28,12 +28,12 @@ class Services_Stormpath_Resource_Tenant
 
     public function getApplications()
     {
-        $this->getResourceProperty(self::APPLICATIONS, Services_Stormpath::APPLICATION_LIST);
+        return $this->getResourceProperty(self::APPLICATIONS, Services_Stormpath::APPLICATION_LIST);
     }
 
     public function getDirectories()
     {
-        $this->getResourceProperty(self::DIRECTORIES, Services_Stormpath::DIRECTORY_LIST);
+        return $this->getResourceProperty(self::DIRECTORIES, Services_Stormpath::DIRECTORY_LIST);
     }
 
     public function verifyAccountEmail($token)

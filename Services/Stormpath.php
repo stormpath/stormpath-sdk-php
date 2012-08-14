@@ -20,6 +20,10 @@ class Services_Stormpath
     const DIRECTORY                = 'Directory';
     const DIRECTORY_LIST           = 'DirectoryList';
     const EMAIL_VERIFICATION_TOKEN = 'EmailVerificationToken';
+    const GROUP                    = 'Group';
+    const GROUP_LIST               = 'GroupList';
+    const GROUP_MEMBERSHIP         = 'GroupMembership';
+    const GROUP_MEMBERSHIP_LIST    = 'GroupMembershipList';
     const PASSWORD_RESET_TOKEN     = 'PasswordResetToken';
     const TENANT                   = 'Tenant';
 
@@ -28,5 +32,12 @@ class Services_Stormpath
 
     public static $Statuses        = array(self::DISABLED => self::DISABLED,
                                            self::ENABLED => self::ENABLED);
+
+    public static function createClient($accessId, $secretKey, $baseUrl = null)
+    {
+        $apiKey = new Services_Stormpath_Client_ApiKey($accessId, $secretKey);
+
+        return new Services_Stormpath_Client_Client($apiKey, $baseUrl);
+    }
 
 }
