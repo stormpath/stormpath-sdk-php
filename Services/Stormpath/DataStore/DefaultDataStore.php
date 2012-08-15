@@ -188,5 +188,7 @@ class Services_Stormpath_DataStore_DefaultDataStore
         {
             $headers['Content-Type'] = 'application/json';
         }
+
+        $request->setHeaders($headers);
     }
 }

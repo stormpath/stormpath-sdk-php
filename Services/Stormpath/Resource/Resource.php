@@ -74,7 +74,7 @@ abstract class Services_Stormpath_Resource_Resource
 
         } else
         {
-            unset($href);
+            $href = false;
         }
 
 
@@ -139,7 +139,7 @@ abstract class Services_Stormpath_Resource_Resource
 
     private function readProperty($name)
     {
-        return $this->getProperties()->$name;
+        return isset($this->getProperties()->$name) ? $this->getProperties()->$name : false;
     }
 
 }

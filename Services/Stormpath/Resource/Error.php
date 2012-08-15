@@ -15,27 +15,27 @@ class Services_Stormpath_Resource_Error extends Services_Stormpath_Resource_Reso
 
     public function getStatus()
     {
-        //TODO:implement
+        return $this->getProperty(self::STATUS);
     }
 
     public function getCode()
     {
-        //TODO:implement
+        return $this->getProperty(self::CODE);
     }
 
     public function getMessage()
     {
-        //TODO:implement
+        return $this->getProperty(self::MESSAGE);
     }
 
     public function getDeveloperMessage()
     {
-        //TODO:implement
+        return $this->getProperty(self::DEV_MESSAGE);
     }
 
     public function getMoreInfo()
     {
-        //TODO:implement
+        return $this->getProperty(self::MORE_INFO);
     }
 
 }

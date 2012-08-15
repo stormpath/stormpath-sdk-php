@@ -17,6 +17,8 @@ class Services_Stormpath
     const ACCOUNT_LIST             = 'AccountList';
     const APPLICATION              = 'Application';
     const APPLICATION_LIST         = 'ApplicationList';
+    const AUTHENTICATION_RESULT    = 'Services_Stormpath_Authc_AuthenticationResult';
+    const BASIC_LOGIN_ATTEMPT      = 'Services_Stormpath_Authc_BasicLoginAttempt';
     const DIRECTORY                = 'Directory';
     const DIRECTORY_LIST           = 'DirectoryList';
     const EMAIL_VERIFICATION_TOKEN = 'EmailVerificationToken';

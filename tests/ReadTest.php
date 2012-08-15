@@ -8,8 +8,8 @@ class ReadTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
 
         $this->client = Services_Stormpath::createClient('id',
-                                                         'secret',
-                                                          'http://localhost:8080/v1');
+            'secret',
+            'http://localhost:8080/v1');
 
     }
 
@@ -179,6 +179,72 @@ class ReadTest extends PHPUnit_Framework_TestCase {
             // just checking that at least one
             // account property can be read from here
             $this->assertInternalType('string', $acc->getUsername());
+        }
+    }
+
+    public function testGetAccount() {
+
+        $className = 'Services_Stormpath_Resource_Account';
+        $tenant = $this->client->getCurrentTenant();
+
+        $account = null;
+        foreach($tenant->getDirectories() as $dir)
+        {
+            $hasAccount = false;
+            foreach($dir->getAccounts() as $acc)
+            {
+                // taking the first group that shows up
+                // to read its properties
+                $account = $acc;
+                $hasAccount = true;
+            }
+
+            if ($hasAccount)
+            {
+                break;
+            }
+        }
+
+        $this->assertInstanceOf($className, $account);
+
+        $this->assertInternalType('string', $account->getUsername());
+        $this->assertInternalType('string', $account->getEmail());
+        $this->assertInternalType('string', $account->getGivenName());
+        // middle name is optional
+        //$this->assertInternalType('string', $account->getMiddleName());
+        $this->assertInternalType('string', $account->getSurname());
+        $this->assertTrue(array_key_exists($account->getStatus(), Services_Stormpath::$Statuses));
+
+        $className = 'Services_Stormpath_Resource_Directory';
+        $this->assertInstanceOf($className, $account->getDirectory());
+
+        //email verification token is not always available so
+        //this test is optional
+        /*$className = 'Services_Stormpath_Resource_EmailVerificationToken';
+        $this->assertInstanceOf($className, $account->getEmailVerificationToken());*/
+
+        $className = 'Services_Stormpath_Resource_GroupList';
+        $groupList = $account->getGroups();
+        $this->assertInstanceOf($className, $groupList);
+
+        foreach($groupList as $group)
+        {
+            // just checking that at least one
+            // group property can be read from here
+            $this->assertInternalType('string', $group->getName());
+        }
+
+        $className = 'Services_Stormpath_Resource_GroupMembershipList';
+        $groupMembershipList = $account->getGroupMemberShips();
+        $this->assertInstanceOf($className, $groupMembershipList);
+
+        foreach($groupMembershipList as $groupMembership)
+        {
+            $className = 'Services_Stormpath_Resource_Account';
+            $this->assertInstanceOf($className, $groupMembership->getAccount());
+
+            $className = 'Services_Stormpath_Resource_Group';
+            $this->assertInstanceOf($className, $groupMembership->getGroup());
         }
     }
 

@@ -15,4 +15,9 @@ class Services_Stormpath_Client_Client
         return $this->dataStore->getResource('/tenants/current', Services_Stormpath::TENANT);
     }
 
+    public function getDataStore()
+    {
+        return $this->dataStore;
+    }
+
 }

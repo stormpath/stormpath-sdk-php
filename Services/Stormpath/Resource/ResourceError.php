@@ -13,21 +13,21 @@ class Services_Stormpath_Resource_ResourceError extends RuntimeException
 
     public function getStatus()
     {
-        return $this->error->getStatus();
+        return $this->error ? $this->error->getStatus() : -1;
     }
 
     public function getErrorCode()
     {
-        return $this->error->getCode();
+        return $this->error ? $this->error->getCode() : -1;
     }
 
     public function getDeveloperMessage()
     {
-        return $this->error->getDeveloperMessage();
+        return $this->error ? $this->error->getDeveloperMessage() : null;
     }
 
     public function getMoreInfo()
     {
-        return $this->error->getMoreInfo();
+        return $this->error ? $this->error->getMoreInfo() : null;
     }
 }

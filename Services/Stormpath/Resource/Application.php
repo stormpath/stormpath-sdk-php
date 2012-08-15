@@ -86,8 +86,9 @@ class Services_Stormpath_Resource_Application
         return $this->getDataStore()->getResource($href, Services_Stormpath::PASSWORD_RESET_TOKEN);
     }
 
-    public function authenticate($request)
+    public function authenticate(Services_Stormpath_Authc_AuthenticationRequest $request)
     {
-        //TODO:implement
+        $basicAuthenticator = new Services_Stormpath_Authc_BasicAuthenticator($this->getDataStore());
+        return $basicAuthenticator->authenticate($this->getHref(), $request);
     }
 }
