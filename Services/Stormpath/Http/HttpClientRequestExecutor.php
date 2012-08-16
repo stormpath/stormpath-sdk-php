@@ -19,9 +19,9 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
         //TODO: Switch to Digest Authentication
         $this->httpClient->setAuth($this->apiKey->getId(), $this->apiKey->getSecret());
 
-        $this->addQueryString($request->getResourceUrl(), $request->getQueryString());
-
         $this->httpClient->setUrl($request->getResourceUrl());
+
+        $this->addQueryString($request->getQueryString());
 
         $this->httpClient->setMethod($request->getMethod());
 
@@ -38,22 +38,13 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
 
     }
 
-    private function addQueryString($href, array $queryString)
+    private function addQueryString(array $queryString)
     {
         ksort($queryString);
 
-        foreach($queryString as $pair)
+        foreach($queryString as $pairValue)
         {
-            if (strpos($href, '?'))
-            {
-                $href  .= '&' . key($pair) . '=' . $pair;
-
-            } else
-            {
-                $href  .= '?' . key($pair) . '=' . $pair;
-
-            }
-
+            $this->httpClient->getUrl()->setQueryVariable(key($queryString), $pairValue);
         }
     }
 

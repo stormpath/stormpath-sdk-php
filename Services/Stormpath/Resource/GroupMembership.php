@@ -21,11 +21,19 @@ class Services_Stormpath_Resource_GroupMembership
     {
         //TODO: enable auto discovery
         $href = "/groupMemberships";
+        $hrefPropName = self::HREF_PROP_NAME;
 
-        $accountProps = [self::HREF_PROP_NAME => $account->getHref()];
-        $groupProps = [self::HREF_PROP_NAME => $group->getHref()];
+        $accountProps = new stdClass();
+        $accountProps->$hrefPropName = $account->getHref();
 
-        $properties = [self::ACCOUNT => $accountProps, self::GROUP => $groupProps];
+        $groupProps = new stdClass();
+        $groupProps->$hrefPropName = $group->getHref();
+
+        $accountsPropName = self::ACCOUNT;
+        $groupsPropName = self::GROUP;
+        $properties = new stdClass();
+        $properties->$accountsPropName = $accountProps;
+        $properties->$groupsPropName = $groupProps;
 
         $groupMembership = $this->getDataStore()->instantiate(Services_Stormpath::GROUP_MEMBERSHIP, $properties);
 

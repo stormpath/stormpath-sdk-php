@@ -85,7 +85,16 @@ class Services_Stormpath_DataStore_DefaultDataStore
                            Services_Stormpath_Resource_Resource $resource,
                            $returnType)
     {
-        return $this->saveResource($parentHref, $resource, $returnType);
+        $returnedResource = $this->saveResource($parentHref, $resource, $returnType);
+
+        $returnTypeClass = $this->resourceFactory->instantiate($returnType, array());
+        if ($resource instanceof $returnTypeClass)
+        {
+            //ensure the caller's argument is updated with what is returned from the server:
+            $resource->setProperties($returnedResource->getProperties());
+        }
+
+        return $returnedResource;
     }
 
     public function save(Services_Stormpath_Resource_Resource $resource,
@@ -105,12 +114,12 @@ class Services_Stormpath_DataStore_DefaultDataStore
 
         $returnType = $returnType ? $returnType : get_class($resource);
 
-        $returnValue = $this->saveResource($href, $resource, $returnType);
+        $returnedResource = $this->saveResource($href, $resource, $returnType);
 
         //ensure the caller's argument is updated with what is returned from the server:
-        $resource->setProperties($returnValue->getProperties());
+        $resource->setProperties($returnedResource->getProperties());
 
-        return $returnValue;
+        return $returnedResource;
 
     }
 

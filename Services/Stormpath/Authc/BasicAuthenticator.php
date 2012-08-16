@@ -33,7 +33,7 @@ class Services_Stormpath_Authc_BasicAuthenticator
 
         $value = base64_encode($value);
 
-        $attempt = $this->dataStore->instantiate(Services_Stormpath::BASIC_LOGIN_ATTEMPT, new stdClass());
+        $attempt = $this->dataStore->instantiate(Services_Stormpath::BASIC_LOGIN_ATTEMPT);
         $attempt->setType('basic');
         $attempt->setValue($value);
 

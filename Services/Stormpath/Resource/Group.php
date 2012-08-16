@@ -69,6 +69,6 @@ class Services_Stormpath_Resource_Group
     public function addAccount(Services_Stormpath_Resource_Account $account)
     {
         $groupMembership = $this->getDataStore()->instantiate(Services_Stormpath::GROUP_MEMBERSHIP);
-        return $groupMembership.create($this, $account);
+        return $groupMembership->create($account, $this);
     }
 }

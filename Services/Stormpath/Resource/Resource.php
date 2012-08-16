@@ -14,7 +14,7 @@ abstract class Services_Stormpath_Resource_Resource
                                 stdClass $properties = null)
     {
         $this->dataStore = $dataStore;
-        $this->properties = $properties;
+        $this->properties = $properties ? $properties : new stdClass();
     }
 
     public function getProperties()

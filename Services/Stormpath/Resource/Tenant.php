@@ -21,7 +21,7 @@ class Services_Stormpath_Resource_Tenant
     public function createApplication(Services_Stormpath_Resource_Application $application)
     {
         //TODO: enable auto discovery
-        return $this->getDataStore()->create(self::APPLICATIONS,
+        return $this->getDataStore()->create('/applications',
                                              $application,
                                              Services_Stormpath::APPLICATION);
     }
