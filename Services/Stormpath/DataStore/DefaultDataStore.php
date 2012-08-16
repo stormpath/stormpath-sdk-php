@@ -191,7 +191,7 @@ class Services_Stormpath_DataStore_DefaultDataStore
     {
         $headers = $request->getHeaders();
         $headers['Accept'] = 'application/json';
-        $headers['User-Agent'] = 'Stormpath-PhpSDK/' .Services_Stormpath_Version::SDK_VERSION;
+        $headers['User-Agent'] = 'Stormpath-PhpSDK/' .Services_Stormpath_Util_Version::SDK_VERSION;
 
         if ($request->getBody())
         {

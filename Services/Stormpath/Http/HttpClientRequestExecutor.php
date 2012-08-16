@@ -11,11 +11,13 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
     {
         $this->apiKey = $apiKey;
         $this->httpClient = new HTTP_Request2;
+        $this->httpClient->setConfig(array('ssl_verify_peer' => FALSE,
+                                           'ssl_verify_host' => FALSE));
+
     }
 
     public function executeRequest(Services_Stormpath_Http_Request $request)
     {
-
         //TODO: Switch to Digest Authentication
         $this->httpClient->setAuth($this->apiKey->getId(), $this->apiKey->getSecret());
 

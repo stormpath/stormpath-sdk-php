@@ -15,6 +15,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     private $modifyApplication;
     private $modifyDirectory;
     private $modifyGroup;
+    private $modifyGroupMembership;
     private $verifyEmailVerificationToken;
     private $verifyPasswordResetToken;
 
@@ -330,6 +331,51 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
             $this->assertTrue($groupAdded);
 
+        }
+    }
+
+    public function testModifyGroupMembership()
+    {
+        if ($this->modifyGroupMembership)
+        {
+            $groupHref = 'groups/Ki3qEVTeSZmaRUgAdf9h_w';
+            $group = $this->client->getDataStore()->getResource($groupHref, Services_Stormpath::GROUP);
+
+            $accountHref = 'accounts/KeLhxO2eStSfg-9sztdqrQ';
+            $account = $this->client->getDataStore()->getResource($accountHref, Services_Stormpath::ACCOUNT);
+
+            $groupMembership = false;
+            foreach($account->getGroupMemberShips() as $tmpGroupMembership)
+            {
+                $tmpGroup = $tmpGroupMembership->getGroup();
+
+                if ($tmpGroup and strrpos($tmpGroup->getHref(), $groupHref))
+                {
+                    $groupMembership = $tmpGroupMembership;
+                    break;
+                }
+            }
+
+            if ($groupMembership)
+            {
+                $groupMembership->delete();
+            }
+
+            $group->addAccount($account);
+
+            foreach($account->getGroupMemberShips() as $tmpGroupMembership)
+            {
+                $tmpGroup = $tmpGroupMembership->getGroup();
+
+                if ($tmpGroup and strrpos($tmpGroup->getHref(), $groupHref))
+                {
+                    $groupMembership = $tmpGroupMembership;
+                    break;
+                }
+            }
+
+            $className = 'Services_Stormpath_Resource_GroupMembership';
+            $this->assertInstanceOf($className, $groupMembership);
         }
     }
 

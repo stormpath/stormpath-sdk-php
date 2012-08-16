@@ -1,0 +1,16 @@
+apiKey.id: myApiKeyId
+apiKey.secret: myApkiKeySecret
+
+different.apiKey.id: myApiKeyId
+different.apiKey.secret: myApkiKeySecret
+
+
+stormpath:
+  apiKey:
+    id: myNestedApiKeyId
+    secret: myNestedApkiKeySecret
+
+different.stormpath:
+  different.apiKey:
+    different.id: myDifferentNestedApiKeyId
+    different.secret: myDifferentNestedApkiKeySecret

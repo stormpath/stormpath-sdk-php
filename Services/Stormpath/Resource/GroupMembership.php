@@ -9,12 +9,12 @@ class Services_Stormpath_Resource_GroupMembership
 
     public function getAccount()
     {
-        return $this->getProperty(self::ACCOUNT);
+        return $this->getResourceProperty(self::ACCOUNT, Services_Stormpath::ACCOUNT);
     }
 
     public function getGroup()
     {
-        return $this->getProperty(self::GROUP);
+        return $this->getResourceProperty(self::GROUP, Services_Stormpath::GROUP);
     }
 
     public function create(Services_Stormpath_Resource_Account $account, Services_Stormpath_Resource_Group $group)
