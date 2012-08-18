@@ -4,11 +4,12 @@
     "description": "A PHP wrapper for Stormpath's API",
     "keywords": ["stormpath", "cloud", "security", "api"],
     "homepage": "https://github.com/stormpath/stormpath-sdk-php",
-    "license": "Apache",
+    "license": "MIT",
     "authors": [
         {
             "name": "Elder Crisostomo",
-            "email": "elder@stormpath.com"
+            "email": "elder@stormpath.com",
+            "role": "Developer"
         }
     ],
     "repositories": [
@@ -23,10 +24,7 @@
         }
     },
     "require": {
-        "php": ">=5.3.10"
-    },
-    "require": {
-        "php": ">=5.3.10",
+        "php": ">=5.3.0",
         "pear-pear/HTTP_Request2": "2.1.1"
     }
 }

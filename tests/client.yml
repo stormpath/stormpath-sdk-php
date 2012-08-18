@@ -1,9 +1,11 @@
 apiKey.id: myApiKeyId
 apiKey.secret: myApkiKeySecret
 
-different.apiKey.id: myApiKeyId
-different.apiKey.secret: myApkiKeySecret
+different.apiKey.id: myDifferentApiKeyId
+different.apiKey.secret: myDifferentApkiKeySecret
 
+empty.apiKey.id:
+empty.apiKey.secret:
 
 stormpath:
   apiKey:

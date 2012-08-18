@@ -7,19 +7,26 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
     private $apiKey;
     private $httpClient;
 
-    public function __construct(Services_Stormpath_Client_ApiKey $apiKey)
+    public function __construct(Services_Stormpath_Client_ApiKey $apiKey = null)
     {
-        $this->apiKey = $apiKey;
         $this->httpClient = new HTTP_Request2;
-        $this->httpClient->setConfig(array('ssl_verify_peer' => FALSE,
-                                           'ssl_verify_host' => FALSE));
+
+        if ($apiKey)
+        {
+            $this->apiKey = $apiKey;
+            $this->httpClient->setConfig(array('ssl_verify_peer' => FALSE,
+                                               'ssl_verify_host' => FALSE));
+        }
 
     }
 
     public function executeRequest(Services_Stormpath_Http_Request $request)
     {
-        //TODO: Switch to Digest Authentication
-        $this->httpClient->setAuth($this->apiKey->getId(), $this->apiKey->getSecret());
+        if ($this->apiKey)
+        {
+            //TODO: Switch to Digest Authentication
+            $this->httpClient->setAuth($this->apiKey->getId(), $this->apiKey->getSecret());
+        }
 
         $this->httpClient->setUrl($request->getResourceUrl());
 
