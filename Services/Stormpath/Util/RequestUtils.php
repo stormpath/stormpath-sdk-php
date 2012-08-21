@@ -15,29 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-class Services_Stormpath_Authc_BasicLoginAttempt
-    extends Services_Stormpath_Resource_Resource
+
+class Services_Stormpath_Util_RequestUtils
 {
-    const TYPE = "type";
-    const VALUE = "value";
 
-    public function getType()
+    public static function isDefaultPort(array $parsedUrl)
     {
-        return $this->getProperty(self::TYPE);
+        $scheme = $parsedUrl['scheme'];
+        $port = $parsedUrl['port'];
+        return $port <= 0 or ($port == 80 and $scheme == 'http') or ($port == 443 and $scheme == 'https');
     }
 
-    public function setType($type)
+    public static function encodeUrl($value, $path, $canonical)
     {
-        $this->setProperty(self::TYPE, $type);
-    }
-
-    public function getValue()
-    {
-        return $this->getProperty(self::VALUE);
-    }
-
-    public function setValue($value)
-    {
-        $this->setProperty(self::VALUE, $value);
+        //TODO: implement
     }
 }

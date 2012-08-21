@@ -10,7 +10,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     private $createAccount;
     private $createAccountWithGroup;
     private $createApplication;
-    private $createPasswordResetToken;
+    private $sendPasswordResetEmail;
     private $modifyAccount;
     private $modifyApplication;
     private $modifyDirectory;
@@ -32,10 +32,13 @@ class WriteTest extends PHPUnit_Framework_TestCase
         $href = 'applications/A0atUpZARYGApaN5f88O3A';
         $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
-        $result = $application->authenticate(new Services_Stormpath_Authc_UsernamePasswordRequest('kentucky', 'super_P4ss'));
+        $result = $application->authenticateAccount(new Services_Stormpath_Authc_UsernamePasswordRequest('kentucky', 'super_P4ss'));
+
+        $className = 'Services_Stormpath_Authc_AuthenticationResult';
+        $this->assertInstanceOf($className, $result);
 
         $className = 'Services_Stormpath_Resource_Account';
-        $this->assertInstanceOf($className, $result);
+        $this->assertInstanceOf($className, $result->getAccount());
     }
 
     public function testFailedAuthentication()
@@ -46,7 +49,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
         $result = false;
         try {
 
-            $application->authenticate(new Services_Stormpath_Authc_UsernamePasswordRequest('kentucky', 'badPass'));
+            $application->authenticateAccount(new Services_Stormpath_Authc_UsernamePasswordRequest('kentucky', 'badPass'));
 
         } catch (Services_Stormpath_Resource_ResourceError $re)
         {
@@ -197,16 +200,16 @@ class WriteTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function testCreatePasswordResetToken()
+    public function testSendPasswordResetEmail()
     {
-        if ($this->createPasswordResetToken)
+        if ($this->sendPasswordResetEmail)
         {
             $href = 'applications/A0atUpZARYGApaN5f88O3A';
             $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
-            $result = $application->createPasswordResetToken('phpsdk@email.com');
+            $result = $application->sendPasswordResetEmail('phpsdk@email.com');
 
-            $className = 'Services_Stormpath_Resource_PasswordResetToken';
+            $className = 'Services_Stormpath_Resource_Account';
             $this->assertInstanceOf($className, $result);
         }
     }
@@ -218,12 +221,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
             $href = 'applications/A0atUpZARYGApaN5f88O3A';
             $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
-            $result = $application->verifyPasswordResetToken('OP_t8SwJReiYBQffTcINLw');
-
-            $className = 'Services_Stormpath_Resource_PasswordResetToken';
-            $this->assertInstanceOf($className, $result);
-
-            $result = $result->getAccount();
+            $result = $application->verifyPasswordResetToken('o-Q96TGKT5GG4nOCZegLiw');
 
             $className = 'Services_Stormpath_Resource_Account';
             $this->assertInstanceOf($className, $result);

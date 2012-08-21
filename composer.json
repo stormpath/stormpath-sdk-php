@@ -4,7 +4,7 @@
     "description": "A PHP wrapper for Stormpath's API",
     "keywords": ["stormpath", "cloud", "security", "api"],
     "homepage": "https://github.com/stormpath/stormpath-sdk-php",
-    "license": "MIT",
+    "license": "http://www.apache.org/licenses/LICENSE-2.0",
     "authors": [
         {
             "name": "Elder Crisostomo",
