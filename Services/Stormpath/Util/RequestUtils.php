@@ -19,6 +19,14 @@
 class Services_Stormpath_Util_RequestUtils
 {
 
+    /**
+     * Returns {@code true} if the specified parsed url (array result of a call to parse_url(url))
+     * uses a standard port (i.e. http == 80 or https == 443),
+     * {@code false} otherwise.
+     *
+     * @param $parsedUrl
+     * @return true if the specified parsed url is using a non-standard port, false otherwise
+     */
     public static function isDefaultPort(array $parsedUrl)
     {
         $scheme = strtolower($parsedUrl['scheme']);

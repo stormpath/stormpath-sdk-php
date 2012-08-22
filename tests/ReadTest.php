@@ -6,9 +6,7 @@ class ReadTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
 
-        $this->client = Services_Stormpath::createClient('id',
-            'secret',
-            'http://localhost:8080/v1');
+        $this->client = Services_Stormpath::createClient('id', 'secret');
 
     }
 
@@ -82,9 +80,6 @@ class ReadTest extends PHPUnit_Framework_TestCase {
             // account property can be read from here
             $this->assertInternalType('string', $acc->getUsername());
         }
-
-        $className = 'Services_Stormpath_Resource_PasswordResetToken';
-        $this->assertInstanceOf($className, $application->getPasswordResetToken());
 
     }
 

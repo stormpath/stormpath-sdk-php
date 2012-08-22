@@ -16,6 +16,7 @@ require_once 'HTTP/Request2.php';
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 class Services_Stormpath_Http_HttpClientRequestExecutor
     implements Services_Stormpath_Http_RequestExecutor
 {
@@ -41,9 +42,7 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
     {
         if ($this->apiKey)
         {
-            //TODO: Switch to Digest Authentication
-            $this->httpClient->setAuth($this->apiKey->getId(), $this->apiKey->getSecret());
-            //$this->signer->signRequest($request, $this->apiKey);
+            $this->signer->signRequest($request, $this->apiKey);
         }
 
         $this->httpClient->setUrl($request->getResourceUrl());
@@ -69,9 +68,9 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
     {
         ksort($queryString);
 
-        foreach($queryString as $pairValue)
+        foreach($queryString as $key => $value)
         {
-            $this->httpClient->getUrl()->setQueryVariable(key($queryString), $pairValue);
+            $this->httpClient->getUrl()->setQueryVariable($key, $value);
         }
     }
 

@@ -8,6 +8,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     private $addGroupToAccount;
     private $client;
     private $createAccount;
+    private $createAccountWorkflowOverride;
     private $createAccountWithGroup;
     private $createApplication;
     private $sendPasswordResetEmail;
@@ -21,15 +22,13 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
     public function setUp() {
 
-        $this->client = Services_Stormpath::createClient('id',
-            'secret',
-            'http://localhost:8080/v1');
+        $this->client = Services_Stormpath::createClient('id', 'secret');
 
     }
 
     public function testSuccessfulAuthentication()
     {
-        $href = 'applications/A0atUpZARYGApaN5f88O3A';
+        $href = 'applications/fzyWJ5V_SDORGPk4fT2jhA';
         $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
         $result = $application->authenticateAccount(new Services_Stormpath_Authc_UsernamePasswordRequest('kentucky', 'super_P4ss'));
@@ -43,7 +42,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
     public function testFailedAuthentication()
     {
-        $href = '/applications/A0atUpZARYGApaN5f88O3A';
+        $href = '/applications/fzyWJ5V_SDORGPk4fT2jhA';
         $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
         $result = false;
@@ -68,7 +67,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->createAccount)
         {
-            $href = 'directories/_oIg8zU5QWyiz22DcVYVLg';
+            $href = 'directories/wDTY5jppTLS2uZEAcqaL5A';
             $directory = $this->client->getDataStore()->getResource($href, Services_Stormpath::DIRECTORY);
 
             $email = 'phpsdk@email.com';
@@ -81,21 +80,63 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
             try {
 
-                 $directory->createAccount($account, false);
+                 $directory->createAccount($account);
 
             } catch (Services_Stormpath_Resource_ResourceError $re)
             {
                 $this->assertTrue(false);
             }
 
+            $accountCreated = false;
             foreach($directory->getAccounts() as $acc)
             {
                 if ($acc->getEmail() == $email)
                 {
-                    $this->assertTrue(true);
+                    $accountCreated = true;
                     break;
                 }
             }
+
+            $this->assertTrue($accountCreated);
+
+        }
+    }
+
+    public function testCreateAccountWorkflowOverride()
+    {
+        if ($this->createAccountWorkflowOverride)
+        {
+            $href = 'directories/wDTY5jppTLS2uZEAcqaL5A';
+            $directory = $this->client->getDataStore()->getResource($href, Services_Stormpath::DIRECTORY);
+
+            $email = 'phpsdkworkflowoverride@email.com';
+            $account = $this->client->getDataStore()->instantiate(Services_Stormpath::ACCOUNT);
+            $account->setEmail($email);
+            $account->setGivenName('Php');
+            $account->setPassword('super_P4ss');
+            $account->setSurname('Sdk Workflow Override');
+            $account->setUsername('phpsdkworkflowoverride');
+
+            try {
+
+                $directory->createAccount($account, false);
+
+            } catch (Services_Stormpath_Resource_ResourceError $re)
+            {
+                $this->assertTrue(false);
+            }
+
+            $accountCreated = false;
+            foreach($directory->getAccounts() as $acc)
+            {
+                if ($acc->getEmail() == $email)
+                {
+                    $accountCreated = true;
+                    break;
+                }
+            }
+
+            $this->assertTrue($accountCreated);
 
         }
     }
@@ -104,7 +145,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->modifyAccount)
         {
-            $href = '/accounts/9T-6HmQ5SsygYGH1xDcysQ';
+            $href = '/accounts/ije9hUEKTZ29YcGhdG5s2A';
             $account = $this->client->getDataStore()->getResource($href, Services_Stormpath::ACCOUNT);
 
             date_default_timezone_set('America/Los_Angeles');
@@ -121,7 +162,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->modifyApplication)
         {
-            $href = 'applications/A0atUpZARYGApaN5f88O3A';
+            $href = 'applications/fzyWJ5V_SDORGPk4fT2jhA';
             $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
             date_default_timezone_set('America/Los_Angeles');
@@ -138,7 +179,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->modifyDirectory)
         {
-            $href = '/directories/_oIg8zU5QWyiz22DcVYVLg';
+            $href = '/directories/wDTY5jppTLS2uZEAcqaL5A';
             $directory = $this->client->getDataStore()->getResource($href, Services_Stormpath::DIRECTORY);
 
             date_default_timezone_set('America/Los_Angeles');
@@ -155,7 +196,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->modifyGroup)
         {
-            $href = 'groups/Ki3qEVTeSZmaRUgAdf9h_w';
+            $href = 'groups/mCidbrAcSF-VpkNfOVvJkQ';
             $group = $this->client->getDataStore()->getResource($href, Services_Stormpath::GROUP);
 
             date_default_timezone_set('America/Los_Angeles');
@@ -204,7 +245,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->sendPasswordResetEmail)
         {
-            $href = 'applications/A0atUpZARYGApaN5f88O3A';
+            $href = 'applications/fzyWJ5V_SDORGPk4fT2jhA';
             $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
             $result = $application->sendPasswordResetEmail('phpsdk@email.com');
@@ -218,7 +259,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->verifyPasswordResetToken)
         {
-            $href = 'applications/A0atUpZARYGApaN5f88O3A';
+            $href = 'applications/fzyWJ5V_SDORGPk4fT2jhA';
             $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
             $result = $application->verifyPasswordResetToken('o-Q96TGKT5GG4nOCZegLiw');
@@ -232,10 +273,10 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->addAccountToGroup)
         {
-            $groupHref = 'groups/Ki3qEVTeSZmaRUgAdf9h_w';
+            $groupHref = 'groups/mCidbrAcSF-VpkNfOVvJkQ';
             $group = $this->client->getDataStore()->getResource($groupHref, Services_Stormpath::GROUP);
 
-            $accountHref = 'accounts/KeLhxO2eStSfg-9sztdqrQ';
+            $accountHref = 'accounts/ije9hUEKTZ29YcGhdG5s2A';
             $account = $this->client->getDataStore()->getResource($accountHref, Services_Stormpath::ACCOUNT);
 
             $group->addAccount($account);
@@ -258,10 +299,10 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->addGroupToAccount)
         {
-            $groupHref = 'groups/Ki3qEVTeSZmaRUgAdf9h_w';
+            $groupHref = 'groups/mCidbrAcSF-VpkNfOVvJkQ';
             $group = $this->client->getDataStore()->getResource($groupHref, Services_Stormpath::GROUP);
 
-            $accountHref = 'accounts/KeLhxO2eStSfg-9sztdqrQ';
+            $accountHref = 'accounts/ije9hUEKTZ29YcGhdG5s2A';
             $account = $this->client->getDataStore()->getResource($accountHref, Services_Stormpath::ACCOUNT);
 
             $account->addGroup($group);
@@ -284,10 +325,10 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->createAccountWithGroup)
         {
-            $directoryHref = 'directories/_oIg8zU5QWyiz22DcVYVLg';
+            $directoryHref = 'directories/wDTY5jppTLS2uZEAcqaL5A';
             $directory = $this->client->getDataStore()->getResource($directoryHref, Services_Stormpath::DIRECTORY);
 
-            $groupHref = 'groups/Ki3qEVTeSZmaRUgAdf9h_w';
+            $groupHref = 'groups/mCidbrAcSF-VpkNfOVvJkQ';
             $group = $this->client->getDataStore()->getResource($groupHref, Services_Stormpath::GROUP);
 
             $email = 'phpsdkwithgroup@email.com';
@@ -336,10 +377,10 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->modifyGroupMembership)
         {
-            $groupHref = 'groups/Ki3qEVTeSZmaRUgAdf9h_w';
+            $groupHref = 'groups/mCidbrAcSF-VpkNfOVvJkQ';
             $group = $this->client->getDataStore()->getResource($groupHref, Services_Stormpath::GROUP);
 
-            $accountHref = 'accounts/KeLhxO2eStSfg-9sztdqrQ';
+            $accountHref = 'accounts/ije9hUEKTZ29YcGhdG5s2A';
             $account = $this->client->getDataStore()->getResource($accountHref, Services_Stormpath::ACCOUNT);
 
             $groupMembership = false;

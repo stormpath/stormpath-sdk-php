@@ -67,8 +67,7 @@ class Services_Stormpath_Http_Authc_Sauthc1Signer
         $canonicalQueryString = $this->canonicalizeQueryString($request);
         $canonicalHeaderString = $this->canonicalizeHeaders($request);
         $signedHeadersString = $this->getSignedHeaders($request);
-        //$requestPayloadHashHex = $this->toHex($this->hashText($this->getRequestPayload($request)));
-        $requestPayloadHashHex = $this->hashText($this->getRequestPayload($request));
+        $requestPayloadHashHex = $this->toHex($this->hashText($this->getRequestPayload($request)));
 
         $canonicalRequest = $method . self::NL .
                             $canonicalResourcePath . self::NL .
@@ -79,8 +78,7 @@ class Services_Stormpath_Http_Authc_Sauthc1Signer
 
         $id = $apiKey->getId() . '/' . $dateStamp . '/' . $nonce . '/' . self::ID_TERMINATOR;
 
-        //$canonicalRequestHashHex = $this->toHex($this->hashText($canonicalRequest));
-        $canonicalRequestHashHex = $this->hashText($canonicalRequest);
+        $canonicalRequestHashHex = $this->toHex($this->hashText($canonicalRequest));
 
         $stringToSign = self::ALGORITHM . self::NL .
                         $timeStamp . self::NL .
@@ -94,8 +92,7 @@ class Services_Stormpath_Http_Authc_Sauthc1Signer
         $kSigning = $this->sign(self::ID_TERMINATOR, $kNonce, self::DEFAULT_ALGORITHM);
 
         $signature = $this->sign($this->toUTF8($stringToSign), $kSigning, self::DEFAULT_ALGORITHM);
-        //$signatureHex = $this->toHex($signature);
-        $signatureHex = $signature;
+        $signatureHex = $this->toHex($signature);
 
         $authorizationHeader = self::AUTHENTICATION_SCHEME . ' ' .
                                $this->createNameValuePair(self::SAUTHC1_ID, $id) . ', ' .
@@ -121,14 +118,14 @@ class Services_Stormpath_Http_Authc_Sauthc1Signer
 
     protected function hashText($text)
     {
-        return hash(self::DEFAULT_ALGORITHM, $this->toUTF8($text));
+        return hash(self::DEFAULT_ALGORITHM, $this->toUTF8($text), true);
     }
 
     protected function sign($data, $key, $algorithm)
     {
         $utf8Data = $this->toUTF8($data);
 
-        return hash_hmac($algorithm, $utf8Data, $key);
+        return hash_hmac($algorithm, $utf8Data, $key, true);
     }
 
     protected function toUTF8($str)
