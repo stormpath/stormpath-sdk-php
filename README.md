@@ -27,3 +27,9 @@ directory and then include the library file:
     require '/path/to/stormpath-sdk-php/Services/Stormpath.php';
 
 You're ready to connect with Stormpath!
+
+## Documentation
+
+Project Documentation is here:
+
+https://github.com/stormpath/stormpath-sdk-php/wiki
