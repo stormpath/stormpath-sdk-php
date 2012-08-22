@@ -118,4 +118,26 @@ class Services_Stormpath_Http_DefaultRequest
         $this->contentLength = $length;
     }
 
+    function toStrQueryString($canonical)
+    {
+        $result = '';
+
+        if ($this->getQueryString())
+        {
+            foreach($this->getQueryString() as $key => $value)
+            {
+                $encodedKey = Services_Stormpath_Util_RequestUtils::encodeUrl($key, false, $canonical);
+                $encodedValue = Services_Stormpath_Util_RequestUtils::encodeUrl($value, false, $canonical);
+
+                if ($result)
+                {
+                    $result .= '&';
+                }
+
+                $result .= $encodedKey . '=' . $encodedValue;
+            }
+        }
+
+        return $result;
+    }
 }

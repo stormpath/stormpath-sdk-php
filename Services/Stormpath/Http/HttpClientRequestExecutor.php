@@ -21,6 +21,7 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
 {
     private $apiKey;
     private $httpClient;
+    private $signer;
 
     public function __construct(Services_Stormpath_Client_ApiKey $apiKey = null)
     {
@@ -29,6 +30,7 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
         if ($apiKey)
         {
             $this->apiKey = $apiKey;
+            $this->signer = new Services_Stormpath_Http_Authc_Sauthc1Signer;
             $this->httpClient->setConfig(array('ssl_verify_peer' => FALSE,
                                                'ssl_verify_host' => FALSE));
         }
@@ -41,6 +43,7 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
         {
             //TODO: Switch to Digest Authentication
             $this->httpClient->setAuth($this->apiKey->getId(), $this->apiKey->getSecret());
+            //$this->signer->signRequest($request, $this->apiKey);
         }
 
         $this->httpClient->setUrl($request->getResourceUrl());

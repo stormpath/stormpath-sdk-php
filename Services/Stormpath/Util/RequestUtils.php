@@ -21,13 +21,35 @@ class Services_Stormpath_Util_RequestUtils
 
     public static function isDefaultPort(array $parsedUrl)
     {
-        $scheme = $parsedUrl['scheme'];
-        $port = $parsedUrl['port'];
+        $scheme = strtolower($parsedUrl['scheme']);
+        $port = array_key_exists('port', $parsedUrl) ? $parsedUrl['port'] : $scheme == 'https' ? 443 : 0;
         return $port <= 0 or ($port == 80 and $scheme == 'http') or ($port == 443 and $scheme == 'https');
     }
 
     public static function encodeUrl($value, $path, $canonical)
     {
-        //TODO: implement
+        if (!$value)
+        {
+            return '';
+        }
+
+        $encoded = urlencode($value);
+
+        if ($canonical)
+        {
+            $encoded = strtr(
+                           strtr(
+                               strtr($encoded,
+                                   array('+' => '%20')),
+                                   array('*' =>'%2A')),
+                                   array('%7E' => '~'));
+
+            if ($path)
+            {
+                $encoded = strtr($encoded, array('%2F' => '/'));
+            }
+        }
+
+        return $encoded;
     }
 }

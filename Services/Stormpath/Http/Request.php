@@ -31,4 +31,6 @@ interface Services_Stormpath_Http_Request extends Services_Stormpath_Http_HttpMe
     public function setQueryString(array $queryString);
 
     public function setBody($body, $length);
+
+    function toStrQueryString($canonical);
 }
