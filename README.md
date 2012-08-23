@@ -12,6 +12,17 @@ You can install **stormpath-sdk-php** via Composer or by downloading the source.
 **stormpath-sdk-php** is available on Packagist as the 
 [`stormpath/sdk`](http://packagist.org/packages/stormpath/sdk) package.
 
+You will need to include the PEAR repository to your **composer.json** file and, of course, the **stormpath/sdk** dependency:
+
+    "repositories": [
+        {
+            "type": "pear",
+            "url": "http://pear.php.net"
+        }
+    ],"require": {
+        "stormpath/sdk": "0.1.0"
+    }
+
 ### Download the source code
 
 [Click here to download the source
