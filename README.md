@@ -20,7 +20,7 @@ You will need to include the PEAR repository to your **composer.json** file and,
             "url": "http://pear.php.net"
         }
     ],"require": {
-        "stormpath/sdk": "0.1.0"
+        "stormpath/sdk": "*"
     }
 
 ### Download the source code
