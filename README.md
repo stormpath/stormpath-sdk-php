@@ -23,6 +23,10 @@ You will need to include the PEAR repository to your **composer.json** file and,
         "stormpath/sdk": "*"
     }
 
+Once the project and its dependencies have been installed, include the composer auto loader file:
+
+    require 'vendor/autoload.php';
+    
 ### Download the source code
 
 [Click here to download the source
