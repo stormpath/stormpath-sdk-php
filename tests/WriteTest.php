@@ -6,6 +6,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
     private $addAccountToGroup;
     private $addGroupToAccount;
+    private $changePassword;
     private $client;
     private $createAccount;
     private $createAccountWorkflowOverride;
@@ -266,6 +267,36 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
             $className = 'Services_Stormpath_Resource_Account';
             $this->assertInstanceOf($className, $result);
+        }
+    }
+
+    public function testChangePassword()
+    {
+        if ($this->changePassword)
+        {
+            $href = 'applications/fzyWJ5V_SDORGPk4fT2jhA';
+            $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
+
+            $account = $application->verifyPasswordResetToken('TFMWt3lbQdWc7MNF48pJbw');
+
+            $className = 'Services_Stormpath_Resource_Account';
+            $this->assertInstanceOf($className, $account);
+
+            $newPassword = 'new_P4ss';
+            $account->setPassword($newPassword);
+            $account->save();
+
+            $result = true;
+            try {
+
+                $application->authenticateAccount(new Services_Stormpath_Authc_UsernamePasswordRequest($account->getUsername(), $newPassword));
+
+            } catch (Services_Stormpath_Resource_ResourceError $re)
+            {
+                $result = false;
+            }
+
+            $this->assertTrue($result);
         }
     }
 
