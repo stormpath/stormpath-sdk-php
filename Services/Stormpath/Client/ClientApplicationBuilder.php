@@ -85,11 +85,19 @@ class Services_Stormpath_Client_ClientApplicationBuilder
     private $clientBuilder;
     private $applicationHref;
 
-    public function __construct(Services_Stormpath_Client_ClientBuilder $clientBuilder = null)
+    public function __construct($clientBuilder = null)
     {
         if (!$clientBuilder)
         {
             $clientBuilder = new Services_Stormpath_Client_ClientBuilder;
+
+        } else
+        {
+            if (!($clientBuilder instanceof Services_Stormpath_Client_ClientBuilder))
+            {
+                throw new InvalidArgumentException("'\$clientBuilder' must be an instance of " .
+                    "Services_Stormpath_Client_ClientBuilder when provided.");
+            }
         }
 
         $this->clientBuilder = $clientBuilder;
@@ -341,8 +349,9 @@ class Services_Stormpath_Client_ClientApplicationBuilder
             throw new InvalidArgumentException('Invalid application href URL');
         }
 
-        $parts[0] = substr($href, 0, $doubleSlashIndex + 1); //up to and including the double slash
-        $parts[1] = substr($href, $doubleSlashIndex, strlen(self::DOUBLE_SLASH), $atSignIndex -1); //raw user info
+        $doubleSlashIndex = $doubleSlashIndex + strlen(self::DOUBLE_SLASH);
+        $parts[0] = substr($href, 0, $doubleSlashIndex); //up to and including the double slash
+        $parts[1] = substr($href, $doubleSlashIndex, $atSignIndex - $doubleSlashIndex); //raw user info
         $parts[2] = substr($href, $atSignIndex + 1); //after the @ character
 
         return $parts;
