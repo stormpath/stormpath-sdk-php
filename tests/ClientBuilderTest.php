@@ -33,7 +33,7 @@ class ClientBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testReadCustomSimplePropertiesFromLocalFile()
     {
-        $builder = new Services_Stormpath_Client_ClientBuilder();
+        $builder = new Services_Stormpath_Client_ClientBuilder;
         $result = $builder->setApiKeyFileLocation($this->clientFile)
                   ->setApiKeyIdPropertyName('different.apiKey.id')
                   ->setApiKeySecretPropertyName('different.apiKey.secret')
@@ -45,7 +45,7 @@ class ClientBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testFailureReadCustomSimplePropertiesFromLocalFile()
     {
-        $builder = new Services_Stormpath_Client_ClientBuilder();
+        $builder = new Services_Stormpath_Client_ClientBuilder;
 
         try{
 
@@ -62,7 +62,7 @@ class ClientBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testEmptyReadCustomSimplePropertiesFromLocalFile()
     {
-        $builder = new Services_Stormpath_Client_ClientBuilder();
+        $builder = new Services_Stormpath_Client_ClientBuilder;
 
         try{
 
@@ -127,7 +127,7 @@ class ClientBuilderTest extends PHPUnit_Framework_TestCase
     {
         $idPath = array('stormpath', 'apiKey', 'id');
         $secretPath = array('stormpath', 'apiKey', 'secret');
-        $builder = new Services_Stormpath_Client_ClientBuilder();
+        $builder = new Services_Stormpath_Client_ClientBuilder;
         $result = $builder->setApiKeyFileLocation($this->clientFile)
                   ->setApiKeyIdPropertyName($idPath)
                   ->setApiKeySecretPropertyName($secretPath)

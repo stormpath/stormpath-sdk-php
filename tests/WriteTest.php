@@ -14,6 +14,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     private $createApplication;
     private $sendPasswordResetEmail;
     private $modifyAccount;
+    private $modifyDeleteAccount;
     private $modifyApplication;
     private $modifyDirectory;
     private $modifyGroup;
@@ -29,7 +30,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
     public function testSuccessfulAuthentication()
     {
-        $href = 'applications/fzyWJ5V_SDORGPk4fT2jhA';
+        $href = 'applications/A0atUpZARYGApaN5f88O3A';
         $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
         $result = $application->authenticateAccount(new Services_Stormpath_Authc_UsernamePasswordRequest('kentucky', 'super_P4ss'));
@@ -41,34 +42,23 @@ class WriteTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf($className, $result->getAccount());
     }
 
+    /**
+     * @expectedException Services_Stormpath_Resource_ResourceError
+     */
     public function testFailedAuthentication()
     {
-        $href = '/applications/fzyWJ5V_SDORGPk4fT2jhA';
+        $href = '/applications/A0atUpZARYGApaN5f88O3A';
         $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
-        $result = false;
-        try {
+        $application->authenticateAccount(new Services_Stormpath_Authc_UsernamePasswordRequest('kentucky', 'badPass'));
 
-            $application->authenticateAccount(new Services_Stormpath_Authc_UsernamePasswordRequest('kentucky', 'badPass'));
-
-        } catch (Services_Stormpath_Resource_ResourceError $re)
-        {
-            $this->assertInternalType('int', $re->getStatus());
-            $this->assertInternalType('int', $re->getErrorCode());
-            $this->assertInternalType('string', $re->getDeveloperMessage());
-            $this->assertInternalType('string', $re->getMoreInfo());
-            $this->assertInternalType('string', $re->getMessage());
-            $result = true;
-        }
-
-        $this->assertTrue($result);
     }
 
     public function testCreateAccount()
     {
         if ($this->createAccount)
         {
-            $href = 'directories/wDTY5jppTLS2uZEAcqaL5A';
+            $href = 'directories/_oIg8zU5QWyiz22DcVYVLg';
             $directory = $this->client->getDataStore()->getResource($href, Services_Stormpath::DIRECTORY);
 
             $email = 'phpsdk@email.com';
@@ -149,13 +139,36 @@ class WriteTest extends PHPUnit_Framework_TestCase
             $href = '/accounts/ije9hUEKTZ29YcGhdG5s2A';
             $account = $this->client->getDataStore()->getResource($href, Services_Stormpath::ACCOUNT);
 
-            date_default_timezone_set('America/Los_Angeles');
+            date_default_timezone_set('UTC');
             $modValue = 'Modified at: '. date_format(date_create(), 'Y-m-d H:i:s') . ' by PHPSdk';
             $account->setMiddleName($modValue);
 
             $account->save();
 
             $this->assertTrue($account->getMiddleName() == $modValue);
+        }
+    }
+
+    public function testModifyDeleteAccount()
+    {
+        if ($this->modifyDeleteAccount)
+        {
+            $href = '/accounts/fQ33FHd3Rnuk2rAaiCuGqQ';
+            $account = $this->client->getDataStore()->getResource($href, Services_Stormpath::ACCOUNT);
+
+            date_default_timezone_set('UTC');
+            $modValue = 'Modified at: '. date_format(date_create(), 'Y-m-d H:i:s') . ' by PHPSdk';
+            $account->setMiddleName($modValue);
+
+            $account->save();
+
+            $this->assertTrue($account->getMiddleName() == $modValue);
+
+            $account->setMiddleName(null);
+
+            $account->save();
+
+            $this->assertTrue($account->getMiddleName() == null);
         }
     }
 

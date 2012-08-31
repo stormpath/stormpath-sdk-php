@@ -106,7 +106,7 @@ class Services_Stormpath_DataStore_DefaultDataStore
         if ($resource instanceof $returnTypeClass)
         {
             //ensure the caller's argument is updated with what is returned from the server:
-            $resource->setProperties($returnedResource->getProperties());
+            $resource->setProperties($this->toStdClass($returnedResource));
         }
 
         return $returnedResource;
@@ -132,7 +132,7 @@ class Services_Stormpath_DataStore_DefaultDataStore
         $returnedResource = $this->saveResource($href, $resource, $returnType);
 
         //ensure the caller's argument is updated with what is returned from the server:
-        $resource->setProperties($returnedResource->getProperties());
+        $resource->setProperties($this->toStdClass($returnedResource));
 
         return $returnedResource;
 
@@ -197,7 +197,7 @@ class Services_Stormpath_DataStore_DefaultDataStore
 
         $response = $this->executeRequest(Services_Stormpath_Http_Request::METHOD_POST,
                                           $href,
-                                          json_encode($resource->getProperties()));
+                                          json_encode($this->toStdClass($resource)));
 
         return $this->resourceFactory->instantiate($returnType, array($response));
     }
@@ -214,5 +214,44 @@ class Services_Stormpath_DataStore_DefaultDataStore
         }
 
         $request->setHeaders($headers);
+    }
+
+    private function toStdClass(Services_Stormpath_Resource_Resource $resource)
+    {
+        $propertyNames = $resource->getPropertyNames();
+
+        $properties = new stdClass();
+
+        foreach($propertyNames as $name)
+        {
+            $property = $resource->getProperty($name);
+
+            if ($property instanceof stdClass)
+            {
+                $property = $this->toSimpleReference($name, $property);
+            }
+
+            $properties->$name = $property;
+        }
+
+        return $properties;
+    }
+
+    private function toSimpleReference($propertyName, stdClass $properties)
+    {
+        $hrefPropName = Services_Stormpath_Resource_Resource::HREF_PROP_NAME;
+
+        if (!isset($properties->$hrefPropName))
+        {
+            throw new InvalidArgumentException ("Nested resource '$propertyName' must have an 'href' property.");
+        }
+
+        $href = $properties->$hrefPropName;
+
+        $toReturn = new stdClass();
+
+        $toReturn->$hrefPropName = $href;
+
+        return $toReturn;
     }
 }

@@ -44,7 +44,6 @@ class ReadTest extends PHPUnit_Framework_TestCase {
             // directory property can be read from here
             $this->assertInternalType('string', $dir->getName());
         }
-
     }
 
     public function testGetApplication() {
@@ -240,6 +239,31 @@ class ReadTest extends PHPUnit_Framework_TestCase {
             $className = 'Services_Stormpath_Resource_Group';
             $this->assertInstanceOf($className, $groupMembership->getGroup());
         }
+    }
+
+    public function testDirtyPropertiesRetainedAfterMaterialization()
+    {
+        $tenant = $this->client->getCurrentTenant();
+
+        $href = null;
+        foreach($tenant->getDirectories() as $dir)
+        {
+            $href = $dir->getHref();
+            break;
+        }
+
+        $properties = new stdClass();
+        $properties->href = $href;
+
+        $directory = $this->client->getDataStore()->instantiate(Services_Stormpath::DIRECTORY, $properties);
+
+        $name = 'Name Before Materialization';
+
+        $directory->setName($name);
+
+        $this->assertInternalType('string', $directory->getDescription());
+
+        $this->assertTrue($directory->getName() == $name);
     }
 
 }

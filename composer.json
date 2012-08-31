@@ -24,7 +24,7 @@
         }
     },
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.3.10",
         "pear-pear/HTTP_Request2": "2.1.1"
     }
 }

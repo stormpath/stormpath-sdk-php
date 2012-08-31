@@ -16,10 +16,11 @@
  * limitations under the License.
  */
 
-abstract class Services_Stormpath_Resource_Resource
+class Services_Stormpath_Resource_Resource
 {
     private $dataStore;
     private $properties;
+    private $dirtyProperties;
     private $materialized;
     private $dirty;
 
@@ -29,23 +30,21 @@ abstract class Services_Stormpath_Resource_Resource
                                 stdClass $properties = null)
     {
         $this->dataStore = $dataStore;
-        $this->properties = $properties ? $properties : new stdClass();
+        $this->setProperties($properties);
     }
 
-    public function getProperties()
-    {
-        return $this->properties;
-    }
-
-    public function setProperties(stdClass $properties)
+    public function setProperties(stdClass $properties = null)
     {
         $this->dirty = false;
+
+        $this->properties = new stdClass();
+        $this->dirtyProperties = new stdClass();
 
         if ($properties)
         {
             $this->properties = $properties;
             $propertiesArr = (array) $properties;
-            $hrefOnly = count($propertiesArr) == 1 and $propertiesArr[self::HREF_PROP_NAME];
+            $hrefOnly = count($propertiesArr) == 1 and array_key_exists(self::HREF_PROP_NAME, $propertiesArr);
             $this->materialized = !$hrefOnly;
         } else
         {
@@ -58,9 +57,17 @@ abstract class Services_Stormpath_Resource_Resource
         if (self::HREF_PROP_NAME != $name)
         {
             //not the href/id, must be a property that requires materialization:
-            if(!$this->isNew() and !$this->isMaterialized())
+            if (!$this->isNew() and !$this->isMaterialized())
             {
-                $this->materialize();
+                // only materialize if the property hasn't been set previously (no need to execute a server
+                // request since we have the most recent value already):
+                $present = isset($this->dirtyProperties->$name);
+
+                if (!$present)
+                {
+                    // exhausted present properties - we require a server call:
+                    $this->materialize();
+                }
             }
         }
 
@@ -75,6 +82,11 @@ abstract class Services_Stormpath_Resource_Resource
     public function getHref()
     {
         return $this->getProperty(self::HREF_PROP_NAME);
+    }
+
+    public function __toString()
+    {
+        return get_class($this);
     }
 
     protected function getResourceProperty($key, $className)
@@ -101,18 +113,9 @@ abstract class Services_Stormpath_Resource_Resource
 
     protected function setProperty($name, $value)
     {
-        if ($value)
-        {
-            $this->properties->$name = $value;
-            $this->dirty = true;
-        } else
-        {
-            if (isset($this->properties->$name))
-            {
-                unset($this->properties->$name);
-                $this->dirty = true;
-            }
-        }
+        $this->properties->$name = $value;
+        $this->dirtyProperties->$name = $value;
+        $this->dirty = true;
     }
 
     protected function getDataStore()
@@ -130,7 +133,12 @@ abstract class Services_Stormpath_Resource_Resource
         $className = get_class($this);
 
         $resource = $this->dataStore->getResource($this->getHref(), $className);
-        $this->properties = $resource->getProperties();
+
+        $this->properties = $resource->properties;
+
+        //retain dirty properties:
+        $this->properties = (object) array_merge((array)$this->properties, (array)$this->dirtyProperties);
+
         $this->materialized = true;
     }
 
@@ -154,7 +162,7 @@ abstract class Services_Stormpath_Resource_Resource
 
     private function readProperty($name)
     {
-        return isset($this->getProperties()->$name) ? $this->getProperties()->$name : false;
+        return property_exists($this->properties, $name) ? $this->properties->$name : null;
     }
 
 }
