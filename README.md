@@ -29,8 +29,7 @@ Once the project and its dependencies have been installed, include the composer 
     
 ### Download the source code
 
-[Click here to download the source
-(.zip)](https://github.com/stormpath/stormpath-sdk-php/zipball/master) which includes all
+Go to the [tags directory](https://github.com/stormpath/stormpath-sdk-php/tags) and download the latest version of the SDK which includes all
 dependencies, with the exception of HTTP_Request2.
 
 The HTTP_Request2 dependency must be installed via PEAR (version 2.1.1 is the minimum required). 
