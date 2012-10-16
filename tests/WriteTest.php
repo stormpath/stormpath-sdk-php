@@ -317,10 +317,10 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->addAccountToGroup)
         {
-            $groupHref = 'groups/mCidbrAcSF-VpkNfOVvJkQ';
+            $groupHref = 'groups/0I5wmUILTvqHraXLERE9fw';
             $group = $this->client->getDataStore()->getResource($groupHref, Services_Stormpath::GROUP);
 
-            $accountHref = 'accounts/ije9hUEKTZ29YcGhdG5s2A';
+            $accountHref = 'accounts/RpB0hBFVSTmoLZTqHlwBRg';
             $account = $this->client->getDataStore()->getResource($accountHref, Services_Stormpath::ACCOUNT);
 
             $group->addAccount($account);
@@ -343,10 +343,10 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->addGroupToAccount)
         {
-            $groupHref = 'groups/mCidbrAcSF-VpkNfOVvJkQ';
+            $groupHref = 'groups/E_D6HFfxSFmP0wIRvvvMUA';
             $group = $this->client->getDataStore()->getResource($groupHref, Services_Stormpath::GROUP);
 
-            $accountHref = 'accounts/ije9hUEKTZ29YcGhdG5s2A';
+            $accountHref = 'accounts/RpB0hBFVSTmoLZTqHlwBRg';
             $account = $this->client->getDataStore()->getResource($accountHref, Services_Stormpath::ACCOUNT);
 
             $account->addGroup($group);
@@ -421,10 +421,10 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->modifyGroupMembership)
         {
-            $groupHref = 'groups/mCidbrAcSF-VpkNfOVvJkQ';
+            $groupHref = 'groups/0I5wmUILTvqHraXLERE9fw';
             $group = $this->client->getDataStore()->getResource($groupHref, Services_Stormpath::GROUP);
 
-            $accountHref = 'accounts/ije9hUEKTZ29YcGhdG5s2A';
+            $accountHref = 'accounts/RpB0hBFVSTmoLZTqHlwBRg';
             $account = $this->client->getDataStore()->getResource($accountHref, Services_Stormpath::ACCOUNT);
 
             $groupMembership = false;
@@ -459,6 +459,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
             $className = 'Services_Stormpath_Resource_GroupMembership';
             $this->assertInstanceOf($className, $groupMembership);
+
         }
     }
 

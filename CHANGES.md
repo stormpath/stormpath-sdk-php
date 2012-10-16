@@ -1,6 +1,17 @@
 stormpath-sdk-php Changelog
 ====================
 
+Version 0.3.0
+-------------
+
+Released on October 16, 2012
+
+- The Services_Stormpath_Resource_GroupMembership class now extends the Services_Stormpath_Resource_Resource. It is no longer possible to call save() on an instance of this class.
+- The create() method of the Services_Stormpath_Resource_GroupMembership class is now static and receives an instance of Services_Stormpath_Resource_InstanceResource.
+- The addGroup() method implementation of the Services_Stormpath_Resource_Account class was updated to reflect the previously mentioned changes.
+- The addAccount() method implementation of the Services_Stormpath_Resource_Group class was updated to reflect the previously mentioned changes.
+
+
 Version 0.2.0
 -------------
 

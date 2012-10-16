@@ -17,7 +17,7 @@
  */
 
 class Services_Stormpath_Resource_GroupMembership
-    extends Services_Stormpath_Resource_InstanceResource
+    extends Services_Stormpath_Resource_Resource
 {
     const ACCOUNT = "account";
     const GROUP = "group";
@@ -32,7 +32,8 @@ class Services_Stormpath_Resource_GroupMembership
         return $this->getResourceProperty(self::GROUP, Services_Stormpath::GROUP);
     }
 
-    public function create(Services_Stormpath_Resource_Account $account, Services_Stormpath_Resource_Group $group)
+    public static function create(Services_Stormpath_Resource_Account $account, Services_Stormpath_Resource_Group $group,
+                                  Services_Stormpath_DataStore_InternalDataStore $dataStore)
     {
         //TODO: enable auto discovery
         $href = "/groupMemberships";
@@ -50,9 +51,9 @@ class Services_Stormpath_Resource_GroupMembership
         $properties->$accountsPropName = $accountProps;
         $properties->$groupsPropName = $groupProps;
 
-        $groupMembership = $this->getDataStore()->instantiate(Services_Stormpath::GROUP_MEMBERSHIP, $properties);
+        $groupMembership = $dataStore->instantiate(Services_Stormpath::GROUP_MEMBERSHIP, $properties);
 
-        return $this->getDataStore()->create($href, $groupMembership, Services_Stormpath::GROUP_MEMBERSHIP);
+        return $dataStore->create($href, $groupMembership, Services_Stormpath::GROUP_MEMBERSHIP);
     }
 
     public function delete()
