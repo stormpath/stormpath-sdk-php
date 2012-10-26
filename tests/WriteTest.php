@@ -18,7 +18,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     private $modifyApplication;
     private $modifyDirectory;
     private $modifyGroup;
-    private $modifyGroupMembership;
+    private $modifyGroupMembership = true;
     private $verifyEmailVerificationToken;
     private $verifyPasswordResetToken;
 
@@ -30,7 +30,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
     public function testSuccessfulAuthentication()
     {
-        $href = 'applications/A0atUpZARYGApaN5f88O3A';
+        $href = 'applications/uGBNDZ7TRhm_tahanqvn9A';
         $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
         $result = $application->authenticateAccount(new Services_Stormpath_Authc_UsernamePasswordRequest('kentucky', 'super_P4ss'));
@@ -47,7 +47,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
      */
     public function testFailedAuthentication()
     {
-        $href = '/applications/A0atUpZARYGApaN5f88O3A';
+        $href = '/applications/uGBNDZ7TRhm_tahanqvn9A';
         $application = $this->client->getDataStore()->getResource($href, Services_Stormpath::APPLICATION);
 
         $application->authenticateAccount(new Services_Stormpath_Authc_UsernamePasswordRequest('kentucky', 'badPass'));
@@ -441,6 +441,11 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
             if ($groupMembership)
             {
+                $groupMembership->delete();
+
+            } else
+            {
+                $groupMembership = $account->addGroup($group);
                 $groupMembership->delete();
             }
 

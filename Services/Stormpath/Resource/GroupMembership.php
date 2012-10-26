@@ -32,7 +32,22 @@ class Services_Stormpath_Resource_GroupMembership
         return $this->getResourceProperty(self::GROUP, Services_Stormpath::GROUP);
     }
 
-    public static function create(Services_Stormpath_Resource_Account $account, Services_Stormpath_Resource_Group $group,
+    public function delete()
+    {
+        $this->getDataStore()->delete($this);
+    }
+
+    /**
+     * THIS IS NOT PART OF THE STORMPATH PUBLIC API.  SDK end-users should not call it - it could be removed or
+     * changed at any time.  It has the public modifier only as an implementation technique to be accessible to other
+     * resource implementations.
+     *
+     * @param $account the account to associate with the group.
+     * @param $group the group which will contain the account.
+     * @param $dataStore the datastore used to create the membership
+     * @return the created GroupMembership instance.
+     */
+    public static function _create(Services_Stormpath_Resource_Account $account, Services_Stormpath_Resource_Group $group,
                                   Services_Stormpath_DataStore_InternalDataStore $dataStore)
     {
         //TODO: enable auto discovery
@@ -56,8 +71,4 @@ class Services_Stormpath_Resource_GroupMembership
         return $dataStore->create($href, $groupMembership, Services_Stormpath::GROUP_MEMBERSHIP);
     }
 
-    public function delete()
-    {
-        $this->getDataStore()->delete($this);
-    }
 }

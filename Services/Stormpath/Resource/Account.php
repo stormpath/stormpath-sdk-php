@@ -127,6 +127,6 @@ class Services_Stormpath_Resource_Account
 
     public function addGroup(Services_Stormpath_Resource_Group $group)
     {
-        return Services_Stormpath_Resource_GroupMembership::create($this, $group, $this->getDataStore());
+        return Services_Stormpath_Resource_GroupMembership::_create($this, $group, $this->getDataStore());
     }
 }
