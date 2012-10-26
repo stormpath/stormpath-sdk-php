@@ -18,7 +18,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     private $modifyApplication;
     private $modifyDirectory;
     private $modifyGroup;
-    private $modifyGroupMembership = true;
+    private $modifyGroupMembership;
     private $verifyEmailVerificationToken;
     private $verifyPasswordResetToken;
 
