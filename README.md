@@ -46,6 +46,4 @@ You're ready to connect with Stormpath!
 
 ## Documentation
 
-Project Documentation is here:
-
-https://github.com/stormpath/stormpath-sdk-php/wiki
+For additional information, please see the full [Project Documentation](https://www.stormpath.com/docs/php/product-guide).
