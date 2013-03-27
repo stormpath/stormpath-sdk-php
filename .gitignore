@@ -2,7 +2,7 @@
 *.ipr
 *.iws
 .idea
-vendor/*
+vendor
 composer.lock
 composer.phar
 *.tgz

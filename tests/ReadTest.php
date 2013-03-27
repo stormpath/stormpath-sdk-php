@@ -6,7 +6,8 @@ class ReadTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
 
-        $this->client = Services_Stormpath::createClient('id', 'secret');
+        $builder = new Services_Stormpath_Client_ClientBuilder;
+        $this->client = $builder->setApiKeyFileLocation($_SERVER['HOME'].'/.stormpath/apiKey.yml')->setBaseURL('http://localhost:8080/v1')->build();
 
     }
 

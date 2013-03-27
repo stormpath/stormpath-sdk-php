@@ -24,7 +24,8 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
     public function setUp() {
 
-        $this->client = Services_Stormpath::createClient('id', 'secret');
+        $builder = new Services_Stormpath_Client_ClientBuilder;
+        $this->client = $builder->setApiKeyFileLocation($_SERVER['HOME'].'/.stormpath/apiKey.yml')->setBaseURL('http://localhost:8080/v1')->build();
 
     }
 
@@ -58,20 +59,23 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->createAccount)
         {
-            $href = 'directories/_oIg8zU5QWyiz22DcVYVLg';
+            $href = 'directories/18k4m10DdrE3J4iEXw4Sq5';
             $directory = $this->client->getDataStore()->getResource($href, Services_Stormpath::DIRECTORY);
 
-            $email = 'phpsdk@email.com';
+            $email = 'phpsdk2@email.com';
             $account = $this->client->getDataStore()->instantiate(Services_Stormpath::ACCOUNT);
             $account->setEmail($email);
             $account->setGivenName('Php');
             $account->setPassword('super_P4ss');
             $account->setSurname('Sdk');
-            $account->setUsername('phpsdk');
+            $account->setUsername('phpsdk2');
 
             try {
 
-                 $directory->createAccount($account);
+                $createdAccount = $directory->createAccount($account);
+                $className = 'Services_Stormpath_Resource_Account';
+                $this->assertTrue($account->getHref() ? true : false);
+                $this->assertInstanceOf($className, $createdAccount);
 
             } catch (Services_Stormpath_Resource_ResourceError $re)
             {
@@ -97,7 +101,7 @@ class WriteTest extends PHPUnit_Framework_TestCase
     {
         if ($this->createAccountWorkflowOverride)
         {
-            $href = 'directories/wDTY5jppTLS2uZEAcqaL5A';
+            $href = 'directories/18k4m10DdrE3J4iEXw4Sq5';
             $directory = $this->client->getDataStore()->getResource($href, Services_Stormpath::DIRECTORY);
 
             $email = 'phpsdkworkflowoverride@email.com';
@@ -110,7 +114,10 @@ class WriteTest extends PHPUnit_Framework_TestCase
 
             try {
 
-                $directory->createAccount($account, false);
+                $createdAccount = $directory->createAccount($account, false);
+                $className = 'Services_Stormpath_Resource_Account';
+                $this->assertTrue($account->getHref() ? true : false);
+                $this->assertInstanceOf($className, $createdAccount);
 
             } catch (Services_Stormpath_Resource_ResourceError $re)
             {

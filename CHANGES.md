@@ -1,5 +1,13 @@
 stormpath-sdk-php Changelog
-====================
+===========================
+
+Version 0.3.1
+-------------
+
+Released on March 27, 2013
+
+- Fixing bug where the createAccount() method of the Services_Stormpath_Resource_Directory class was not returning the created account.
+
 
 Version 0.3.0
 -------------

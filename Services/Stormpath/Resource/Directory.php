@@ -76,7 +76,7 @@ class Services_Stormpath_Resource_Directory
             $href .= '?registrationWorkflowEnabled=' . var_export($registrationWorkflowEnabled, true);
         }
 
-        $this->getDataStore()->create($href, $account, Services_Stormpath::ACCOUNT);
+        return $this->getDataStore()->create($href, $account, Services_Stormpath::ACCOUNT);
     }
 
     public function getAccounts()
