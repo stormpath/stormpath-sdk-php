@@ -1,30 +1,33 @@
 {
-    "name": "stormpath/sdk",
+    "name": "stormpath/stormpath",
     "type": "library",
-    "description": "A PHP wrapper for Stormpath's API",
-    "keywords": ["stormpath", "cloud", "security", "api"],
-    "homepage": "https://github.com/stormpath/stormpath-sdk-php",
+    "description": "A PHP library for the Stormpath API",
+    "keywords": [
+        "user management", 
+        "user security", 
+        "group management",
+        "authentication"
+    ],
+    "homepage": "http://www.stormpath.com/",
     "license": "Apache 2.0",
     "authors": [
         {
             "name": "Elder Crisostomo",
             "email": "elder@stormpath.com",
             "role": "Developer"
-        }
-    ],
-    "repositories": [
+        },
         {
-            "type": "pear",
-            "url": "http://pear.php.net"
+            "name": "Tom Anderson",
+            "email": "tanderson@soliantconsulting.com"
         }
     ],
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zend-http": ">=2.2"
+    },
     "autoload": {
         "psr-0": {
-            "Services_Stormpath": ""
+            "Stormpath": "/src"
         }
-    },
-    "require": {
-        "php": ">=5.3.10",
-        "pear-pear/HTTP_Request2": "2.1.1"
     }
 }
