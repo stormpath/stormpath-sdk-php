@@ -3,8 +3,8 @@
     "type": "library",
     "description": "A PHP library for the Stormpath API",
     "keywords": [
-        "user management", 
-        "user security", 
+        "user management",
+        "user security",
         "group management",
         "authentication"
     ],
@@ -19,6 +19,10 @@
         {
             "name": "Tom Anderson",
             "email": "tanderson@soliantconsulting.com"
+        },
+        {
+            "name": "Vinay Gnaesh",
+            "email": "vganesh@soliantconsulting.com"
         }
     ],
     "require": {
