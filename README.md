@@ -1,5 +1,5 @@
 # Stormpath SDK for PHP
-Copyright &copy; 2013 Stormpath, Inc. and contributors.  This project is licensed under the [Apache 2.0 Open Source License](http://www.apache.org/licenses/LICENSE-2.0).
+
 For additional information, please see the full [Project Documentation](https://www.stormpath.com/docs/php/product-guide).
 
 Installation
@@ -24,3 +24,7 @@ use Stormpath\Service\StormpathService as Stormpath;
 
 Stormpath::configure(...);
 ```
+
+This project is licensed under the [Apache 2.0 Open Source License](http://www.apache.org/licenses/LICENSE-2.0).
+
+Copyright &copy; 2013 Stormpath, Inc. and contributors.  
