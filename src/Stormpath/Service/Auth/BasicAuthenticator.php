@@ -25,7 +25,7 @@ class BasicAuthenticator
 
         if (!($request instanceof Services_Stormpath_Authc_UsernamePasswordRequest))
         {
-            throw new InvalidArgumentException('Only Services_Stormpath_Authc_UsernamePasswordRequest instances are supported.');
+            throw new InvalidArgumentException('Only UsernamePasswordRequest instances are supported.');
         }
 
         $username = $request->getPrincipals();
