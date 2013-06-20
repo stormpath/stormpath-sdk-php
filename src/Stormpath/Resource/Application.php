@@ -5,6 +5,7 @@
  */
 namespace Stormpath\Resource;
 
+use Stormpath\Client\ApiKey;
 use Zend\Http\Client;
 use Zend\Http\Headers;
 use Zend\Json\Json;
@@ -56,6 +57,7 @@ class Application
         $http->setOptions(array('sslverifypeer' => false));
         $http->setMethod('POST');
 
+        $options['name'] = self::getName();
         $options['description'] = self::getDescription();
         $options['status'] = self::getStatus();
 
@@ -63,6 +65,8 @@ class Application
         return Json::decode($response->getBody());
 
     }
+
+
 
 }
 
