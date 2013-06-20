@@ -5,6 +5,10 @@
  */
 namespace Stormpath\Resource;
 
+use Zend\Http\Client;
+use Zend\Http\Headers;
+use Zend\Json\Json;
+
 class Application
 {
     private static $name;
@@ -16,7 +20,7 @@ class Application
         return self::$name;
     }
 
-    public static function setName($name)
+    public static function setName($value)
     {
         self::$name = $value;
     }
@@ -40,6 +44,26 @@ class Application
     {
         self::$status = $value;
     }
+
+
+    public static function registerApplication($apiKey,$options = array())
+    {
+        if (!$apiKey)
+            throw new \Exception('Get an API key');
+
+        $http = new Client();
+        $http->setUri('https://api.stormpath.com/v1/applications/' . $apiKey);
+        $http->setOptions(array('sslverifypeer' => false));
+        $http->setMethod('POST');
+
+        $options['description'] = self::getDescription();
+        $options['status'] = self::getStatus();
+
+        $response = $http->send();
+        return Json::decode($response->getBody());
+
+    }
+
 }
 
 
