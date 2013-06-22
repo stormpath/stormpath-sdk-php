@@ -25,5 +25,5 @@ Configure the service
 ```php
 use Stormpath\Service\StormpathService as Stormpath;
 
-Stormpath::configure(...);
+Stormpath::CreateClient($accessId, $secretId);
 ```
