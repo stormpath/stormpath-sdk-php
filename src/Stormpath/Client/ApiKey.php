@@ -1,8 +1,9 @@
 <?php
+/*
+ * Set your api Key using the getters and setters in this class
+ */
 
 namespace Stormpath\Client;
-
-
 
 class ApiKey
 {
