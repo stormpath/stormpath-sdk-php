@@ -3,11 +3,12 @@
  /*
  * @desc Register an application with stormpath
  */
+
 namespace Stormpath\Resource;
 
 use Stormpath\Client\ApiKey;
+use Stormpath\Service\StormpathService;
 use Zend\Http\Client;
-use Zend\Http\Headers;
 use Zend\Json\Json;
 
 class Application
@@ -18,6 +19,7 @@ class Application
 
     public static function getName()
     {
+
         return self::$name;
     }
 
@@ -28,6 +30,7 @@ class Application
 
     public static function getDescription()
     {
+
         return self::$description;
     }
 
@@ -38,6 +41,7 @@ class Application
 
     public static function getStatus()
     {
+
         return self::$status;
     }
 
@@ -46,29 +50,24 @@ class Application
         self::$status = $value;
     }
 
-
-    public static function registerApplication($apiKey,$options = array())
+    public static function registerApplication($options = array())
     {
-        if (!$apiKey)
+        if (!ApiKey::getAccessId())
             throw new \Exception('Get an API key');
 
         $http = new Client();
-        $http->setUri('https://api.stormpath.com/v1/applications/' . $apiKey);
+        $http->setUri(StormpathService::BASEURI .'/applications/'. ApiKey::getAccessId());
         $http->setOptions(array('sslverifypeer' => false));
         $http->setMethod('POST');
 
         $options['name'] = self::getName();
         $options['description'] = self::getDescription();
         $options['status'] = self::getStatus();
+        $http->setParameterGet($options);
 
         $response = $http->send();
         return Json::decode($response->getBody());
 
     }
 
-
-
 }
-
-
-?>
