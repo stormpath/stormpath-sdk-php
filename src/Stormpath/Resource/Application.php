@@ -1,5 +1,4 @@
 <?php
-
  /*
  * @desc Register an application with stormpath
  */
