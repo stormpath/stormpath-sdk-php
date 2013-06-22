@@ -14,7 +14,7 @@ final class StormpathService
 
     public static function createClient($accessId, $secretKey)
     {
-        ApiKey::getAccessId($accessId);
+        ApiKey::setAccessId($accessId);
         ApiKey::setSecretKey($secretKey);
     }
 
