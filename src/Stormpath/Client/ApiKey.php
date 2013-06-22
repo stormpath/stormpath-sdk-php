@@ -2,30 +2,33 @@
 
 namespace Stormpath\Client;
 
+
+
 class ApiKey
 {
 
-    private static $id;
-    private static  $secret;
+    private static $accessid;
+    private static  $secretkey;
 
-    public function getId()
+    public static function getAccessId()
     {
-        return self::$id;
+
+        return self::$accessid;
     }
 
-    public function setId($value)
+    public static function setAccessId($value)
     {
-        self::$id = $value;
+        self::$accessid = $value;
     }
 
-    public function getSecret()
+    public static function getSecretkey()
     {
-        return self::$secret;
+
+        return self::$secretkey;
     }
 
-    public function setSecret($value)
+    public static function setSecretKey($value)
     {
-        self::$secret = $value;
+        self::$secretkey = $value;
     }
-
 }
