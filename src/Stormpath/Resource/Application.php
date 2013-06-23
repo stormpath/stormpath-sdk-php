@@ -1,6 +1,6 @@
 <?php
  /*
- * @desc Register an application with stormpath
+ * @desc Register an application with Stormpath
  */
 
 namespace Stormpath\Resource;
@@ -47,6 +47,13 @@ class Application
     public static function setStatus($value)
     {
         self::$status = $value;
+    }
+
+    public static function configure($name, $status, $description)
+    {
+        self::setName($name);
+        self::setDescription($description);
+        self::setStatus($status);
     }
 
     public static function registerApplication($options = array())
