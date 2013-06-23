@@ -21,7 +21,7 @@ Installation
     
 Use
 ---
-Configure the service
+Create a client through the service
 ```php
 use Stormpath\Service\StormpathService as Stormpath;
 
