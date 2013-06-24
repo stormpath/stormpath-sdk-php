@@ -18,11 +18,11 @@ Installation
     
 Use
 ---
-Configure the service
+Create a client through the service
 ```php
 use Stormpath\Service\StormpathService as Stormpath;
 
-Stormpath::configure(...);
+Stormpath::CreateClient($accessId, $secretId);
 ```
 
 This project is licensed under the [Apache 2.0 Open Source License](http://www.apache.org/licenses/LICENSE-2.0).

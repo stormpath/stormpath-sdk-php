@@ -3,8 +3,8 @@
     "type": "library",
     "description": "A PHP library for the Stormpath API",
     "keywords": [
-        "user management", 
-        "user security", 
+        "user management",
+        "user security",
         "group management",
         "authentication"
     ],
@@ -19,11 +19,16 @@
         {
             "name": "Tom Anderson",
             "email": "tanderson@soliantconsulting.com"
+        },
+        {
+            "name": "Vinay Gnaesh",
+            "email": "vganesh@soliantconsulting.com"
         }
     ],
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zend-http": ">=2.2"
+        "zendframework/zend-http": ">=2.2",
+        "zendframework/zend-json": ">=2.2"
     },
     "autoload": {
         "psr-0": {
