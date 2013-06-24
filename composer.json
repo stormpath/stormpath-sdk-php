@@ -25,14 +25,19 @@
             "email": "vganesh@soliantconsulting.com"
         }
     ],
+    "require-dev": {
+        "zendframework/zendframework": ">=2.2"
+    },
     "require": {
         "php": ">=5.3.3",
         "zendframework/zend-http": ">=2.2",
-        "zendframework/zend-json": ">=2.2"
+        "zendframework/zend-json": ">=2.2",
+        "rhumsaa/uuid": "2.1.*@dev",
+        "moontoast/math": "1.1.0"
     },
     "autoload": {
         "psr-0": {
-            "Stormpath": "/src"
+            "Stormpath\\": "src/"
         }
     }
 }

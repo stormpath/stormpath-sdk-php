@@ -18,12 +18,24 @@ Installation
     
 Use
 ---
-Create a client through the service
-```php
-use Stormpath\Service\StormpathService as Stormpath;
-
-Stormpath::CreateClient($accessId, $secretId);
+Configure a new application
 ```
+Stormpath::configure($id, $secret);
+Stormpath::register('New Name', 'Description', 'enabled'); 
+```
+
+Enable Basic authentication instead of Digest
+```
+use Zend\Http\Client;
+use Stormpath\Http\Client\Adapter\Basic;
+
+Stormpath::configure($id, $secret);
+$client = new Client();
+$adapter = new Basic();
+$client->setAdapter($adapter);
+Stormpath::setHttpClient($client);
+```
+
 
 This project is licensed under the [Apache 2.0 Open Source License](http://www.apache.org/licenses/LICENSE-2.0).
 
