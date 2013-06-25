@@ -36,6 +36,22 @@ $client->setAdapter($adapter);
 Stormpath::setHttpClient($client);
 ```
 
+Testing
+-------
+Create a ```local.php``` file and set api parameters
+
+```
+<?php
+// ~/test/autoload/local.php
+
+return [
+    'stormpath' => [
+        'id' => 'stormpath_id',
+        'secret' => 'stormpath_secret',
+    ]
+];
+```
+
 
 This project is licensed under the [Apache 2.0 Open Source License](http://www.apache.org/licenses/LICENSE-2.0).
 
