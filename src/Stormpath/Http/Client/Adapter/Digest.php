@@ -34,6 +34,8 @@ class Digest extends Socket
 
         $headers['Host'] = $hostHeader;
         $headers['X-Stormpath-Date'] = $timeStamp;
+        $headers['Authorization'] = 'Basic ' . base64_encode(Stormpath::getId() . ':' . Stormpath::getSecret());
+        $headers['Content-Type'] = 'application/json;charset=UTF-8';
 
         if ($resourcePath = $parsedUrl['path']) {
             $resourcePath = urlencode($resourcePath);
