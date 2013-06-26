@@ -2,7 +2,7 @@
 require_once 'HTTP/Request2.php';
 
 /*
- * Copyright 2012 Stormpath, Inc.
+ * Copyright 2013 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,13 @@ require_once 'HTTP/Request2.php';
 class Services_Stormpath_Http_HttpClientRequestExecutor
     implements Services_Stormpath_Http_RequestExecutor
 {
+    const REDIRECTS_LIMIT = 10;
+
     private $apiKey;
     private $httpClient;
     private $signer;
+    private $redirectResponse;
+    private $redirectsLimit;
 
     public function __construct(Services_Stormpath_Client_ApiKey $apiKey = null)
     {
@@ -34,12 +38,15 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
             $this->signer = new Services_Stormpath_Http_Authc_Sauthc1Signer;
             $this->httpClient->setConfig(array('ssl_verify_peer' => FALSE,
                                                'ssl_verify_host' => FALSE));
+            $this->redirectsLimit = self::REDIRECTS_LIMIT;
         }
 
     }
 
     public function executeRequest(Services_Stormpath_Http_Request $request)
     {
+        $this->redirectResponse = null;
+
         if ($this->apiKey)
         {
             $this->signer->signRequest($request, $this->apiKey);
@@ -56,6 +63,17 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
         $this->httpClient->setHeader($request->getHeaders());
 
         $response = $this->httpClient->send();
+
+        if ($response->isRedirect() && $this->redirectsLimit > 0)
+        {
+            $request->setResourceUrl($response->getHeader('location'));
+            $this->redirectsLimit--;
+            $this->redirectResponse = $this->executeRequest($request);
+            return $this->redirectResponse;
+
+        }
+
+        $this->redirectsLimit = self::REDIRECTS_LIMIT;
 
         return new Services_Stormpath_Http_DefaultResponse($response->getStatus(),
                                                            $response->getHeader('Content-Type'),

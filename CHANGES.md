@@ -1,6 +1,14 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 0.3.2
+-------------
+
+Released on June 26, 2013
+
+- Added http redirection support to Services_Stormpath_Http_HttpClientRequestExecutor to fix current tenant retrieval issue.
+
+
 Version 0.3.1
 -------------
 

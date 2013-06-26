@@ -64,7 +64,6 @@ class ReadTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf($className, $application);
 
         $this->assertInternalType('string', $application->getName());
-        $this->assertInternalType('string', $application->getDescription());
         $this->assertTrue(array_key_exists($application->getStatus(), Services_Stormpath::$Statuses));
 
         $className = 'Services_Stormpath_Resource_Tenant';
@@ -100,7 +99,6 @@ class ReadTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf($className, $directory);
 
         $this->assertInternalType('string', $directory->getName());
-        $this->assertInternalType('string', $directory->getDescription());
         $this->assertTrue(array_key_exists($directory->getStatus(), Services_Stormpath::$Statuses));
 
         $className = 'Services_Stormpath_Resource_Tenant';
@@ -155,7 +153,6 @@ class ReadTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf($className, $group);
 
         $this->assertInternalType('string', $group->getName());
-        $this->assertInternalType('string', $group->getDescription());
         $this->assertTrue(array_key_exists($group->getStatus(), Services_Stormpath::$Statuses));
 
         $className = 'Services_Stormpath_Resource_Tenant';
