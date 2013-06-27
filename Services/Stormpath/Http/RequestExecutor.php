@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2012 Stormpath, Inc.
+ * Copyright 2013 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,6 @@
 interface Services_Stormpath_Http_RequestExecutor
 {
 
-    public function executeRequest(Services_Stormpath_Http_Request $request);
+    public function executeRequest(Services_Stormpath_Http_Request $request, $redirectsLimit = 10);
 
 }

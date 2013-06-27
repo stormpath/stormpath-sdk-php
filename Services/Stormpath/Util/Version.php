@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2012 Stormpath, Inc.
+ * Copyright 2013 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,6 @@
 
 class Services_Stormpath_Util_Version
 {
-    const SDK_VERSION = '0.3.1';
+    const SDK_VERSION = '0.3.2';
 
 }
