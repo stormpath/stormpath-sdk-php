@@ -20,12 +20,9 @@ require_once 'HTTP/Request2.php';
 class Services_Stormpath_Http_HttpClientRequestExecutor
     implements Services_Stormpath_Http_RequestExecutor
 {
-    const REDIRECTS_LIMIT = 10;
-
     private $apiKey;
     private $httpClient;
     private $signer;
-    private $redirectsLimit;
 
     public function __construct(Services_Stormpath_Client_ApiKey $apiKey = null)
     {
@@ -37,12 +34,11 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
             $this->signer = new Services_Stormpath_Http_Authc_Sauthc1Signer;
             $this->httpClient->setConfig(array('ssl_verify_peer' => FALSE,
                                                'ssl_verify_host' => FALSE));
-            $this->redirectsLimit = self::REDIRECTS_LIMIT;
         }
 
     }
 
-    public function executeRequest(Services_Stormpath_Http_Request $request)
+    public function executeRequest(Services_Stormpath_Http_Request $request, $redirectsLimit = 10)
     {
         if ($this->apiKey)
         {
@@ -61,15 +57,12 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
 
         $response = $this->httpClient->send();
 
-        if ($response->isRedirect() && $this->redirectsLimit > 0)
+        if ($response->isRedirect() && $redirectsLimit)
         {
             $request->setResourceUrl($response->getHeader('location'));
-            $this->redirectsLimit--;
-            return $this->executeRequest($request);
+            return $this->executeRequest($request, --$redirectsLimit);
 
         }
-
-        $this->redirectsLimit = self::REDIRECTS_LIMIT;
 
         return new Services_Stormpath_Http_DefaultResponse($response->getStatus(),
                                                            $response->getHeader('Content-Type'),
