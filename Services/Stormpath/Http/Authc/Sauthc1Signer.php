@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2012 Stormpath, Inc.
+ * Copyright 2013 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ class Services_Stormpath_Http_Authc_Sauthc1Signer
 
     public function signRequest(Services_Stormpath_Http_Request $request, Services_Stormpath_Client_ApiKey $apiKey)
     {
+
         date_default_timezone_set(self::TIME_ZONE);
         $date = new DateTime();
         $timeStamp = $date->format(self::TIMESTAMP_FORMAT);
@@ -56,6 +57,9 @@ class Services_Stormpath_Http_Authc_Sauthc1Signer
         }
 
         $requestHeaders = $request->getHeaders();
+
+        unset($requestHeaders[self::STORMPATH_DATE_HEADER]);
+        unset($requestHeaders[self::AUTHORIZATION_HEADER]);
 
         $requestHeaders[self::HOST_HEADER] = $hostHeader;
         $requestHeaders[self::STORMPATH_DATE_HEADER] = $timeStamp;

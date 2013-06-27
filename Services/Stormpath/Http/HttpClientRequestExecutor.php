@@ -2,7 +2,7 @@
 require_once 'HTTP/Request2.php';
 
 /*
- * Copyright 2012 Stormpath, Inc.
+ * Copyright 2013 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
 
     }
 
-    public function executeRequest(Services_Stormpath_Http_Request $request)
+    public function executeRequest(Services_Stormpath_Http_Request $request, $redirectsLimit = 10)
     {
         if ($this->apiKey)
         {
@@ -56,6 +56,13 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
         $this->httpClient->setHeader($request->getHeaders());
 
         $response = $this->httpClient->send();
+
+        if ($response->isRedirect() && $redirectsLimit)
+        {
+            $request->setResourceUrl($response->getHeader('location'));
+            return $this->executeRequest($request, --$redirectsLimit);
+
+        }
 
         return new Services_Stormpath_Http_DefaultResponse($response->getStatus(),
                                                            $response->getHeader('Content-Type'),

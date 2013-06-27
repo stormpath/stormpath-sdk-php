@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2012 Stormpath, Inc.
+ * Copyright 2013 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,4 +33,6 @@ interface Services_Stormpath_Http_Request extends Services_Stormpath_Http_HttpMe
     public function setBody($body, $length);
 
     function toStrQueryString($canonical);
+
+    function setResourceUrl($resourceUrl);
 }
