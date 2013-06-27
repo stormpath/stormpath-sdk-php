@@ -42,11 +42,11 @@ class Digest extends Socket
             $resourcePath = strtr(
                 strtr(
                     strtr($encoded,
-                        ['+' => '%20']
+                        array('+' => '%20')
                     ),
-                    ['*' =>'%2A']
+                    array('*' =>'%2A')
                 ),
-                ['%7E' => '~']
+                array('%7E' => '~')
             );
             $resourcePath = strtr($resourcePath, array('%2F' => '/'));
         } else {

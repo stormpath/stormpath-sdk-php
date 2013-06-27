@@ -78,11 +78,11 @@ class StormpathService
         $client->setUri(self::BASEURI . '/applications');
         $client->setMethod('POST');
         $client->setOptions(array('sslverifypeer' => false));
-        $client->setRawBody(Json::encode([
+        $client->setRawBody(Json::encode(array(
             'name' => $name,
             'description' => $description,
             'status' => $status,
-        ]));
+        )));
 
         return Json::decode($client->send()->getBody());
     }
