@@ -25,7 +25,6 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
     private $apiKey;
     private $httpClient;
     private $signer;
-    private $redirectResponse;
     private $redirectsLimit;
 
     public function __construct(Services_Stormpath_Client_ApiKey $apiKey = null)
@@ -45,8 +44,6 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
 
     public function executeRequest(Services_Stormpath_Http_Request $request)
     {
-        $this->redirectResponse = null;
-
         if ($this->apiKey)
         {
             $this->signer->signRequest($request, $this->apiKey);
@@ -68,8 +65,7 @@ class Services_Stormpath_Http_HttpClientRequestExecutor
         {
             $request->setResourceUrl($response->getHeader('location'));
             $this->redirectsLimit--;
-            $this->redirectResponse = $this->executeRequest($request);
-            return $this->redirectResponse;
+            return $this->executeRequest($request);
 
         }
 
