@@ -44,12 +44,12 @@ Create a ```local.php``` file and set api parameters
 <?php
 // ~/test/autoload/local.php
 
-return [
-    'stormpath' => [
+return array(
+    'stormpath' => array(
         'id' => 'stormpath_id',
         'secret' => 'stormpath_secret',
-    ]
-];
+    ),
+);
 ```
 
 
