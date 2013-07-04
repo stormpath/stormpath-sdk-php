@@ -11,9 +11,10 @@ use Zend\Mvc\Router\RouteMatch;
 use PHPUnit_Framework_TestCase;
 use Zend\ServiceManager\ServiceManager;
 use Stormpath\Service\StormpathService;
-use Stormpath\Http\Client\Adapter\Digest;
-use Stormpath\Http\Client\Adapter\Basic;
+use Stormpath\Auth\Digest;
+use Stormpath\Auth\Basic;
 use Zend\Http\Client;
+use Stormpath\Resource\Group;
 
 class StormpathServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,20 +22,18 @@ class StormpathServiceTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-    }
-
-    public function XtestConfigureWithBasicAuthentication()
-    {
         $config = Bootstrap::getApplication()->getConfig();
 
-
-        $this->assertNull(StormpathService::configure($config['stormpath']['id'], $config['stormpath']['secret']));
-
+        StormpathService::configure($config['stormpath']['id'], $config['stormpath']['secret']);
         $client = new Client();
         $adapter = new Basic();
         $client->setAdapter($adapter);
         StormpathService::setHttpClient($client);
 
+    }
+
+    public function testConfigureWithBasicAuthentication()
+    {
         $randomName = md5(uniqid());
 
         $result = StormpathService::register($randomName, 'Description', 'enabled');
@@ -43,7 +42,7 @@ class StormpathServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($randomName, $result->name);
     }
 
-    public function testConfigureWithDigestAuthentication()
+    public function XtestConfigureWithDigestAuthentication()
     {
         $config = Bootstrap::getApplication()->getConfig();
 
@@ -59,10 +58,24 @@ class StormpathServiceTest extends \PHPUnit_Framework_TestCase
 
         $result = StormpathService::register($randomName, 'Description', 'enabled');
 
-        $this->assertNotEquals('401', $result->status);
+        //$this->assertNotEquals('401', $result->status);
 
         $this->assertEquals('ENABLED', $result->status);
         $this->assertEquals($randomName, $result->name);
+    }
+
+    public function testRegister()
+    {
+
+    }
+
+    public function testReadGroups()
+    {
+        $result = Group::read('');
+
+        print_r($result);
+
+        $this->assertEquals('enabled',$result->status);
     }
 
 }

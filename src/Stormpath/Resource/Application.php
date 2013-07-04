@@ -49,12 +49,6 @@ class Application
         self::$status = $value;
     }
 
-    public static function configure($name, $status, $description)
-    {
-        self::setName($name);
-        self::setDescription($description);
-        self::setStatus($status);
-    }
 
     public static function registerApplication($options = array())
     {
@@ -75,5 +69,30 @@ class Application
         return Json::decode($response->getBody());
 
     }
+
+	public static function register($name, $description = '', $status = 'enabled')
+	{
+		switch ($status) {
+			case 'enabled':
+			case 'disabled':
+				break;
+			default:
+				throw new \Exception('Invalid application status');
+		}
+
+		$client = self::getHttpClient();
+		$client->setUri(self::BASEURI . '/applications');
+		$client->setMethod('POST');
+		$client->setRawBody(Json::encode(array(
+			'name' => $name,
+			'description' => $description,
+			'status' => $status,
+		)));
+
+
+		return Json::decode($client->send()->getBody());
+	}
+
+
 
 }

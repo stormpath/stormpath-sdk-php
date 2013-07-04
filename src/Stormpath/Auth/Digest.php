@@ -1,6 +1,6 @@
 <?php
 
-namespace Stormpath\Http\Client\Adapter;
+namespace Stormpath\Auth;
 
 use Stormpath\Service\StormpathService as Stormpath;
 use Zend\Http\Client\Adapter\Socket;
@@ -69,8 +69,9 @@ class Digest extends Socket
             $canonicalHeaderString .= "$key:$val\n";
         }
 
-//        $canonicalHeaderString = implode("\n", $canonicalHeaders);
+//      $canonicalHeaderString = implode("\n", $canonicalHeaders);
         $signedHeadersString = implode(';', array_keys($headers));
+
         $requestPayloadHashHex = $this->toHex($this->hashText($body));
 
         $canonicalRequest = $method . "\n" .
@@ -80,6 +81,8 @@ class Digest extends Socket
                             $signedHeadersString . "\n" .
                             $requestPayloadHashHex;
 
+        print_r($canonicalRequest);
+
         $id = Stormpath::getId() . '/' . $dateStamp . '/' . $nonce . '/sauthc1_request';
 
         $canonicalRequestHashHex = $this->toHex($this->hashText($canonicalRequest));
@@ -88,6 +91,8 @@ class Digest extends Socket
                         $timeStamp . "\n" .
                         $id . "\n" .
                         $canonicalRequestHashHex;
+
+        print_r($stringToSign);
 
         // SAuthc1 uses a series of derived keys, formed by hashing different pieces of data
         $kSecret = $this->toUTF8('SAuthc1' . Stormpath::getSecret());

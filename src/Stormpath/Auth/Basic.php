@@ -1,6 +1,6 @@
 <?php
 
-namespace Stormpath\Http\Client\Adapter;
+namespace Stormpath\Auth;
 
 use Stormpath\Service\StormpathService as Stormpath;
 use Zend\Http\Client\Adapter\Socket;

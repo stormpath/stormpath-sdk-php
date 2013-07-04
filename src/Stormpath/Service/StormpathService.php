@@ -8,8 +8,8 @@
 namespace Stormpath\Service;
 
 use Stormpath\Client\ApiKey;
-use Stormpath\Http\Client\Adapter\Digest;
-use Stormpath\Http\Client\Adapter\Basic;
+use Stormpath\Auth\Digest;
+use Stormpath\Auth\Basic;
 use Zend\Http\Client;
 use Zend\Json\Json;
 
@@ -49,7 +49,9 @@ class StormpathService
 
     public static function setHttpClient(Client $value)
     {
+        $value->setOptions(array('sslverifypeer' => false));
         self::$httpClient = $value;
+
     }
 
     public static function configure($id, $secret = null)
@@ -59,7 +61,7 @@ class StormpathService
 
         // Set default http client; overwriteable after configuration
         $client = new Client();
-        $adapter = new Digest();
+        $adapter = new Basic();
         $client->setAdapter($adapter);
         self::setHttpClient($client);
     }
@@ -77,12 +79,12 @@ class StormpathService
         $client = self::getHttpClient();
         $client->setUri(self::BASEURI . '/applications');
         $client->setMethod('POST');
-        $client->setOptions(array('sslverifypeer' => false));
         $client->setRawBody(Json::encode(array(
             'name' => $name,
             'description' => $description,
             'status' => $status,
         )));
+
 
         return Json::decode($client->send()->getBody());
     }
