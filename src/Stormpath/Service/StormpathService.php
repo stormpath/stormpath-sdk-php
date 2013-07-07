@@ -8,65 +8,13 @@
 namespace Stormpath\Service;
 
 use Stormpath\Client\ApiKey;
-use Stormpath\Auth\Digest;
-use Stormpath\Auth\Basic;
-use Zend\Http\Client;
-use Zend\Json\Json;
+use Stormpath\Client\Client;
 
 class StormpathService
 {
-    const BASEURI = 'https://api.stormpath.com/v1';
+    const BASEURI = 'https://api.stormpath.com/v1/';
 
-    private static $id;
-    private static $secret;
-    private static $httpClient;
-
-    public static function getId()
-    {
-        return self::$id;
-    }
-
-    private static function setId($value)
-    {
-        self::$id = $value;
-    }
-
-    public static function getSecret()
-    {
-
-        return self::$secret;
-    }
-
-    private static function setSecret($value)
-    {
-        self::$secret = $value;
-    }
-
-    public static function getHttpClient()
-    {
-        return self::$httpClient;
-    }
-
-    public static function setHttpClient(Client $value)
-    {
-        $value->setOptions(array('sslverifypeer' => false));
-        self::$httpClient = $value;
-
-    }
-
-    public static function configure($id, $secret = null)
-    {
-        self::setId($id);
-        self::setSecret($secret);
-
-        // Set default http client; overwriteable after configuration
-        $client = new Client();
-        $adapter = new Basic();
-        $client->setAdapter($adapter);
-        self::setHttpClient($client);
-    }
-
-    public static function register($name, $description = '', $status = 'enabled')
+    public function register($name, $description = '', $status = 'enabled')
     {
         switch ($status) {
             case 'enabled':
@@ -89,10 +37,13 @@ class StormpathService
         return Json::decode($client->send()->getBody());
     }
 
-    public static function createClient($accessId, $secretKey)
+    /*public function InstantiateClient($accessId, $secret, $baseURL)
     {
-        ApiKey::setAccessId($accessId);
-        ApiKey::setSecretKey($secretKey);
+        $apikey = new ApiKey($accessId,$secret);
+		//$apikey = array('id' => $accessId , 'secret' => $secret);
+		return new Client($apikey, $baseURL);
     }
+	*/
+
 
 }

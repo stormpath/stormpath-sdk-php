@@ -8,28 +8,25 @@ namespace Stormpath\Client;
 class ApiKey
 {
 
-    private static $id;
-    private static $secret;
+    private  $id;
+    private  $secret;
 
-    public static function getId()
+	public function __construct($id, $secret)
+	{
+		$this->id = $id;
+		$this->secret = $secret;
+	}
+
+    public function getId()
     {
-        return self::$id;
+
+        return $this->id;
     }
 
-    private static function setId($value)
-    {
-        self::$id = $value;
-    }
-
-    public static function getSecret()
+    public function getSecret()
     {
 
-        return self::$secret;
-    }
-
-    private static function setSecret($value)
-    {
-        self::$secret = $value;
+        return $this->secret;
     }
 
 }

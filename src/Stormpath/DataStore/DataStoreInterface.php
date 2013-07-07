@@ -15,6 +15,4 @@ interface DataStoreInterface
 
 	public function delete($resource);
 
-	public function executeRequest($method, $href, $body, $query);
-
 }

@@ -6,6 +6,7 @@
 namespace Stormpath\http;
 
 use Zend\Http\Client;
+use Stormpath\Client\ApiKey;
 use Zend\Json\Json;
 use Stormpath\Auth\Digest;
 use Stormpath\Auth\Basic;
@@ -14,6 +15,12 @@ use Stormpath\Service\StormpathService as Stormpath;
 class RequestExecutor
 {
     public $httpClient;
+	public $apikey;
+
+	public function __Construct(ApiKey $apikey)
+	{
+		$this->apikey = $apikey;
+	}
 
     public function getHttpClient()
     {
@@ -31,7 +38,7 @@ class RequestExecutor
     {
         // Set default http client; overwriteable after configuration
         $client = new Client();
-        $adapter = new Basic();
+        $adapter = new Basic($this->apikey);
         $client->setAdapter($adapter);
         $this->setHttpClient($client);
 

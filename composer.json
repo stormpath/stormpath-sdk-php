@@ -33,8 +33,9 @@
         "php": ">=5.3.3",
         "zendframework/zend-http": ">=2.2",
         "zendframework/zend-json": ">=2.2",
-        "rhumsaa/uuid": "2.1.*@dev",
-        "moontoast/math": "1.1.0"
+        "rhumsaa/uuid": "2.*",
+        "moontoast/math": "1.1.0",
+        "zendframework/zend-config" : ">=2.2"
     },
     "autoload": {
         "psr-0": {

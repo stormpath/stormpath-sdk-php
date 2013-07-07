@@ -15,6 +15,7 @@ use Stormpath\Auth\Digest;
 use Stormpath\Auth\Basic;
 use Zend\Http\Client;
 use Stormpath\Resource\Group;
+use Stormpath\Client\ApiKey;
 
 class StormpathServiceTest extends \PHPUnit_Framework_TestCase
 {
