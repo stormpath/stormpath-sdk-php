@@ -1,29 +1,81 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: vganesh
- * Date: 7/2/13
- * Time: 8:09 AM
- * To change this template use File | Settings | File Templates.
- */
 
 namespace Stormpath\Resource;
 
-use Zend\Http\Client;
-use Zend\Json\Json;
-use Stormpath\Service\StormpathService as Stormpath;
+use Stormpath\Service\StormpathService;
 
-class Group
+class Group extends InstanceResource
 {
-    public static function read($groupID)
-    {
-        $client = Stormpath::getHttpClient();
-        $client->setUri(Stormpath::BASEURI . '/groups/' . urlencode($groupID));
-        $client->setMethod('GET');
+    const NAME = "name";
+    const DESCRIPTION = "description";
+    const STATUS = "status";
+    const TENANT = "tenant";
+    const DIRECTORY = "directory";
+    const ACCOUNTS = "accounts";
 
-        return Json::decode($client->send()->getBody());
+    public function getName()
+    {
+
+        return $this->getProperty(self::NAME);
     }
 
+    public function setName($name)
+    {
+        $this->setProperty(self::NAME, $name);
+    }
 
+    public function getDescription()
+    {
 
+        return $this->getProperty(self::DESCRIPTION);
+    }
+
+    public function setDescription($description)
+    {
+        $this->setProperty(self::DESCRIPTION, $description);
+    }
+
+    public function getStatus()
+    {
+        $value = $this->getProperty(self::STATUS);
+
+        if ($value)
+        {
+            $value = strtoupper($value);
+        }
+
+        return $value;
+    }
+
+    public function setStatus($status)
+    {
+        if (array_key_exists($status, StormpathService::$Statuses))
+        {
+            $this->setProperty(self::STATUS, StormpathService::$Statuses[$status]);
+        }
+    }
+
+    public function getTenant()
+    {
+
+        return $this->getResourceProperty(self::TENANT, StormpathService::TENANT);
+    }
+
+    public function getAccounts()
+    {
+
+        return $this->getResourceProperty(self::ACCOUNTS, StormpathService::ACCOUNT_LIST);
+    }
+
+    public function getDirectory()
+    {
+
+        return $this->getResourceProperty(self::DIRECTORY, StormpathService::DIRECTORY);
+    }
+
+    public function addAccount(Account $account)
+    {
+
+        return GroupMembership::_create($account, $this, $this->getDataStore());
+    }
 }

@@ -1,64 +1,56 @@
 <?php
-/**
- * A class to fetch the Tenant resources
- *
- */
 
 namespace Stormpath\Resource;
 
-use Stormpath\Client\ApiKey;
 use Stormpath\Service\StormpathService;
-use Zend\Http\Client;
-use Zend\Json\Json;
 
-class Tenant
+class Tenant extends InstanceResource
 {
-    private static $name;
+    const NAME         = "name";
+    const KEY          = "key";
+    const APPLICATIONS = "applications";
+    const DIRECTORIES  = "directories";
 
-    public static function getName()
+    public function getName()
     {
-
-        return self::$name;
+        return $this->getProperty(self::NAME);
     }
 
-    public static function setName($value)
+    public function getKey()
     {
-        self::$name = $value;
+        return $this->getProperty(self::KEY);
     }
 
-    public static function configure($name)
+    public function createApplication(Application $application)
     {
-        self::setName($name);
+        //TODO: enable auto discovery
+        return $this->getDataStore()->create('/applications', $application, StormpathService::APPLICATION);
     }
 
-    /*
-     * $method => GET to read the tenant resources ,POST to update the tenant resources
-     * $current => set to true to get the current tenant resources else set to false
-     */
-
-    public static function Tenant($method, $current, $options = array())
+    public function getApplications()
     {
-        if (!ApiKey::getAccessId())
-            throw new \Exception('Get an API key');
 
-        $http = new Client();
-
-        if($current)
-        {
-            $http->setUri(StormpathService::BASEURI .'/tenants/current/'. ApiKey::getAccessId());
-        }
-        else
-        {
-            $http->setUri(StormpathService::BASEURI .'/tenants/'. ApiKey::getAccessId());
-        }
-        $http->setOptions(array('sslverifypeer' => false));
-        $http->setMethod($method);
-
-        $options['name'] = self::getName();
-        $http->setParameterGet($options);
-
-        $response = $http->send();
-        return Json::decode($response->getBody());
+        return $this->getResourceProperty(self::APPLICATIONS, StormpathService::APPLICATION_LIST);
     }
 
+    public function getDirectories()
+    {
+
+        return $this->getResourceProperty(self::DIRECTORIES, StormpathService::DIRECTORY_LIST);
+    }
+
+    public function verifyAccountEmail($token)
+    {
+        //TODO: enable auto discovery via Tenant resource (should be just /emailVerificationTokens)
+        $href = "/accounts/emailVerificationTokens/" . $token;
+
+        $tokenProperties = new stdClass();
+        $hrefName = self::HREF_PROP_NAME;
+        $tokenProperties->$hrefName = $href;
+
+        $evToken = $this->getDataStore()->instantiate(StormpathService::EMAIL_VERIFICATION_TOKEN, $tokenProperties);
+
+        //execute a POST (should clean this up / make it more obvious)
+        return $this->getDataStore()->save($evToken, StormpathService::ACCOUNT);
+    }
 }

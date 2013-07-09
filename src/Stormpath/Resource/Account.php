@@ -1,130 +1,131 @@
 <?php
-/**
- *
- */
 
 namespace Stormpath\Resource;
 
-use Zend\Http\Client;
-use Zend\Json\Json;
-use Stormpath\Service\StormpathService as Stormpath;
+use Stormpath\Service\StormpathService;
 
+class Account extends InstanceResource
+{
+    const USERNAME                 = "username";
+    const EMAIL                    = "email";
+    const PASSWORD                 = "password";
+    const GIVEN_NAME               = "givenName";
+    const MIDDLE_NAME              = "middleName";
+    const SURNAME                  = "surname";
+    const STATUS                   = "status";
+    const GROUPS                   = "groups";
+    const DIRECTORY                = "directory";
+    const EMAIL_VERIFICATION_TOKEN = "emailVerificationToken";
+    const GROUP_MEMBERSHIPS        = "groupMemberships";
 
-class Account {
-
-    private   $givenname;
-    private   $surname;
-    private   $password;
-    private   $email;
-    private   $username;
-    private   $middlename;
-    private   $status;
-
-    public  function getEmail()
+    public function getUsername()
     {
 
-        return $this->email;
+        return $this->getProperty(self::USERNAME);
     }
 
-    public  function setEmail($value)
+    public function setUsername($username)
     {
-        $this->email = $value;
+        $this->setProperty(self::USERNAME, $username);
     }
 
-    public  function getGivenName()
+    public function getEmail()
     {
 
-        return $this->givenname;
+        return $this->getProperty(self::EMAIL);
     }
 
-    public  function setGivenName($value)
+    public function setEmail($email)
     {
-        $this->givenname = $value;
+        $this->setProperty(self::EMAIL, $email);
     }
 
-    public  function getSurName()
+    public function setPassword($password)
     {
-
-        return $this->givenname;
+        $this->setProperty(self::PASSWORD, $password);
     }
 
-    public  function setSurName($value)
+    public function getGivenName()
     {
-        $this->surname = $value;
+
+        return $this->getProperty(self::GIVEN_NAME);
     }
 
-    public  function setPassword($value)
+    public function setGivenName($givenName)
     {
-        $this->password = $value;
+        $this->setProperty(self::GIVEN_NAME, $givenName);
     }
 
-    public  function getUserName()
+    public function getMiddleName()
     {
 
-        return $this->username;
+        return $this->getProperty(self::MIDDLE_NAME);
     }
 
-    public  function setUserName($value)
+    public function setMiddleName($middleName)
     {
-        $this->username = $value;
+
+        return $this->setProperty(self::MIDDLE_NAME, $middleName);
     }
 
-    public  function getMiddleName()
+    public function getSurname()
     {
 
-        return $this->middlename;
+        return $this->getProperty(self::SURNAME);
     }
 
-    public  function setMiddleName($value)
+    public function setSurname($surname)
     {
-        $this->middlename = $value;
+        $this->setProperty(self::SURNAME, $surname);
     }
 
-    public  function getStatus()
+    public function getStatus()
     {
+        $value = $this->getProperty(self::STATUS);
 
-        return $this->status;
+        if ($value)
+        {
+            $value = strtoupper($value);
+        }
+
+        return $value;
     }
 
-    public  function setStatus($value)
+    public function setStatus($status)
     {
-        $this->status = $value;
+        if (array_key_exists($status, StormpathService::$Statuses))
+        {
+            $this->setProperty(self::STATUS, StormpathService::$Statuses[$status]);
+        }
     }
 
-
-    public  function configure($email,$givenname,$surname,$username,$status,$middlename)
+    public function getGroups()
     {
-        $this->setEmail($email);
-        $this->setGivenName($givenname);
-        $this->setSurName($surname);
-        $this->setUserName($username);
-        $this->setMiddleName($middlename);
-        $this->setStatus($status);
+
+        return $this->getResourceProperty(self::GROUPS, StormpathService::GROUP_LIST);
     }
 
-    public  function read($accountID)
+    public function getDirectory()
     {
-        $client = Stormpath::getHttpClient();
-        $client->setUri(Stormpath::BASEURI . '/accounts/' . urlencode($accountID));
-        $client->setMethod('GET');
 
-        return Json::decode($client->send()->getBody());
+        return $this->getResourceProperty(self::DIRECTORY, StormpathService::DIRECTORY);
     }
 
-    public  function create($directoryID)
+    public function getEmailVerificationToken()
     {
-        $client = Stormpath::getHttpClient();
-        $client->setUri(Stormpath::BASEURI . '/directories/' . urlencode($directoryID));
-        $client->setMethod('POST');
-        $client->setRawBody(Json::encode(array(
-            'email' => $this->getEmail(),
-            'givenName' => $this->getGivenName(),
-            'surname' => $this->getSurName(),
-            'username' => $this->getUserName(),
-            'middleName' => $this->getMiddleName(),
-            'status' => $this->getStatus(),
-        )));
 
-        return Json::decode($client->send()->getBody());
+        return $this->getResourceProperty(self::EMAIL_VERIFICATION_TOKEN, StormpathService::EMAIL_VERIFICATION_TOKEN);
+    }
+
+    public function getGroupMemberShips()
+    {
+
+        return $this->getResourceProperty(self::GROUP_MEMBERSHIPS, StormpathService::GROUP_MEMBERSHIP_LIST);
+    }
+
+    public function addGroup(Group $group)
+    {
+
+        return GroupMembership::_create($this, $group, $this->getDataStore());
     }
 }

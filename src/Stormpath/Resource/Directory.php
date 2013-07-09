@@ -1,59 +1,88 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: vganesh
- * Date: 7/2/13
- * Time: 11:57 AM
- * To change this template use File | Settings | File Templates.
- */
 
 namespace Stormpath\Resource;
 
-class Directory
+use Stormpath\Service\StormpathService;
+
+class Directory extends InstanceResource
 {
+    const NAME        = "name";
+    const DESCRIPTION = "description";
+    const STATUS      = "status";
+    const ACCOUNTS    = "accounts";
+    const GROUPS      = "groups";
+    const TENANT      = "tenant";
 
-    private  $name;
-    private  $description;
-    private  $status;
-
-    public  function getName()
+    public function getName()
     {
 
-        return $this->name;
+        return $this->getProperty(self::NAME);
     }
 
-    public  function setName($value)
+    public function setName($name)
     {
-        $this->name = $value;
+        $this->setProperty(self::NAME, $name);
     }
 
-    public  function getDescription()
-    {
-
-        return $this->description;
-    }
-
-    public  function setDescription($value)
-    {
-        $this->description = $value;
-    }
-
-    public  function getStatus()
+    public function getDescription()
     {
 
-        return $this->status;
+        return $this->getProperty(self::DESCRIPTION);
     }
 
-    public  function setStatus($value)
+    public function setDescription($description)
     {
-        $this->status = $value;
+        $this->setProperty(self::DESCRIPTION, $description);
     }
 
-    public  function configure($name,$description,$status)
+    public function getStatus()
     {
-        $this->setName($name);
-        $this->setDescription($description);
-        $this->setStatus($status);
+        $value = $this->getProperty(self::STATUS);
+
+        if ($value)
+        {
+            $value = strtoupper($value);
+        }
+
+        return $value;
     }
 
+    public function setStatus($status)
+    {
+        if (array_key_exists($status, StormpathService::$Statuses))
+        {
+            $this->setProperty(self::STATUS, StormpathService::$Statuses[$status]);
+        }
+    }
+
+    public function createAccount(Account $account, $registrationWorkflowEnabled = true)
+    {
+        $accounts = $this->getAccounts();
+        $href = $accounts->getHref();
+
+        if (!$registrationWorkflowEnabled)
+        {
+            $href .= '?registrationWorkflowEnabled=' . var_export($registrationWorkflowEnabled, true);
+        }
+
+        return $this->getDataStore()->create($href, $account, StormpathService::ACCOUNT);
+    }
+
+    public function getAccounts()
+    {
+
+        return $this->getResourceProperty(self::ACCOUNTS, StormpathService::ACCOUNT_LIST);
+    }
+
+    public function getGroups()
+    {
+
+        return $this->getResourceProperty(self::GROUPS, StormpathService::GROUP_LIST);
+    }
+
+    public function getTenant()
+    {
+
+        return $this->getResourceProperty(self::TENANT, StormpathService::TENANT);
+    }
 }

@@ -1,49 +1,50 @@
 <?php
-/*
- * Create the client by giving the APIid and the Secret key
- *
- * DevNotes:  keys of 'id' and 'secret' @ http://www.stormpath.com/docs/rest/api#Base
- */
 
 namespace Stormpath\Service;
 
 use Stormpath\Client\ApiKey;
 use Stormpath\Client\Client;
 
+function autoload($className) {
+    if (substr($className, 0, 18) != 'Services_Stormpath') {
+        return false;
+    }
+    $file = str_replace('_', '/', $className);
+    $file = str_replace('Services/', '', $file);
+    return include dirname(__FILE__) . "/$file.php";
+}
+
+spl_autoload_register('autoload');
+
 class StormpathService
 {
-    const BASEURI = 'https://api.stormpath.com/v1/';
+    const ACCOUNT                  = 'Account';
+    const ACCOUNT_LIST             = 'AccountList';
+    const APPLICATION              = 'Application';
+    const APPLICATION_LIST         = 'ApplicationList';
+    const AUTHENTICATION_RESULT    = 'Services_Stormpath_Authc_AuthenticationResult';
+    const BASIC_LOGIN_ATTEMPT      = 'Services_Stormpath_Authc_BasicLoginAttempt';
+    const DIRECTORY                = 'Directory';
+    const DIRECTORY_LIST           = 'DirectoryList';
+    const EMAIL_VERIFICATION_TOKEN = 'EmailVerificationToken';
+    const GROUP                    = 'Group';
+    const GROUP_LIST               = 'GroupList';
+    const GROUP_MEMBERSHIP         = 'GroupMembership';
+    const GROUP_MEMBERSHIP_LIST    = 'GroupMembershipList';
+    const PASSWORD_RESET_TOKEN     = 'PasswordResetToken';
+    const TENANT                   = 'Tenant';
 
-    public function register($name, $description = '', $status = 'enabled')
+    const ENABLED                  = 'ENABLED';
+    const DISABLED                 = 'DISABLED';
+
+    public static $Statuses        = array(self::DISABLED => self::DISABLED,
+                                           self::ENABLED => self::ENABLED);
+
+    public static function createClient($accessId, $secretKey, $baseUrl = null)
     {
-        switch ($status) {
-            case 'enabled':
-            case 'disabled':
-                break;
-            default:
-                throw new \Exception('Invalid application status');
-        }
+        $apiKey = new ApiKey($accessId, $secretKey);
 
-        $client = self::getHttpClient();
-        $client->setUri(self::BASEURI . '/applications');
-        $client->setMethod('POST');
-        $client->setRawBody(Json::encode(array(
-            'name' => $name,
-            'description' => $description,
-            'status' => $status,
-        )));
-
-
-        return Json::decode($client->send()->getBody());
+        return new Client($apiKey, $baseUrl);
     }
-
-    /*public function InstantiateClient($accessId, $secret, $baseURL)
-    {
-        $apikey = new ApiKey($accessId,$secret);
-		//$apikey = array('id' => $accessId , 'secret' => $secret);
-		return new Client($apikey, $baseURL);
-    }
-	*/
-
 
 }
