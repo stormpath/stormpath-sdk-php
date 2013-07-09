@@ -5,55 +5,54 @@
 
 namespace Stormpath\Resource;
 
-use Stormpath\Client\ApiKey;
+use Stormpath\Resource\AbstractResource;
 use Stormpath\Service\StormpathService;
 use Zend\Http\Client;
 use Zend\Json\Json;
 
-class Application
+class Application extends AbstractResource
 {
-    private static $name;
-    private static $description;
-    private static $status;
+    protected $name;
+    protected $description;
+    protected $status;
 
     public static function getName()
     {
-
-        return self::$name;
+        $this->_load();
+        return $this->name;
     }
 
     public static function setName($value)
     {
-        self::$name = $value;
+        $this->_load();
+        $this->name = $value;
+        return $this;
     }
 
     public static function getDescription()
     {
-
-        return self::$description;
+        $this->_load();
+        return $this->description;
     }
 
     public static function setDescription($value)
     {
-        self::$description = $value;
+        $this->_load();
+        $this->description = $value;
+        return $this;
     }
 
     public static function getStatus()
     {
-
-        return self::$status;
+        $this->_load();
+        return $this->status;
     }
 
     public static function setStatus($value)
     {
-        self::$status = $value;
-    }
-
-    public static function configure($name, $status, $description)
-    {
-        self::setName($name);
-        self::setDescription($description);
-        self::setStatus($status);
+        $this->_load();
+        $this->status = $value;
+        return $this;
     }
 
     public static function registerApplication($options = array())
@@ -75,5 +74,4 @@ class Application
         return Json::decode($response->getBody());
 
     }
-
 }

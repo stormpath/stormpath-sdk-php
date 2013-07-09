@@ -7,7 +7,7 @@
 
 namespace Stormpath\Service;
 
-use Stormpath\Client\ApiKey;
+use Stormpath\ResourceManager;
 use Stormpath\Http\Client\Adapter\Digest;
 use Stormpath\Http\Client\Adapter\Basic;
 use Zend\Http\Client;
@@ -15,8 +15,6 @@ use Zend\Json\Json;
 
 class StormpathService
 {
-    const BASEURI = 'https://api.stormpath.com/v1';
-
     private static $id;
     private static $secret;
     private static $httpClient;
@@ -49,21 +47,31 @@ class StormpathService
 
     public static function setHttpClient(Client $value)
     {
+        $value->setOptions(array('sslverifypeer' => false));
         self::$httpClient = $value;
     }
 
-    public static function configure($id, $secret = null)
+    public static function configure($id, $secret)
     {
         self::setId($id);
         self::setSecret($secret);
 
         // Set default http client; overwriteable after configuration
         $client = new Client();
-        $adapter = new Digest();
+        $adapter = new Basic();
         $client->setAdapter($adapter);
         self::setHttpClient($client);
     }
 
+    public static function getResourceManager()
+    {
+        $resourceManager = new ResourceManager();
+        $resourceManager->setHttpClient(self::getHttpClient());
+
+        return $resourceManager;
+    }
+
+/*
     public static function register($name, $description = '', $status = 'enabled')
     {
         switch ($status) {
@@ -84,13 +92,12 @@ class StormpathService
             'status' => $status,
         )));
 
+        try {
+            $response = $client->send();
+        } catch (\Exception $e) {
+
+        }
         return Json::decode($client->send()->getBody());
     }
-
-    public static function createClient($accessId, $secretKey)
-    {
-        ApiKey::setAccessId($accessId);
-        ApiKey::setSecretKey($secretKey);
-    }
-
+*/
 }

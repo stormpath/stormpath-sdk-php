@@ -21,12 +21,7 @@ class StormpathServiceTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-    }
-
-    public function XtestConfigureWithBasicAuthentication()
-    {
         $config = Bootstrap::getApplication()->getConfig();
-
 
         $this->assertNull(StormpathService::configure($config['stormpath']['id'], $config['stormpath']['secret']));
 
@@ -34,16 +29,27 @@ class StormpathServiceTest extends \PHPUnit_Framework_TestCase
         $adapter = new Basic();
         $client->setAdapter($adapter);
         StormpathService::setHttpClient($client);
-
-        $randomName = md5(uniqid());
-
-        $result = StormpathService::register($randomName, 'Description', 'enabled');
-
-        $this->assertEquals('ENABLED', $result->status);
-        $this->assertEquals($randomName, $result->name);
     }
 
-    public function testConfigureWithDigestAuthentication()
+    public function testConfigureWithBasicAuthentication()
+    {
+
+        $resourceManager = StormpathService::getResourceManager();
+
+        $tenant = $resourceManager->getCurrentTenant();
+
+#        print_r($tenant->getArrayCopy());
+
+        $applications = $tenant->getApplications();
+
+        foreach ($applications as $a) {
+            echo 'asdfa';
+
+            die('iterate');
+        }
+    }
+
+    public function XtestConfigureWithDigestAuthentication()
     {
         $config = Bootstrap::getApplication()->getConfig();
 

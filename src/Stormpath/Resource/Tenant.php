@@ -6,59 +6,80 @@
 
 namespace Stormpath\Resource;
 
-use Stormpath\Client\ApiKey;
-use Stormpath\Service\StormpathService;
+use Stormpath\Collection;
 use Zend\Http\Client;
 use Zend\Json\Json;
 
-class Tenant
+class Tenant extends AbstractResource
 {
-    private static $name;
+    protected $_url = 'https://api.stormpath.com/v1/tenants';
 
-    public static function getName()
+    protected $name;
+
+    public function getName()
     {
-
-        return self::$name;
+        return $this->name;
     }
 
-    public static function setName($value)
+    public function setName($value)
     {
-        self::$name = $value;
+        $this->name = $value;
+        return $this;
     }
 
-    public static function configure($name)
+    protected $key;
+
+    public function getKey()
     {
-        self::setName($name);
+        return $this->key;
     }
 
-    /*
-     * $method => GET to read the tenant resources ,POST to update the tenant resources
-     * $current => set to true to get the current tenant resources else set to false
-     */
-
-    public static function Tenant($method, $current, $options = array())
+    public function setKey($value)
     {
-        if (!ApiKey::getAccessId())
-            throw new \Exception('Get an API key');
-
-        $http = new Client();
-
-        if($current)
-        {
-            $http->setUri(StormpathService::BASEURI .'/tenants/current/'. ApiKey::getAccessId());
-        }
-        else
-        {
-            $http->setUri(StormpathService::BASEURI .'/tenants/'. ApiKey::getAccessId());
-        }
-        $http->setOptions(array('sslverifypeer' => false));
-        $http->setMethod($method);
-
-        $options['name'] = self::getName();
-        $http->setParameterGet($options);
-
-        $response = $http->send();
-        return Json::decode($response->getBody());
+        $this->key = $value;
+        return $this;
     }
 
+    protected $applications;
+
+    public function getApplications()
+    {
+        return $this->applications;
+    }
+
+    public function setApplications(Collection $applications)
+    {
+        $this->applications = $applications;
+    }
+
+    protected $directories;
+
+    public function getDirectories()
+    {
+        return $this->directories;
+    }
+
+    public function setDirectories(Collection $directories)
+    {
+        $this->directories = $directories;
+    }
+
+    public function exchangeArray($data)
+    {
+        $this->setHref(isset($data['href']) ? $data['href']: null);
+        $this->setName(isset($data['name']) ? $data['name']: null);
+        $this->setKey(isset($data['key']) ? $data['key']: null);
+
+        $this->setApplications(new Collection($this->getResourceManager(), 'Stormpath\Resource\Application', $data['applications']['href']));
+        $this->setDirectories(new Collection($this->getResourceManager(), 'Stormpath\Resource\Directory', $data['directories']['href']));
+    }
+
+    public function getArrayCopy()
+    {
+        return array(
+            'href' => $this->getHref(),
+            'name' => $this->getName(),
+            'key' => $this->getKey(),
+        );
+    }
 }
