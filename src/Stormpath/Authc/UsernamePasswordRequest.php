@@ -17,16 +17,19 @@ class UsernamePasswordRequest implements AuthenticationRequest
 
     function getPrincipals()
     {
+
         return $this->username;
     }
 
     function getCredentials()
     {
+
         return $this->password;
     }
 
     function getHost()
     {
+
         return $this->host;
     }
 

@@ -5,14 +5,12 @@ namespace Stormpath\DataStore;
 use Stormpath\DataStore\ResourceFactory;
 use Stormpath\DataStore\InternalDataStore;
 
-class DefaultResourceFactory
-    implements ResourceFactory
+class DefaultResourceFactory implements ResourceFactory
 {
-
     private $dataStore;
 
-    const RESOURCE_PATH = 'Services_Stormpath_Resource_';
-    const AUTHC_PATH = 'Services_Stormpath_Authc_';
+    const RESOURCE_PATH = 'Stormpath\Resource\\';
+    const AUTHC_PATH = 'Stormpath\Authc\\';
 
     public function __construct(InternalDataStore $dataStore)
     {
