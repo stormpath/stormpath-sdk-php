@@ -158,6 +158,14 @@ Optionally enable Basic authentication instead of default Digest
     Stormpath::setHttpClient($client);
 ```
 
+Optionally enable apc cache
+
+```
+    use Zend\Cache\StorageFactory;
+
+    Stormpath::setCache(StorageFactory::adapterFactory('apc'));
+```
+
 
 Common Resource Properties
 --------------------------

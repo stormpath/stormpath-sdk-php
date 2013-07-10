@@ -12,12 +12,15 @@ use Stormpath\Http\Client\Adapter\Digest;
 use Stormpath\Http\Client\Adapter\Basic;
 use Zend\Http\Client;
 use Zend\Json\Json;
+use Zend\Cache\StorageFactory;
+use Zend\Cache\Storage\StorageInterface;
 
 class StormpathService
 {
     private static $id;
     private static $secret;
     private static $httpClient;
+    private static $cache;
 
     public static function getId()
     {
@@ -51,6 +54,16 @@ class StormpathService
         self::$httpClient = $value;
     }
 
+    public static function getCache()
+    {
+        return self::$cache;
+    }
+
+    public static function setCache(StorageInterface $cache)
+    {
+        self::$cache = $cache;
+    }
+
     public static function configure($id, $secret)
     {
         self::setId($id);
@@ -61,12 +74,14 @@ class StormpathService
         $adapter = new Basic();
         $client->setAdapter($adapter);
         self::setHttpClient($client);
+        self::setCache(StorageFactory::adapterFactory('memory'));
     }
 
     public static function getResourceManager()
     {
         $resourceManager = new ResourceManager();
         $resourceManager->setHttpClient(self::getHttpClient());
+        $resourceManager->setCache(self::getCache());
 
         return $resourceManager;
     }

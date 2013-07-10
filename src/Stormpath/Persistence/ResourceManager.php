@@ -7,6 +7,7 @@ use Zend\Http\Client;
 use Zend\Http\Response;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Collections\ArrayCollection;
+use Zend\Cache\Storage\StorageInterface;
 
 class ResourceManager implements ObjectManager
 {
@@ -14,6 +15,18 @@ class ResourceManager implements ObjectManager
     private $delete;
     private $insert;
     private $update;
+    private $cache;
+
+    public function getCache()
+    {
+        return $this->cache;
+    }
+
+    public function setCache(StorageInterface $cache)
+    {
+        $this->cache = $cache;
+        return $this;
+    }
 
     public function getHttpClient()
     {
@@ -45,12 +58,19 @@ class ResourceManager implements ObjectManager
         $client->setUri($class->_getUrl() . '/' . $id);
         $client->setMethod('GET');
 
-        $response = $client->send();
+        $cachedJson = $this->getCache()->getItem(get_class($class) . $id, $success);
 
-        if ($response->isSuccess()) {
-            $class->exchangeArray(json_decode($response->getBody(), true));
+        if ($success) {
+            $class->exchangeArray(json_decode($cachedJson, true));
         } else {
-            $this->handleInvalidResponse($response);
+            $response = $client->send();
+
+            if ($response->isSuccess()) {
+                $class->exchangeArray(json_decode($response->getBody(), true));
+                $this->getCache()->setItem(get_class($class) . $id, $response->getBody());
+            } else {
+                $this->handleInvalidResponse($response);
+            }
         }
     }
 
@@ -208,6 +228,7 @@ class ResourceManager implements ObjectManager
                     $resource->setResourceManager($this);
                     $newProperties = json_decode($response->getBody(), true);
                     $resource->exchangeArray($newProperties);
+                    $this->getCache()->setItem(get_class($resource) . $resource->getId(), $response->getBody());
                 } else {
                     $this->handleInvalidResponse($response);
                 }
@@ -234,6 +255,7 @@ class ResourceManager implements ObjectManager
                     $this->handleInvalidResponse($response);
                 }
 
+                $this->getCache()->removeItem(get_class($resource) . $resource->getId());
                 $this->update->removeElement($resource);
             }
         }
@@ -254,6 +276,7 @@ class ResourceManager implements ObjectManager
                     $this->handleInvalidResponse($response);
                 }
 
+                $this->getCache()->removeItem(get_class($resource) . $resource->getId());
                 $this->delete->removeElement($resource);
             }
         }
