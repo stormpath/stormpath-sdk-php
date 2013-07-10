@@ -6,7 +6,7 @@
 
 namespace Stormpath\Resource;
 
-use Stormpath\Collection;
+use Stormpath\Collections\ResourceCollection;
 use Zend\Http\Client;
 use Zend\Json\Json;
 
@@ -18,11 +18,13 @@ class Tenant extends AbstractResource
 
     public function getName()
     {
+        $this->_load();
         return $this->name;
     }
 
     public function setName($value)
     {
+        $this->_load();
         $this->name = $value;
         return $this;
     }
@@ -31,11 +33,13 @@ class Tenant extends AbstractResource
 
     public function getKey()
     {
+        $this->_load();
         return $this->key;
     }
 
     public function setKey($value)
     {
+        $this->_load();
         $this->key = $value;
         return $this;
     }
@@ -44,11 +48,13 @@ class Tenant extends AbstractResource
 
     public function getApplications()
     {
+        $this->_load();
         return $this->applications;
     }
 
-    public function setApplications(Collection $applications)
+    public function setApplications(ResourceCollection $applications)
     {
+        $this->_load();
         $this->applications = $applications;
     }
 
@@ -56,11 +62,13 @@ class Tenant extends AbstractResource
 
     public function getDirectories()
     {
+        $this->_load();
         return $this->directories;
     }
 
-    public function setDirectories(Collection $directories)
+    public function setDirectories(ResourceCollection $directories)
     {
+        $this->_load();
         $this->directories = $directories;
     }
 
@@ -70,12 +78,13 @@ class Tenant extends AbstractResource
         $this->setName(isset($data['name']) ? $data['name']: null);
         $this->setKey(isset($data['key']) ? $data['key']: null);
 
-        $this->setApplications(new Collection($this->getResourceManager(), 'Stormpath\Resource\Application', $data['applications']['href']));
-        $this->setDirectories(new Collection($this->getResourceManager(), 'Stormpath\Resource\Directory', $data['directories']['href']));
+        $this->setApplications(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\Application', $data['applications']['href']));
+        $this->setDirectories(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\Directory', $data['directories']['href']));
     }
 
     public function getArrayCopy()
     {
+        $this->_load();
         return array(
             'href' => $this->getHref(),
             'name' => $this->getName(),

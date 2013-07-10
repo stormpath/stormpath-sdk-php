@@ -1,18 +1,23 @@
 <?php
 
-namespace Stormpath;
+namespace Stormpath\Collections;
 
-use ArrayIterator;
-use Stormpath\ResourceManager;
+use Closure, ArrayIterator;
+use Doctrine\Common\Collections\Expr\Expression;
+use Doctrine\Common\Collections\Expr\ClosureExpressionVisitor;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Selectable;
+use Doctrine\Common\Collections\Criteria;
+use Stormpath\Persistence\ResourceManager;
 
-class Collection
+class ResourceCollection implements Collection, Selectable
 {
-    private $resourceManager;
-    private $className;
-    private $href;
+    private $_resourceManager;
+    private $_className;
+    private $_href;
 
     private $_elements;
-    private $__isInitialized__ = false;
+    private $_isInitialized = false;
 
     public function __construct(ResourceManager $resourceManager, $className, $href)
     {
@@ -20,18 +25,38 @@ class Collection
         $this->setClassName($className);
         $this->setHref($href);
 
-        $__isInitialized__ = false;
+        $this->_isInitialized = false;
     }
 
     private function _load()
     {
-        if ($this->__isInitialized__) {
+        if ($this->_isInitialized) {
             return;
         }
 
-        $this->__isInitialized__ = true;
+        $this->_isInitialized = true;
 
-            die('loading collection');
+        $client = $this->getResourceManager()->getHttpClient();
+        // FIXME:  add support for pagination
+        $client->setUri($this->getHref());
+        $client->setMethod('GET');
+
+        $response = $client->send();
+
+        if ($response->isSuccess()) {
+            $className = $this->getClassName();
+            $body = json_decode($response->getBody(), true);
+            if (!isset($body['items'])) return;
+
+            foreach ($body['items'] as $data) {
+                $resource = new $className();
+                $resource->setResourceManager($this->getResourceManager());
+                $resource->exchangeArray($data);
+                $this->add($resource);
+            }
+        } else {
+            $this->getResourceManager()->handleInvalidResponse($response);
+        }
     }
 
     public function getResourceManager()
@@ -64,6 +89,17 @@ class Collection
     public function setHref($href)
     {
         $this->href = $href;
+    }
+
+    /**
+     * Gets the PHP array representation of this collection.
+     *
+     * @return array The PHP array representation of this collection.
+     */
+    public function toArray()
+    {
+        $this->_load();
+        return $this->_elements;
     }
 
     /**
@@ -121,6 +157,157 @@ class Collection
     {
         $this->_load();
         return current($this->_elements);
+    }
+
+    /**
+     * Removes an element with a specific key/index from the collection.
+     *
+     * @param mixed $key
+     * @return mixed The removed element or NULL, if no element exists for the given key.
+     */
+    public function remove($key)
+    {
+        $this->_load();
+        if (isset($this->_elements[$key])) {
+            $removed = $this->_elements[$key];
+            unset($this->_elements[$key]);
+
+            return $removed;
+        }
+
+        return null;
+    }
+
+    /**
+     * Removes the specified element from the collection, if it is found.
+     *
+     * @param mixed $element The element to remove.
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeElement($element)
+    {
+        $this->_load();
+        $key = array_search($element, $this->_elements, true);
+
+        if ($key !== false) {
+            unset($this->_elements[$key]);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * ArrayAccess implementation of offsetExists()
+     *
+     * @see containsKey()
+     *
+     * @param mixed $offset
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        $this->_load();
+        return $this->containsKey($offset);
+    }
+
+    /**
+     * ArrayAccess implementation of offsetGet()
+     *
+     * @see get()
+     *
+     * @param mixed $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        $this->_load();
+        return $this->get($offset);
+    }
+
+    /**
+     * ArrayAccess implementation of offsetSet()
+     *
+     * @see add()
+     * @see set()
+     *
+     * @param mixed $offset
+     * @param mixed $value
+     * @return bool
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->_load();
+        if ( ! isset($offset)) {
+            return $this->add($value);
+        }
+        return $this->set($offset, $value);
+    }
+
+    /**
+     * ArrayAccess implementation of offsetUnset()
+     *
+     * @see remove()
+     *
+     * @param mixed $offset
+     * @return mixed
+     */
+    public function offsetUnset($offset)
+    {
+        $this->_load();
+        return $this->remove($offset);
+    }
+
+    /**
+     * Checks whether the collection contains a specific key/index.
+     *
+     * @param mixed $key The key to check for.
+     * @return boolean TRUE if the given key/index exists, FALSE otherwise.
+     */
+    public function containsKey($key)
+    {
+        $this->_load();
+        return isset($this->_elements[$key]);
+    }
+
+    /**
+     * Checks whether the given element is contained in the collection.
+     * Only element values are compared, not keys. The comparison of two elements
+     * is strict, that means not only the value but also the type must match.
+     * For objects this means reference equality.
+     *
+     * @param mixed $element
+     * @return boolean TRUE if the given element is contained in the collection,
+     *          FALSE otherwise.
+     */
+    public function contains($element)
+    {
+        $this->_load();
+        foreach ($this->_elements as $collectionElement) {
+            if ($element === $collectionElement) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Tests for the existence of an element that satisfies the given predicate.
+     *
+     * @param Closure $p The predicate.
+     * @return boolean TRUE if the predicate is TRUE for at least one element, FALSE otherwise.
+     */
+    public function exists(Closure $p)
+    {
+        $this->_load();
+        foreach ($this->_elements as $key => $element) {
+            if ($p($key, $element)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -382,6 +569,4 @@ class Collection
 
         return new static($filtered);
     }
-
 }
-

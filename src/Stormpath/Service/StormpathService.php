@@ -7,7 +7,7 @@
 
 namespace Stormpath\Service;
 
-use Stormpath\ResourceManager;
+use Stormpath\Persistence\ResourceManager;
 use Stormpath\Http\Client\Adapter\Digest;
 use Stormpath\Http\Client\Adapter\Basic;
 use Zend\Http\Client;

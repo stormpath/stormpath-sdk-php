@@ -31,22 +31,9 @@ class StormpathServiceTest extends \PHPUnit_Framework_TestCase
         StormpathService::setHttpClient($client);
     }
 
-    public function testConfigureWithBasicAuthentication()
+    public function testFetchResourceManager()
     {
-
-        $resourceManager = StormpathService::getResourceManager();
-
-        $tenant = $resourceManager->getCurrentTenant();
-
-#        print_r($tenant->getArrayCopy());
-
-        $applications = $tenant->getApplications();
-
-        foreach ($applications as $a) {
-            echo 'asdfa';
-
-            die('iterate');
-        }
+        $this->assertTrue(StormpathService::getResourceManager() instanceof \Stormpath\Persistence\ResourceManager);
     }
 
     public function XtestConfigureWithDigestAuthentication()

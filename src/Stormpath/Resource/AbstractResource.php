@@ -2,46 +2,80 @@
 
 namespace Stormpath\Resource;
 
-use Stormpath\ResourceManager;
+use Stormpath\Persistence\ResourceManager;
 
 abstract class AbstractResource
 {
+    /**
+     * Set the $_url to the url to fetch a resource from for this resource type
+     *
+     * @required per resource
+     */
     protected $_url = '';
 
-    protected $resourceManager;
+    /**
+     * The instance of the resource manager which manages this resource
+     */
+    protected $_resourceManager;
 
-    private $__isInitialized__ = true;
+    /**
+     * When lazy loading is used this variable is set to false
+     * until the loading of the resource has occured
+     */
+    private $_isInitialized = true;
+
+    /**
+     * The id for this resource.  This variable is only used
+     * for lazy loading
+     */
     private $_identifier;
 
+    /**
+     * The true identifier of this resource.  Populated only after
+     * the resource has been loaded
+     */
+    private $id;
+
+    /**
+     * Get the resource manager managing this resource
+     */
     public function getResourceManager()
     {
-        return $this->resourceManager;
+        return $this->_resourceManager;
     }
 
+    /**
+     * Set the resource manager
+     */
     public function setResourceManager(ResourceManager $resourceManager)
     {
-        $this->resourceManager = $resourceManager;
+        $this->_resourceManager = $resourceManager;
         return $this;
     }
 
-
+    /**
+     * Initialize this resource for lazy loading
+     */
     public function _lazy($resourceManager, $identifier)
     {
-        $__isInitialized__ = false;
-        $this->setResourceManager($resourceManager);
+        $this->_isInitialized = false;
         $this->_identifier = $identifier;
+        $this->setResourceManager($resourceManager);
     }
 
+    /**
+     * Load a lazy initialized resource
+     */
     public function _load()
     {
-        $__isInitialized__ = true;
-
-        if (!$this->_identifier) {
+        if ($this->_isInitialized or !$this->_identifier) {
             return;
         }
 
-        $this->_resourceManager->load($this->_identifier, $this);
+        $this->_isInitialized = true;
+
         $this->setId($this->_identifier);
+        $this->_resourceManager->load($this->_identifier, $this);
 
         unset($this->_entityPersister, $this->_identifier);
     }
@@ -64,13 +98,16 @@ abstract class AbstractResource
         }
 
         if ($this->getId()) {
-            return $this->url . '/' . $this->getId();
+            return $this->_getUrl() . '/' . $this->getId();
         }
     }
 
     public function setHref($value)
     {
         $this->href = $value;
+
+        $this->setId(substr($value, strrpos($value, '/') + 1));
+
         return $this;
     }
 

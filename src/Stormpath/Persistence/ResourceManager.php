@@ -1,11 +1,13 @@
 <?php
 
-namespace Stormpath;
+namespace Stormpath\Persistence;
 
+use Stormpath\Resource;
 use Zend\Http\Client;
 use Zend\Http\Response;
+use Doctrine\Common\Persistence\ObjectManager;
 
-class ResourceManager
+class ResourceManager implements ObjectManager
 {
     private $httpClient;
 
@@ -14,35 +16,12 @@ class ResourceManager
         return $this->httpClient;
     }
 
-    public function setHttpClient(Client $value)
+    public function setHttpClient(Client $client)
     {
         # $client->setOptions(array('sslverifypeer' => false));
 
-        $this->httpClient = $value;
+        $this->httpClient = $client;
         return $this;
-    }
-
-    public function getCurrentTenant()
-    {
-        $client = $this->getHttpClient();
-        $client->setUri('https://api.stormpath.com/v1/tenants/current');
-        $client->setMethod('GET');
-
-        $body = $this->validateResponse($client->send());
-
-        $tenant = new Resource\Tenant();
-        $tenant->setResourceManager($this);
-        $tenant->exchangeArray(json_decode($body, true));
-
-        $this->persist($tenant);
-
-        return $tenant;
-    }
-
-    public function validateResponse(Response $response)
-    {
-
-        return $response->getBody();
     }
 
     public function find($className, $id) {
@@ -66,10 +45,19 @@ class ResourceManager
 
         $response = $client->send();
 
-        print_r($response);die();
+        if ($response->isSuccess()) {
+            $class->exchangeArray(json_decode($response->getBody(), true));
+        } else {
+            $this->handleInvalidResponse($response);
+        }
+    }
 
-#        return Json::decode($client->send()->getBody());
-
+    /**
+     * Handle all non 200 OK responses
+     */
+    public function handleInvalidResponse(Response $response)
+    {
+        throw new \Exception('Invalid response');
     }
 
     function persist($object)

@@ -36,6 +36,11 @@ $client->setAdapter($adapter);
 Stormpath::setHttpClient($client);
 ```
 
+Tenant
+------
+
+$resourceManager->find('Stormpath\Resource\Tenant', 'current');
+
 Testing
 -------
 Create a ```local.php``` file and set api parameters
