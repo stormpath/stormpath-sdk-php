@@ -52,17 +52,17 @@ class ResourceManager implements ObjectManager
         return $resource;
     }
 
+    // Fetches a GET and hydrates a class
     public function load($id, $class) {
-        // Fetches a GET and hydrates a class
-        $client = $this->getHttpClient();
-        $client->setUri($class->_getUrl() . '/' . $id);
-        $client->setMethod('GET');
-
         $cachedJson = $this->getCache()->getItem(get_class($class) . $id, $success);
 
         if ($success) {
             $class->exchangeArray(json_decode($cachedJson, true));
         } else {
+            $client = $this->getHttpClient();
+            $client->setUri($class->_getUrl() . '/' . $id);
+            $client->setMethod('GET');
+
             $response = $client->send();
 
             if ($response->isSuccess()) {
@@ -251,11 +251,11 @@ class ResourceManager implements ObjectManager
 
                 if ($response->isSuccess()) {
                     $resource->exchangeArray(json_decode($response->getBody(), true));
+                    $this->getCache()->setItem(get_class($resource) . $resource->getId(), $response->getBody());
                 } else {
                     $this->handleInvalidResponse($response);
                 }
 
-                $this->getCache()->removeItem(get_class($resource) . $resource->getId());
                 $this->update->removeElement($resource);
             }
         }
