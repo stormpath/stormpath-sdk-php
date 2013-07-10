@@ -5,6 +5,7 @@ namespace StormpathTest\Resource;
 use PHPUnit_Framework_TestCase;
 use Stormpath\Service\StormpathService;
 use Stormpath\Resource\Application;
+use Stormpath\Resource\Account;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,5 +52,39 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->application->setDescription($originalDescription);
         $resourceManager->persist($this->application);
         $resourceManager->flush();
+    }
+
+    public function testLoginAttempt()
+    {
+        $resourceManager = StormpathService::getResourceManager();
+
+        $username = md5(rand());
+        $password = md5(rand()) . strtoupper(md5(rand()));
+        $email = md5(rand()) . '@test.stormpath.com';
+
+        $account1 = new Account;
+        $account1->setUsername($username);
+        $account1->setEmail($email);
+        $account1->setPassword($password);
+        $account1->setGivenName('Test');
+        $account1->setMiddleName('User');
+        $account1->setSurname('One');
+        $account1->setApplication($this->application);
+        $account1->setStatus('ENABLED');
+
+        $resourceManager->persist($account1);
+        $resourceManager->flush();
+
+        // Test login attempt
+        $loginAttempt = new LoginAttempt;
+        $loginAttempt->setUsername($email);
+        $loginAttempt->setPassword($password);
+        $loginAttempt->setApplication($app);
+
+        $resourceManager->persist($loginAttempt);
+        $resourceManager->flush();
+
+        $this->assertTrue($loginAttempt->getAccount() instanceof Account);
+        $this->assertEquals($loginAttempt->getAccount()->getId(), $account1->getId());
     }
 }

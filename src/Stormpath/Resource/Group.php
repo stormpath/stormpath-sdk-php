@@ -17,9 +17,24 @@ class Group extends AbstractResource
     protected $status;
 
     protected $tenant;
-
     protected $directory;
-    protected $groups;
+
+    protected $accounts;
+    protected $accountMemberships;
+
+    /**
+     * When a group is created the _url is changed to the directory
+     * it is created under.  Therefore we reset the url when the Href is set.
+     */
+    public function setHref($value)
+    {
+        $this->_setUrl('https://api.stormpath.com/v1/groups');
+        $this->href = $value;
+
+        $this->setId(substr($value, strrpos($value, '/') + 1));
+
+        return $this;
+    }
 
     public function getName()
     {
@@ -86,17 +101,30 @@ class Group extends AbstractResource
         return $this->directory;
     }
 
-    public function setGroups(ResourceCollection $value)
+    public function setAccounts(ResourceCollection $value)
     {
         $this->_load();
-        $this->groups = $value;
+        $this->accounts = $value;
         return $this;
     }
 
-    public function getGroups()
+    public function getAccounts()
     {
         $this->_load();
-        return $this->groups;
+        return $this->accounts;
+    }
+
+    public function setAccountMemberships(ResourceCollection $value)
+    {
+        $this->_load();
+        $this->accountMemberships = $value;
+        return $this;
+    }
+
+    public function getAccountMemberships()
+    {
+        $this->_load();
+        return $this->accountMemberships;
     }
 
     public function exchangeArray($data)
@@ -114,7 +142,8 @@ class Group extends AbstractResource
         $directory->_lazy($this->getResourceManager(), substr($data['directory']['href'], strrpos($data['directory']['href'], '/') + 1));
         $this->setDirectory($directory);
 
-        $this->setGroups(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\Group', $data['groups']['href']));
+        $this->setAccounts(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\Account', $data['accounts']['href']));
+        $this->setAccountMemberships(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\GroupMembership', $data['accountMemberships']['href']));
     }
 
     public function getArrayCopy()

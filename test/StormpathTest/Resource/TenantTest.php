@@ -41,4 +41,28 @@ class TenantTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($tenant->getName());
         $this->assertNotEmpty($tenant->getKey());
     }
+
+    /**
+     * NOT A UNIT TEST
+     *
+     * This is a helper function to delete all applications from the current tenant
+     */
+    public function XtestDeleteAllApplicationsFromTenant()
+    {
+        $resourceManager = StormpathService::getResourceManager();
+
+        $tenant = $resourceManager->find('Stormpath\Resource\Tenant', 'current');
+
+        $count = 0;
+        foreach ($tenant->getApplications() as $application)
+        {
+            $resourceManager->remove($application);
+            $count ++;
+        }
+
+        $resourceManager->flush();
+
+        die("deleted $count applications");
+
+    }
 }

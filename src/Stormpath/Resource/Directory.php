@@ -99,12 +99,6 @@ class Directory extends AbstractResource
         return $this->tenant;
     }
 
-    public function addAccount(Account &$account)
-    {
-        $account->_setUrl('https://api.stormpath.com/v1/directories/' . $this->getId() . '/accounts');
-        $this->getResourceManager()->persist($account);
-    }
-
     public function exchangeArray($data)
     {
         $this->setHref(isset($data['href']) ? $data['href']: null);

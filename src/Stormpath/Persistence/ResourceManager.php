@@ -59,8 +59,9 @@ class ResourceManager implements ObjectManager
      */
     public function handleInvalidResponse(Response $response)
     {
-        print_r(get_class_methods($response));die();
-        throw new \Exception('Invalid response: ');
+        #print_r(get_class_methods($response));die();
+        $result = json_decode($response->getBody(), true);
+        throw new \Exception($result['code'] . ' (' . $result['status'] . ') ' . $result['message'] . "\n\n" . $result['developerMessage']);
     }
 
     function persist($object)
@@ -180,7 +181,17 @@ class ResourceManager implements ObjectManager
             foreach ($this->insert as $resource) {
                 switch(get_class($resource)) {
                     case 'Stormpath\Resource\Account':
-                        $resource->_setUrl('https://api.stormpath.com/v1/directories/' . $resource->getDirectory()->getId() . '/accounts');
+                        if ($resource->getDirectory()) {
+                            $resource->_setUrl('https://api.stormpath.com/v1/directories/' . $resource->getDirectory()->getId() . '/accounts');
+                        } else {
+                            $resource->_setUrl('https://api.stormpath.com/v1/applications/' . $resource->getApplication()->getId() . '/accounts');
+                        }
+                        break;
+                    case 'Stormpath\Resource\Group':
+                        $resource->_setUrl('https://api.stormpath.com/v1/directories/' . $resource->getDirectory()->getId() . '/groups');
+                        break;
+                    case 'Stormpath\Resource\LoginAttempt':
+                        $resource->_setUrl('https://api.stormpath.com/v1/applications/' . $resource->getApplication()->getId() . '/loginAttempts');
                         break;
                     default:
                         break;

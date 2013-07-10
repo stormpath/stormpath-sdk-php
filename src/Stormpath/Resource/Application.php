@@ -156,25 +156,4 @@ class Application extends AbstractResource
             'status' => $this->getStatus(),
         );
     }
-/*
-    public function registerApplication($options = array())
-    {
-        if (!ApiKey::getAccessId())
-            throw new \Exception('Get an API key');
-
-        $http = new Client();
-        $http->setUri(StormpathService::BASEURI .'/applications/'. ApiKey::getAccessId());
-        $http->setOptions(array('sslverifypeer' => false));
-        $http->setMethod('POST');
-
-        $options['name'] = self::getName();
-        $options['description'] = self::getDescription();
-        $options['status'] = self::getStatus();
-        $http->setParameterGet($options);
-
-        $response = $http->send();
-        return Json::decode($response->getBody());
-
-    }
-*/
 }

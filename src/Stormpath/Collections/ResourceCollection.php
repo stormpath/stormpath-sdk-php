@@ -19,6 +19,9 @@ class ResourceCollection implements Collection, Selectable
     private $_elements;
     private $_isInitialized = false;
 
+    private $offset = 0;
+    private $limit = 25;
+
     public function __construct(ResourceManager $resourceManager, $className, $href)
     {
         $this->setResourceManager($resourceManager);
@@ -34,12 +37,17 @@ class ResourceCollection implements Collection, Selectable
             return;
         }
 
+        $this->clear();
         $this->_isInitialized = true;
 
         $client = $this->getResourceManager()->getHttpClient();
         // FIXME:  add support for pagination
         $client->setUri($this->getHref());
         $client->setMethod('GET');
+        $client->setParameterGet(array(
+            'offset' => $this->getOffset(),
+            'limit' => $this->getLimit(),
+        ));
 
         $response = $client->send();
 
@@ -89,6 +97,28 @@ class ResourceCollection implements Collection, Selectable
     public function setHref($href)
     {
         $this->href = $href;
+    }
+
+    public function setOffset($value)
+    {
+        $this->offset = $value;
+        return $this;
+    }
+
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    public function setLimit($value)
+    {
+        $this->limit = $value;
+        return $this;
+    }
+
+    public function getLimit()
+    {
+        return $this->limit;
     }
 
     /**
@@ -511,7 +541,7 @@ class ResourceCollection implements Collection, Selectable
      */
     public function clear()
     {
-        $this->_load();
+        $this->_isInitialized = false;
         $this->_elements = array();
     }
 

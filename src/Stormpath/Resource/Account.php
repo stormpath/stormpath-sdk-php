@@ -7,6 +7,7 @@ use Stormpath\Service\StormpathService;
 use Stormpath\Collections\ResourceCollection;
 use Zend\Http\Client;
 use Zend\Json\Json;
+use Stormpath\Resource\Application;
 
 class Account extends AbstractResource
 {
@@ -22,6 +23,7 @@ class Account extends AbstractResource
     protected $groups;
     protected $directory;
     protected $tenant;
+    protected $application;
 
     /**
      * When an account is created the _url is changed to the directory
@@ -175,6 +177,22 @@ class Account extends AbstractResource
     {
         $this->_load();
         return $this->tenant;
+    }
+
+    /**
+     * Application is only used when creating a new account
+     *
+     * Directory or Application must be set to create.  Directory overrides Application.
+     */
+    public function setApplication(Application $value)
+    {
+        $this->application = $value;
+        return $this;
+    }
+
+    public function getApplication()
+    {
+        return $this->application;
     }
 
     public function exchangeArray($data)

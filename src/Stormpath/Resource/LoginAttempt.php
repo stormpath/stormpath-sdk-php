@@ -4,6 +4,7 @@ namespace Stormpath\Resource;
 
 use Stormpath\Resource\AbstractResource;
 use Stormpath\Service\StormpathService;
+use Stormpath\Resource\Account;
 
 class LoginAttempt extends AbstractResource
 {
@@ -12,45 +13,72 @@ class LoginAttempt extends AbstractResource
      */
     protected $_url = '';
 
-    protected $type;
-    protected $value;
+    protected $type = 'basic';
+    protected $username;
+    protected $password;
+
+    protected $application;
+    private $account;
+
+    public function setApplication(Application $value)
+    {
+        $this->application = $value;
+        return $this;
+    }
+
+    public function getApplication()
+    {
+        return $this->application;
+    }
 
     public function setType($value)
     {
-        $this->_load();
         $this->type = $value;
         return $this;
     }
 
     public function getType()
     {
-        $this->_load();
         return $this->type;
     }
 
-    public function setValue($value)
+    public function setUsername($value)
     {
-        $this->_load();
-        $this->value = $value;
+        $this->username = $value;
         return $this;
     }
 
-    public function getValue()
+    public function setPassword($value)
     {
-        $this->_load();
-        return $this->value;
+        $this->password = $value;
+        return $this;
+    }
+
+    private function getValue()
+    {
+        return base64_encode($this->username . ':' . $this->password);
+    }
+
+    private function setAccount(Account $value)
+    {
+        $this->account = $value;
+        return $this;
+    }
+
+    public function getAccount()
+    {
+        return $this->account;
     }
 
     public function exchangeArray($data)
     {
-        $this->setType(isset($data['type']) ? $data['type']: null);
-        $this->setValue(isset($data['value']) ? $data['value']: null);
+        $account = new Account;
+        $account->_lazy($this->getResourceManager(), substr($data['account']['href'], strrpos($data['account']['href'], '/') + 1));
+        $this->setAccount($account);
     }
 
     public function getArrayCopy()
     {
-        $this->_load();
-
         return array(
             'type' => $this->getType(),
             'value' => $this->getValue(),

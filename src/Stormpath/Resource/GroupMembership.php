@@ -53,7 +53,7 @@ class GroupMembership extends AbstractResource
 
         $group = new Group;
         $group->_lazy($this->getResourceManager(), substr($data['group']['href'], strrpos($data['group']['href'], '/') + 1));
-        $this->setGroup($tenant);
+        $this->setGroup($group);
     }
 
     public function getArrayCopy()
@@ -61,7 +61,12 @@ class GroupMembership extends AbstractResource
         $this->_load();
 
         return array(
-            'href' => $this->getHref(),
+            'account' => array(
+                'href' => $this->getAccount()->getHref(),
+            ),
+            'group' => array(
+                'href' => $this->getGroup()->getHref(),
+            ),
         );
     }
 }

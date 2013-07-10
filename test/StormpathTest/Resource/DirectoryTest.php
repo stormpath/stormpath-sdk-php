@@ -6,6 +6,10 @@ use PHPUnit_Framework_TestCase;
 use Stormpath\Service\StormpathService;
 use Stormpath\Resource\Directory;
 use Stormpath\Resource\Account;
+use Stormpath\Resource\Group;
+use Stormpath\Resource\GroupMembership;
+use Stormpath\Resource\LoginAttempt;
+use Stormpath\Resource\Application;
 
 class DirectoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -66,6 +70,7 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $account1->setMiddleName('User');
         $account1->setSurname('One');
         $account1->setDirectory($this->directory);
+        $account1->setStatus('ENABLED');
 
         $account2 = new Account;
         $account2->setUsername(md5(rand()));
@@ -75,6 +80,7 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $account2->setMiddleName('User');
         $account2->setSurname('Two');
         $account2->setDirectory($this->directory);
+        $account2->setStatus('ENABLED');
 
         $account3 = new Account;
         $account3->setUsername(md5(rand()));
@@ -84,6 +90,7 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $account3->setMiddleName('User');
         $account3->setSurname('Three');
         $account3->setDirectory($this->directory);
+        $account3->setStatus('ENABLED');
 
         $resourceManager->persist($account1);
         $resourceManager->persist($account2);
@@ -91,5 +98,79 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $resourceManager->flush();
 
         $this->assertEquals(3, sizeof($this->directory->getAccounts()));
+
+        // Clean Up
+        $resourceManager->remove($account1);
+        $resourceManager->remove($account2);
+        $resourceManager->remove($account3);
+        $resourceManager->flush();
+    }
+
+    public function testAddGroups()
+    {
+        $resourceManager = StormpathService::getResourceManager();
+
+        $groups = array();
+        for ($i = 0; $i <= 2; $i++) {
+            $group = new Group;
+            $group->setName(md5(rand()));
+            $group->setDescription('Test Group ' . $i);
+            $group->setStatus('ENABLED');
+            $group->setDirectory($this->directory);
+
+            $groups[] = $group;
+            $resourceManager->persist($group);
+        }
+
+        $resourceManager->flush();
+
+        $this->assertEquals(3, sizeof($this->directory->getGroups()));
+
+        // Clean Up
+        foreach ($groups as $group) {
+            $resourceManager->remove($group);
+        }
+
+        $resourceManager->flush();
+    }
+
+    public function testAssignAccountToGroup()
+    {
+        $resourceManager = StormpathService::getResourceManager();
+
+        $group1 = new Group;
+        $group1->setName(md5(rand()));
+        $group1->setDescription('Test Group One');
+        $group1->setStatus('ENABLED');
+        $group1->setDirectory($this->directory);
+
+        $username = md5(rand());
+        $password = md5(rand()) . strtoupper(md5(rand()));
+
+        $account1 = new Account;
+        $account1->setUsername($username);
+        $account1->setEmail(md5(rand()) . '@test.stormpath.com');
+        $account1->setPassword($password);
+        $account1->setGivenName('Test');
+        $account1->setMiddleName('User');
+        $account1->setSurname('One');
+        $account1->setDirectory($this->directory);
+
+        $resourceManager->persist($group1);
+        $resourceManager->persist($account1);
+        $resourceManager->flush();
+
+        $groupMembership = new GroupMembership();
+        $groupMembership->setGroup($group1);
+        $groupMembership->setAccount($account1);
+
+        $resourceManager->persist($groupMembership);
+        $resourceManager->flush();
+
+        // Clean Up
+        $resourceManager->remove($groupMembership);
+        $resourceManager->remove($group1);
+        $resourceManager->remove($account1);
+        $resourceManager->flush();
     }
 }
