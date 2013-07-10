@@ -23,6 +23,20 @@ class Account extends AbstractResource
     protected $directory;
     protected $tenant;
 
+    /**
+     * When an account is created the _url is changed to the directory
+     * it is created under.  Therefore we reset the url when the Href is set.
+     */
+    public function setHref($value)
+    {
+        $this->_setUrl('https://api.stormpath.com/v1/accounts');
+        $this->href = $value;
+
+        $this->setId(substr($value, strrpos($value, '/') + 1));
+
+        return $this;
+    }
+
     public function getUsername()
     {
         $this->_load();
@@ -44,6 +58,11 @@ class Account extends AbstractResource
 
     public function setEmail($value)
     {
+        $validator = new \Zend\Validator\EmailAddress();
+        if (!$validator->isValid($value)) {
+            throw new \Exception("Invalid email address");
+        }
+
         $this->_load();
         $this->email = $value;
         return $this;
@@ -57,6 +76,11 @@ class Account extends AbstractResource
 
     public function setPassword($value)
     {
+        if (strtolower($value) === $value
+            or strtoupper($value) === $value) {
+            throw new \Exception('Password must be mixed case');
+        }
+
         $this->_load();
         $this->password = $value;
         return $this;

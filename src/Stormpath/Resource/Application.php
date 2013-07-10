@@ -143,12 +143,14 @@ class Application extends AbstractResource
         $this->setPasswordResetTokens(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\PasswordResetToken', $data['passwordResetTokens']['href']));
     }
 
+    /**
+     * GetArrayCopy only returns those properties which can be updated
+     */
     public function getArrayCopy()
     {
         $this->_load();
 
         return array(
-            'href' => $this->getHref(),
             'name' => $this->getName(),
             'description' => $this->getDescription(),
             'status' => $this->getStatus(),

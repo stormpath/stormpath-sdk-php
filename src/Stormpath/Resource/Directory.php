@@ -7,9 +7,12 @@ use Stormpath\Service\StormpathService;
 use Stormpath\Collections\ResourceCollection;
 use Zend\Http\Client;
 use Zend\Json\Json;
+use Stormpath\Resource\Account;
 
 class Directory extends AbstractResource
 {
+    protected $_url = 'https://api.stormpath.com/v1/directories';
+
     protected $name;
     protected $description;
     protected $status;
@@ -96,6 +99,12 @@ class Directory extends AbstractResource
         return $this->tenant;
     }
 
+    public function addAccount(Account &$account)
+    {
+        $account->_setUrl('https://api.stormpath.com/v1/directories/' . $this->getId() . '/accounts');
+        $this->getResourceManager()->persist($account);
+    }
+
     public function exchangeArray($data)
     {
         $this->setHref(isset($data['href']) ? $data['href']: null);
@@ -116,7 +125,6 @@ class Directory extends AbstractResource
         $this->_load();
 
         return array(
-            'href' => $this->getHref(),
             'name' => $this->getName(),
             'description' => $this->getDescription(),
             'status' => $this->getStatus(),

@@ -41,26 +41,4 @@ class TenantTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($tenant->getName());
         $this->assertNotEmpty($tenant->getKey());
     }
-
-    public function testTenantApplicationsCollection()
-    {
-        $resourceManager = StormpathService::getResourceManager();
-
-        $tenant = $resourceManager->find('Stormpath\Resource\Tenant', 'current');
-
-        $this->assertGreaterThan(0, sizeof($tenant->getApplications()));
-    }
-
-    public function testTenantApplicationTenantIsTenant()
-    {
-        $resourceManager = StormpathService::getResourceManager();
-
-        $tenant = $resourceManager->find('Stormpath\Resource\Tenant', 'current');
-
-        foreach ($tenant->getApplications() as $application)
-        {
-            print_r($application->getTenant()->getArrayCopy());die();
-        }
-
-    }
 }

@@ -37,6 +37,11 @@ abstract class AbstractResource
     private $id;
 
     /**
+     * The url primary key
+     */
+    private $href;
+
+    /**
      * Get the resource manager managing this resource
      */
     public function getResourceManager()
@@ -66,16 +71,17 @@ abstract class AbstractResource
     /**
      * Load a lazy initialized resource
      */
-    public function _load()
+    public function _load($overrideIdentifierAndForceLoad = false)
     {
-        if ($this->_isInitialized or !$this->_identifier) {
+        if (!$overrideIdentifierAndForceLoad
+            and ($this->_isInitialized or !$this->_identifier)) {
             return;
         }
 
         $this->_isInitialized = true;
 
-        $this->setId($this->_identifier);
-        $this->_resourceManager->load($this->_identifier, $this);
+        $this->setId($overrideIdentifierAndForceLoad ?: $this->_identifier);
+        $this->_resourceManager->load($this->getId(), $this);
 
         unset($this->_entityPersister, $this->_identifier);
     }
@@ -85,7 +91,7 @@ abstract class AbstractResource
         return $this->id;
     }
 
-    private function setId($value)
+    protected function setId($value)
     {
         $this->id = $value;
         return $this;
@@ -114,6 +120,12 @@ abstract class AbstractResource
     public function _getUrl()
     {
         return $this->_url;
+    }
+
+    public function _setUrl($value)
+    {
+        $this->_url = $value;
+        return $this;
     }
 
     abstract public function exchangeArray($values);

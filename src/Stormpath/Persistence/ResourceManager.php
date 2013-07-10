@@ -6,10 +6,14 @@ use Stormpath\Resource;
 use Zend\Http\Client;
 use Zend\Http\Response;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class ResourceManager implements ObjectManager
 {
     private $httpClient;
+    private $delete;
+    private $insert;
+    private $update;
 
     public function getHttpClient()
     {
@@ -29,10 +33,8 @@ class ResourceManager implements ObjectManager
         $resource->_lazy($this, $id);
 
         // Because this function can be called arbitrarily load the resource
-        // to verify it exists
+        // immediatly and to verify it exists
         $resource->_load();
-
-        $this->persist($resource);
 
         return $resource;
     }
@@ -57,12 +59,25 @@ class ResourceManager implements ObjectManager
      */
     public function handleInvalidResponse(Response $response)
     {
-        throw new \Exception('Invalid response');
+        print_r(get_class_methods($response));die();
+        throw new \Exception('Invalid response: ');
     }
 
     function persist($object)
     {
+        if (!$this->insert) {
+            $this->insert = new ArrayCollection;
+        }
 
+        if (!$this->update) {
+            $this->update = new ArrayCollection;
+        }
+
+        if ($object->getId()) {
+            $this->update->add($object);
+        } else {
+            $this->insert->add($object);
+        }
     }
 
     /**
@@ -74,7 +89,14 @@ class ResourceManager implements ObjectManager
      */
     function remove($object)
     {
+        if (!$this->delete) {
+            $this->delete = new ArrayCollection;
+        }
 
+        if ($object->getId()) {
+            // Objects with no id have not been created
+            $this->delete->add($object);
+        }
     }
 
     /**
@@ -87,7 +109,7 @@ class ResourceManager implements ObjectManager
      */
     function merge($object)
     {
-
+        throw new \Exception('Merge not implemented');
     }
 
     /**
@@ -98,7 +120,9 @@ class ResourceManager implements ObjectManager
      */
     function clear($objectName = null)
     {
-
+        $this->insert = new ArrayCollection;
+        $this->update = new ArrayCollection;
+        $this->delete = new ArrayCollection;
     }
 
     /**
@@ -112,7 +136,26 @@ class ResourceManager implements ObjectManager
      */
     function detach($object)
     {
+        if ($this->insert) {
+            if ($this->insert->contains($object)) {
+                $this->insert->removeElement($object);
+                return;
+            }
+        }
 
+        if ($this->update) {
+            if ($this->update->contains($object)) {
+                $this->update->removeElement($object);
+                return;
+            }
+        }
+
+        if ($this->delete) {
+            if ($this->delete->contains($object)) {
+                $this->delete->removeElement($object);
+                return;
+            }
+        }
     }
 
     /**
@@ -123,7 +166,7 @@ class ResourceManager implements ObjectManager
      */
     function refresh($object)
     {
-
+        $object->_load($object->getId());
     }
 
     /**
@@ -133,8 +176,78 @@ class ResourceManager implements ObjectManager
      */
     function flush()
     {
+        if ($this->insert) {
+            foreach ($this->insert as $resource) {
+                switch(get_class($resource)) {
+                    case 'Stormpath\Resource\Account':
+                        $resource->_setUrl('https://api.stormpath.com/v1/directories/' . $resource->getDirectory()->getId() . '/accounts');
+                        break;
+                    default:
+                        break;
+                }
+                // Create a resource
+                $client = $this->getHttpClient();
+                $client->setUri($resource->_getUrl());
+                $client->setMethod('POST');
 
+                $client->setRawBody(json_encode($resource->getArrayCopy()));
+                $response = $client->send();
+
+                if ($response->isSuccess()) {
+                    $resource->setResourceManager($this);
+                    $newProperties = json_decode($response->getBody(), true);
+                    $resource->exchangeArray($newProperties);
+                } else {
+                    $this->handleInvalidResponse($response);
+                }
+
+                $this->insert->removeElement($resource);
+            }
+        }
+
+        if ($this->update) {
+            foreach ($this->update as $resource) {
+                $resource->_load();
+
+                // Delete a resource
+                $client = $this->getHttpClient();
+                $client->setUri($resource->getHref());
+                $client->setMethod('POST');
+
+                $client->setRawBody(json_encode($resource->getArrayCopy()));
+                $response = $client->send();
+
+                if ($response->isSuccess()) {
+                    $resource->exchangeArray(json_decode($response->getBody(), true));
+                } else {
+                    $this->handleInvalidResponse($response);
+                }
+
+                $this->update->removeElement($resource);
+            }
+        }
+
+        if ($this->delete) {
+            foreach ($this->delete as $resource) {
+                $resource->_load();
+
+                // Delete a resource
+                $client = $this->getHttpClient();
+                $client->setUri($resource->getHref());
+                $client->setMethod('DELETE');
+
+                $response = $client->send();
+
+                if ($response->isSuccess()) {
+                } else {
+                    $this->handleInvalidResponse($response);
+                }
+
+                $this->delete->removeElement($resource);
+            }
+        }
     }
+
 
     /**
      * Gets the repository for a class.
