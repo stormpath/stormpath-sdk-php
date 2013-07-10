@@ -8,18 +8,15 @@ use Stormpath\Collections\ResourceCollection;
 use Zend\Http\Client;
 use Zend\Json\Json;
 
-class Application extends AbstractResource
+class Directory extends AbstractResource
 {
-    protected $_url = 'https://api.stormpath.com/v1/applications';
-
     protected $name;
     protected $description;
     protected $status;
-    protected $tenant;
+
     protected $accounts;
     protected $groups;
-    protected $loginAttempts;
-    protected $passwordResetTokens;
+    protected $tenant;
 
     public function getName()
     {
@@ -60,19 +57,6 @@ class Application extends AbstractResource
         return $this;
     }
 
-    public function setTenant(Tenant $value)
-    {
-        $this->_load();
-        $this->tenant = $value;
-        return $this;
-    }
-
-    public function getTenant()
-    {
-        $this->_load();
-        return $this->tenant;
-    }
-
     public function setAccounts(ResourceCollection $value)
     {
         $this->_load();
@@ -99,30 +83,17 @@ class Application extends AbstractResource
         return $this->groups;
     }
 
-    public function setLoginAttempts(ResourceCollection $value)
+    public function setTenant(Tenant $value)
     {
         $this->_load();
-        $this->loginAttempts = $value;
+        $this->tenant = $value;
         return $this;
     }
 
-    public function getLoginAttempts()
+    public function getTenant()
     {
         $this->_load();
-        return $this->loginAttempts;
-    }
-
-    public function setPasswordResetTokens(ResourceCollection $value)
-    {
-        $this->_load();
-        $this->passwordResetTokens = $value;
-        return $this;
-    }
-
-    public function getPasswordResetTokens()
-    {
-        $this->_load();
-        return $this->passwordResetTokens;
+        return $this->tenant;
     }
 
     public function exchangeArray($data)
@@ -132,15 +103,12 @@ class Application extends AbstractResource
         $this->setDescription(isset($data['description']) ? $data['description']: null);
         $this->setStatus(isset($data['status']) ? $data['status']: null);
 
-        $tenant = new \Stormpath\Resource\Tenant;
-        $tenant->_lazy($this->getResourceManager(), substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1));
-
-        $this->setTenant($tenant);
-
         $this->setAccounts(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\Account', $data['accounts']['href']));
         $this->setGroups(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\Group', $data['groups']['href']));
-        $this->setLoginAttempts(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\LoginAttempt', $data['loginAttempts']['href']));
-        $this->setPasswordResetTokens(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\PasswordResetToken', $data['passwordResetTokens']['href']));
+
+        $tenant = new \Stormpath\Resource\Tenant;
+        $tenant->_lazy($this->getResourceManager(), substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1));
+        $this->setTenant($tenant);
     }
 
     public function getArrayCopy()
@@ -154,25 +122,4 @@ class Application extends AbstractResource
             'status' => $this->getStatus(),
         );
     }
-/*
-    public function registerApplication($options = array())
-    {
-        if (!ApiKey::getAccessId())
-            throw new \Exception('Get an API key');
-
-        $http = new Client();
-        $http->setUri(StormpathService::BASEURI .'/applications/'. ApiKey::getAccessId());
-        $http->setOptions(array('sslverifypeer' => false));
-        $http->setMethod('POST');
-
-        $options['name'] = self::getName();
-        $options['description'] = self::getDescription();
-        $options['status'] = self::getStatus();
-        $http->setParameterGet($options);
-
-        $response = $http->send();
-        return Json::decode($response->getBody());
-
-    }
-*/
 }
