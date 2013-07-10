@@ -85,34 +85,4 @@ class StormpathService
 
         return $resourceManager;
     }
-
-/*
-    public static function register($name, $description = '', $status = 'enabled')
-    {
-        switch ($status) {
-            case 'enabled':
-            case 'disabled':
-                break;
-            default:
-                throw new \Exception('Invalid application status');
-        }
-
-        $client = self::getHttpClient();
-        $client->setUri(self::BASEURI . '/applications');
-        $client->setMethod('POST');
-        $client->setOptions(array('sslverifypeer' => false));
-        $client->setRawBody(Json::encode(array(
-            'name' => $name,
-            'description' => $description,
-            'status' => $status,
-        )));
-
-        try {
-            $response = $client->send();
-        } catch (\Exception $e) {
-
-        }
-        return Json::decode($client->send()->getBody());
-    }
-*/
 }
