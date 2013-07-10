@@ -1,6 +1,8 @@
-# Stormpath SDK for PHP
+# Stormpath Client for PHP
 
 For additional information, please see the full [Project Documentation](https://www.stormpath.com/docs/php/product-guide).
+
+[![Build Status](https://travis-ci.org/TomHAnderson/stormpath-sdk-php.png)](https://travis-ci.org/TomHAnderson/stormpath-sdk-php)
 
 Installation
 ------------
@@ -304,6 +306,8 @@ Collections
 Group
 -----
 
+You must set a Directory before persisting a new Group.
+
 Editable setters are
 
 ```
@@ -342,7 +346,7 @@ Setters used when created
 Login Attempt
 -------------
 
-A login attempt is the Resource to use when you want to authenticate a user by username and password against an application.
+A login attempt is the Resource to use when you want to authenticate a user by username and password against an application.  All three parameters are required.
 
 ```
     $loginAttempt = new LoginAttempt;

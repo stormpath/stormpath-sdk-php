@@ -86,5 +86,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($loginAttempt->getAccount() instanceof Account);
         $this->assertEquals($loginAttempt->getAccount()->getId(), $account1->getId());
+
+        $resourceManager->remove($account1);
+        $resourceManager->flush();
     }
 }
