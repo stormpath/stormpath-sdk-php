@@ -37,14 +37,14 @@ class CacheTest extends \PHPUnit_Framework_TestCase
         $cachedJson = $resourceManager->getCache()->getItem(get_class($dir) . $dir->getId(), $success);
         $this->assertTrue($success);
 
-        // Update resource to clear cache
+        // Update resource to update cache
         $dir->setDescription('phpunit changed description');
 
         $resourceManager->persist($dir);
         $resourceManager->flush();
 
         $cachedJson = $resourceManager->getCache()->getItem(get_class($dir) . $dir->getId(), $success);
-        $this->assertFalse($success);
+        $this->assertTrue($success);
 
         $dirCopy = $resourceManager->find('Stormpath\Resource\Directory', $dir->getId());
 
@@ -54,5 +54,8 @@ class CacheTest extends \PHPUnit_Framework_TestCase
         // Clean Up
         $resourceManager->remove($dir);
         $resourceManager->flush();
+
+        $cachedJson = $resourceManager->getCache()->getItem(get_class($dir) . $dir->getId(), $success);
+        $this->assertFalse($success);
     }
 }
