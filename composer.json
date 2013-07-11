@@ -23,7 +23,12 @@
         {
             "name": "Vinay Gnaesh",
             "email": "vganesh@soliantconsulting.com"
+        },
+        {
+            "name" : "Matthew Vargeson",
+            "email": "mvargeson@soliantconsulting.com"
         }
+
     ],
     "require-dev": {
         "zendframework/zendframework": ">=2.2",
@@ -35,7 +40,8 @@
         "zendframework/zend-json": ">=2.2",
         "rhumsaa/uuid": "2.*",
         "moontoast/math": "1.1.0",
-        "zendframework/zend-config" : ">=2.2"
+        "zendframework/zend-config" : ">=2.2",
+        "zendframework/zend-cache" : ">=2.2"
     },
     "autoload": {
         "psr-0": {
