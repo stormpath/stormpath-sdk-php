@@ -2,7 +2,7 @@
 
 namespace Stormpath\Resource;
 
-class EmailVerificationToken extends InstanceResource
+class EmailVerificationToken extends Instance
 {
-
+	
 }

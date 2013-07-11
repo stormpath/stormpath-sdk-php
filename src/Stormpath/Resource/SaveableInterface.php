@@ -2,7 +2,8 @@
 
 namespace Stormpath\Resource;
 
-interface Saveable
+interface SaveableInterface
 {
     public function save();
+    public function delete();
 }
