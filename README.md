@@ -18,41 +18,9 @@ Installation
     
 Use
 ---
-Configure a new application
-```
-Stormpath::configure($id, $secret);
-Stormpath::register('New Name', 'Description', 'enabled'); 
-```
-
-Enable Basic authentication instead of Digest
-```
-use Zend\Http\Client;
-use Stormpath\Http\Client\Adapter\Basic;
-
-Stormpath::configure($id, $secret);
-$client = new Client();
-$adapter = new Basic();
-$client->setAdapter($adapter);
-Stormpath::setHttpClient($client);
-```
 
 Testing
 -------
-Create a ```local.php``` file and set api parameters
-
-```
-<?php
-// ~/test/autoload/local.php
-
-return array(
-    'stormpath' => array(
-        'id' => 'stormpath_id',
-        'secret' => 'stormpath_secret',
-    ),
-);
-```
-
-
 This project is licensed under the [Apache 2.0 Open Source License](http://www.apache.org/licenses/LICENSE-2.0).
 
 Copyright &copy; 2013 Stormpath, Inc. and contributors.  
