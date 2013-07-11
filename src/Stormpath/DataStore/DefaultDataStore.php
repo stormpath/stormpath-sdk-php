@@ -11,15 +11,19 @@ use Stormpath\Resource\Resource;
 use Stormpath\Resource\Error;
 use Stormpath\Resource\ResourceError;
 use Stormpath\Util\Version;
+use Zend\Cache\Storage\StorageInterface;
+use Zend\Cache\StorageFactory;
 
-
-class DefaultDataStore
-    implements InternalDataStore
+class DefaultDataStore implements InternalDataStore
 {
 
     private $requestExecutor;
     private $resourceFactory;
     private $baseUrl;
+	private $cache;
+	public $CACHE_REGIONS = array("applications", "directories", "accounts", "groups", "groupMemberships", "tenants");
+
+	private $regionOptions = array();
 
     const DEFAULT_SERVER_HOST = 'api.stormpath.com';
     const DEFAULT_API_VERSION = '1';
@@ -37,6 +41,8 @@ class DefaultDataStore
         {
            $this->baseUrl = $baseUrl;
         }
+
+		$this->cache  = StorageFactory::adapterFactory('apc');
 
     }
 
@@ -110,7 +116,7 @@ class DefaultDataStore
 
         if (!strlen($href))
         {
-            throw new InvalidArgumentException('save may only be called on objects that have already been persisted (i.e. they have an existing href).');
+            throw new \InvalidArgumentException('save may only be called on objects that have already been persisted (i.e. they have an existing href).');
         }
 
         if ($this->needsToBeFullyQualified($href))
@@ -160,6 +166,8 @@ class DefaultDataStore
         $this->applyDefaultRequestHeaders($request);
 
         $response = $this->requestExecutor->executeRequest($request);
+
+
 
         $result = $response->getBody() ? json_decode($response->getBody()) : '';
 

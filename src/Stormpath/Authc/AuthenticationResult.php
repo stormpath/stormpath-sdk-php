@@ -11,7 +11,6 @@ class AuthenticationResult extends Resource
 
     public function getAccount()
     {
-
         return $this->getResourceProperty(self::ACCOUNT, StormpathService::ACCOUNT);
     }
 }

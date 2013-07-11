@@ -2,7 +2,7 @@
 
 namespace Stormpath\Resource;
 
-class ResourceError extends RuntimeException
+class ResourceError extends \RuntimeException
 {
     private $error;
     

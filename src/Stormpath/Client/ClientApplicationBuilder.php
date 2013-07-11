@@ -23,8 +23,8 @@ class ClientApplicationBuilder
         {
             if (!($clientBuilder instanceof ClientBuilder))
             {
-                throw new InvalidArgumentException("'\$clientBuilder' must be an instance of " .
-                    "Services_Stormpath_Client_ClientBuilder when provided.");
+                throw new \InvalidArgumentException("'\$clientBuilder' must be an instance of " ."ClientBuilder when provided.");
+
             }
         }
 
@@ -225,7 +225,7 @@ class ClientApplicationBuilder
 
         if (!$href)
         {
-            throw new InvalidArgumentException("'\$applicationHref' property must be specified when using this builder implementation.");
+            throw new \InvalidArgumentException("'\$applicationHref' property must be specified when using this builder implementation.");
         }
 
         $cleanedHref = $href;
@@ -262,19 +262,19 @@ class ClientApplicationBuilder
     {
         if (!is_string($href))
         {
-            throw new InvalidArgumentException('$href must be a string');
+            throw new \InvalidArgumentException('$href must be a string');
         }
 
         if (!is_int($atSignIndex))
         {
-            throw new InvalidArgumentException('$atSignIndex must be an int');
+            throw new \InvalidArgumentException('$atSignIndex must be an int');
         }
 
         $doubleSlashIndex = strpos($href, self::DOUBLE_SLASH);
 
         if ($doubleSlashIndex === false)
         {
-            throw new InvalidArgumentException('Invalid application href URL');
+            throw new \InvalidArgumentException('Invalid application href URL');
         }
 
         $doubleSlashIndex = $doubleSlashIndex + strlen(self::DOUBLE_SLASH);
@@ -290,12 +290,12 @@ class ClientApplicationBuilder
     {
         if (!is_array($pair))
         {
-            throw new InvalidArgumentException('$pair must be an array');
+            throw new \InvalidArgumentException('$pair must be an array');
         }
 
         if (count($pair) != 2)
         {
-            throw new InvalidArgumentException('$applicationHref userInfo segment must consist' .
+            throw new \InvalidArgumentException('$applicationHref userInfo segment must consist' .
                 ' of the following format: apiKeyId:apiKeySecret');
         }
 

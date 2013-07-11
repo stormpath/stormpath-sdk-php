@@ -3,7 +3,7 @@
 namespace Stormpath\Client;
 
 use Stormpath\Client\Client;
-use Stormpath\Resource\Resource\Application;
+use Stormpath\Resource\Application;
 
 class ClientApplication
 {
@@ -11,7 +11,6 @@ class ClientApplication
     private $application;
 
     public function __construct(Client $client,Application $application)
-
     {
         $this->client = $client;
         $this->application = $application;

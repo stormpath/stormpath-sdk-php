@@ -19,7 +19,7 @@ class DefaultResourceFactory implements ResourceFactory
 
     public function instantiate($className, array $constructorArgs)
     {
-        $class = new ReflectionClass($this->qualifyClassName($className));
+        $class = new \ReflectionClass($this->qualifyClassName($className));
 
         array_unshift($constructorArgs, $this->dataStore);
 

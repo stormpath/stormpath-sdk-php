@@ -8,43 +8,73 @@ use Zend\Http\Response as Res;
 use Stormpath\Http\Request;
 use Stormpath\Client\ApiKey;
 use Zend\Json\Json;
-use Stormpath\Authc\Digest;
-use Stormpath\Authc\Basic;
+use Stormpath\Http\Client\Adapter\Digest;
+use Stormpath\Http\Client\Adapter\Basic;
 use Stormpath\Service\StormpathService;
+use Zend\Navigation\Exception\InvalidArgumentException;
+use Zend\Cache\StorageFactory;
+use Zend\Cache\Storage\StorageInterface;
 
 class HttpClientRequestExecutor implements RequestExecutor
 {
 	public $httpClient;
 	public $apiKey;
+	public $cache;
 
     public function __construct(ApiKey $apiKey = null)
     {
-        $this->httpClient = new Client();
+        $httpClient = new Client();
 
-        if ($apiKey)
-        {
+        if($apiKey) {
             $this->apiKey = $apiKey;
 			//need to make a provision for the users to choose the authentication type
 			$adapter = new Basic($this->apiKey);
-			$this->httpClient->setAdapter($adapter);
+			$httpClient->setAdapter($adapter);
 
-            $this->httpClient->setOptions(array('ssl_verify_peer' => FALSE,
+            $httpClient->setOptions(array('ssl_verify_peer' => FALSE,
                                                'ssl_verify_host' => FALSE));
         }
+		else {
+				throw new InvalidArgumentException();
+		}
 
+		$this->setHttpClient($httpClient);
     }
+
+	public function getHttpClient()
+	{
+		return $this->httpClient;
+	}
+
+	public function setHttpClient(Client $client)
+	{
+		$this->httpClient = $client;
+		return $this;
+	}
+
+	public function getCache()
+	{
+		return $this->cache;
+	}
+
+	public function setCache(StorageInterface $cache)
+	{
+		$this->cache = $cache;
+	}
+
 	/*
 	 * This method uses the Zend Request and Response class
 	 * It does not use any of the existing Http classes
 	 */
 	public function zendExecuteRequest(Req $request, $redirectsLimit = 10)
 	{
-		$this->httpClient->setUri($request->getUriString());
+		$client = $this->getHttpClient();
+		$client->setUri($request->getUriString());
 		$this->addQueryString($request->getQuery());
-		$this->httpClient->setMethod($request->getMethod());
-		$this->httpClient->setRawBody($request->getContent());
-		$this->httpClient->setHeaders($request->getHeaders());
-		$response = $this->httpClient->send();
+		$client->setMethod($request->getMethod());
+		$client->setRawBody($request->getContent());
+		$client->setHeaders($request->getHeaders());
+		$response = $$client->send();
 		if ($response->isRedirect() && $redirectsLimit)
 		{
 			$request->setUri($response->getHeaders('location'));
