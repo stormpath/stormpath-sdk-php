@@ -6,7 +6,7 @@ use Stormpath\Service\StormpathService;
 use Stormpath\Authc\AuthenticationRequest;
 use Stormpath\Authc\BasicAuthenticator;
 
-class Application extends InstanceResource
+class Application extends Instance
 {
     const NAME                  = "name";
     const DESCRIPTION           = "description";
@@ -14,61 +14,55 @@ class Application extends InstanceResource
     const TENANT                = "tenant";
     const ACCOUNTS              = "accounts";
     const PASSWORD_RESET_TOKENS = "passwordResetTokens";
-
+    
     public function getName()
     {
-
         return $this->getProperty(self::NAME);
     }
-
+    
     public function setName($name)
     {
         $this->setProperty(self::NAME, $name);
     }
-
+    
     public function getDescription()
     {
-
         return $this->getProperty(self::DESCRIPTION);
     }
-
+    
     public function setDescription($description)
     {
         $this->setProperty(self::DESCRIPTION, $description);
     }
-
+    
     public function getStatus()
     {
         $value = $this->getProperty(self::STATUS);
-
-        if ($value)
-        {
+        
+        if ($value) {
             $value = strtoupper($value);
         }
-
+        
         return $value;
     }
-
+    
     public function setStatus($status)
     {
-        if (array_key_exists($status, StormpathService::$Statuses))
-        {
+        if (array_key_exists($status, StormpathService::$Statuses)) {
             $this->setProperty(self::STATUS, StormpathService::$Statuses[$status]);
         }
     }
-
+    
     public function getTenant()
     {
-
         return $this->getResourceProperty(self::TENANT, StormpathService::TENANT);
     }
-
+    
     public function getAccounts()
     {
-
         return $this->getResourceProperty(self::ACCOUNTS, StormpathService::ACCOUNT_LIST);
     }
-
+    
     /**
      * Sends a password reset email for the specified account username or email address.  The email will contain
      * a password reset link that the user can click or copy into their browser address bar.
@@ -84,10 +78,10 @@ class Application extends InstanceResource
     public function sendPasswordResetEmail($accountUsernameOrEmail)
     {
         $passwordResetToken = $this->createPasswordResetToken($accountUsernameOrEmail);
-
+        
         return $passwordResetToken->getAccount();
     }
-
+    
     /**
      * Verifies a password reset token in a user-clicked link within an email.
      * <p/>
@@ -124,20 +118,18 @@ class Application extends InstanceResource
      */
     public function verifyPasswordResetToken($token)
     {
+        $passwordResetProps = new stdClass();
+        
         $href = $this->getPasswordResetTokensHref();
         $href .= '/' .$token;
-
-        $passwordResetProps = new stdClass();
-
         $hrefName = self::HREF_PROP_NAME;
-
         $passwordResetProps->$hrefName = $href;
-
+        
         $passwordResetToken = $this->getDataStore()->instantiate(StormpathService::PASSWORD_RESET_TOKEN, $passwordResetProps);
-
+        
         return $passwordResetToken->getAccount();
     }
-
+    
     /**
      * Authenticates an account's submitted principals and credentials (e.g. username and password).  The account must
      * be in one of the Application's
@@ -161,31 +153,29 @@ class Application extends InstanceResource
     public function authenticateAccount(AuthenticationRequest $request)
     {
         $basicAuthenticator = new BasicAuthenticator($this->getDataStore());
-
+        
 		return $basicAuthenticator->authenticate($this->getHref(), $request);
     }
-
+    
     private  function createPasswordResetToken($accountUsernameOrEmail)
     {
         $href = $this->getPasswordResetTokensHref();
-
+        
         $passwordResetProps = new stdClass();
-
         $passwordResetProps->email = $accountUsernameOrEmail;
-
+        
         $passwordResetToken = $this->getDataStore()->instantiate(StormpathService::PASSWORD_RESET_TOKEN, $passwordResetProps);
-
+        
         return $this->getDataStore()->create($href, $passwordResetToken, StormpathService::PASSWORD_RESET_TOKEN);
     }
-
+    
     private function getPasswordResetTokensHref()
     {
         $passwordResetTokensRef = $this->getProperty(self::PASSWORD_RESET_TOKENS);
-
-        if ($passwordResetTokensRef)
-        {
+        
+        if ($passwordResetTokensRef) {
             $hrefName = self::HREF_PROP_NAME;
-
+            
             return $passwordResetTokensRef->$hrefName;
         }
     }
