@@ -9,9 +9,15 @@ Installation
   1. edit `composer.json` file with following contents:
 
      ```json
-     "require": {
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/TomHAnderson/StormpathClient-PHP"
+        }
+    ],
+    "require": {
         "stormpath/stormpath-tha": "dev-master"
-     }
+    }
      ```
   2. install composer via `curl -s http://getcomposer.org/installer | php` (on windows, download
      http://getcomposer.org/installer and execute it with PHP)
