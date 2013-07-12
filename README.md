@@ -1,6 +1,7 @@
 # Stormpath Client for PHP
 
 [![Build Status](https://travis-ci.org/TomHAnderson/stormpath-sdk-php.png)](https://travis-ci.org/TomHAnderson/stormpath-sdk-php)
+[![Dependency Status](https://www.versioneye.com/user/projects/51e052589041060002005a07/badge.png)](https://www.versioneye.com/user/projects/51e052589041060002005a07)
 
 Installation
 ------------
