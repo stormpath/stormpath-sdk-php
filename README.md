@@ -1,7 +1,5 @@
 # Stormpath Client for PHP
 
-For additional information, please see the full [Project Documentation](https://www.stormpath.com/docs/php/product-guide).
-
 [![Build Status](https://travis-ci.org/TomHAnderson/stormpath-sdk-php.png)](https://travis-ci.org/TomHAnderson/stormpath-sdk-php)
 
 Installation
@@ -16,7 +14,7 @@ Installation
         }
     ],
     "require": {
-        "stormpath/stormpath-tha": "dev-master"
+        "stormpath/stormpath": "dev-master"
     }
      ```
   2. install composer via `curl -s http://getcomposer.org/installer | php` (on windows, download
@@ -412,6 +410,7 @@ return array(
 );
 ```
 
+For additional information, please see the [Product Guide](https://www.stormpath.com/docs/php/product-guide).
 
 This project is licensed under the [Apache 2.0 Open Source License](http://www.apache.org/licenses/LICENSE-2.0).
 
