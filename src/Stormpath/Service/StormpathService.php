@@ -70,7 +70,7 @@ class StormpathService
         self::setSecret($secret);
 
         // Set default http client; overwriteable after configuration
-        $client = new Client();
+        $client = new Client(null, array('keepalive' => true));
         $adapter = new Basic();
         $client->setAdapter($adapter);
         self::setHttpClient($client);

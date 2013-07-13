@@ -8,7 +8,7 @@ use Stormpath\Service\StormpathService;
 use Stormpath\Http\Client\Adapter\Digest;
 use Stormpath\Http\Client\Adapter\Basic;
 use Zend\Http\Client;
-use Stormpath\Resource\Directory;
+use Stormpath\Resource\Application;
 
 class ExpandReferencesTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,35 +16,35 @@ class ExpandReferencesTest extends \PHPUnit_Framework_TestCase
     {
         $resourceManager = StormpathService::getResourceManager();
 
-        $dir = new Directory;
+        $dir = new Application;
 
         $dir->setName(md5(rand()));
-        $dir->setDescription('phpunit test directory');
+        $dir->setDescription('phpunit test application');
         $dir->setStatus('ENABLED');
 
         $resourceManager->persist($dir);
         $resourceManager->flush();
 
-        $this->directory = $dir;
+        $this->application = $dir;
     }
 
     protected function tearDown()
     {
         $resourceManager = StormpathService::getResourceManager();
-        $resourceManager->remove($this->directory);
+        $resourceManager->remove($this->application);
         $resourceManager->flush();
     }
 
     /**
-     * Fetch the current directory with expanding (multiple) references
+     * Fetch the current application with expanding (multiple) references
      */
-    public function testFetchDirectoryWithExpandResources()
+    public function testFetchapplicationWithExpandResources()
     {
         $resourceManager = StormpathService::getResourceManager();
 
-        $directory = $resourceManager->find('Stormpath\Resource\Directory', $this->directory->getId(), true);
+        $application = $resourceManager->find('Stormpath\Resource\Application', $this->application->getId(), true);
 
-        $href = $directory->getTenant()->getHref();
-        # print_r($directory->getTenant()->getArrayCopy());
+        $href = $application->getTenant()->getHref();
+        # print_r($application->getTenant()->getArrayCopy());
     }
 }
