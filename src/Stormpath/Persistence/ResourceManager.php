@@ -43,8 +43,10 @@ class ResourceManager implements ObjectManager
         return $this;
     }
 
-    public function find($className, $id)
+    public function find($className, $id, $expandReferences = false)
     {
+        $this->setExpandReferences($expandReferences);
+
         $resource = new $className();
         $resource->_lazy($this, $id);
 
@@ -67,13 +69,12 @@ class ResourceManager implements ObjectManager
     }
 
     // Fetches a GET and hydrates a class
-    public function load($id, $class, $expandReferences = false)
+    public function load($id, $class)
     {
-        if ($expandReferences) {
-            $this->setExpandReferences($expandReferences);
-        }
         $success = false;
-        if (!$eager) $cachedJson = $this->getCache()->getItem(get_class($class) . $id, $success);
+        if (!$this->getExpandReferences()) {
+            $cachedJson = $this->getCache()->getItem(get_class($class) . $id, $success);
+        }
 
         if ($success) {
             $class->exchangeArray(json_decode($cachedJson, true));
@@ -82,12 +83,11 @@ class ResourceManager implements ObjectManager
             $client->setUri($class->_getUrl() . '/' . $id);
             $client->setMethod('GET');
 
-            if ($expandReferences) $client->setParameterGet(array(
-                'expand' => $class->getExpandString(),
-            ));
+#            if ($this->getExpandReferences()) $client->setParameterGet(array(
+#                'expand' => $class->getExpandString(),
+#            ));
 
             $response = $client->send();
-
             if ($response->isSuccess()) {
                 $class->exchangeArray(json_decode($response->getBody(), true));
                 $this->getCache()->setItem(get_class($class) . $id, $response->getBody());
