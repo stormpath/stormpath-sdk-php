@@ -42,6 +42,16 @@ abstract class AbstractResource
     private $href;
 
     /**
+     * A string of all references on the Resource to eagerly load with Expand Resources
+     */
+    protected $_expandString;
+
+    public function getExpandString()
+    {
+        return $this->_expandString;
+    }
+
+    /**
      * Get the resource manager managing this resource
      */
     public function getResourceManager()

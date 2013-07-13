@@ -11,6 +11,7 @@ use Zend\Json\Json;
 class Application extends AbstractResource
 {
     protected $_url = 'https://api.stormpath.com/v1/applications';
+    protected $_expandString = 'tenant';
 
     protected $name;
     protected $description;
@@ -127,14 +128,23 @@ class Application extends AbstractResource
 
     public function exchangeArray($data)
     {
+        $eager = $this->getResourceManager()->getExpandReferences();
+        $this->getResourceManager()->setExpandReferences(false);
+
         $this->setHref(isset($data['href']) ? $data['href']: null);
         $this->setName(isset($data['name']) ? $data['name']: null);
         $this->setDescription(isset($data['description']) ? $data['description']: null);
         $this->setStatus(isset($data['status']) ? $data['status']: null);
 
-        $tenant = new \Stormpath\Resource\Tenant;
-        $tenant->_lazy($this->getResourceManager(), substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1));
-
+        if ($eager) {
+            // If this resource was fetched with eager loading store the retrieved data in the cache then
+            // fetch the object from the cache.
+            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Tenant' . strrpos($data['tenant']['href'], '/') + 1), $data['tenant']);
+            $tenant = $this->getResourceManager()->find('Stormpath\Resource\Tenant', strrpos($data['tenant']['href'], '/') + 1), false);
+        } else {
+            $tenant = new \Stormpath\Resource\Tenant;
+            $tenant->_lazy($this->getResourceManager(), substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1));
+        }
         $this->setTenant($tenant);
 
         $this->setAccounts(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\Account', $data['accounts']['href']));

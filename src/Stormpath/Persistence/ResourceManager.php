@@ -16,6 +16,7 @@ class ResourceManager implements ObjectManager
     private $insert;
     private $update;
     private $cache;
+    private $expandReferences;
 
     public function getCache()
     {
@@ -30,6 +31,7 @@ class ResourceManager implements ObjectManager
 
     public function getHttpClient()
     {
+        $this->httpClient->resetParameters();
         return $this->httpClient;
     }
 
@@ -41,7 +43,8 @@ class ResourceManager implements ObjectManager
         return $this;
     }
 
-    public function find($className, $id) {
+    public function find($className, $id)
+    {
         $resource = new $className();
         $resource->_lazy($this, $id);
 
@@ -52,9 +55,25 @@ class ResourceManager implements ObjectManager
         return $resource;
     }
 
+    public function getExpandReferences()
+    {
+        return $this->expandReferences;
+    }
+
+    public function setExpandReferences($value)
+    {
+        $this->expandReferences = $value;
+        return $this;
+    }
+
     // Fetches a GET and hydrates a class
-    public function load($id, $class) {
-        $cachedJson = $this->getCache()->getItem(get_class($class) . $id, $success);
+    public function load($id, $class, $expandReferences = false)
+    {
+        if ($expandReferences) {
+            $this->setExpandReferences($expandReferences);
+        }
+        $success = false;
+        if (!$eager) $cachedJson = $this->getCache()->getItem(get_class($class) . $id, $success);
 
         if ($success) {
             $class->exchangeArray(json_decode($cachedJson, true));
@@ -62,6 +81,10 @@ class ResourceManager implements ObjectManager
             $client = $this->getHttpClient();
             $client->setUri($class->_getUrl() . '/' . $id);
             $client->setMethod('GET');
+
+            if ($expandReferences) $client->setParameterGet(array(
+                'expand' => $class->getExpandString(),
+            ));
 
             $response = $client->send();
 

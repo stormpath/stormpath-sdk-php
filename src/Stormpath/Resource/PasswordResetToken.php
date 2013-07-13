@@ -12,6 +12,7 @@ class PasswordResetToken extends AbstractResource
      * Login attempts cannot be lazy loaded or loaded directly
      */
     protected $_url = '';
+    protected $_expandString = 'account';
 
     protected $email;
     protected $account;
@@ -44,11 +45,21 @@ class PasswordResetToken extends AbstractResource
 
     public function exchangeArray($data)
     {
+        $eager = $this->getResourceManager()->getExpandReferences();
+        $this->getResourceManager()->setExpandReferences(false);
+
         $this->setHref(isset($data['href']) ? $data['href']: null);
         $this->setType(isset($data['email']) ? $data['email']: null);
 
-        $account = new Account;
-        $account->_lazy($this->getResourceManager(), substr($data['account']['href'], strrpos($data['account']['href'], '/') + 1));
+        if ($eager) {
+            // If this resource was fetched with eager loading store the retrieved data in the cache then
+            // fetch the object from the cache.
+            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Account' . strrpos($data['account']['href'], '/') + 1), $data['account']);
+            $account = $this->getResourceManager()->find('Stormpath\Resource\Account', strrpos($data['account']['href'], '/') + 1), false);
+        } else {
+            $account = new \Stormpath\Resource\Account;
+            $account->_lazy($this->getResourceManager(), substr($data['account']['href'], strrpos($data['account']['href'], '/') + 1));
+        }
         $this->setAccount($account);
     }
 

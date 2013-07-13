@@ -12,6 +12,7 @@ use Stormpath\Resource\Application;
 class Account extends AbstractResource
 {
     protected $_url = 'https://api.stormpath.com/v1/accounts';
+    protected $_expandString = 'directory,tenant';
 
     protected $username;
     protected $email;
@@ -197,6 +198,9 @@ class Account extends AbstractResource
 
     public function exchangeArray($data)
     {
+        $eager = $this->getResourceManager()->getExpandReferences();
+        $this->getResourceManager()->setExpandReferences(false);
+
         $this->setHref(isset($data['href']) ? $data['href']: null);
         $this->setUsername(isset($data['username']) ? $data['username']: null);
         $this->setEmail(isset($data['email']) ? $data['email']: null);
@@ -208,12 +212,26 @@ class Account extends AbstractResource
 
         $this->setGroups(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\Group', $data['groups']['href']));
 
-        $directory = new \Stormpath\Resource\Directory;
-        $directory->_lazy($this->getResourceManager(), substr($data['directory']['href'], strrpos($data['directory']['href'], '/') + 1));
-        $this->setDirectory($directory);
+        if ($eager) {
+            // If this resource was fetched with eager loading store the retrieved data in the cache then
+            // fetch the object from the cache.
+            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Directory' . strrpos($data['directory']['href'], '/') + 1), $data['directory']);
+            $directory = $this->getResourceManager()->find('Stormpath\Resource\Directory', strrpos($data['directory']['href'], '/') + 1), false);
+        } else {
+            $directory = new \Stormpath\Resource\Directory;
+            $directory->_lazy($this->getResourceManager(), substr($data['directory']['href'], strrpos($data['directory']['href'], '/') + 1));
+        }
+        $this->setDirecotry($directory);
 
-        $tenant = new \Stormpath\Resource\Tenant;
-        $tenant->_lazy($this->getResourceManager(), substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1));
+        if ($eager) {
+            // If this resource was fetched with eager loading store the retrieved data in the cache then
+            // fetch the object from the cache.
+            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Tenant' . strrpos($data['tenant']['href'], '/') + 1), $data['tenant']);
+            $tenant = $this->getResourceManager()->find('Stormpath\Resource\Tenant', strrpos($data['tenant']['href'], '/') + 1), false);
+        } else {
+            $tenant = new \Stormpath\Resource\Tenant;
+            $tenant->_lazy($this->getResourceManager(), substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1));
+        }
         $this->setTenant($tenant);
     }
 

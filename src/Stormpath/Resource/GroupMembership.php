@@ -13,6 +13,7 @@ use Zend\Json\Json;
 class GroupMembership extends AbstractResource
 {
     protected $_url = 'https://api.stormpath.com/v1/groupMemberships';
+    protected $_expandString = 'account,group';
 
     protected $account;
     protected $group;
@@ -45,14 +46,31 @@ class GroupMembership extends AbstractResource
 
     public function exchangeArray($data)
     {
+        $eager = $this->getResourceManager()->getExpandReferences();
+        $this->getResourceManager()->setExpandReferences(false);
+
         $this->setHref(isset($data['href']) ? $data['href']: null);
 
-        $account = new Account;
-        $account->_lazy($this->getResourceManager(), substr($data['account']['href'], strrpos($data['account']['href'], '/') + 1));
+        if ($eager) {
+            // If this resource was fetched with eager loading store the retrieved data in the cache then
+            // fetch the object from the cache.
+            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Account' . strrpos($data['account']['href'], '/') + 1), $data['account']);
+            $account = $this->getResourceManager()->find('Stormpath\Resource\Account', strrpos($data['account']['href'], '/') + 1), false);
+        } else {
+            $account = new \Stormpath\Resource\Account;
+            $account->_lazy($this->getResourceManager(), substr($data['account']['href'], strrpos($data['account']['href'], '/') + 1));
+        }
         $this->setAccount($account);
 
-        $group = new Group;
-        $group->_lazy($this->getResourceManager(), substr($data['group']['href'], strrpos($data['group']['href'], '/') + 1));
+        if ($eager) {
+            // If this resource was fetched with eager loading store the retrieved data in the cache then
+            // fetch the object from the cache.
+            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Group' . strrpos($data['group']['href'], '/') + 1), $data['group']);
+            $group = $this->getResourceManager()->find('Stormpath\Resource\Group', strrpos($data['group']['href'], '/') + 1), false);
+        } else {
+            $group = new \Stormpath\Resource\Group;
+            $group->_lazy($this->getResourceManager(), substr($data['group']['href'], strrpos($data['group']['href'], '/') + 1));
+        }
         $this->setGroup($group);
     }
 

@@ -87,6 +87,16 @@ You may sort collections
 
 See https://www.stormpath.com/docs/rest/api#CollectionResources for more details of search options.
 
+
+Eager Loading References
+------------------------
+
+The Stormpath API documentation refers to this as Resource Expansion.  You may use Resource Expansion when using
+the ``` $resourceManager->find(); ``` method.  Resource Expansion will occur for the found resource only and will not occur for resources which are returned from the find().  In other words, when a resource is fetched eagerly, with Resource Expansion, only those resources directly associated to the found Resource will be eagerly loaded.  Resources which are properties of the Resources which are eagerly loaded are not eagerly loaded.  This avoids a waterfall affect of loading whole trees of data with one request.
+
+To eagerly load a resouce use ``` $resourceManager->find('Stormpath\Resource\ResourceName', $resourceId, true); ``` setting the third parameter to true to enable resource expansion.
+
+
 Finding Resources
 -----------------
 
@@ -100,6 +110,9 @@ To find an existing resource use the find() method of the Resource Manager.
     // Parameters are the Resource class and id for the resource
     $account = $resourceManager->find('Stormpath\Resource\Account', $resourceId);
 ```
+
+To eagerly load a resouce use ``` $resourceManager->find('Stormpath\Resource\ResourceName', $resourceId, true);
+
 
 Creating a Resource
 -------------------
@@ -187,9 +200,9 @@ Optionally enable Basic authentication instead of the default Digest authenticat
     StormpathService::setHttpClient($client);
 ```
 
-By default the memory cache is used.  You may enable an alternative cache.  See https://packages.zendframework.com/docs/latest/manual/en/modules/zend.cache.storage.adapter.html for all available cache adapters.  The advantage of enabling an alternative cache is the cache will persist between user sessions
+By default the memory cache is used.  You may enable an alternative cache.  See https://packages.zendframework.com/docs/latest/manual/en/modules/zend.cache.storage.adapter.html for all available cache adapters.  The advantage of enabling an alternative cache is the cache may persist between user sessions.
 
-```
+```php
     use Zend\Cache\StorageFactory;
 
     Stormpath::setCache(StorageFactory::adapterFactory('apc'));
