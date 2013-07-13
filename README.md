@@ -55,19 +55,37 @@ A collection is a group of related Resources as a property of a Resource and may
     $this->assertEquals(25, sizeof($groupsCollection));
 ```
 
-To fetch a new page of results from a collection clear the collection and set the new limit and/or offset.  The collection will lazy load the next time it is used.
+To fetch a new page of results from a collection set the new limit and/or offset.  This will clear the collection so the next time it's accessed it will be with the new offset/limit(s).  The collection will lazy load the next time it is used.
 
 ```php
-    $groupsCollection->clear();
     $groupsCollection->setOffset(25);
     $this->assertEquals(25, sizeof($groupsCollection));
 
-    $groupsCollection->clear();
     $groupsCollection->setLimit(5);
     $groupsCollection->setOffset(0);
     $this->assertEquals(5, sizeof($groupsCollection));
 ```
 
+You may search collections by setting setSearch(string|array);  The collection is reset when the search, offset, or limit is set and will lazy load when the collection is next accessed.
+
+```php
+    // Search all properties for Joe
+    $groupsCollection->setSearch('Joe');
+    
+    // Search name for Joe
+    $groupsCollection->setSearch(array(
+        'name' => 'Joe'
+    ));
+```
+
+You may sort collections
+
+```php
+
+    $groupsCollection->setOrderBy(array('name' => 'ASC', 'description' => 'DESC')); 
+```
+
+See https://www.stormpath.com/docs/rest/api#CollectionResources for more details of search options.
 
 Finding Resources
 -----------------
@@ -75,6 +93,8 @@ Finding Resources
 To find an existing resource use the find() method of the Resource Manager.
 
 ```php
+    use Stormpath\Service\StormpathService;
+
     $resourceManager = StormpathService::getResourceManager();
     
     // Parameters are the Resource class and id for the resource
@@ -111,6 +131,8 @@ Editing a Resource
 Editing resources is as simple as setting properties on a found object then persisting the resource.
 
 ```php
+    use Stormpath\Service\StormpathService;
+    
     $resourceManager = StormpathService::getResourceManager();
     
     // Parameters are the Resource class and id for the resource
@@ -129,6 +151,8 @@ Deleting a Resource
 Use the resource manager to delete resources
 
 ```php
+    use Stormpath\Service\StormpathService;
+    
     $resourceManager = StormpathService::getResourceManager();
     
     // Parameters are the Resource class and id for the resource
@@ -144,26 +168,26 @@ Use
 Configure for use
 
 ```php
-    use Stormpath\Service\StormpathService as Stormpath;
+    use Stormpath\Service\StormpathService;
 
-    Stormpath::configure($id, $secret);
-    Stormpath::register('New Name', 'Description', 'enabled'); 
+    StormpathService::configure($id, $secret);
+    StormpathService::register('New Name', 'Description', 'enabled'); 
 ```
 
-Optionally enable Basic authentication instead of default Digest
+Optionally enable Basic authentication instead of the default Digest authentication
 
 ```php
     use Zend\Http\Client;
     use Stormpath\Http\Client\Adapter\Basic;
 
-    Stormpath::configure($id, $secret);
+    StormpathService::configure($id, $secret);
     $client = new Client();
     $adapter = new Basic();
     $client->setAdapter($adapter);
-    Stormpath::setHttpClient($client);
+    StormpathService::setHttpClient($client);
 ```
 
-Optionally enable apc cache
+By default the memory cache is used.  You may enable an alternative cache.  See https://packages.zendframework.com/docs/latest/manual/en/modules/zend.cache.storage.adapter.html for all available cache adapters.  The advantage of enabling an alternative cache is the cache will persist between user sessions
 
 ```
     use Zend\Cache\StorageFactory;
@@ -178,10 +202,10 @@ Common Resource Properties
 Every resource shares these methods
 
 ```php
-    // Return the id
+    // Return the resource id
     $resource->getId(); 
     
-    // Return the Href including the id portion
+    // Return the resource Href including the id portion
     $resource->getHref();
 ```
 
@@ -189,7 +213,7 @@ Every resource shares these methods
 Account
 -------
 
-Accounts must be created against an Application or a Directory.  To specify which just set the property of either using ``` $account->setApplication($application); ``` or ``` $account->setDirectory($directory); ```
+Accounts must be created against an Application or a Directory.  To specify which just set the property of either using ``` $account->setApplication($application); ``` or ``` $account->setDirectory($directory); ``` at the time you create the account resource.
 
 Create a new account and assign it to an Application
 
@@ -222,7 +246,7 @@ Create a new account and assign it to an Application
     $resourceManager->flush();
 ```
 
-Editable setters ``` $account->set[Setter]($value); ``` are
+Properties (editable with ``` $account->set[Property]($value); ```)
 
 ```
     Username
@@ -237,6 +261,7 @@ Editable setters ``` $account->set[Setter]($value); ``` are
 References
 
 ```
+    Application - only used when creating an account.  This reference is not populated from a find() call.
     Directory
     Tenant
 ```
@@ -268,7 +293,7 @@ Create a new application
     $resourceManager->flush();
 ```
 
-Editable setters are
+Properties
 
 ```
     Name
@@ -295,7 +320,7 @@ Collections
 Directory
 ---------
 
-Editable setters are
+Properties
 
 ```
     Name
@@ -321,7 +346,7 @@ Group
 
 You must set a Directory before persisting a new Group.
 
-Editable setters are
+Properties
 
 ```
     Name
@@ -347,9 +372,9 @@ Collections
 Group Membership
 ----------------
 
-Editable setters are Resources.  Group Memberships may only be created or deleted.  To create a Group Membership set the Account and Group then persist.
+All properties are Resources.  Group Memberships may only be created or deleted.  To create a Group Membership set the Account and Group then persist.
 
-Setters used when created
+Properties set when created
 ```
     Account
     Group

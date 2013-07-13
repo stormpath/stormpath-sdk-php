@@ -21,6 +21,8 @@ class ResourceCollection implements Collection, Selectable
 
     private $offset = 0;
     private $limit = 25;
+    private $search;
+    private $orderBy;
 
     public function __construct(ResourceManager $resourceManager, $className, $href)
     {
@@ -41,13 +43,37 @@ class ResourceCollection implements Collection, Selectable
         $this->_isInitialized = true;
 
         $client = $this->getResourceManager()->getHttpClient();
-        // FIXME:  add support for pagination
         $client->setUri($this->getHref());
         $client->setMethod('GET');
-        $client->setParameterGet(array(
+
+        // Build pagination and search
+        $get = array(
             'offset' => $this->getOffset(),
             'limit' => $this->getLimit(),
-        ));
+        );
+        if ($this->getSearch()) {
+            if (is_array($this->getSearch())) {
+                $get = array_merge($get, $this->getSearch());
+            } else {
+                $get['q'] = $this->getSearch();
+            }
+        }
+
+        // Build orderBy
+        if ($this->getOrderBy()) {
+            if (!is_array($this->getOrderBy())) {
+                throw new \Exception('OrderBy must be an array as [["fieldName" => "ASC|DESC"]["field2" => "ASC|DESC"]]');
+            }
+
+            $sorts = array();
+            foreach ($this->getOrderBy() as $field => $order) {
+                $sorts[] = $field . ' ' . $order;
+            }
+
+            $get['orderBy'] = implode(',', $sorts);
+        }
+
+        $client->setParameterGet($get);
 
         $response = $client->send();
 
@@ -101,6 +127,7 @@ class ResourceCollection implements Collection, Selectable
 
     public function setOffset($value)
     {
+        $this->clear();
         $this->offset = $value;
         return $this;
     }
@@ -112,6 +139,7 @@ class ResourceCollection implements Collection, Selectable
 
     public function setLimit($value)
     {
+        $this->clear();
         $this->limit = $value;
         return $this;
     }
@@ -119,6 +147,29 @@ class ResourceCollection implements Collection, Selectable
     public function getLimit()
     {
         return $this->limit;
+    }
+
+    public function setSearch($value)
+    {
+        $this->clear();
+        $this->search = $value;
+        return $this;
+    }
+
+    public function getSearch()
+    {
+        return $this->search;
+    }
+
+    public function getOrderBy()
+    {
+        return  $this->orderBy;
+    }
+
+    public function setOrderBy($orderBy)
+    {
+        $this->orderBy = $orderBy;
+        return $this;
     }
 
     /**
