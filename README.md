@@ -3,25 +3,6 @@
 [![Build Status](https://travis-ci.org/TomHAnderson/stormpath-sdk-php.png)](https://travis-ci.org/TomHAnderson/stormpath-sdk-php)
 [![Dependency Status](https://www.versioneye.com/user/projects/51e052589041060002005a07/badge.png)](https://www.versioneye.com/user/projects/51e052589041060002005a07)
 
-Installation
-------------
-  1. edit `composer.json` file with following contents:
-
-     ```json
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/TomHAnderson/StormpathClient-PHP"
-        }
-    ],
-    "require": {
-        "stormpath/stormpath": "dev-master"
-    }
-     ```
-  2. install composer via `curl -s http://getcomposer.org/installer | php` (on windows, download
-     http://getcomposer.org/installer and execute it with PHP)
-  3. run `php composer.phar install`
-
 Overview
 ========
 
@@ -43,6 +24,30 @@ through a getter, setter, or Resource Manager action.
 
 The Resource Manager is a Doctrine Object Manager.  Multiple Resources may be set for insert, update, or delete
 and all acted upon when the Resource Manager is flush(); ed.  To queue a Resource for addition or update use ``` $resourceManager->persist($resource); ```  To queue a Resource for deletion use ``` $resourceManager->remove($resource); ```
+
+For more information on Object Relational Mappers see https://en.wikipedia.org/wiki/Object-relational_mapping.
+
+For more information please see the [Stormpath Product Guide](https://www.stormpath.com/docs/php/product-guide) and the [Stormpath REST API](http://www.stormpath.com/docs/rest/api).
+
+
+Installation
+------------
+  1. edit `composer.json` file with following contents:
+
+     ```json
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/TomHAnderson/StormpathClient-PHP"
+        }
+    ],
+    "require": {
+        "stormpath/stormpath": "dev-master"
+    }
+     ```
+  2. install composer via `curl -s http://getcomposer.org/installer | php` (on windows, download
+     http://getcomposer.org/installer and execute it with PHP)
+  3. run `php composer.phar install`
 
 
 Collections
@@ -463,8 +468,6 @@ return array(
     ),
 );
 ```
-
-For additional information, please see the [Product Guide](https://www.stormpath.com/docs/php/product-guide).
 
 This project is licensed under the [Apache 2.0 Open Source License](http://www.apache.org/licenses/LICENSE-2.0).
 
