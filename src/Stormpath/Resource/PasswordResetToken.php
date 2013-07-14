@@ -49,7 +49,7 @@ class PasswordResetToken extends AbstractResource
         $this->getResourceManager()->setExpandReferences(false);
 
         $this->setHref(isset($data['href']) ? $data['href']: null);
-        $this->setType(isset($data['email']) ? $data['email']: null);
+        $this->setEmail(isset($data['email']) ? $data['email']: null);
 
         if ($eager) {
             // If this resource was fetched with eager loading store the retrieved data in the cache then
@@ -69,7 +69,7 @@ class PasswordResetToken extends AbstractResource
 
         return array(
             'href' => $this->getHref(),
-            'type' => $this->getType(),
+            'email' => $this->getEmail(),
         );
     }
 }

@@ -419,7 +419,22 @@ A login attempt is the Resource to use when you want to authenticate a user by u
 Password Reset Token
 --------------------
 
-TODO
+To initialize a password reset email create a PasswordResetToken, set the email and application, and persist and flush it.  Post flush the PasswordResetToken will contain the acocunt which was reset.
+
+```php
+    use Stormpath\Resource\PasswordResetToken;
+
+    $application = $resourceManager->find('Stormpath\Resource\Application', $applicationId);
+
+    $passwordResetToken = new PasswordResetToken;
+    $passwordResetTokan->setApplication($application);
+    $passwordResetToken->setEmail('resetpassword@test.stormpath.com');
+    $resourceManager->persist($passwordResetToken);
+
+    $resourceManager->flush();
+
+    $account = $passwordResetToken->getAccount();
+```    
 
 
 Tenant
