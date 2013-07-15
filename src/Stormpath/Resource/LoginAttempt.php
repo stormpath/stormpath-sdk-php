@@ -79,8 +79,8 @@ class LoginAttempt extends AbstractResource
         if ($eager) {
             // If this resource was fetched with eager loading store the retrieved data in the cache then
             // fetch the object from the cache.
-            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Account' . strrpos($data['account']['href'], '/') + 1, $data['account']);
-            $account = $this->getResourceManager()->find('Stormpath\Resource\Account', strrpos($data['account']['href'], '/') + 1, false);
+            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Account' . substr($data['account']['href'], strrpos($data['account']['href'], '/') + 1, json_encode($data['account'])));
+            $account = $this->getResourceManager()->find('Stormpath\Resource\Account', substr($data['account']['href'], strrpos($data['account']['href'], '/') + 1, false));
         } else {
             $account = new \Stormpath\Resource\Account;
             $account->_lazy($this->getResourceManager(), substr($data['account']['href'], strrpos($data['account']['href'], '/') + 1));
