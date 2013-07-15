@@ -25,9 +25,9 @@ through a getter, setter, or Resource Manager action.
 The Resource Manager is a Doctrine Object Manager.  Multiple Resources may be set for insert, update, or delete
 and all acted upon when the Resource Manager is flush(); ed.  To queue a Resource for addition or update use ``` $resourceManager->persist($resource); ```  To queue a Resource for deletion use ``` $resourceManager->remove($resource); ```
 
-For more information on Object Relational Mappers see https://en.wikipedia.org/wiki/Object-relational_mapping.
-
 For more information please see the [Stormpath Product Guide](https://www.stormpath.com/docs/php/product-guide) and the [Stormpath REST API](http://www.stormpath.com/docs/rest/api).
+
+For more information on Object Relational Mappers see https://en.wikipedia.org/wiki/Object-relational_mapping.
 
 
 Installation
@@ -83,7 +83,7 @@ You may search collections by setting setSearch(string|array);  The collection i
     ));
 ```
 
-You may sort collections
+You may sort Collections
 
 ```php
 
@@ -93,13 +93,22 @@ You may sort collections
 See https://www.stormpath.com/docs/rest/api#CollectionResources for more details of search options.
 
 
-Eager Loading References
-------------------------
+Resource Expansion
+------------------
 
-The Stormpath API documentation refers to this as Resource Expansion.  You may use Resource Expansion when using
-the ``` $resourceManager->find(); ``` method.  Resource Expansion will occur for the found resource only and will not occur for resources which are returned from the find().  In other words, when a resource is fetched eagerly, with Resource Expansion, only those resources directly associated to the found Resource will be eagerly loaded.  Resources which are properties of the Resources which are eagerly loaded are not eagerly loaded.  This avoids a waterfall affect of loading whole trees of data with one request.
+This feature of the Stormpath API can also be called eager loading references.  You may use Resource Expansion when using the ``` $resourceManager->find(); ``` method.  Resource Expansion will occur for the found resource only and will not occur for resources which are returned from the find().  In other words, when a resource is fetched eagerly, with Resource Expansion, only those resources directly associated to the found Resource will be eagerly loaded.  Resources which are properties of the Resources which are eagerly loaded are not eagerly loaded.  This avoids a waterfall affect of loading whole trees of data with one request.
 
-To eagerly load a resouce use ``` $resourceManager->find('Stormpath\Resource\ResourceName', $resourceId, true); ``` setting the third parameter to true to enable resource expansion.
+To expand a resouce use ``` $resourceManager->find('Stormpath\Resource\ResourceName', $resourceId, true); ``` setting the third parameter to true to enable resource expansion.  You cannot use resource expansion for resources fetched from a Collection.
+
+
+Caching
+-------
+
+This API client relies on caching.  There must be a ZF2 cache registered with the StormpathService.  By default the Memory cache is used.
+
+Caching occurs whenever a Resource is fetched from Stormpath.  Caches are identified by ResourceName + ResourceID such as 'Stormpath\Resource\Application12345'.  Caching will return a copy of the last fetched resource when that resource is fetched again.  This works for lazy loaded Resources too:  e.g. a Resource is fetched as part of a collection and configured for lazy loading.  When the Resource is loaded it will pull a cached copy of that resource if one exists.
+
+Caching works completely behind the scenes and you can change the cache adapter when you configure the service.  See the Use section for an example of changing the cache adapter.  If you ever had a need to work with the cache directly you can fetch the current adapter with ``` StormpathService::getCache(); ``` or ``` $resourceManager->getCache(); ```
 
 
 Finding Resources
