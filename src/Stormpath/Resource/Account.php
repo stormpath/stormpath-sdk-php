@@ -233,8 +233,6 @@ class Account extends AbstractResource
             $tenant->_lazy($this->getResourceManager(), substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1));
         }
         $this->setTenant($tenant);
-
-        print_r($data);
     }
 
     public function getArrayCopy()
