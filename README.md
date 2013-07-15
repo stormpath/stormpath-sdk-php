@@ -122,6 +122,42 @@ Installation
   3. run `php composer.phar install`
 
 
+Use
+---
+Configure for use
+
+```php
+    use Stormpath\Service\StormpathService;
+
+    StormpathService::configure($id, $secret);
+```
+
+Optionally enable Basic authentication instead of the default Digest authentication
+
+```php
+    use Stormpath\Http\Client\Adapter\Basic;
+
+    StormpathService::configure($id, $secret);
+    StormpathService::getHttpClient()->setAdapter(new Basic(null, array('keepalive' => true)));
+```
+
+By default a memory cache is used.  You may use an alternative cache.  See https://packages.zendframework.com/docs/latest/manual/en/modules/zend.cache.storage.adapter.html for all available cache adapters.  The advantage of enabling an alternative cache is the cache may persist between user sessions.
+
+```php
+    use Zend\Cache\StorageFactory;
+
+    Stormpath::setCache(StorageFactory::adapterFactory('apc'));
+```
+
+Once configured with these options you may fetch the Resource Manager to begin working.
+
+```php
+    use Stormpath\Service\StormpathService;
+    
+    $resourceManager = StormpathService::getResourceManager();
+```
+
+
 Finding Resources
 -----------------
 
@@ -200,41 +236,6 @@ Use the resource manager to delete resources
     $resourceManager->flush();
 ```
 
-
-Use
----
-Configure for use
-
-```php
-    use Stormpath\Service\StormpathService;
-
-    StormpathService::configure($id, $secret);
-```
-
-Optionally enable Basic authentication instead of the default Digest authentication
-
-```php
-    use Stormpath\Http\Client\Adapter\Basic;
-
-    StormpathService::configure($id, $secret);
-    StormpathService::getHttpClient()->setAdapter(new Basic(null, array('keepalive' => true)));
-```
-
-By default a memory cache is used.  You may use an alternative cache.  See https://packages.zendframework.com/docs/latest/manual/en/modules/zend.cache.storage.adapter.html for all available cache adapters.  The advantage of enabling an alternative cache is the cache may persist between user sessions.
-
-```php
-    use Zend\Cache\StorageFactory;
-
-    Stormpath::setCache(StorageFactory::adapterFactory('apc'));
-```
-
-Once configured with these options you may fetch the Resource Manager to begin working.
-
-```php
-    use Stormpath\Service\StormpathService;
-    
-    $resourceManager = StormpathService::getResourceManager();
-```
 
 Common Resource Properties
 --------------------------
