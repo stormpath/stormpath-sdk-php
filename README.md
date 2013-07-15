@@ -6,7 +6,7 @@
 Overview
 ========
 
-This API client is an [Object Relational Mapper](https://en.wikipedia.org/wiki/Object-relational_mapping).  Here, entities are called Resources.  These are the available Resources:
+This API client is an [Object Relational Mapper](https://en.wikipedia.org/wiki/Object-relational_mapping) based on the [Doctrine Common](http://www.doctrine-project.org/projects/common.html) project library.  These are the available Resources:
 
 ```php 
     Stormpath\Resource\Account
