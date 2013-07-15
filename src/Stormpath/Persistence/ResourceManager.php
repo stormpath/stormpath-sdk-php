@@ -3,6 +3,7 @@
 namespace Stormpath\Persistence;
 
 use Stormpath\Resource;
+use Stormpath\Exception\ApiException;
 use Zend\Http\Client;
 use Zend\Http\Response;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -83,9 +84,9 @@ class ResourceManager implements ObjectManager
             $client->setUri($class->_getUrl() . '/' . $id);
             $client->setMethod('GET');
 
-#            if ($this->getExpandReferences()) $client->setParameterGet(array(
-#                'expand' => $class->getExpandString(),
-#            ));
+            if ($this->getExpandReferences()) $client->setParameterGet(array(
+                'expand' => $class->getExpandString(),
+            ));
 
             $response = $client->send();
             if ($response->isSuccess()) {
@@ -102,9 +103,12 @@ class ResourceManager implements ObjectManager
      */
     public function handleInvalidResponse(Response $response)
     {
-        #print_r(get_class_methods($response));die();
-        $result = json_decode($response->getBody(), true);
-        throw new \Exception($result['code'] . ' (' . $result['status'] . ') ' . $result['message'] . "\n\n" . $result['developerMessage']);
+        $details = json_decode($response->getBody(), true);
+
+        $exception = new ApiException($details['message'], $details['code']);
+        $exception->exchangeArray($details);
+
+        throw $exception;
     }
 
     function persist($object)
