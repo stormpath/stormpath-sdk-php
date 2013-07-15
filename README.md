@@ -6,28 +6,25 @@
 Overview
 ========
 
-This API client is an Object Relational Mapper.  Here, entities are called Resources.  
-These are the available Resources:
+This API client is an [Object Relational Mapper](https://en.wikipedia.org/wiki/Object-relational_mapping).  Here, entities are called Resources.  These are the available Resources:
 
-1. Stormpath\Resource\Account
-2. Stormpath\Resource\Application
-3. Stormpath\Resource\Directory
-4. Stormpath\Resource\Group
-5. Stormpath\Resource\GroupMembership
-6. Stormpath\Resource\LoginAttempt
-7. Stormpath\Resource\PasswordResetToken
-8. Stormpath\Resource\Tenant
+```php 
+    Stormpath\Resource\Account
+    Stormpath\Resource\Application
+    Stormpath\Resource\Directory
+    Stormpath\Resource\Group
+    Stormpath\Resource\GroupMembership
+    Stormpath\Resource\LoginAttempt
+    Stormpath\Resource\PasswordResetToken
+    Stormpath\Resource\Tenant
+```
 
-When resources are found using find() they are initialized immediatly.  When Resources are part of a 
-collection they are lazy loaded so the Resource is not fetched from the server until it is acted upon
-through a getter, setter, or Resource Manager action.
+When resources are found using the find() method of the Resource Manager they are initialized and fetched immediatly.  When Resources are part of a collection they are lazy loaded so the Resource is not fetched from the server until it is acted upon through a getter, setter, or Resource Manager action.
 
 The Resource Manager is a Doctrine Object Manager.  Multiple Resources may be set for insert, update, or delete
 and all acted upon when the Resource Manager is flush(); ed.  To queue a Resource for addition or update use ``` $resourceManager->persist($resource); ```  To queue a Resource for deletion use ``` $resourceManager->remove($resource); ```
 
-For more information please see the [Stormpath Product Guide](https://www.stormpath.com/docs/php/product-guide) and the [Stormpath REST API](http://www.stormpath.com/docs/rest/api).
-
-For more information on Object Relational Mappers see https://en.wikipedia.org/wiki/Object-relational_mapping.
+See the [Stormpath Product Guide](https://www.stormpath.com/docs/php/product-guide) and the [Stormpath REST API](http://www.stormpath.com/docs/rest/api) for details on everything this client implements.
 
 
 Installation
@@ -71,7 +68,7 @@ To fetch a new page of results from a collection set the new limit and/or offset
     $this->assertEquals(5, sizeof($groupsCollection));
 ```
 
-You may search collections by setting setSearch(string|array);  The collection is reset when the search, offset, or limit is set and will lazy load when the collection is next accessed.
+You may search collections by setting setSearch(string|array);  See https://www.stormpath.com/docs/rest/api#CollectionResources for more details of search options.
 
 ```php
     // Search all properties for Joe
@@ -90,7 +87,7 @@ You may sort Collections
     $groupsCollection->setOrderBy(array('name' => 'ASC', 'description' => 'DESC')); 
 ```
 
-See https://www.stormpath.com/docs/rest/api#CollectionResources for more details of search options.
+The collection is reset when the sort, search, offset, or limit is set and will lazy load when the collection is next accessed.  
 
 
 Resource Expansion
@@ -198,23 +195,18 @@ Configure for use
     use Stormpath\Service\StormpathService;
 
     StormpathService::configure($id, $secret);
-    StormpathService::register('New Name', 'Description', 'enabled'); 
 ```
 
 Optionally enable Basic authentication instead of the default Digest authentication
 
 ```php
-    use Zend\Http\Client;
     use Stormpath\Http\Client\Adapter\Basic;
 
     StormpathService::configure($id, $secret);
-    $client = new Client();
-    $adapter = new Basic();
-    $client->setAdapter($adapter);
-    StormpathService::setHttpClient($client);
+    StormpathService::getHttpClient()->setAdapter(new Basic(null, array('keepalive' => true)));
 ```
 
-By default the memory cache is used.  You may enable an alternative cache.  See https://packages.zendframework.com/docs/latest/manual/en/modules/zend.cache.storage.adapter.html for all available cache adapters.  The advantage of enabling an alternative cache is the cache may persist between user sessions.
+By default a memory cache is used.  You may use an alternative cache.  See https://packages.zendframework.com/docs/latest/manual/en/modules/zend.cache.storage.adapter.html for all available cache adapters.  The advantage of enabling an alternative cache is the cache may persist between user sessions.
 
 ```php
     use Zend\Cache\StorageFactory;
@@ -222,6 +214,13 @@ By default the memory cache is used.  You may enable an alternative cache.  See 
     Stormpath::setCache(StorageFactory::adapterFactory('apc'));
 ```
 
+Once configured with these options you may fetch the Resource Manager to begin working.
+
+```php
+    use Stormpath\Service\StormpathService;
+    
+    $resourceManager = StormpathService::getResourceManager();
+```
 
 Common Resource Properties
 --------------------------
@@ -233,6 +232,7 @@ Every resource shares these methods
     $resource->getId(); 
     
     // Return the resource Href including the id portion
+    // Collections also have this method.
     $resource->getHref();
 ```
 
@@ -413,7 +413,7 @@ Login Attempt
 
 A login attempt is the Resource to use when you want to authenticate a user by username and password against an application.  All three parameters are required.
 
-```
+```php
     $loginAttempt = new LoginAttempt;
     $loginAttempt->setUsername($username);
     $loginAttempt->setPassword($password);

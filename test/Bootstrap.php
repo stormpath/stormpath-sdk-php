@@ -60,11 +60,7 @@ class Bootstrap
         $config = Bootstrap::getApplication()->getConfig();
 
         StormpathService::configure($config['stormpath']['id'], $config['stormpath']['secret']);
-
-        $client = new Client(null, array('keepalive' => true));
-        $adapter = new Basic();
-        $client->setAdapter($adapter);
-        StormpathService::setHttpClient($client);
+        StormpathService::getHttpClient()->setAdapter(new Basic(null, array('keepalive' => true)));
     }
 
     public static function getApplication()
