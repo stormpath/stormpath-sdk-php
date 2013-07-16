@@ -18,5 +18,7 @@ class AccountStatus {
 
 	const UNVERIFIED = 'UNVERIFIED';
 
+	const VERIFIED = 'VERIFIED';
+
 
 }
