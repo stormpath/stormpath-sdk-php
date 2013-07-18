@@ -10,7 +10,7 @@ use Stormpath\Client\Proxy;
 use Stormpath\DataStore\DataStore;
 use Zend\Navigation\Exception\InvalidArgumentException;
 
-class client implements DataStore
+class client
 {
 	const DEFAULT_API_VERSION = 1;
 	private $currentTenantHref;
@@ -42,16 +42,6 @@ class client implements DataStore
 		return $this->dataStore();
 	}
 
-	private function createRequestExecutor(Apikey $apiKey, Proxy $proxy)
-	{
-		$className = "Stormpath\\Client\\http\\httpclient\\HttpClientRequestExecutor";
-
-	}
-
-	public function createDataStore($requestExecutor, $secondCtorArg)
-	{
-
-	}
 
 
 

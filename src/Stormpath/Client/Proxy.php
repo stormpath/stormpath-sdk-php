@@ -30,7 +30,6 @@ class Proxy
 			$this->username = $username;
 			$this->password = $password;
 			$this->authenticationRequired = $authenticationRequired;
-
 	}
 
 	public function getHost()
@@ -84,20 +83,20 @@ class Proxy
         return $result;
     }
 
-    public function equals(StdClass $object)
+    public function equals($object)
     {
     	if($this == $object){   
     		return true;
     	}
 
     	if($object instanceof Proxy){
-    		$p = (Proxy)$object;
+    		$p = $object;
 
-    		return ($host != null ? $host->equals($p->getHost()) : p->getHost() == null) && 
-    		($port == $p->getPort()) && 
-    		($username != null ? $username->equals($p->getUsername()) : $p->getUsername() == null) &&
-            ($password != null ? $password->equals($p->getPassword()) : $p->getPassword() == null) &&
-            ($authenticationRequired == $p->$authenticationRequired);
+    		return ($this->host != null ? $this->host->equals($p->getHost()) : $p->getHost() == null) &&
+    		($this->port == $p->getPort()) &&
+    		($this->username != null ? $this->username->equals($p->getUsername()) : $p->getUsername() == null) &&
+            ($this->password != null ? $this->password->equals($p->getPassword()) : $p->getPassword() == null) &&
+            ($this->authenticationRequired == $p->$this->authenticationRequired);
     	}
 
     	return false;

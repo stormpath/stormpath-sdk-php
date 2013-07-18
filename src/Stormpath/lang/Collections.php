@@ -20,23 +20,7 @@ abstract class Collections
         if ($collection == null) {
             throw InvalidArgumentException("collection cannot be null");
         }
-
         $arr = (object)$array;
-        foreach($elem as $arr) {
-            collection.add($elem);
-        }
     }
-
-    public static function mergePropertiesIntoMap($properties = array(), $map = array())
-    {
-        if ($map == null) {
-            throw InvalidArgumentException("Map must not be null");
-        }
-        if ($properties != null) {
-            foreach($en = $)
-        }
-    }
-
-}
 
 }
