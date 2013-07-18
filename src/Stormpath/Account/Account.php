@@ -6,6 +6,8 @@
 
 namespace Stormpath\Account;
 
+// first change
+
 interface Account extends Resource, Savable
 {
 	public function getUsername();
