@@ -7,19 +7,20 @@
 
 namespace Stormpath\Service;
 
-use Stormpath\Client\ApiKey;
+use Stormpath\Persistence\ResourceManager;
 use Stormpath\Http\Client\Adapter\Digest;
 use Stormpath\Http\Client\Adapter\Basic;
 use Zend\Http\Client;
 use Zend\Json\Json;
+use Zend\Cache\StorageFactory;
+use Zend\Cache\Storage\StorageInterface;
 
 class StormpathService
 {
-    const BASEURI = 'https://api.stormpath.com/v1';
-
     private static $id;
     private static $secret;
     private static $httpClient;
+    private static $cache;
 
     public static function getId()
     {
@@ -49,48 +50,39 @@ class StormpathService
 
     public static function setHttpClient(Client $value)
     {
+        $value->setOptions(array('sslverifypeer' => false));
         self::$httpClient = $value;
     }
 
-    public static function configure($id, $secret = null)
+    public static function getCache()
+    {
+        return self::$cache;
+    }
+
+    public static function setCache(StorageInterface $cache)
+    {
+        self::$cache = $cache;
+    }
+
+    public static function configure($id, $secret)
     {
         self::setId($id);
         self::setSecret($secret);
 
         // Set default http client; overwriteable after configuration
-        $client = new Client();
-        $adapter = new Digest();
+        $client = new Client(null, array('keepalive' => true));
+        $adapter = new Basic();
         $client->setAdapter($adapter);
         self::setHttpClient($client);
+        self::setCache(StorageFactory::adapterFactory('memory'));
     }
 
-    public static function register($name, $description = '', $status = 'enabled')
+    public static function getResourceManager()
     {
-        switch ($status) {
-            case 'enabled':
-            case 'disabled':
-                break;
-            default:
-                throw new \Exception('Invalid application status');
-        }
+        $resourceManager = new ResourceManager();
+        $resourceManager->setHttpClient(self::getHttpClient());
+        $resourceManager->setCache(self::getCache());
 
-        $client = self::getHttpClient();
-        $client->setUri(self::BASEURI . '/applications');
-        $client->setMethod('POST');
-        $client->setOptions(array('sslverifypeer' => false));
-        $client->setRawBody(Json::encode(array(
-            'name' => $name,
-            'description' => $description,
-            'status' => $status,
-        )));
-
-        return Json::decode($client->send()->getBody());
+        return $resourceManager;
     }
-
-    public static function createClient($accessId, $secretKey)
-    {
-        ApiKey::setAccessId($accessId);
-        ApiKey::setSecretKey($secretKey);
-    }
-
 }

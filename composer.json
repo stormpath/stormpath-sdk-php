@@ -12,11 +12,6 @@
     "license": "Apache 2.0",
     "authors": [
         {
-            "name": "Elder Crisostomo",
-            "email": "elder@stormpath.com",
-            "role": "Developer"
-        },
-        {
             "name": "Tom Anderson",
             "email": "tanderson@soliantconsulting.com"
         },
@@ -26,14 +21,13 @@
         }
     ],
     "require-dev": {
-        "zendframework/zendframework": ">=2.2",
-        "phpunit/phpunit": "3.7.14"
+        "phpunit/phpunit": "3.7.22"
     },
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zend-http": ">=2.2",
-        "zendframework/zend-json": ">=2.2",
-        "rhumsaa/uuid": "2.1.*@dev",
+        "zendframework/zendframework": ">=2.2",
+        "doctrine/common": "2.4.x-dev",
+        "rhumsaa/uuid": ">=2.1",
         "moontoast/math": "1.1.0"
     },
     "autoload": {

@@ -24,7 +24,6 @@ class Basic extends Socket
     {
         $headers['Authorization'] = 'Basic ' . base64_encode(Stormpath::getId() . ':' . Stormpath::getSecret());
         $headers['Content-Type'] = 'application/json;charset=UTF-8';
-
         return parent::write($method, $uri, $httpVer, $headers, $body);
     }
 }
