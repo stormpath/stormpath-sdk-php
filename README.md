@@ -21,7 +21,7 @@ This API client is an [Object Relational Mapper](https://en.wikipedia.org/wiki/O
 
 When resources are found using the find() method of the Resource Manager they are initialized and fetched immediatly.  When Resources are part of a collection they are lazy loaded so the Resource is not fetched from the server until it is acted upon through a getter, setter, or Resource Manager action.
 
-The Resource Manager is a Doctrine Object Manager.  Multiple Resources may be set for insert, update, or delete
+Multiple Resources may be set for insert, update, or delete
 and all acted upon when the Resource Manager is flush(); ed.  To queue a Resource for addition or update use ``` $resourceManager->persist($resource); ```  To queue a Resource for deletion use ``` $resourceManager->remove($resource); ```
 
 See the [Stormpath Product Guide](https://www.stormpath.com/docs/php/product-guide) and the [Stormpath REST API](http://www.stormpath.com/docs/rest/api) for details on everything this client implements.
