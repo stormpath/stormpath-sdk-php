@@ -2,12 +2,15 @@
 
 namespace StormpathTest;
 
-use Zend\Loader\AutoloaderFactory
-    , Zend\Mvc\Service\ServiceManagerConfig
-    , Zend\ServiceManager\ServiceManager
-    , Zend\Stdlib\ArrayUtils
-    , RuntimeException
-    ;
+use Zend\Loader\AutoloaderFactory;
+use Zend\Mvc\Service\ServiceManagerConfig;
+use Zend\ServiceManager\ServiceManager;
+use Zend\Stdlib\ArrayUtils;
+use RuntimeException;
+use Stormpath\Service\StormpathService;
+use Zend\Http\Client;
+use Stormpath\Http\Client\Adapter\Digest;
+use Stormpath\Http\Client\Adapter\Basic;
 
 error_reporting(E_ALL | E_STRICT);
 chdir(__DIR__);
@@ -52,6 +55,12 @@ class Bootstrap
         $application = \Zend\Mvc\Application::init($config);
 
         static::$application = $application;
+
+        // Configure Stormpath
+        $config = Bootstrap::getApplication()->getConfig();
+
+        StormpathService::configure($config['stormpath']['id'], $config['stormpath']['secret']);
+        StormpathService::getHttpClient()->setAdapter(new Basic(null, array('keepalive' => true)));
     }
 
     public static function getApplication()

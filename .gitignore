@@ -8,3 +8,4 @@ composer.phar
 *.tgz
 *.zip
 local.php
+test/code-coverage
