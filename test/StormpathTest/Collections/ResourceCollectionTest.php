@@ -95,7 +95,6 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, $groupsCollection->key());
         $groupsCollection->setOffset(50);
         $offset = $groupsCollection->getOffset();
-        print
 
         $groupsCollection->offsetSet($offset, 20);
         $this->assertEquals(20, $groupsCollection->offsetGet($offset));
