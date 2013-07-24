@@ -10,10 +10,12 @@ use Stormpath\Resource\Group;
 use Stormpath\Resource\GroupMembership;
 use Stormpath\Resource\LoginAttempt;
 use Stormpath\Resource\Application;
+use Stormpath\Resource\Exception;
 
 class DirectoryTest extends \PHPUnit_Framework_TestCase
 {
     protected $directory;
+    protected $tenant;
 
     protected function setUp()
     {
@@ -130,8 +132,8 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         foreach ($groups as $group) {
             $resourceManager->remove($group);
         }
-
         $resourceManager->flush();
+
     }
 
     public function testAssignAccountToGroup()

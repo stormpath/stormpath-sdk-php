@@ -9,7 +9,7 @@ use Stormpath\Http\Client\Adapter\Digest;
 use Stormpath\Http\Client\Adapter\Basic;
 use Zend\Http\Client;
 
-class DigestTest extends \PHPUnit_Framework_TestCase
+class BasicTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
@@ -22,13 +22,13 @@ class DigestTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        StormpathService::getHttpClient()->setAdapter(new Digest(null, array('keepalive' => true)));
+        StormpathService::getHttpClient()->setAdapter(new Basic(null, array('keepalive' => true)));
     }
-
 
     public function testBasicAuthentication()
     {
         $resourceManager = StormpathService::getResourceManager();
         $tenant = $resourceManager->find('Stormpath\Resource\Tenant', 'current');
     }
+
 }

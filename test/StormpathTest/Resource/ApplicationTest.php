@@ -6,6 +6,7 @@ use PHPUnit_Framework_TestCase;
 use Stormpath\Service\StormpathService;
 use Stormpath\Resource\Application;
 use Stormpath\Resource\Account;
+use Stormpath\Resource\PasswordResetToken;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
@@ -54,6 +55,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->flush();
     }
 
+
     public function testLoginAttempt()
     {
         $resourceManager = StormpathService::getResourceManager();
@@ -75,11 +77,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->persist($account1);
         $resourceManager->flush();
 
+
         // Test login attempt
         $loginAttempt = new LoginAttempt;
         $loginAttempt->setUsername($email);
         $loginAttempt->setPassword($password);
-        $loginAttempt->setApplication($app);
+        $loginAttempt->setApplication($this->app);
 
         $resourceManager->persist($loginAttempt);
         $resourceManager->flush();

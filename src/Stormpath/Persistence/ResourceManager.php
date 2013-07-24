@@ -107,7 +107,7 @@ class ResourceManager implements ObjectManager
 
         $exception = new ApiException($details['message'], $details['code']);
         $exception->exchangeArray($details);
-
+       
         throw $exception;
     }
 

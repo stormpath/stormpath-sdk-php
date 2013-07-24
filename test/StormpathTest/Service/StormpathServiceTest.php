@@ -18,7 +18,7 @@ class StormpathServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNull(StormpathService::configure($config['stormpath']['id'], $config['stormpath']['secret']));
 
         $client = new Client();
-        $adapter = new Basic();
+        $adapter = new Digest();
         $client->setAdapter($adapter);
         StormpathService::setHttpClient($client);
     }

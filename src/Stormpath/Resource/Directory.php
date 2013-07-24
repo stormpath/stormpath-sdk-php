@@ -103,6 +103,7 @@ class Directory extends AbstractResource
     public function exchangeArray($data)
     {
         $eager = $this->getResourceManager()->getExpandReferences();
+        print_r($eager);
         $this->getResourceManager()->setExpandReferences(false);
 
         $this->setHref(isset($data['href']) ? $data['href']: null);

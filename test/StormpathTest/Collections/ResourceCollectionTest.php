@@ -88,6 +88,19 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $groupsCollection->setOffset(50);
         $this->assertEquals(3, sizeof($groupsCollection));
 
+        $groupsCollection->remove(2);
+        $this->assertEquals(false, $groupsCollection->offsetExists(2));
+        $this->assertEquals(false, $groupsCollection->remove(15));
+
+        $this->assertEquals(0, $groupsCollection->key());
+        $groupsCollection->setOffset(50);
+        $offset = $groupsCollection->getOffset();
+
+        $groupsCollection->offsetSet($offset, 20);
+        $this->assertEquals(20, $groupsCollection->offsetGet($offset));
+        $groupsCollection->offsetUnset($offset);
+        $this->assertEquals(0, $groupsCollection->offsetGet($offset));
+
         $groupsCollection->setLimit(100);
         $groupsCollection->setOffset(0);
         $this->assertEquals(53, sizeof($groupsCollection));
@@ -112,6 +125,14 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 
         $group = $groupsCollection->first();
         $this->assertEquals('Z First Group When OrderBy = Description DESC', $group->getDescription());
+
+        $this->assertEquals(true, is_array($groupsCollection->toArray()));
+
+        $this->assertEquals(false, $groupsCollection->contains($name));
+
+        $this->assertEquals(false, $groupsCollection->isEmpty());
+  
+        $this->assertEquals(null, $groupsCollection->get(5));
 
         // Clean Up
         foreach ($groups as $group) {

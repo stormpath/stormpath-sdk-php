@@ -71,7 +71,7 @@ class StormpathService
 
         // Set default http client; overwriteable after configuration
         $client = new Client(null, array('keepalive' => true));
-        $adapter = new Basic();
+        $adapter = new Digest();
         $client->setAdapter($adapter);
         self::setHttpClient($client);
         self::setCache(StorageFactory::adapterFactory('memory'));

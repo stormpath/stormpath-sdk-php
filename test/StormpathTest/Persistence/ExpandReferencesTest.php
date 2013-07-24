@@ -51,6 +51,7 @@ class ExpandReferencesTest extends \PHPUnit_Framework_TestCase
         $directory->setStatus('ENABLED');
         $resourceManager->persist($directory);
         $resourceManager->flush();
+        
 
         # FIXME: Assign user to directory
 
@@ -72,12 +73,14 @@ class ExpandReferencesTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($account->getDirectory()->getHref(), $directory->getHref());
         $this->assertEquals($account->getTenant()->getHref(),
             $resourceManager->find('Stormpath\Resource\Tenant', 'current')->getHref());
-
+       
         // Clean Up
         $resourceManager->remove($account1);
+        $resourceManager->clear($directory);
         $resourceManager->remove($directory);
         $resourceManager->flush();
     }
+
 
     public function testFetchApplicationWithExpandResources()
     {
@@ -90,5 +93,20 @@ class ExpandReferencesTest extends \PHPUnit_Framework_TestCase
         }
 
         $href = $application->getTenant()->getHref();
+
+        $this->assertEquals($href,  $resourceManager->find('Stormpath\Resource\Tenant', 'current')->getHref());
     }
+
+    public function testFetchDirectoryWithExpandResources()
+    {
+         $resourceManager = StormpathService::getResourceManager();
+         $directory = new Directory;
+         $directory->setName(md5(rand()));
+         $directory->setDescription('phpunit test directory');
+         $directory->setStatus('ENABLED');
+        
+         $resourceManager->persist($directory);
+         $resourceManager->flush();
+    }
+
 }

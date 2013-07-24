@@ -49,7 +49,8 @@ class Digest extends Socket
                 array('%7E' => '~')
             );
             $resourcePath = strtr($resourcePath, array('%2F' => '/'));
-        } else {
+        } 
+        else {
             $resourcePath = '/';
         }
 
@@ -107,7 +108,7 @@ class Digest extends Socket
         $headers['authorization'] = $authorizationHeader;
 
         $return = parent::write($method, $uri, $httpVer, $headers, $body);
-
+        
         return $return;
     }
 

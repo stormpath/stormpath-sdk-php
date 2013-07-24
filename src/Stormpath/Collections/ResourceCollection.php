@@ -564,16 +564,7 @@ class ResourceCollection implements Collection, Selectable
      */
     public function partition(Closure $p)
     {
-        $this->_load();
-        $coll1 = $coll2 = array();
-        foreach ($this->_elements as $key => $element) {
-            if ($p($key, $element)) {
-                $coll1[$key] = $element;
-            } else {
-                $coll2[$key] = $element;
-            }
-        }
-        return array(new static($coll1), new static($coll2));
+         throw new \Exception('partition not implemented');
     }
 
     /**
