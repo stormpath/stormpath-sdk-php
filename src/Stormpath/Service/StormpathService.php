@@ -21,6 +21,7 @@ class StormpathService
     private static $secret;
     private static $httpClient;
     private static $cache;
+    const BASE_URI = 'https://api.stormpath.com/v1/';
 
     public static function getId()
     {
