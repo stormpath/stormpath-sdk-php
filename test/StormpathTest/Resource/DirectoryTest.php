@@ -170,6 +170,7 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $resourceManager->flush();
 
         // Clean Up
+        $resourceManager->detach($group1);
         $resourceManager->remove($groupMembership);
         $resourceManager->remove($group1);
         $resourceManager->remove($account1);

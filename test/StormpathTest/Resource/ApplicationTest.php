@@ -93,4 +93,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->remove($account1);
         $resourceManager->flush();
     }
+
+    public function testAccount()
+    {
+        
+    }
 }
+
