@@ -13,7 +13,6 @@ class Account extends AbstractResource
 {
     protected $_url = 'https://api.stormpath.com/v1/accounts';
     protected $_expandString = 'directory,tenant';
-
     protected $username;
     protected $email;
     protected $password;

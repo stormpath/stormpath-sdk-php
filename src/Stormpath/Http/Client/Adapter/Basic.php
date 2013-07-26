@@ -22,7 +22,7 @@ class Basic extends Socket
      */
     public function write($method, $uri, $httpVer = '1.1', $headers = array(), $body = '')
     {
-        $headers['Authorization'] = 'Basic ' . base64_encode(Stormpath::getId() . ':' . Stormpath::getSecret());
+        $headers['Authorization'] = 'Basic ' . base64_encode(Stormpath::getApiKey()->getId() . ':' . Stormpath::getApiKey()->getSecret());
         $headers['Content-Type'] = 'application/json;charset=UTF-8';
         return parent::write($method, $uri, $httpVer, $headers, $body);
     }

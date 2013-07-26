@@ -3,6 +3,7 @@
 namespace Stormpath\Http\Client\Adapter;
 
 use Stormpath\Service\StormpathService as Stormpath;
+use Stormpath\Client\ApiKey;
 use Zend\Http\Client\Adapter\Socket;
 use Zend\Http\Request;
 use Rhumsaa\Uuid\Uuid;
@@ -81,7 +82,8 @@ class Digest extends Socket
                             $signedHeadersString . "\n" .
                             $requestPayloadHashHex;
 
-        $id = Stormpath::getId() . '/' . $dateStamp . '/' . $nonce . '/sauthc1_request';
+
+        $id = Stormpath::getApiKey()->getId() . '/' . $dateStamp . '/' . $nonce . '/sauthc1_request';
 
         $canonicalRequestHashHex = $this->toHex($this->hashText($canonicalRequest));
 
@@ -91,7 +93,7 @@ class Digest extends Socket
                         $canonicalRequestHashHex;
 
         // SAuthc1 uses a series of derived keys, formed by hashing different pieces of data
-        $kSecret = $this->toUTF8('SAuthc1' . Stormpath::getSecret());
+        $kSecret = $this->toUTF8('SAuthc1' . Stormpath::getApiKey()->getSecret());
         $kDate = $this->sign($dateStamp, $kSecret, 'SHA256');
         $kNonce = $this->sign($nonce, $kDate, 'SHA256');
 
