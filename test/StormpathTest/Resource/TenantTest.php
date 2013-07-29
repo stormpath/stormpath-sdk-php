@@ -4,6 +4,7 @@ namespace StormpathTest\Resource;
 
 use StormpathTest\Bootstrap;
 use Zend\Mvc\Router\Http\TreeRouteStack as HttpRouter;
+use Zend\Config\Reader\Ini as ConfigReader;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
@@ -21,9 +22,11 @@ class TenantTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $config = Bootstrap::getApplication()->getConfig();
 
-        $this->assertNull(StormpathService::configure($config['stormpath']['id'], $config['stormpath']['secret']));
+        $reader = new ConfigReader();
+        $config = $reader->fromFile('/Users/vganesh/.stormpath/apiKey.ini');
+
+        $this->assertNull( StormpathService::configure($config['apiKey']['id'], $config['apiKey']['secret']));
 
         $client = new Client();
         $adapter = new Basic();
@@ -40,6 +43,9 @@ class TenantTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($tenant->getHref());
         $this->assertNotEmpty($tenant->getName());
         $this->assertNotEmpty($tenant->getKey());
+
+        $tenantArray = $tenant->getArrayCopy();
+        $this->assertEquals('soliantconsulting', $tenantArray['name']);
     }
 
     /**

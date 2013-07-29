@@ -15,6 +15,7 @@ use Zend\Json\Json;
 use Stormpath\Client\ApiKey;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\Cache\StorageFactory;
+use Zend\Config\Reader\Ini as ConfigReader;
 
 class StormpathService
 {
@@ -64,7 +65,7 @@ class StormpathService
 
         // Set default HTTP client; overwriteable after configuration
         $client = new HttpClient(null, array('keepalive' => true));
-        $adapter = new Digest();
+        $adapter = new Basic();
         $client->setAdapter($adapter);
         self::setHttpClient($client);
 
