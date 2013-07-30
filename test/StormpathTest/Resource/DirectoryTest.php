@@ -22,7 +22,6 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $resourceManager = StormpathService::getResourceManager();
 
         $dir = new Directory;
-
         $dir->setName(md5(rand()));
         $dir->setDescription('phpunit test directory');
         $dir->setStatus('ENABLED');

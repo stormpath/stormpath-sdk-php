@@ -23,6 +23,7 @@ class Digest extends Socket
      */
     public function write($method, $uri, $httpVer = '1.1', $headers = array(), $body = '')
     {
+        var_dump($body);
         $date = new \DateTime();
         $timeStamp = $date->format('Ymd\THms\Z');
         $dateStamp = $date->format('Ymd');
@@ -33,10 +34,18 @@ class Digest extends Socket
         $parsedUrl = parse_url($uri);
         $hostHeader = $parsedUrl['host'];  # Verify host has port #
 
-        $headers['Host'] = $hostHeader;
+        unset($headers['X-Stormpath-Date']);
+        unset($headers['authorization']);
+        unset($headers['accept-encoding']);
+        
+
+       // $headers['Host'] = 'localhost'.':8080';
         $headers['X-Stormpath-Date'] = $timeStamp;
         $headers['Accept'] = 'application/json';
-        $headers['User-Agent'] = 'StormpathClient-PHP';
+        $headers['User-Agent'] = 'Stormpath-PhpSDK';
+        $headers['Content-Type'] = 'application/json';
+
+
 
         if ($resourcePath = $parsedUrl['path']) {
             $encoded = urlencode($resourcePath);
@@ -70,9 +79,11 @@ class Digest extends Socket
         foreach ($headers as $key => $val) {
             $canonicalHeaderString .= "$key:$val\n";
         }
+        
+        $canonicalHeaderString = implode("\n", $canonicalHeaders);
+        $signedHeadersString = strtolower(implode(';', array_keys($headers)));
 
-//        $canonicalHeaderString = implode("\n", $canonicalHeaders);
-        $signedHeadersString = implode(';', array_keys($headers));
+        
         $requestPayloadHashHex = $this->toHex($this->hashText($body));
 
         $canonicalRequest = $method . "\n" .
@@ -82,6 +93,7 @@ class Digest extends Socket
                             $signedHeadersString . "\n" .
                             $requestPayloadHashHex;
 
+        //print_r($canonicalRequest);
 
         $id = Stormpath::getApiKey()->getId() . '/' . $dateStamp . '/' . $nonce . '/sauthc1_request';
 
@@ -109,9 +121,12 @@ class Digest extends Socket
 
         $headers['authorization'] = $authorizationHeader;
 
+        print_r($headers);
+
         $return = parent::write($method, $uri, $httpVer, $headers, $body);
         
         return $return;
+
     }
 
     public function toHex($data)
@@ -127,9 +142,9 @@ class Digest extends Socket
 
     protected function sign($data, $key, $algorithm)
     {
-//        $utf8Data = $this->toUTF8($data);
+        $utf8Data = $this->toUTF8($data);
 
-        return hash_hmac($algorithm, $data, $key, true);
+        return hash_hmac($algorithm, $utf8Data, $key, true);
     }
 
     protected function toUTF8($str)

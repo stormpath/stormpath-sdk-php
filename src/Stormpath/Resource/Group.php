@@ -23,6 +23,11 @@ class Group extends AbstractResource
     protected $accounts;
     protected $accountMemberships;
 
+    /*public function __construct()
+    {
+        $this->_setUrl(StormpathService::BASE_URI.'/groups');
+    }
+    */
     /**
      * When a group is created the _url is changed to the directory
      * it is created under.  Therefore we reset the url when the Href is set.

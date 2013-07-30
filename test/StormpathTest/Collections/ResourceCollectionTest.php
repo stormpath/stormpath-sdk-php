@@ -20,11 +20,10 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $resourceManager = StormpathService::getResourceManager();
 
         $dir = new Directory;
-
         $dir->setName(md5(rand()));
         $dir->setDescription('phpunit test directory');
         $dir->setStatus('ENABLED');
-
+        
         $resourceManager->persist($dir);
         $resourceManager->flush();
 
@@ -36,6 +35,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $resourceManager = StormpathService::getResourceManager();
         $resourceManager->remove($this->directory);
         $resourceManager->flush();
+
     }
 
     public function testCollectionPagination()

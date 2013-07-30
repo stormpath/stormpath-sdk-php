@@ -22,7 +22,6 @@ class TenantTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-
         $reader = new ConfigReader();
         $config = $reader->fromFile('/Users/vganesh/.stormpath/apiKey.ini');
 

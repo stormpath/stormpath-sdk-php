@@ -18,6 +18,11 @@ class GroupMembership extends AbstractResource
     protected $account;
     protected $group;
 
+    /*public function __construct()
+    {
+        $this->_setUrl(StormpathService::BASE_URI.'/groupMemberships');
+    }*/
+
     public function setAccount(Account $value)
     {
         $this->_load();

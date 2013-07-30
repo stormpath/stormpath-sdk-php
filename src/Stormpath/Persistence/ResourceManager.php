@@ -9,6 +9,7 @@ use Zend\Http\Response;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Zend\Cache\Storage\StorageInterface;
+use Stormpath\Service\StormpathService;
 
 class ResourceManager implements ObjectManager
 {
@@ -107,7 +108,6 @@ class ResourceManager implements ObjectManager
 
         $exception = new ApiException($details['message'], $details['code']);
         $exception->exchangeArray($details);
-       
         throw $exception;
     }
 
@@ -247,7 +247,6 @@ class ResourceManager implements ObjectManager
                 $client = $this->getHttpClient();
                 $client->setUri($resource->_getUrl());
                 $client->setMethod('POST');
-
                 $client->setRawBody(json_encode($resource->getArrayCopy()));
                 $response = $client->send();
 
@@ -259,7 +258,7 @@ class ResourceManager implements ObjectManager
                 } else {
                     $this->handleInvalidResponse($response);
                 }
-
+                
                 $this->insert->removeElement($resource);
             }
         }
