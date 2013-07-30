@@ -11,8 +11,7 @@ use Stormpath\Resource\Application;
 
 class Account extends AbstractResource
 {
-    protected $_url = 'https://api.stormpath.com/v1/accounts';
-    //protected $_url = StormpathService::BASE_URI.'/accounts';
+    protected $_url = '/accounts';
     protected $_expandString = 'directory,tenant';
     protected $username;
     protected $email;
@@ -26,19 +25,13 @@ class Account extends AbstractResource
     protected $tenant;
     protected $application;
 
-    /*public function __construct()
-    {
-        $this->_setUrl(StormpathService::BASE_URI.'/accounts');
-    }
-    */
-    
     /**
      * When an account is created the _url is changed to the directory
      * it is created under.  Therefore we reset the url when the Href is set.
      */
     public function setHref($value)
     {
-        $this->_setUrl('https://api.stormpath.com/v1/accounts');
+        $this->_setUrl(StormpathService::getBaseUrl() . '/accounts');
         $this->href = $value;
 
         $this->setId(substr($value, strrpos($value, '/') + 1));

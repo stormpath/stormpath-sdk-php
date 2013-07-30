@@ -9,17 +9,12 @@ namespace Stormpath\Resource;
 use Stormpath\Collections\ResourceCollection;
 use Zend\Http\Client;
 use Zend\Json\Json;
-use Stormpath\Service\StormpathService;
 
 class Tenant extends AbstractResource
 {
-    protected $_url = 'https://api.stormpath.com/v1/tenants';
-    protected $name;
+    protected $_url = '/tenants';
 
-    /*public function __construct()
-    {
-        $this->_setUrl(StormpathService::BASE_URI.'/tenants');
-    }*/
+    protected $name;
 
     public function getName()
     {

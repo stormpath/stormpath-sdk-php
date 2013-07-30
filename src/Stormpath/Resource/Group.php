@@ -10,7 +10,7 @@ use Zend\Json\Json;
 
 class Group extends AbstractResource
 {
-    protected $_url = 'https://api.stormpath.com/v1/groups';
+    protected $_url = '/groups';
     protected $_expandString = 'directory,tenant';
 
     protected $name;
@@ -23,18 +23,13 @@ class Group extends AbstractResource
     protected $accounts;
     protected $accountMemberships;
 
-    /*public function __construct()
-    {
-        $this->_setUrl(StormpathService::BASE_URI.'/groups');
-    }
-    */
     /**
      * When a group is created the _url is changed to the directory
      * it is created under.  Therefore we reset the url when the Href is set.
      */
     public function setHref($value)
     {
-        $this->_setUrl('https://api.stormpath.com/v1/groups');
+        $this->_setUrl(StormpathService::getBaseUrl() . '/groups');
         $this->href = $value;
 
         $this->setId(substr($value, strrpos($value, '/') + 1));

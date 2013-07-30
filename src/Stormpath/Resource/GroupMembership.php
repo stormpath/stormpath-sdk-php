@@ -12,16 +12,11 @@ use Zend\Json\Json;
 
 class GroupMembership extends AbstractResource
 {
-    protected $_url = 'https://api.stormpath.com/v1/groupMemberships';
+    protected $_url = '/groupMemberships';
     protected $_expandString = 'account,group';
 
     protected $account;
     protected $group;
-
-    /*public function __construct()
-    {
-        $this->_setUrl(StormpathService::BASE_URI.'/groupMemberships');
-    }*/
 
     public function setAccount(Account $value)
     {

@@ -10,8 +10,9 @@ use Zend\Json\Json;
 
 class Application extends AbstractResource
 {
-    protected $_url = 'https://api.stormpath.com/v1/applications';
+    protected $_url = '/applications';
     protected $_expandString = 'tenant';
+
     protected $name;
     protected $description;
     protected $status;
@@ -21,11 +22,6 @@ class Application extends AbstractResource
     protected $loginAttempts;
     protected $passwordResetTokens;
 
-    /*public function __construct()
-    {
-        $this->_setUrl(StormpathService::BASE_URI.'/applications');
-    }
-    */
     public function getName()
     {
         $this->_load();
