@@ -23,7 +23,6 @@ class Digest extends Socket
      */
     public function write($method, $uri, $httpVer = '1.1', $headers = array(), $body = '')
     {
-        var_dump($body);
         $date = new \DateTime();
         $timeStamp = $date->format('Ymd\THms\Z');
         $dateStamp = $date->format('Ymd');
@@ -32,20 +31,17 @@ class Digest extends Socket
         // SAuthc1 requires that we sign the Host header so we
         // have to have it in the request by the time we sign.
         $parsedUrl = parse_url($uri);
-        $hostHeader = $parsedUrl['host'];  # Verify host has port #
+        echo "this is the parsedurl: ";
+        print_r(implode(',',$parsedUrl));
 
-        unset($headers['X-Stormpath-Date']);
-        unset($headers['authorization']);
-        unset($headers['accept-encoding']);
-        
+        print_r("this is the path: " . $parsedUrl['path']);
+ 
+        //$hostHeader = $parsedUrl['host'];  # Verify host has port #
 
-       // $headers['Host'] = 'localhost'.':8080';
+        //$headers['Host'] = $hostHeader;
         $headers['X-Stormpath-Date'] = $timeStamp;
         $headers['Accept'] = 'application/json';
-        $headers['User-Agent'] = 'Stormpath-PhpSDK';
-        $headers['Content-Type'] = 'application/json';
-
-
+        $headers['User-Agent'] = 'StormpathClient-PHP';
 
         if ($resourcePath = $parsedUrl['path']) {
             $encoded = urlencode($resourcePath);
@@ -66,7 +62,7 @@ class Digest extends Socket
 
         $canonicalResourcePath = $resourcePath;
         $canonicalQueryString = (isset($parsedUrl['query'])) ? $parsedUrl['query']: '';
-
+        print_r("This is the canonical resource path: " . $canonicalResourcePath);
 
         foreach ($headers as $key => $value) {
             $canonicalHeaders[strtolower($key)] = $value;
@@ -79,12 +75,17 @@ class Digest extends Socket
         foreach ($headers as $key => $val) {
             $canonicalHeaderString .= "$key:$val\n";
         }
-        
-        $canonicalHeaderString = implode("\n", $canonicalHeaders);
-        $signedHeadersString = strtolower(implode(';', array_keys($headers)));
 
-        
+        print_r("this is the ksorted headers string: ". $canonicalHeaderString);
+
+//        $canonicalHeaderString = implode("\n", $canonicalHeaders);
+        $signedHeadersString = implode(';', array_keys($headers));
+
+        print_r("this is the signed header String: " . $signedHeadersString);
+
         $requestPayloadHashHex = $this->toHex($this->hashText($body));
+
+        print_r("this is the request payloadhex: ". $requestPayloadHashHex);
 
         $canonicalRequest = $method . "\n" .
                             $canonicalResourcePath . "\n" .
@@ -93,40 +94,51 @@ class Digest extends Socket
                             $signedHeadersString . "\n" .
                             $requestPayloadHashHex;
 
-        //print_r($canonicalRequest);
+        print_r("this is the canonical request: " . $canonicalRequest);
+
 
         $id = Stormpath::getApiKey()->getId() . '/' . $dateStamp . '/' . $nonce . '/sauthc1_request';
 
         $canonicalRequestHashHex = $this->toHex($this->hashText($canonicalRequest));
+
+        print_r("this the canonical Request hex: " . $canonicalRequestHashHex);
+
 
         $stringToSign = "HMAC-SHA-256\n" .
                         $timeStamp . "\n" .
                         $id . "\n" .
                         $canonicalRequestHashHex;
 
+        print_r("String to sign: " . $stringToSign);
+
         // SAuthc1 uses a series of derived keys, formed by hashing different pieces of data
         $kSecret = $this->toUTF8('SAuthc1' . Stormpath::getApiKey()->getSecret());
+        print_r("ksecret: ". $kSecret);
         $kDate = $this->sign($dateStamp, $kSecret, 'SHA256');
+        print_r("kDate: ".  $kDate );
         $kNonce = $this->sign($nonce, $kDate, 'SHA256');
-
+        print_r("kNonce: " . $kNonce);
         $kSigning = $this->sign('sauthc1_request', $kNonce, 'SHA256');
-
+        print_r("ksigning: " . $kSigning);
         $signature = $this->sign($this->toUTF8($stringToSign), $kSigning, 'SHA256');
+        print_r("signature: " . $signature );
         $signatureHex = $this->toHex($signature);
+        print_r("signatureHex: " . $signatureHex);
 
         $authorizationHeader = 'SAuthc1 ' .
                                $this->createNameValuePair('sauthc1Id', $id) . ', ' .
                                $this->createNameValuePair('sauthc1SignedHeaders', $signedHeadersString) . ', ' .
                                $this->createNameValuePair('sauthc1Signature', $signatureHex);
 
-        $headers['authorization'] = $authorizationHeader;
+        print_r("authorizationHeader: " . $authorizationHeader);
 
-        print_r($headers);
+        $headers['authorization'] = $authorizationHeader;
 
         $return = parent::write($method, $uri, $httpVer, $headers, $body);
         
-        return $return;
+        print_r("Return Value: " . $return);
 
+        return $return;
     }
 
     public function toHex($data)
@@ -142,9 +154,9 @@ class Digest extends Socket
 
     protected function sign($data, $key, $algorithm)
     {
-        $utf8Data = $this->toUTF8($data);
+//        $utf8Data = $this->toUTF8($data);
 
-        return hash_hmac($algorithm, $utf8Data, $key, true);
+        return hash_hmac($algorithm, $data, $key, true);
     }
 
     protected function toUTF8($str)
