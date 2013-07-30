@@ -60,7 +60,7 @@ class Bootstrap
 
         // Configure Stormpath
         $reader = new ConfigReader();
-        $config = $reader->fromFile('/Users/vganesh/.stormpath/apiKey.ini');
+        $config = $reader->fromFile($_SERVER['HOME'] . '/.stormpath/apiKey.ini');
         $id = $config['apiKey']['id'];
         $secret = $config['apiKey']['secret'];
 
