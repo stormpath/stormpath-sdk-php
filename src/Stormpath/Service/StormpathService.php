@@ -10,37 +10,23 @@ namespace Stormpath\Service;
 use Stormpath\Persistence\ResourceManager;
 use Stormpath\Http\Client\Adapter\Digest;
 use Stormpath\Http\Client\Adapter\Basic;
-use Zend\Http\Client;
+use Zend\Http\Client as HttpClient;
 use Zend\Json\Json;
-use Zend\Cache\StorageFactory;
+use Stormpath\Client\ApiKey;
 use Zend\Cache\Storage\StorageInterface;
+use Zend\Cache\StorageFactory;
+use Zend\Config\Reader\Ini as ConfigReader;
 
 class StormpathService
 {
-    private static $id;
-    private static $secret;
+    private static $apiKey;
     private static $httpClient;
     private static $cache;
+    private static $baseUrl = 'https://api.stormpath.com/v1';
 
-    public static function getId()
+    public static function getBaseUrl()
     {
-        return self::$id;
-    }
-
-    private static function setId($value)
-    {
-        self::$id = $value;
-    }
-
-    public static function getSecret()
-    {
-
-        return self::$secret;
-    }
-
-    private static function setSecret($value)
-    {
-        self::$secret = $value;
+        return self::$baseUrl;
     }
 
     public static function getHttpClient()
@@ -48,10 +34,20 @@ class StormpathService
         return self::$httpClient;
     }
 
-    public static function setHttpClient(Client $value)
+    public static function setHttpClient(HttpClient $value)
     {
         $value->setOptions(array('sslverifypeer' => false));
         self::$httpClient = $value;
+    }
+
+    public static function getApiKey()
+    {
+        return self::$apiKey;
+    }
+
+    public static function setApiKey(ApiKey $apiKey)
+    {
+        self::$apiKey = $apiKey;
     }
 
     public static function getCache()
@@ -66,14 +62,19 @@ class StormpathService
 
     public static function configure($id, $secret)
     {
-        self::setId($id);
-        self::setSecret($secret);
+        // Set default API key; overwriteable after configuration
+        $apiKey = new ApiKey;
+        $apiKey->setId($id);
+        $apiKey->setSecret($secret);
+        self::setApiKey($apiKey);
 
-        // Set default http client; overwriteable after configuration
-        $client = new Client(null, array('keepalive' => true));
-        $adapter = new Digest();
+        // Set default HTTP client; overwriteable after configuration
+        $client = new HttpClient(null, array('keepalive' => true));
+        $adapter = new Basic();
         $client->setAdapter($adapter);
         self::setHttpClient($client);
+
+        // Set default cache adapter; overwriteable after configuration
         self::setCache(StorageFactory::adapterFactory('memory'));
     }
 

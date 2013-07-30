@@ -12,7 +12,7 @@ use Zend\Json\Json;
 
 class Tenant extends AbstractResource
 {
-    protected $_url = 'https://api.stormpath.com/v1/tenants';
+    protected $_url = '/tenants';
 
     protected $name;
 

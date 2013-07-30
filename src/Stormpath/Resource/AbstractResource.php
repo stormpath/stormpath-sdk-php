@@ -3,6 +3,7 @@
 namespace Stormpath\Resource;
 
 use Stormpath\Persistence\ResourceManager;
+use Stormpath\Service\StormpathService;
 
 abstract class AbstractResource
 {
@@ -45,6 +46,11 @@ abstract class AbstractResource
      * A string of all references on the Resource to eagerly load with Expand Resources
      */
     protected $_expandString;
+
+    public function __construct()
+    {
+        $this->_setUrl(StormpathService::getBaseUrl() . $this->_getUrl());
+    }
 
     public function getExpandString()
     {

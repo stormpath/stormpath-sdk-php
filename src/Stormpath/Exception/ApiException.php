@@ -12,11 +12,12 @@ namespace Stormpath\Exception;
  * getMoreInfo
  */
 
-class ApiException extends \Exception
+class ApiException extends \RuntimeException
 {
     protected $status;
     protected $developerMessage;
     protected $moreInfo;
+    protected $code;
 
     public function exchangeArray($data)
     {
