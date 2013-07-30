@@ -22,7 +22,12 @@ class StormpathService
     private static $apiKey;
     private static $httpClient;
     private static $cache;
-    //const BASE_URI = 'https://api.stormpath.com/v1';
+    private static $baseUrl = 'https://api.stormpath.com/v1';
+
+    public static function getBaseUrl()
+    {
+        return self::$baseUrl;
+    }
 
     public static function getHttpClient()
     {
@@ -65,7 +70,7 @@ class StormpathService
 
         // Set default HTTP client; overwriteable after configuration
         $client = new HttpClient(null, array('keepalive' => true));
-        $adapter = new Basic;
+        $adapter = new Basic();
         $client->setAdapter($adapter);
         self::setHttpClient($client);
 
