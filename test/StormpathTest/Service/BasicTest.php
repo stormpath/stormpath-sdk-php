@@ -14,11 +14,6 @@ class BasicTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $reader = new ConfigReader();
-        $config = $reader->fromFile('/Users/vganesh/.stormpath/apiKey.ini');
-
-        $this->assertNull( StormpathService::configure($config['apiKey']['id'], $config['apiKey']['secret']));
-
         StormpathService::getHttpClient()->setAdapter(new Basic(null, array('keepalive' => true)));
     }
 
@@ -31,7 +26,6 @@ class BasicTest extends \PHPUnit_Framework_TestCase
     {
         $resourceManager = StormpathService::getResourceManager();
         $tenant = $resourceManager->find('Stormpath\Resource\Tenant', 'current');
-        print_r($tenant->getName());
     }
 
 }
