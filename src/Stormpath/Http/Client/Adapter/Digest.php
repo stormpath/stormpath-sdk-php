@@ -31,17 +31,14 @@ class Digest extends Socket
         // SAuthc1 requires that we sign the Host header so we
         // have to have it in the request by the time we sign.
         $parsedUrl = parse_url($uri);
-        echo "this is the parsedurl: ";
-        print_r(implode(',',$parsedUrl));
 
-        print_r("this is the path: " . $parsedUrl['path']);
- 
-        //$hostHeader = $parsedUrl['host'];  # Verify host has port #
+        $hostHeader = $parsedUrl['host'];  # Verify host has port #
 
-        //$headers['Host'] = $hostHeader;
+        $headers['Host'] = $hostHeader;
         $headers['X-Stormpath-Date'] = $timeStamp;
         $headers['Accept'] = 'application/json';
         $headers['User-Agent'] = 'StormpathClient-PHP';
+		$headers['Content-Type'] = 'application/json;charset=UTF-8';
 
         if ($resourcePath = $parsedUrl['path']) {
             $encoded = urlencode($resourcePath);
@@ -62,7 +59,7 @@ class Digest extends Socket
 
         $canonicalResourcePath = $resourcePath;
         $canonicalQueryString = (isset($parsedUrl['query'])) ? $parsedUrl['query']: '';
-        print_r("This is the canonical resource path: " . $canonicalResourcePath);
+       
 
         foreach ($headers as $key => $value) {
             $canonicalHeaders[strtolower($key)] = $value;
@@ -76,16 +73,10 @@ class Digest extends Socket
             $canonicalHeaderString .= "$key:$val\n";
         }
 
-        print_r("this is the ksorted headers string: ". $canonicalHeaderString);
-
-//        $canonicalHeaderString = implode("\n", $canonicalHeaders);
+//      $canonicalHeaderString = implode("\n", $canonicalHeaders);
         $signedHeadersString = implode(';', array_keys($headers));
 
-        print_r("this is the signed header String: " . $signedHeadersString);
-
         $requestPayloadHashHex = $this->toHex($this->hashText($body));
-
-        print_r("this is the request payloadhex: ". $requestPayloadHashHex);
 
         $canonicalRequest = $method . "\n" .
                             $canonicalResourcePath . "\n" .
@@ -94,14 +85,10 @@ class Digest extends Socket
                             $signedHeadersString . "\n" .
                             $requestPayloadHashHex;
 
-        print_r("this is the canonical request: " . $canonicalRequest);
-
 
         $id = Stormpath::getApiKey()->getId() . '/' . $dateStamp . '/' . $nonce . '/sauthc1_request';
 
         $canonicalRequestHashHex = $this->toHex($this->hashText($canonicalRequest));
-
-        print_r("this the canonical Request hex: " . $canonicalRequestHashHex);
 
 
         $stringToSign = "HMAC-SHA-256\n" .
@@ -109,34 +96,27 @@ class Digest extends Socket
                         $id . "\n" .
                         $canonicalRequestHashHex;
 
-        print_r("String to sign: " . $stringToSign);
-
         // SAuthc1 uses a series of derived keys, formed by hashing different pieces of data
         $kSecret = $this->toUTF8('SAuthc1' . Stormpath::getApiKey()->getSecret());
-        print_r("ksecret: ". $kSecret);
+       
         $kDate = $this->sign($dateStamp, $kSecret, 'SHA256');
-        print_r("kDate: ".  $kDate );
+       
         $kNonce = $this->sign($nonce, $kDate, 'SHA256');
-        print_r("kNonce: " . $kNonce);
+       
         $kSigning = $this->sign('sauthc1_request', $kNonce, 'SHA256');
-        print_r("ksigning: " . $kSigning);
+       
         $signature = $this->sign($this->toUTF8($stringToSign), $kSigning, 'SHA256');
-        print_r("signature: " . $signature );
+      
         $signatureHex = $this->toHex($signature);
-        print_r("signatureHex: " . $signatureHex);
-
+      
         $authorizationHeader = 'SAuthc1 ' .
                                $this->createNameValuePair('sauthc1Id', $id) . ', ' .
                                $this->createNameValuePair('sauthc1SignedHeaders', $signedHeadersString) . ', ' .
                                $this->createNameValuePair('sauthc1Signature', $signatureHex);
 
-        print_r("authorizationHeader: " . $authorizationHeader);
-
         $headers['authorization'] = $authorizationHeader;
 
         $return = parent::write($method, $uri, $httpVer, $headers, $body);
-        
-        print_r("Return Value: " . $return);
 
         return $return;
     }
