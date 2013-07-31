@@ -60,12 +60,12 @@ class Bootstrap
 
         // Configure Stormpath
         $reader = new ConfigReader();
-        $config = $reader->fromFile($_SERVER['HOME'] . '/.stormpath/apiKey.ini');
+        $config = $reader->fromFile($_SERVER['HOME'] . '/.stormpath/apiKeycopy.ini');
         $id = $config['apiKey']['id'];
         $secret = $config['apiKey']['secret'];
 
         StormpathService::configure($id, $secret);
-        StormpathService::getHttpClient()->setAdapter(new Basic(null, array('keepalive' => true)));
+        StormpathService::getHttpClient()->setAdapter(new Digest(null, array('keepalive' => true)));
     }
 
     public static function getApplication()
