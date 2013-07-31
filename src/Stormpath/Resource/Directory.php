@@ -11,7 +11,7 @@ use Stormpath\Resource\Account;
 
 class Directory extends AbstractResource
 {
-    protected $_url = 'https://api.stormpath.com/v1/directories';
+    protected $_url = '/directories';
     protected $_expandString = 'tenant';
 
     protected $name;

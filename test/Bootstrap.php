@@ -2,6 +2,7 @@
 
 namespace StormpathTest;
 
+use Zend\Config\Reader\Ini as ConfigReader;
 use Zend\Loader\AutoloaderFactory;
 use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
@@ -11,6 +12,7 @@ use Stormpath\Service\StormpathService;
 use Zend\Http\Client;
 use Stormpath\Http\Client\Adapter\Digest;
 use Stormpath\Http\Client\Adapter\Basic;
+use Stormpath\Client\Apikey;
 
 error_reporting(E_ALL | E_STRICT);
 chdir(__DIR__);
@@ -57,17 +59,19 @@ class Bootstrap
         static::$application = $application;
 
         // Configure Stormpath
-        $config = Bootstrap::getApplication()->getConfig();
+        $reader = new ConfigReader();
+        $config = $reader->fromFile($_SERVER['HOME'] . '/.stormpath/apiKey.ini');
+        $id = $config['apiKey']['id'];
+        $secret = $config['apiKey']['secret'];
 
-        StormpathService::configure($config['stormpath']['id'], $config['stormpath']['secret']);
-        StormpathService::getHttpClient()->setAdapter(new Basic(null, array('keepalive' => true)));
+        StormpathService::configure($id, $secret);
+        StormpathService::getHttpClient()->setAdapter(new Digest(null, array('keepalive' => true)));
     }
 
     public static function getApplication()
     {
         return static::$application;
     }
-
 
     protected static function initAutoloader()
     {

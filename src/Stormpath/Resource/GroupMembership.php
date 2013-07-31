@@ -12,7 +12,7 @@ use Zend\Json\Json;
 
 class GroupMembership extends AbstractResource
 {
-    protected $_url = 'https://api.stormpath.com/v1/groupMemberships';
+    protected $_url = '/groupMemberships';
     protected $_expandString = 'account,group';
 
     protected $account;

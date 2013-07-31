@@ -77,7 +77,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->persist($account1);
         $resourceManager->flush();
 
-
         // Test login attempt
         $loginAttempt = new LoginAttempt;
         $loginAttempt->setUsername($email);
@@ -93,4 +92,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->remove($account1);
         $resourceManager->flush();
     }
+
 }
+

@@ -9,6 +9,7 @@ use Zend\Http\Response;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Zend\Cache\Storage\StorageInterface;
+use Stormpath\Service\StormpathService;
 
 class ResourceManager implements ObjectManager
 {
@@ -229,16 +230,16 @@ class ResourceManager implements ObjectManager
                 switch(get_class($resource)) {
                     case 'Stormpath\Resource\Account':
                         if ($resource->getDirectory()) {
-                            $resource->_setUrl('https://api.stormpath.com/v1/directories/' . $resource->getDirectory()->getId() . '/accounts');
+                            $resource->_setUrl(StormpathService::getBaseUrl() . '/directories/' . $resource->getDirectory()->getId() . '/accounts');
                         } else {
-                            $resource->_setUrl('https://api.stormpath.com/v1/applications/' . $resource->getApplication()->getId() . '/accounts');
+                            $resource->_setUrl(StormpathService::getBaseUrl() . '/applications/' . $resource->getApplication()->getId() . '/accounts');
                         }
                         break;
                     case 'Stormpath\Resource\Group':
-                        $resource->_setUrl('https://api.stormpath.com/v1/directories/' . $resource->getDirectory()->getId() . '/groups');
+                        $resource->_setUrl(StormpathService::getBaseUrl() . '/directories/' . $resource->getDirectory()->getId() . '/groups');
                         break;
                     case 'Stormpath\Resource\LoginAttempt':
-                        $resource->_setUrl('https://api.stormpath.com/v1/applications/' . $resource->getApplication()->getId() . '/loginAttempts');
+                        $resource->_setUrl(StormpathService::getBaseUrl() . '/applications/' . $resource->getApplication()->getId() . '/loginAttempts');
                         break;
                     default:
                         break;

@@ -3,6 +3,7 @@
 namespace Stormpath\Http\Client\Adapter;
 
 use Stormpath\Service\StormpathService as Stormpath;
+use Stormpath\Client\ApiKey;
 use Zend\Http\Client\Adapter\Socket;
 use Zend\Http\Request;
 use Rhumsaa\Uuid\Uuid;
@@ -30,12 +31,14 @@ class Digest extends Socket
         // SAuthc1 requires that we sign the Host header so we
         // have to have it in the request by the time we sign.
         $parsedUrl = parse_url($uri);
+
         $hostHeader = $parsedUrl['host'];  # Verify host has port #
 
         $headers['Host'] = $hostHeader;
         $headers['X-Stormpath-Date'] = $timeStamp;
         $headers['Accept'] = 'application/json';
         $headers['User-Agent'] = 'StormpathClient-PHP';
+		$headers['Content-Type'] = 'application/json;charset=UTF-8';
 
         if ($resourcePath = $parsedUrl['path']) {
             $encoded = urlencode($resourcePath);
@@ -56,7 +59,7 @@ class Digest extends Socket
 
         $canonicalResourcePath = $resourcePath;
         $canonicalQueryString = (isset($parsedUrl['query'])) ? $parsedUrl['query']: '';
-
+       
 
         foreach ($headers as $key => $value) {
             $canonicalHeaders[strtolower($key)] = $value;
@@ -70,8 +73,9 @@ class Digest extends Socket
             $canonicalHeaderString .= "$key:$val\n";
         }
 
-//        $canonicalHeaderString = implode("\n", $canonicalHeaders);
+//      $canonicalHeaderString = implode("\n", $canonicalHeaders);
         $signedHeadersString = implode(';', array_keys($headers));
+
         $requestPayloadHashHex = $this->toHex($this->hashText($body));
 
         $canonicalRequest = $method . "\n" .
@@ -81,9 +85,11 @@ class Digest extends Socket
                             $signedHeadersString . "\n" .
                             $requestPayloadHashHex;
 
-        $id = Stormpath::getId() . '/' . $dateStamp . '/' . $nonce . '/sauthc1_request';
+
+        $id = Stormpath::getApiKey()->getId() . '/' . $dateStamp . '/' . $nonce . '/sauthc1_request';
 
         $canonicalRequestHashHex = $this->toHex($this->hashText($canonicalRequest));
+
 
         $stringToSign = "HMAC-SHA-256\n" .
                         $timeStamp . "\n" .
@@ -91,15 +97,18 @@ class Digest extends Socket
                         $canonicalRequestHashHex;
 
         // SAuthc1 uses a series of derived keys, formed by hashing different pieces of data
-        $kSecret = $this->toUTF8('SAuthc1' . Stormpath::getSecret());
+        $kSecret = $this->toUTF8('SAuthc1' . Stormpath::getApiKey()->getSecret());
+       
         $kDate = $this->sign($dateStamp, $kSecret, 'SHA256');
+       
         $kNonce = $this->sign($nonce, $kDate, 'SHA256');
-
+       
         $kSigning = $this->sign('sauthc1_request', $kNonce, 'SHA256');
-
+       
         $signature = $this->sign($this->toUTF8($stringToSign), $kSigning, 'SHA256');
+      
         $signatureHex = $this->toHex($signature);
-
+      
         $authorizationHeader = 'SAuthc1 ' .
                                $this->createNameValuePair('sauthc1Id', $id) . ', ' .
                                $this->createNameValuePair('sauthc1SignedHeaders', $signedHeadersString) . ', ' .
@@ -108,7 +117,7 @@ class Digest extends Socket
         $headers['authorization'] = $authorizationHeader;
 
         $return = parent::write($method, $uri, $httpVer, $headers, $body);
-        
+
         return $return;
     }
 
