@@ -13,10 +13,6 @@ class StormpathServiceTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $config = Bootstrap::getApplication()->getConfig();
-
-        $this->assertNull(StormpathService::configure($config['stormpath']['id'], $config['stormpath']['secret']));
-
         $client = new Client();
         $adapter = new Digest();
         $client->setAdapter($adapter);
