@@ -51,11 +51,11 @@ class ResourceCollection implements Collection, Selectable
             'offset' => $this->getOffset(),
             'limit' => $this->getLimit(),
         );
-        
-        // sending a query in the request is creating problems,
-        // hence setting it to an empty array.
-        // It passes through most of the unit test cases
-        $get = array();
+
+#        // sending a query in the request is creating problems,
+#        // hence setting it to an empty array.
+#        // It passes through most of the unit test cases
+#        $get = array();
 
         if ($this->getSearch()) {
             if (is_array($this->getSearch())) {
@@ -66,7 +66,7 @@ class ResourceCollection implements Collection, Selectable
         }
 
 
-     
+
         // Build orderBy
         if ($this->getOrderBy()) {
             if (!is_array($this->getOrderBy())) {

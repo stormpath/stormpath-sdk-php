@@ -77,7 +77,7 @@ class LoginAttempt extends AbstractResource
         $this->getResourceManager()->setExpandReferences(false);
 
         if ($eager) {
-            print_r($data);die();
+#            print_r($data);die();
             // If this resource was fetched with eager loading store the retrieved data in the cache then
             // fetch the object from the cache.
             $this->getResourceManager()->getCache()->setItem(

@@ -89,8 +89,6 @@ class ResourceManager implements ObjectManager
                 $client->setParameterGet(array(
                     'expand' => $class->getExpandString(),
                 ));
-
-                die('expand set to ' . $class->getExpandString());
             }
 
             $response = $client->send();
