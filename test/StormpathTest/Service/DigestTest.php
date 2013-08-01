@@ -26,7 +26,8 @@ class DigestTest extends \PHPUnit_Framework_TestCase
     {
         $resourceManager = StormpathService::getResourceManager();
         $tenant = $resourceManager->find('Stormpath\Resource\Tenant', 'current');
-        print_r($tenant->getname());
+        $this->assertEquals('soliantconsulting', $tenant->getName());
+        
     }
 
 }

@@ -23,6 +23,7 @@ class Digest extends Socket
      */
     public function write($method, $uri, $httpVer = '1.1', $headers = array(), $body = '')
     {
+
         $date = new \DateTime();
         $timeStamp = $date->format('Ymd\THms\Z');
         $dateStamp = $date->format('Ymd');
@@ -31,15 +32,20 @@ class Digest extends Socket
         // SAuthc1 requires that we sign the Host header so we
         // have to have it in the request by the time we sign.
         $parsedUrl = parse_url($uri);
-
+       // print_r($uri);
         $hostHeader = $parsedUrl['host'];  # Verify host has port #
-
+        //print_r($parsedUrl['query']);
+        //unset($parsedUrl['query']);
         $headers['Host'] = $hostHeader;
         $headers['X-Stormpath-Date'] = $timeStamp;
         $headers['Accept'] = 'application/json';
         $headers['User-Agent'] = 'StormpathClient-PHP';
-		$headers['Content-Type'] = 'application/json;charset=UTF-8';
+        
 
+        if (!empty($body)) {
+            $headers['Content-Type'] = 'application/json;charset=UTF-8';
+        }
+		
         if ($resourcePath = $parsedUrl['path']) {
             $encoded = urlencode($resourcePath);
             $resourcePath = strtr(
