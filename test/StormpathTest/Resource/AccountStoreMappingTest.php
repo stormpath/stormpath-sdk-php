@@ -88,7 +88,6 @@ class AccountStoreMappingTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($accountStoreMapping->getApplication()->getId() == $this->application->getId());
 
-        $resourceManager->remove($account1);
         $resourceManager->remove($accountStoreMapping);
         $resourceManager->remove($directory);
         $resourceManager->flush();
