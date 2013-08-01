@@ -7,6 +7,10 @@ use Stormpath\Service\StormpathService;
 use Stormpath\Resource\Application;
 use Stormpath\Resource\Account;
 use Stormpath\Resource\PasswordResetToken;
+use Stormpath\Resource\Directory;
+use Stormpath\Resource\Group;
+use Stormpath\Resource\AccountStoreMapping;
+use Stormpath\Resource\LoginAttempt;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
@@ -64,6 +68,23 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $password = md5(rand()) . strtoupper(md5(rand()));
         $email = md5(rand()) . '@test.stormpath.com';
 
+        // Create directory and AccountStoreMapping
+        $directory = new Directory;
+        $directory->setName(md5(rand()));
+        $directory->setDescription('phpunit test directory');
+        $directory->setStatus('ENABLED');
+
+        $resourceManager->persist($directory);
+        $resourceManager->flush();
+
+        $accountStoreMapping = new AccountStoreMapping;
+        $accountStoreMapping->setApplication($this->application);
+        $accountStoreMapping->setAccountStore($directory);
+        $accountStoreMapping->setIsDefaultAccountStore(true);
+
+        $resourceManager->persist($accountStoreMapping);
+        $resourceManager->flush();
+
         $account1 = new Account;
         $account1->setUsername($username);
         $account1->setEmail($email);
@@ -81,15 +102,30 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $loginAttempt = new LoginAttempt;
         $loginAttempt->setUsername($email);
         $loginAttempt->setPassword($password);
-        $loginAttempt->setApplication($this->app);
+        $loginAttempt->setApplication($this->application);
 
         $resourceManager->persist($loginAttempt);
         $resourceManager->flush();
 
         $this->assertTrue($loginAttempt->getAccount() instanceof Account);
-        $this->assertEquals($loginAttempt->getAccount()->getId(), $account1->getId());
+        $this->assertEquals($account1->getId(), $loginAttempt->getAccount()->getId());
+
+        // Test login attempt expand resources
+        $resourceManager->setExpandReferences(true);
+        $loginAttempt2 = new LoginAttempt;
+        $loginAttempt2->setUsername($email);
+        $loginAttempt2->setPassword($password);
+        $loginAttempt2->setApplication($this->application);
+
+        $resourceManager->persist($loginAttempt2);
+        $resourceManager->flush();
+
+        $this->assertTrue($loginAttempt2->getAccount() instanceof Account);
+        $this->assertEquals($account1->getId(), $loginAttempt2->getAccount()->getId());
 
         $resourceManager->remove($account1);
+        $resourceManager->remove($accountStoreMapping);
+        $resourceManager->remove($directory);
         $resourceManager->flush();
     }
 

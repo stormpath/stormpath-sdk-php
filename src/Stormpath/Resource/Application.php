@@ -11,7 +11,7 @@ use Zend\Json\Json;
 class Application extends AbstractResource
 {
     protected $_url = '/applications';
-    protected $_expandString = 'tenant';
+    protected $_expandString = 'tenant,defaultAccountStoreMapping,defaultGroupStoreMapping';
 
     protected $name;
     protected $description;
@@ -21,6 +21,9 @@ class Application extends AbstractResource
     protected $groups;
     protected $loginAttempts;
     protected $passwordResetTokens;
+    protected $accountStoreMappings;
+    protected $defaultAccountStoreMapping;
+    protected $defaultGroupStoreMapping;
 
     public function getName()
     {
@@ -72,6 +75,45 @@ class Application extends AbstractResource
     {
         $this->_load();
         return $this->tenant;
+    }
+
+    public function setAccountStoreMappings(ResourceCollection $value)
+    {
+        $this->_load();
+        $this->accountStoreMappings = $value;
+        return $this;
+    }
+
+    public function getAccountStoreMappings()
+    {
+        $this->_load();
+        return $this->accountStoreMappings;
+    }
+
+    public function getDefaultGroupStoreMapping()
+    {
+        $this->_load();
+        return $this->defaultGroupStoreMapping;
+    }
+
+    public function setDefaultGroupStoreMapping(AccountStoreMapping $value)
+    {
+        $this->_load();
+        $this->defaultGroupStoreMapping = $value;
+        return $this;
+    }
+
+    public function getDefaultAccountStoreMapping()
+    {
+        $this->_load();
+        return $this->defaultAccountStoreMapping;
+    }
+
+    public function setDefaultAccountStoreMapping(AccountStoreMapping $value)
+    {
+        $this->_load();
+        $this->defaultAccountStoreMapping = $value;
+        return $this;
     }
 
     public function setAccounts(ResourceCollection $value)
@@ -141,13 +183,28 @@ class Application extends AbstractResource
             // fetch the object from the cache.
             $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Tenant' . substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1), json_encode($data['tenant']));
             $tenant = $this->getResourceManager()->find('Stormpath\Resource\Tenant', substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1), false);
+
+            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\AccountStoreMapping' . substr($data['defaultAccountStoreMapping']['href'], strrpos($data['defaultAccountStoreMapping']['href'], '/') + 1), json_encode($data['defaultAccountStoreMapping']));
+            $defaultAccountStoreMapping = $this->getResourceManager()->find('Stormpath\Resource\AccountStoreMapping', substr($data['defaultAccountStoreMapping']['href'], strrpos($data['defaultAccountStoreMapping']['href'], '/') + 1), false);
+
+            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\AccountStoreMapping' . substr($data['defaultGroupStoreMapping']['href'], strrpos($data['defaultGroupStoreMapping']['href'], '/') + 1), json_encode($data['defaultGroupStoreMapping']));
+            $defaultGroupStoreMapping = $this->getResourceManager()->find('Stormpath\Resource\AccountStoreMapping', substr($data['defaultGroupStoreMapping']['href'], strrpos($data['defaultGroupStoreMapping']['href'], '/') + 1), false);
         } else {
             $tenant = new \Stormpath\Resource\Tenant;
             $tenant->_lazy($this->getResourceManager(), substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1));
+
+            $defaultAccountStoreMapping = new \Stormpath\Resource\AccountStoreMapping;
+            $defaultAccountStoreMapping->_lazy($this->getResourceManager(), substr($data['defaultAccountStoreMapping']['href'], strrpos($data['defaultAccountStoreMapping']['href'], '/') + 1));
+
+            $defaultGroupStoreMapping = new \Stormpath\Resource\AccountStoreMapping;
+            $defaultGroupStoreMapping->_lazy($this->getResourceManager(), substr($data['defaultGroupStoreMapping']['href'], strrpos($data['defaultGroupStoreMapping']['href'], '/') + 1));
         }
         $this->setTenant($tenant);
+        $this->setDefaultAccountStoreMapping($defaultAccountStoreMapping);
+        $this->setDefaultGroupStoreMapping($defaultGroupStoreMapping);
 
         $this->setAccounts(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\Account', $data['accounts']['href']));
+        $this->setAccountStoreMappings(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\AccountStoreMapping', $data['accountStoreMappings']['href']));
         $this->setGroups(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\Group', $data['groups']['href']));
         $this->setLoginAttempts(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\LoginAttempt', $data['loginAttempts']['href']));
         $this->setPasswordResetTokens(new ResourceCollection($this->getResourceManager(), 'Stormpath\Resource\PasswordResetToken', $data['passwordResetTokens']['href']));

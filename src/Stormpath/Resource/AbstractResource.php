@@ -104,6 +104,7 @@ abstract class AbstractResource
 
     public function getId()
     {
+        $this->_load();
         return $this->id;
     }
 

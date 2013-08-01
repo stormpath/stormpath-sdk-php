@@ -65,7 +65,7 @@ class Bootstrap
         $secret = $config['apiKey']['secret'];
 
         StormpathService::configure($id, $secret);
-        StormpathService::getHttpClient()->setAdapter(new Digest(null, array('keepalive' => true)));
+        StormpathService::getHttpClient()->setAdapter(new Basic(null, array('keepalive' => true)));
     }
 
     public static function getApplication()

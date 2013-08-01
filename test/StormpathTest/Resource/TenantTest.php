@@ -44,7 +44,7 @@ class TenantTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($tenant->getKey());
 
         $tenantArray = $tenant->getArrayCopy();
-        $this->assertEquals('soliantconsulting', $tenantArray['name']);
+
     }
 
     /**

@@ -85,9 +85,13 @@ class ResourceManager implements ObjectManager
             $client->setUri($class->_getUrl() . '/' . $id);
             $client->setMethod('GET');
 
-            if ($this->getExpandReferences()) $client->setParameterGet(array(
-                'expand' => $class->getExpandString(),
-            ));
+            if ($this->getExpandReferences()) {
+                $client->setParameterGet(array(
+                    'expand' => $class->getExpandString(),
+                ));
+
+                die('expand set to ' . $class->getExpandString());
+            }
 
             $response = $client->send();
             if ($response->isSuccess()) {
@@ -108,7 +112,7 @@ class ResourceManager implements ObjectManager
 
         $exception = new ApiException($details['message'], $details['code']);
         $exception->exchangeArray($details);
-       
+
         throw $exception;
     }
 
@@ -255,6 +259,7 @@ class ResourceManager implements ObjectManager
                 if ($response->isSuccess()) {
                     $resource->setResourceManager($this);
                     $newProperties = json_decode($response->getBody(), true);
+
                     $resource->exchangeArray($newProperties);
                     $this->getCache()->setItem(get_class($resource) . $resource->getId(), $response->getBody());
                 } else {
