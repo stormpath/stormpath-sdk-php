@@ -13,7 +13,7 @@ use Stormpath\Resource\AccountStoreMapping;
 use Stormpath\Resource\LoginAttempt;
 use Stormpath\Exception\ApiException;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class AccountTest extends \PHPUnit_Framework_TestCase
 {
     protected $application;
 
@@ -61,7 +61,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testLoginAttempt()
+    public function testCreateAccount()
     {
         $resourceManager = StormpathService::getResourceManager();
 
@@ -99,38 +99,33 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->persist($account1);
         $resourceManager->flush();
 
-        // Test login attempt
-        $loginAttempt = new LoginAttempt;
-        $loginAttempt->setUsername($email);
-        $loginAttempt->setPassword($password);
-        $loginAttempt->setApplication($this->application);
-
-        $resourceManager->persist($loginAttempt);
-        $resourceManager->flush();
-
-        $this->assertTrue($loginAttempt->getAccount() instanceof Account);
-        $this->assertEquals($account1->getId(), $loginAttempt->getAccount()->getId());
-
-
-        // Test login attempt expand resources
-        # Currently failing due to resource expansion not returning from stormpath
-        $resourceManager->setExpandReferences(true);
-        $loginAttempt2 = new LoginAttempt;
-        $loginAttempt2->setUsername($email);
-        $loginAttempt2->setPassword($password);
-        $loginAttempt2->setApplication($this->application);
-
-        $resourceManager->persist($loginAttempt2);
-        $resourceManager->flush();
-
-        $this->assertTrue($loginAttempt2->getAccount() instanceof Account);
-        $this->assertEquals($account1->getId(), $loginAttempt2->getAccount()->getId());
-
         $resourceManager->remove($account1);
         $resourceManager->remove($accountStoreMapping);
         $resourceManager->remove($directory);
         $resourceManager->flush();
     }
 
+    public function testInvalidPassword()
+    {
+        $account1 = new Account;
+
+        try {
+            $account1->setPassword('password');
+        } catch (\Exception $e) {
+            $this->assertEquals('Password must be mixed case', $e->getMessage());
+        }
+    }
+
+    public function testInvalidEmail()
+    {
+        $account1 = new Account;
+
+        try {
+            $account1->setEmail('invalid@none');
+            throw new \Exception('Invalid email test failed');
+        } catch (\Exception $e) {
+            $this->assertEquals('Invalid email address', $e->getMessage());
+        }
+    }
 }
 

@@ -13,7 +13,7 @@ use Stormpath\Resource\AccountStoreMapping;
 use Stormpath\Resource\LoginAttempt;
 use Stormpath\Exception\ApiException;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class AccountStoreMappingTest extends \PHPUnit_Framework_TestCase
 {
     protected $application;
 
@@ -86,45 +86,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->persist($accountStoreMapping);
         $resourceManager->flush();
 
-        $account1 = new Account;
-        $account1->setUsername($username);
-        $account1->setEmail($email);
-        $account1->setPassword($password);
-        $account1->setGivenName('Test');
-        $account1->setMiddleName('User');
-        $account1->setSurname('One');
-        $account1->setApplication($this->application);
-        $account1->setStatus('ENABLED');
-
-        $resourceManager->persist($account1);
-        $resourceManager->flush();
-
-        // Test login attempt
-        $loginAttempt = new LoginAttempt;
-        $loginAttempt->setUsername($email);
-        $loginAttempt->setPassword($password);
-        $loginAttempt->setApplication($this->application);
-
-        $resourceManager->persist($loginAttempt);
-        $resourceManager->flush();
-
-        $this->assertTrue($loginAttempt->getAccount() instanceof Account);
-        $this->assertEquals($account1->getId(), $loginAttempt->getAccount()->getId());
-
-
-        // Test login attempt expand resources
-        # Currently failing due to resource expansion not returning from stormpath
-        $resourceManager->setExpandReferences(true);
-        $loginAttempt2 = new LoginAttempt;
-        $loginAttempt2->setUsername($email);
-        $loginAttempt2->setPassword($password);
-        $loginAttempt2->setApplication($this->application);
-
-        $resourceManager->persist($loginAttempt2);
-        $resourceManager->flush();
-
-        $this->assertTrue($loginAttempt2->getAccount() instanceof Account);
-        $this->assertEquals($account1->getId(), $loginAttempt2->getAccount()->getId());
+        $this->assertTrue($accountStoreMapping->getApplication()->getId() == $this->application->getId());
 
         $resourceManager->remove($account1);
         $resourceManager->remove($accountStoreMapping);
@@ -132,5 +94,51 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->flush();
     }
 
+    public function testEagerLoading()
+    {
+        $resourceManager = StormpathService::getResourceManager();
+
+        $username = md5(rand());
+        $password = md5(rand()) . strtoupper(md5(rand()));
+        $email = md5(rand()) . '@test.stormpath.com';
+
+        // Create directory and AccountStoreMapping
+        $directory = new Directory;
+        $directory->setName(md5(rand()));
+        $directory->setDescription('phpunit test directory');
+        $directory->setStatus('ENABLED');
+
+        $resourceManager->persist($directory);
+        $resourceManager->flush();
+
+        $accountStoreMapping = new AccountStoreMapping;
+        $accountStoreMapping->setApplication($this->application);
+        $accountStoreMapping->setAccountStore($directory);
+        $accountStoreMapping->setIsDefaultAccountStore(true);
+
+        $resourceManager->setExpandReferences(true);
+        $resourceManager->persist($accountStoreMapping);
+        $resourceManager->flush();
+
+        $this->assertTrue($accountStoreMapping->getApplication()->getId() == $this->application->getId());
+
+        $resourceManager->remove($account1);
+        $resourceManager->remove($accountStoreMapping);
+        $resourceManager->remove($directory);
+        $resourceManager->flush();
+    }
+
+    public function testInvalidAccountStoreType()
+    {
+        $account1 = new Account;
+        $accountStoreMapping = new AccountStoreMapping;
+
+        try {
+            $accountStoreMapping->setAccountStore($account1);
+            throw new \Exception('Invalid account store test failed');
+        } catch (\Exception $e) {
+            $this->assertEquals('Account store is neither a Group nor Directory resource.', $e->getMessage());
+        }
+    }
 }
 

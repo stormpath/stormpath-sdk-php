@@ -85,7 +85,7 @@ class ResourceManager implements ObjectManager
             $client->setUri($class->_getUrl() . '/' . $id);
             $client->setMethod('GET');
 
-            if ($this->getExpandReferences()) {
+            if ($this->getExpandReferences() and $class->getExpandString()) {
                 $client->setParameterGet(array(
                     'expand' => $class->getExpandString(),
                 ));
@@ -107,7 +107,6 @@ class ResourceManager implements ObjectManager
     public function handleInvalidResponse(Response $response)
     {
         $details = json_decode($response->getBody(), true);
-
         $exception = new ApiException($details['message'], $details['code']);
         $exception->exchangeArray($details);
 
@@ -243,6 +242,9 @@ class ResourceManager implements ObjectManager
                     case 'Stormpath\Resource\LoginAttempt':
                         $resource->_setUrl(StormpathService::getBaseUrl() . '/applications/' . $resource->getApplication()->getId() . '/loginAttempts');
                         break;
+                    case 'Stormpath\Resource\PasswordResetToken':
+                        $resource->_setUrl(StormpathService::getBaseUrl() . '/applications/' . $resource->getApplication()->getId() . '/passwordResetTokens');
+                        break;
                     default:
                         break;
                 }
@@ -252,6 +254,13 @@ class ResourceManager implements ObjectManager
                 $client->setMethod('POST');
 
                 $client->setRawBody(json_encode($resource->getArrayCopy()));
+
+                if ($this->getExpandReferences() and $resource->getExpandString()) {
+                    $client->setParameterGet(array(
+                        'expand' => $resource->getExpandString(),
+                    ));
+                }
+
                 $response = $client->send();
 
                 if ($response->isSuccess()) {

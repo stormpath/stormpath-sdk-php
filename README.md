@@ -476,7 +476,7 @@ To initialize a password reset email create a PasswordResetToken, set the email 
     $application = $resourceManager->find('Stormpath\Resource\Application', $applicationId);
 
     $passwordResetToken = new PasswordResetToken;
-    $passwordResetTokan->setApplication($application);
+    $passwordResetToken->setApplication($application);
     $passwordResetToken->setEmail('resetpassword@test.stormpath.com');
     $resourceManager->persist($passwordResetToken);
 

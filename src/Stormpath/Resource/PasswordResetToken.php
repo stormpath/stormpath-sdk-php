@@ -5,6 +5,7 @@ namespace Stormpath\Resource;
 use Stormpath\Resource\AbstractResource;
 use Stormpath\Service\StormpathService;
 use Stormpath\Resource\Account;
+use Stormpath\Resource\Application;
 
 class PasswordResetToken extends AbstractResource
 {
@@ -14,10 +15,22 @@ class PasswordResetToken extends AbstractResource
     protected $_url = '';
     protected $_expandString = 'account';
 
+    protected $application;
     protected $email;
     protected $account;
 
-    public function setEmail($email)
+    public function getApplication()
+    {
+        return $this->application;
+    }
+
+    public function setApplication(Application $value)
+    {
+        $this->application = $value;
+        return $this;
+    }
+
+    public function setEmail($value)
     {
         $this->_load();
         $this->email = $value;

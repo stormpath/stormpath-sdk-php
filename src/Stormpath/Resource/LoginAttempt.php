@@ -32,10 +32,12 @@ class LoginAttempt extends AbstractResource
         return $this->application;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function setType($value)
     {
-        $this->type = $value;
-        return $this;
+        throw new \Exception('Only basic authentication is supported by Stormpath v1');
     }
 
     public function getType()
