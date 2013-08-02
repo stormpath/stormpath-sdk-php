@@ -103,8 +103,8 @@ class AccountStoreMapping extends AbstractResource
 
         $this->setHref(isset($data['href']) ? $data['href']: null);
         $this->setListIndex(isset($data['listIndex']) ? $data['listIndex']: null);
-        $this->setIsDefaultAccountStore(isset($data['isDefaultAccountStore']) ? $data['isDefaultAccountStore']: null);
-        $this->setIsDefaultGroupStore(isset($data['isDefaultGroupStore']) ? $data['isDefaultGroupStore']: null);
+        $this->setIsDefaultAccountStore(isset($data['isDefaultAccountStore']) ? $data['isDefaultAccountStore']: false);
+        $this->setIsDefaultGroupStore(isset($data['isDefaultGroupStore']) ? $data['isDefaultGroupStore']: false);
 
         if ($eager) {
             // If this resource was fetched with eager loading store the retrieved data in the cache then
@@ -155,8 +155,8 @@ class AccountStoreMapping extends AbstractResource
                 'href' => $this->getAccountStore()->getHref(),
             ),
             'listIndex' => $this->getListIndex(),
-            'isDefaultAccountStore' => $this->getIsDefaultAccountStore(),
-            'isDefaultGroupStore' => $this->getIsDefaultGroupStore(),
+            'isDefaultAccountStore' => ($this->getIsDefaultAccountStore()) ? 'true': 'false',
+            'isDefaultGroupStore' => ($this->getIsDefaultGroupStore()) ? 'true': 'false',
         );
     }
 }

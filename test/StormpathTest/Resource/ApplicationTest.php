@@ -36,7 +36,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         $resourceManager = StormpathService::getResourceManager();
-        $resourceManager->remove($this->application);
+        if ($this->application) $resourceManager->remove($this->application);
         $resourceManager->flush();
     }
 
@@ -58,6 +58,19 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->application->setDescription($originalDescription);
         $resourceManager->persist($this->application);
         $resourceManager->flush();
+    }
+
+    /**
+     * We need detailed unit tests for all these
+     */
+    public function testGetters()
+    {
+        $this->application->getTenant();
+        $this->application->getAccounts();
+        $this->application->getGroups();
+        $this->application->getLoginAttempts();
+        $this->application->getPasswordResetTokens();
+        $this->application->getAccountStoreMappings();
     }
 
 
@@ -132,5 +145,41 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->flush();
     }
 
-}
 
+    public function testDefaultAccountStoreMapping()
+    {
+        $resourceManager = StormpathService::getResourceManager();
+
+        $username = md5(rand());
+        $password = md5(rand()) . strtoupper(md5(rand()));
+        $email = md5(rand()) . '@test.stormpath.com';
+
+        // Create directory and AccountStoreMapping
+        $directory = new Directory;
+        $directory->setName(md5(rand()));
+        $directory->setDescription('phpunit test directory');
+        $directory->setStatus('ENABLED');
+
+        $resourceManager->persist($directory);
+        $resourceManager->flush();
+
+        $accountStoreMapping = new AccountStoreMapping;
+        $accountStoreMapping->setApplication($this->application);
+        $accountStoreMapping->setAccountStore($directory);
+        $accountStoreMapping->setIsDefaultAccountStore(true);
+
+        $resourceManager->persist($accountStoreMapping);
+        $resourceManager->flush();
+
+        $app = $this->application;
+        $resourceManager->refresh($app);
+        $default = $app->getDefaultAccountStoreMapping();
+
+        $this->assertEquals($accountStoreMapping->getId(), $default->getId());
+
+        $this->application = app;
+        $resourceManager->remove($accountStoreMapping);
+        $resourceManager->remove($directory);
+        $resourceManager->flush();
+    }
+}
