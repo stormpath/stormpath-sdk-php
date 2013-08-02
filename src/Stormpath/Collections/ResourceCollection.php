@@ -332,9 +332,6 @@ class ResourceCollection implements Collection, Selectable
     public function offsetSet($offset, $value)
     {
         $this->_load();
-        if ( ! isset($offset)) {
-            return $this->add($value);
-        }
         return $this->set($offset, $value);
     }
 
