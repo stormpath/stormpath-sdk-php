@@ -175,4 +175,12 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $resourceManager->remove($account1);
         $resourceManager->flush();
     }
+
+    public function testExpandReferences()
+    {
+        $resourceManager = StormpathService::getResourceManager();
+        $directory2 = $resourceManager->find('Stormpath\Resource\Directory', $this->directory->getId(), true);
+        $directory2->getTenant();
+    }
+
 }

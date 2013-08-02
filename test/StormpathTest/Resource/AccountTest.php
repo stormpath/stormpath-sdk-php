@@ -99,6 +99,8 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         $resourceManager->persist($account1);
         $resourceManager->flush();
 
+        $account1->getGroups();
+
         $resourceManager->remove($account1);
         $resourceManager->remove($accountStoreMapping);
         $resourceManager->remove($directory);

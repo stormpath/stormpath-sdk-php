@@ -116,7 +116,7 @@ class Directory extends AbstractResource
         if ($eager) {
             // If this resource was fetched with eager loading store the retrieved data in the cache then
             // fetch the object from the cache.
-            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Tenant' . substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1, json_encode($data['tenant'])));
+            $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Tenant' . substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1), json_encode($data['tenant']));
             $tenant = $this->getResourceManager()->find('Stormpath\Resource\Tenant', substr($data['tenant']['href'], strrpos($data['tenant']['href'], '/') + 1, false));
         } else {
             $tenant = new \Stormpath\Resource\Tenant;
