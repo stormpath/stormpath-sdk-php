@@ -45,6 +45,9 @@ class TenantTest extends \PHPUnit_Framework_TestCase
 
         $tenantArray = $tenant->getArrayCopy();
 
+        $tenant->getApplications();
+        $tenant->getDirectories();
+
     }
 
     /**
