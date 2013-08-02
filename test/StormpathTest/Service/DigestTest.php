@@ -12,7 +12,7 @@ use Zend\Http\Client;
 
 class DigestTest extends \PHPUnit_Framework_TestCase
 {
-	protected function setUp()
+    protected function setUp()
     {
         StormpathService::getHttpClient()->setAdapter(new Digest(null, array('keepalive' => true)));
     }
@@ -26,7 +26,6 @@ class DigestTest extends \PHPUnit_Framework_TestCase
     {
         $resourceManager = StormpathService::getResourceManager();
         $tenant = $resourceManager->find('Stormpath\Resource\Tenant', 'current');
-        print_r($tenant->getname());
     }
 
 }

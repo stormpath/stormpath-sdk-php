@@ -23,7 +23,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $dir->setName(md5(rand()));
         $dir->setDescription('phpunit test directory');
         $dir->setStatus('ENABLED');
-        
+
         $resourceManager->persist($dir);
         $resourceManager->flush();
 
@@ -36,6 +36,46 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $resourceManager->remove($this->directory);
         $resourceManager->flush();
 
+    }
+
+    public function testCollectionWalking()
+    {
+        $resourceManager = StormpathService::getResourceManager();
+
+        $groups = array();
+        for ($i = 1000; $i < 1020; $i++) {
+            $group = new Group;
+            $name = md5(rand());
+            $group->setName($name);
+            $group->setDescription('Test Group ' . $i);
+            $group->setStatus('ENABLED');
+            $group->setDirectory($this->directory);
+
+            $groups[] = $group;
+            $resourceManager->persist($group);
+        }
+
+        $resourceManager->flush();
+
+        $groupsCollection = $this->directory->getGroups();
+
+        $this->assertTrue($groupsCollection->contains($groupsCollection->first()));
+
+        $this->assertTrue($groupsCollection->first() instanceof Group);
+        $this->assertTrue($groupsCollection->next() instanceof Group);
+        $this->assertTrue($groupsCollection->current() instanceof Group);
+        $this->assertTrue($groupsCollection->last() instanceof Group);
+        $groupsCollection->offsetSet(1, $groupsCollection->last());
+        $this->assertEquals($groupsCollection->last(), $groupsCollection->offsetGet(1));
+
+        $this->assertTrue($groupsCollection->removeElement($testGroup = $groupsCollection->first()));
+        $this->assertFalse($groupsCollection->removeElement($testGroup));
+        $this->assertFalse($groupsCollection->contains($testGroup));
+
+        // Clean Up
+        foreach ($groups as $group) {
+            $resourceManager->remove($group);
+        }
     }
 
     public function testCollectionPagination()
@@ -110,6 +150,9 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         ));
         $this->assertEquals(1, sizeof($groupsCollection));
 
+        $groupsCollection->setSearch($name);
+        $this->assertEquals(1, sizeof($groupsCollection));
+
         $groupsCollection->setOrderBy(array('description' => 'ASC'));
         $groupsCollection->setSearch(null);
         $groupsCollection->setLimit(1);
@@ -131,7 +174,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $groupsCollection->contains($name));
 
         $this->assertEquals(false, $groupsCollection->isEmpty());
-  
+
         $this->assertEquals(null, $groupsCollection->get(5));
 
         // Clean Up

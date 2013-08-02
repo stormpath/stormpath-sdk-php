@@ -13,7 +13,7 @@ use Stormpath\Resource\AccountStoreMapping;
 use Stormpath\Resource\LoginAttempt;
 use Stormpath\Exception\ApiException;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class PasswordResetTokenTest extends \PHPUnit_Framework_TestCase
 {
     protected $application;
 
@@ -36,7 +36,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         $resourceManager = StormpathService::getResourceManager();
-        if ($this->application) $resourceManager->remove($this->application);
+        $resourceManager->remove($this->application);
         $resourceManager->flush();
     }
 
@@ -60,21 +60,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->flush();
     }
 
-    /**
-     * We need detailed unit tests for all these
-     */
-    public function testGetters()
-    {
-        $this->application->getTenant();
-        $this->application->getAccounts();
-        $this->application->getGroups();
-        $this->application->getLoginAttempts();
-        $this->application->getPasswordResetTokens();
-        $this->application->getAccountStoreMappings();
-    }
 
-
-    public function testLoginAttempt()
+    public function testPasswordResetTokenSuccess()
     {
         $resourceManager = StormpathService::getResourceManager();
 
@@ -124,20 +111,19 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($loginAttempt->getAccount() instanceof Account);
         $this->assertEquals($account1->getId(), $loginAttempt->getAccount()->getId());
 
+        // Test OK password reset token
+        $passwordResetToken = new PasswordResetToken;
+        $passwordResetToken->setEmail($account1->getEmaiL());
+        $passwordResetToken->setApplication($this->application);
+        $resourceManager->persist($passwordResetToken);
 
-        // Test login attempt expand resources
-        # Currently failing due to resource expansion not returning from stormpath
-        $resourceManager->setExpandReferences(true);
-        $loginAttempt2 = new LoginAttempt;
-        $loginAttempt2->setUsername($email);
-        $loginAttempt2->setPassword($password);
-        $loginAttempt2->setApplication($this->application);
-
-        $resourceManager->persist($loginAttempt2);
-        $resourceManager->flush();
-
-        $this->assertTrue($loginAttempt2->getAccount() instanceof Account);
-        $this->assertEquals($account1->getId(), $loginAttempt2->getAccount()->getId());
+        try {
+            $resourceManager->flush();
+            $account = $passwordResetToken->getAccount();
+            $this->assertEquals($account1->getId(), $account->getId());
+        } catch (ApiException $e) {
+            throw \Exception('Error sending password reset token');
+        }
 
         $resourceManager->remove($account1);
         $resourceManager->remove($accountStoreMapping);
@@ -145,8 +131,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->flush();
     }
 
-
-    public function testDefaultAccountStoreMapping()
+    public function testPasswordResetTokenEmailNotFound()
     {
         $resourceManager = StormpathService::getResourceManager();
 
@@ -171,15 +156,63 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->persist($accountStoreMapping);
         $resourceManager->flush();
 
-        $app = $this->application;
-        $resourceManager->refresh($app);
-        $default = $app->getDefaultAccountStoreMapping();
+        $account1 = new Account;
+        $account1->setUsername($username);
+        $account1->setEmail($email);
+        $account1->setPassword($password);
+        $account1->setGivenName('Test');
+        $account1->setMiddleName('User');
+        $account1->setSurname('One');
+        $account1->setApplication($this->application);
+        $account1->setStatus('ENABLED');
 
-        $this->assertEquals($accountStoreMapping->getId(), $default->getId());
+        $resourceManager->persist($account1);
+        $resourceManager->flush();
 
-        $this->application = app;
+        // Test login attempt
+        $loginAttempt = new LoginAttempt;
+        $loginAttempt->setUsername($email);
+        $loginAttempt->setPassword($password);
+        $loginAttempt->setApplication($this->application);
+
+        $resourceManager->persist($loginAttempt);
+        $resourceManager->flush();
+
+        $this->assertTrue($loginAttempt->getAccount() instanceof Account);
+        $this->assertEquals($account1->getId(), $loginAttempt->getAccount()->getId());
+
+        // Test OK password reset token
+        $passwordResetToken = new PasswordResetToken;
+        $passwordResetToken->setEmail('invalid' . $account1->getEmaiL());
+        $passwordResetToken->setApplication($this->application);
+        $resourceManager->persist($passwordResetToken);
+
+        try {
+            $resourceManager->flush();
+            throw new \Exception('Account found for invalid email');
+            $account = $passwordResetToken->getAccount();
+        } catch (ApiException $e) {
+            $userMessage = $e->getMessage();
+            // insert exception test
+            $e->getStatus();
+            $e->getDeveloperMessage();
+            $e->getMoreInfo();
+
+            if ($e->getCode() == 400) {
+                $this->assertEquals('There is no account with that email address.', $userMessage);
+            }
+
+            if ($e->getCode() == 404) {
+                $this->assertEquals('The requested resource does not exist.', $userMessage);
+            }
+        }
+
+        $resourceManager->detach($passwordResetToken);
+        $resourceManager->remove($account1);
         $resourceManager->remove($accountStoreMapping);
         $resourceManager->remove($directory);
         $resourceManager->flush();
     }
+
 }
+

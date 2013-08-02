@@ -85,16 +85,20 @@ class ResourceManager implements ObjectManager
             $client->setUri($class->_getUrl() . '/' . $id);
             $client->setMethod('GET');
 
-            if ($this->getExpandReferences()) $client->setParameterGet(array(
-                'expand' => $class->getExpandString(),
-            ));
+            if ($this->getExpandReferences() and $class->getExpandString()) {
+                $client->setParameterGet(array(
+                    'expand' => $class->getExpandString(),
+                ));
+            }
 
             $response = $client->send();
             if ($response->isSuccess()) {
                 $class->exchangeArray(json_decode($response->getBody(), true));
                 $this->getCache()->setItem(get_class($class) . $id, $response->getBody());
             } else {
+                // @codeCoverageIgnoreStart
                 $this->handleInvalidResponse($response);
+                // @codeCoverageIgnoreEnd
             }
         }
     }
@@ -105,10 +109,9 @@ class ResourceManager implements ObjectManager
     public function handleInvalidResponse(Response $response)
     {
         $details = json_decode($response->getBody(), true);
-
         $exception = new ApiException($details['message'], $details['code']);
         $exception->exchangeArray($details);
-       
+
         throw $exception;
     }
 
@@ -155,6 +158,7 @@ class ResourceManager implements ObjectManager
      *
      * @param object $object
      * @return object
+     * @codeCoverageIgnore
      */
     function merge($object)
     {
@@ -186,24 +190,15 @@ class ResourceManager implements ObjectManager
     function detach($object)
     {
         if ($this->insert) {
-            if ($this->insert->contains($object)) {
-                $this->insert->removeElement($object);
-                return;
-            }
+            $this->insert->removeElement($object);
         }
 
         if ($this->update) {
-            if ($this->update->contains($object)) {
-                $this->update->removeElement($object);
-                return;
-            }
+            $this->update->removeElement($object);
         }
 
         if ($this->delete) {
-            if ($this->delete->contains($object)) {
-                $this->delete->removeElement($object);
-                return;
-            }
+            $this->delete->removeElement($object);
         }
     }
 
@@ -241,6 +236,9 @@ class ResourceManager implements ObjectManager
                     case 'Stormpath\Resource\LoginAttempt':
                         $resource->_setUrl(StormpathService::getBaseUrl() . '/applications/' . $resource->getApplication()->getId() . '/loginAttempts');
                         break;
+                    case 'Stormpath\Resource\PasswordResetToken':
+                        $resource->_setUrl(StormpathService::getBaseUrl() . '/applications/' . $resource->getApplication()->getId() . '/passwordResetTokens');
+                        break;
                     default:
                         break;
                 }
@@ -250,15 +248,25 @@ class ResourceManager implements ObjectManager
                 $client->setMethod('POST');
 
                 $client->setRawBody(json_encode($resource->getArrayCopy()));
+
+                if ($this->getExpandReferences() and $resource->getExpandString()) {
+                    $client->setParameterGet(array(
+                        'expand' => $resource->getExpandString(),
+                    ));
+                }
+
                 $response = $client->send();
 
                 if ($response->isSuccess()) {
                     $resource->setResourceManager($this);
                     $newProperties = json_decode($response->getBody(), true);
+
                     $resource->exchangeArray($newProperties);
                     $this->getCache()->setItem(get_class($resource) . $resource->getId(), $response->getBody());
                 } else {
+                    // @codeCoverageIgnoreStart
                     $this->handleInvalidResponse($response);
+                    // @codeCoverageIgnoreEnd
                 }
 
                 $this->insert->removeElement($resource);
@@ -281,7 +289,9 @@ class ResourceManager implements ObjectManager
                     $resource->exchangeArray(json_decode($response->getBody(), true));
                     $this->getCache()->setItem(get_class($resource) . $resource->getId(), $response->getBody());
                 } else {
+                    // @codeCoverageIgnoreStart
                     $this->handleInvalidResponse($response);
+                    // @codeCoverageIgnoreEnd
                 }
 
                 $this->update->removeElement($resource);
@@ -301,7 +311,9 @@ class ResourceManager implements ObjectManager
 
                 if ($response->isSuccess()) {
                 } else {
+                    // @codeCoverageIgnoreStart
                     $this->handleInvalidResponse($response);
+                    // @codeCoverageIgnoreEnd
                 }
 
                 $this->getCache()->removeItem(get_class($resource) . $resource->getId());
@@ -316,6 +328,7 @@ class ResourceManager implements ObjectManager
      *
      * @param string $className
      * @return \Doctrine\Common\Persistence\ObjectRepository
+     * @codeCoverageIgnore
      */
     function getRepository($className)
     {
@@ -330,6 +343,7 @@ class ResourceManager implements ObjectManager
      *
      * @param string $className
      * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
+     * @codeCoverageIgnore
      */
     function getClassMetadata($className)
     {
@@ -340,6 +354,7 @@ class ResourceManager implements ObjectManager
      * Gets the metadata factory used to gather the metadata of classes.
      *
      * @return \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory
+     * @codeCoverageIgnore
      */
     function getMetadataFactory()
     {
@@ -352,6 +367,7 @@ class ResourceManager implements ObjectManager
      * This method is a no-op for other objects.
      *
      * @param object $obj
+     * @codeCoverageIgnore
      */
     function initializeObject($obj)
     {
@@ -364,6 +380,7 @@ class ResourceManager implements ObjectManager
      *
      * @param object $object
      * @return bool
+     * @codeCoverageIgnore
      */
     function contains($object)
     {

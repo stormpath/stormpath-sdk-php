@@ -10,6 +10,7 @@ This API client is an [Object Relational Mapper](https://en.wikipedia.org/wiki/O
 
 ```php 
     Stormpath\Resource\Account
+    Stormpath\Resource\AccountStoreMapping
     Stormpath\Resource\Application
     Stormpath\Resource\Directory
     Stormpath\Resource\Group
@@ -315,6 +316,20 @@ Collections
 ```
 
 
+AccountStoreMapping
+-------------------
+
+Map an application to an account store.  An account store is a Directory or a Group.  Accounts are attached 
+to the Directory or Group and mapped back to the application through this resource.
+
+An AccountStoreMapping may provide multiple roles.  First, it may specify it's accountStore as the designated
+storage location for new Accounts created through the Application endpoint.
+
+Second, it may speicfy it's accountStore as the designated storage location for new Groups created through the
+Application endpoint.
+
+``
+
 Application
 -----------
 
@@ -461,7 +476,7 @@ To initialize a password reset email create a PasswordResetToken, set the email 
     $application = $resourceManager->find('Stormpath\Resource\Application', $applicationId);
 
     $passwordResetToken = new PasswordResetToken;
-    $passwordResetTokan->setApplication($application);
+    $passwordResetToken->setApplication($application);
     $passwordResetToken->setEmail('resetpassword@test.stormpath.com');
     $resourceManager->persist($passwordResetToken);
 

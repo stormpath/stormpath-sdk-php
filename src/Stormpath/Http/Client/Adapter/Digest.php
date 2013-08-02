@@ -23,6 +23,7 @@ class Digest extends Socket
      */
     public function write($method, $uri, $httpVer = '1.1', $headers = array(), $body = '')
     {
+
         $date = new \DateTime();
         $timeStamp = $date->format('Ymd\THms\Z');
         $dateStamp = $date->format('Ymd');
@@ -31,14 +32,19 @@ class Digest extends Socket
         // SAuthc1 requires that we sign the Host header so we
         // have to have it in the request by the time we sign.
         $parsedUrl = parse_url($uri);
-
+       // print_r($uri);
         $hostHeader = $parsedUrl['host'];  # Verify host has port #
-
+        //print_r($parsedUrl['query']);
+        //unset($parsedUrl['query']);
         $headers['Host'] = $hostHeader;
         $headers['X-Stormpath-Date'] = $timeStamp;
         $headers['Accept'] = 'application/json';
         $headers['User-Agent'] = 'StormpathClient-PHP';
-		$headers['Content-Type'] = 'application/json;charset=UTF-8';
+
+
+        if (!empty($body)) {
+            $headers['Content-Type'] = 'application/json;charset=UTF-8';
+        }
 
         if ($resourcePath = $parsedUrl['path']) {
             $encoded = urlencode($resourcePath);
@@ -52,14 +58,14 @@ class Digest extends Socket
                 array('%7E' => '~')
             );
             $resourcePath = strtr($resourcePath, array('%2F' => '/'));
-        } 
+        }
         else {
             $resourcePath = '/';
         }
 
         $canonicalResourcePath = $resourcePath;
         $canonicalQueryString = (isset($parsedUrl['query'])) ? $parsedUrl['query']: '';
-       
+
 
         foreach ($headers as $key => $value) {
             $canonicalHeaders[strtolower($key)] = $value;
@@ -98,17 +104,17 @@ class Digest extends Socket
 
         // SAuthc1 uses a series of derived keys, formed by hashing different pieces of data
         $kSecret = $this->toUTF8('SAuthc1' . Stormpath::getApiKey()->getSecret());
-       
+
         $kDate = $this->sign($dateStamp, $kSecret, 'SHA256');
-       
+
         $kNonce = $this->sign($nonce, $kDate, 'SHA256');
-       
+
         $kSigning = $this->sign('sauthc1_request', $kNonce, 'SHA256');
-       
+
         $signature = $this->sign($this->toUTF8($stringToSign), $kSigning, 'SHA256');
-      
+
         $signatureHex = $this->toHex($signature);
-      
+
         $authorizationHeader = 'SAuthc1 ' .
                                $this->createNameValuePair('sauthc1Id', $id) . ', ' .
                                $this->createNameValuePair('sauthc1SignedHeaders', $signedHeadersString) . ', ' .

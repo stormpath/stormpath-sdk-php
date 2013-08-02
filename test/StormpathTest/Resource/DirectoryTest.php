@@ -10,6 +10,7 @@ use Stormpath\Resource\Group;
 use Stormpath\Resource\GroupMembership;
 use Stormpath\Resource\LoginAttempt;
 use Stormpath\Resource\Application;
+use Stormpath\Resource\AccountStoreMapping;
 use Stormpath\Resource\Exception;
 
 class DirectoryTest extends \PHPUnit_Framework_TestCase
@@ -175,4 +176,60 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $resourceManager->remove($account1);
         $resourceManager->flush();
     }
+
+    public function testIsDefaultGroupStore()
+    {
+        $resourceManager = StormpathService::getResourceManager();
+        $app = new Application;
+
+        $app->setName(md5(rand()));
+        $app->setDescription('phpunit test application');
+        $app->setStatus('ENABLED');
+
+        $resourceManager->persist($app);
+        $resourceManager->flush();
+
+        $groupStoreMapping = new AccountStoreMapping;
+        $groupStoreMapping->setApplication($app);
+        $groupStoreMapping->setAccountStore($this->directory);
+        $groupStoreMapping->setIsDefaultGroupStore(true);
+
+        $resourceManager->persist($groupStoreMapping);
+        $resourceManager->flush();
+
+        $resourceManager->refresh($app);
+
+        $accountStores = $app->getAccountStoreMappings();
+        $found = false;
+        foreach ($accountStores as $as) {
+            if ($as->getId() == $groupStoreMapping->getId()) $found = true;
+        }
+
+        $this->assertTrue($found);
+
+        $resourceManager->refresh($app);
+
+        /**
+         * App doesn't seem to be including defaultGroupStoreMapping; blank string
+         */
+        $default = $app->getDefaultGroupStoreMapping();
+        if (!$default) $this->assertTrue(false);
+
+        $this->assertEquals($this->directory->getId(), $default->getId());
+
+
+        $resourceManager->remove($groupStoreMapping);
+        $resourceManager->remove($group1);
+        $resourceManager->remove($app);
+        $resourceManager->flush();
+    }
+
+
+    public function testExpandReferences()
+    {
+        $resourceManager = StormpathService::getResourceManager();
+        $directory2 = $resourceManager->find('Stormpath\Resource\Directory', $this->directory->getId(), true);
+        $directory2->getTenant();
+    }
+
 }

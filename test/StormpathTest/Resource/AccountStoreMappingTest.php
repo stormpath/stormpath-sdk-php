@@ -13,7 +13,7 @@ use Stormpath\Resource\AccountStoreMapping;
 use Stormpath\Resource\LoginAttempt;
 use Stormpath\Exception\ApiException;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class AccountStoreMappingTest extends \PHPUnit_Framework_TestCase
 {
     protected $application;
 
@@ -36,7 +36,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         $resourceManager = StormpathService::getResourceManager();
-        if ($this->application) $resourceManager->remove($this->application);
+        $resourceManager->remove($this->application);
         $resourceManager->flush();
     }
 
@@ -58,19 +58,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->application->setDescription($originalDescription);
         $resourceManager->persist($this->application);
         $resourceManager->flush();
-    }
-
-    /**
-     * We need detailed unit tests for all these
-     */
-    public function testGetters()
-    {
-        $this->application->getTenant();
-        $this->application->getAccounts();
-        $this->application->getGroups();
-        $this->application->getLoginAttempts();
-        $this->application->getPasswordResetTokens();
-        $this->application->getAccountStoreMappings();
     }
 
 
@@ -99,54 +86,14 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->persist($accountStoreMapping);
         $resourceManager->flush();
 
-        $account1 = new Account;
-        $account1->setUsername($username);
-        $account1->setEmail($email);
-        $account1->setPassword($password);
-        $account1->setGivenName('Test');
-        $account1->setMiddleName('User');
-        $account1->setSurname('One');
-        $account1->setApplication($this->application);
-        $account1->setStatus('ENABLED');
+        $this->assertTrue($accountStoreMapping->getApplication()->getId() == $this->application->getId());
 
-        $resourceManager->persist($account1);
-        $resourceManager->flush();
-
-        // Test login attempt
-        $loginAttempt = new LoginAttempt;
-        $loginAttempt->setUsername($email);
-        $loginAttempt->setPassword($password);
-        $loginAttempt->setApplication($this->application);
-
-        $resourceManager->persist($loginAttempt);
-        $resourceManager->flush();
-
-        $this->assertTrue($loginAttempt->getAccount() instanceof Account);
-        $this->assertEquals($account1->getId(), $loginAttempt->getAccount()->getId());
-
-
-        // Test login attempt expand resources
-        # Currently failing due to resource expansion not returning from stormpath
-        $resourceManager->setExpandReferences(true);
-        $loginAttempt2 = new LoginAttempt;
-        $loginAttempt2->setUsername($email);
-        $loginAttempt2->setPassword($password);
-        $loginAttempt2->setApplication($this->application);
-
-        $resourceManager->persist($loginAttempt2);
-        $resourceManager->flush();
-
-        $this->assertTrue($loginAttempt2->getAccount() instanceof Account);
-        $this->assertEquals($account1->getId(), $loginAttempt2->getAccount()->getId());
-
-        $resourceManager->remove($account1);
         $resourceManager->remove($accountStoreMapping);
         $resourceManager->remove($directory);
         $resourceManager->flush();
     }
 
-
-    public function testDefaultAccountStoreMapping()
+    public function testEagerLoading()
     {
         $resourceManager = StormpathService::getResourceManager();
 
@@ -168,18 +115,29 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $accountStoreMapping->setAccountStore($directory);
         $accountStoreMapping->setIsDefaultAccountStore(true);
 
+        $resourceManager->setExpandReferences(true);
         $resourceManager->persist($accountStoreMapping);
         $resourceManager->flush();
 
-        $app = $this->application;
-        $resourceManager->refresh($app);
-        $default = $app->getDefaultAccountStoreMapping();
+        $this->assertTrue($accountStoreMapping->getApplication()->getId() == $this->application->getId());
 
-        $this->assertEquals($accountStoreMapping->getId(), $default->getId());
-
-        $this->application = app;
+        $resourceManager->remove($account1);
         $resourceManager->remove($accountStoreMapping);
         $resourceManager->remove($directory);
         $resourceManager->flush();
     }
+
+    public function testInvalidAccountStoreType()
+    {
+        $account1 = new Account;
+        $accountStoreMapping = new AccountStoreMapping;
+
+        try {
+            $accountStoreMapping->setAccountStore($account1);
+            throw new \Exception('Invalid account store test failed');
+        } catch (\Exception $e) {
+            $this->assertEquals('Account store is neither a Group nor Directory resource.', $e->getMessage());
+        }
+    }
 }
+
