@@ -193,6 +193,10 @@ class PasswordResetTokenTest extends \PHPUnit_Framework_TestCase
             $account = $passwordResetToken->getAccount();
         } catch (ApiException $e) {
             $userMessage = $e->getMessage();
+            // insert exception test
+            $e->getStatus();
+            $e->getDeveloperMessage();
+            $e->getMoreInfo();
 
             if ($e->getCode() == 400) {
                 $this->assertEquals('There is no account with that email address.', $userMessage);

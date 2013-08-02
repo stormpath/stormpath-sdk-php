@@ -70,7 +70,9 @@ class ResourceCollection implements Collection, Selectable
         // Build orderBy
         if ($this->getOrderBy()) {
             if (!is_array($this->getOrderBy())) {
+                // @codeCoverageIgnoreStart
                 throw new \Exception('OrderBy must be an array as [["fieldName" => "ASC|DESC"]["field2" => "ASC|DESC"]]');
+                // @codeCoverageIgnoreEnd
             }
 
             $sorts = array();
@@ -97,7 +99,9 @@ class ResourceCollection implements Collection, Selectable
                 $this->add($resource);
             }
         } else {
+            // @codeCoverageIgnoreStart
             $this->getResourceManager()->handleInvalidResponse($response);
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -387,6 +391,7 @@ class ResourceCollection implements Collection, Selectable
      *
      * @param Closure $p The predicate.
      * @return boolean TRUE if the predicate is TRUE for at least one element, FALSE otherwise.
+     * @codeCoverageIgnore
      */
     public function exists(Closure $p)
     {
@@ -407,6 +412,7 @@ class ResourceCollection implements Collection, Selectable
      *
      * @param mixed $element The element to search for.
      * @return mixed The key/index of the element or FALSE if the element was not found.
+     * @codeCoverageIgnore
      */
     public function indexOf($element)
     {
@@ -433,6 +439,7 @@ class ResourceCollection implements Collection, Selectable
      * Gets all keys/indexes of the collection elements.
      *
      * @return array
+     * @codeCoverageIgnore
      */
     public function getKeys()
     {
@@ -444,6 +451,7 @@ class ResourceCollection implements Collection, Selectable
      * Gets all elements.
      *
      * @return array
+     * @codeCoverageIgnore
      */
     public function getValues()
     {
@@ -509,6 +517,7 @@ class ResourceCollection implements Collection, Selectable
      * Gets an iterator for iterating over the elements in the collection.
      *
      * @return ArrayIterator
+     * @codeCoverageIgnore
      */
     public function getIterator()
     {
@@ -522,6 +531,7 @@ class ResourceCollection implements Collection, Selectable
      *
      * @param Closure $func
      * @return Collection
+     * @codeCoverageIgnore
      */
     public function map(Closure $func)
     {
@@ -535,6 +545,7 @@ class ResourceCollection implements Collection, Selectable
      *
      * @param Closure $p The predicate used for filtering.
      * @return Collection A collection with the results of the filter operation.
+     * @codeCoverageIgnore
      */
     public function filter(Closure $p)
     {
@@ -548,6 +559,7 @@ class ResourceCollection implements Collection, Selectable
      *
      * @param Closure $p The predicate.
      * @return boolean TRUE, if the predicate yields TRUE for all elements, FALSE otherwise.
+     * @codeCoverageIgnore
      */
     public function forAll(Closure $p)
     {
@@ -569,6 +581,7 @@ class ResourceCollection implements Collection, Selectable
      * @return array An array with two elements. The first element contains the collection
      *               of elements where the predicate returned TRUE, the second element
      *               contains the collection of elements where the predicate returned FALSE.
+     * @codeCoverageIgnore
      */
     public function partition(Closure $p)
     {
@@ -579,6 +592,7 @@ class ResourceCollection implements Collection, Selectable
      * Returns a string representation of this object.
      *
      * @return string
+     * @codeCoverageIgnore
      */
     public function __toString()
     {
@@ -605,6 +619,7 @@ class ResourceCollection implements Collection, Selectable
      * @param int $offset
      * @param int $length
      * @return array
+     * @codeCoverageIgnore
      */
     public function slice($offset, $length = null)
     {
@@ -618,6 +633,7 @@ class ResourceCollection implements Collection, Selectable
      *
      * @param  Criteria $criteria
      * @return Collection
+     * @codeCoverageIgnore
      */
     public function matching(Criteria $criteria)
     {
