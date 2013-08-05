@@ -250,11 +250,14 @@ class ResourceManager implements ObjectManager
 
                 $client->setRawBody(json_encode($resource->getArrayCopy()));
 
+                // Disabled this; it does not seem to be supported
+                /*
                 if ($this->getExpandReferences() and $resource->getExpandString()) {
                     $client->setParameterGet(array(
                         'expand' => $resource->getExpandString(),
                     ));
                 }
+                */
 
                 $response = $client->send();
 
