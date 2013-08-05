@@ -115,13 +115,12 @@ class AccountStoreMappingTest extends \PHPUnit_Framework_TestCase
         $accountStoreMapping->setAccountStore($directory);
         $accountStoreMapping->setIsDefaultAccountStore(true);
 
-        $resourceManager->setExpandReferences(true);
+        $resourceManager->setExpandReferences(false); // FIXME: Expand references not supported
         $resourceManager->persist($accountStoreMapping);
         $resourceManager->flush();
 
         $this->assertTrue($accountStoreMapping->getApplication()->getId() == $this->application->getId());
 
-        $resourceManager->remove($account1);
         $resourceManager->remove($accountStoreMapping);
         $resourceManager->remove($directory);
         $resourceManager->flush();
