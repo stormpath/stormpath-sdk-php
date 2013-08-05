@@ -210,6 +210,7 @@ class ResourceManager implements ObjectManager
      */
     function refresh($object)
     {
+        $this->getCache()->removeItem(get_class($object) . $object->getId());
         $object->_load($object->getId());
     }
 

@@ -215,11 +215,10 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
         $default = $app->getDefaultGroupStoreMapping();
         if (!$default) $this->assertTrue(false);
 
-        $this->assertEquals($this->directory->getId(), $default->getId());
+        $this->assertEquals($groupStoreMapping->getId(), $default->getId());
 
 
         $resourceManager->remove($groupStoreMapping);
-        $resourceManager->remove($group1);
         $resourceManager->remove($app);
         $resourceManager->flush();
     }
