@@ -168,6 +168,26 @@ class Application extends AbstractResource
         return $this->passwordResetTokens;
     }
 
+    public function setAutoCreateDirectory($value)
+    {
+        if ($this->getId()) {
+            // @codeCoverageIgnoreStart
+            throw new \Exception('Auto Create Directory may only be set when creating an application');
+            // @codeCoverageIgnoreEnd
+        }
+
+        if ($value) {
+            if ($value === true) $value = 'true';
+            $this->_additionalQueryParameters['createDirectory'] = $value;
+        } else {
+            // @codeCoverageIgnoreStart
+            unset($this->_additionalQueryParameters['createDirectory']);
+            // @codeCoverageIgnoreEnd
+        }
+
+        return $this;
+    }
+
     public function exchangeArray($data)
     {
         $eager = $this->getResourceManager()->getExpandReferences();

@@ -86,10 +86,17 @@ class ResourceManager implements ObjectManager
             $client->setMethod('GET');
 
             if ($this->getExpandReferences() and $class->getExpandString()) {
-                $client->setParameterGet(array(
-                    'expand' => $class->getExpandString(),
-                ));
+                $client->getRequest()->getQuery()->set('expand', $class->getExpandString());
             }
+
+            // Remove code coverage ignore when/if features are added which affect a find
+            // @codeCoverageIgnoreStart
+            if ($class->getAdditionalQueryParameters()) {
+                foreach ($class->getAdditionalQueryParameters() as $key => $value) {
+                    $client->getRequest()->getQuery()->set($key, $value);
+                }
+            }
+            // @codeCoverageIgnoreEnd
 
             $response = $client->send();
             if ($response->isSuccess()) {
@@ -259,6 +266,12 @@ class ResourceManager implements ObjectManager
                 }
                 */
 
+                if ($resource->getAdditionalQueryParameters()) {
+                    foreach ($resource->getAdditionalQueryParameters() as $key => $value) {
+                        $client->getRequest()->getQuery()->set($key, $value);
+                    }
+                }
+
                 $response = $client->send();
 
                 if ($response->isSuccess()) {
@@ -287,6 +300,16 @@ class ResourceManager implements ObjectManager
                 $client->setMethod('POST');
 
                 $client->setRawBody(json_encode($resource->getArrayCopy()));
+
+                // Remove code coverage ignore when/if features are added which affect a update
+                // @codeCoverageIgnoreStart
+                if ($resource->getAdditionalQueryParameters()) {
+                    foreach ($resource->getAdditionalQueryParameters() as $key => $value) {
+                        $client->getRequest()->getQuery()->set($key, $value);
+                    }
+                }
+                // @codeCoverageIgnoreEnd
+
                 $response = $client->send();
 
                 if ($response->isSuccess()) {
@@ -310,6 +333,15 @@ class ResourceManager implements ObjectManager
                 $client = $this->getHttpClient();
                 $client->setUri($resource->getHref());
                 $client->setMethod('DELETE');
+
+                // Remove code coverage ignore when/if features are added which affect a delete
+                // @codeCoverageIgnoreStart
+                if ($resource->getAdditionalQueryParameters()) {
+                    foreach ($resource->getAdditionalQueryParameters() as $key => $value) {
+                        $client->getRequest()->getQuery()->set($key, $value);
+                    }
+                }
+                // @codeCoverageIgnoreEnd
 
                 $response = $client->send();
 

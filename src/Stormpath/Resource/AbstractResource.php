@@ -47,9 +47,19 @@ abstract class AbstractResource
      */
     protected $_expandString;
 
+    /**
+     * An array of get parameters to add to the next request.  This is reset between requests.
+     */
+    protected $_additionalQueryParameters = array();
+
     public function __construct()
     {
         $this->_setUrl(StormpathService::getBaseUrl() . $this->_getUrl());
+    }
+
+    public function getAdditionalQueryParameters()
+    {
+        return $this->_additionalQueryParameters;
     }
 
     public function getExpandString()

@@ -40,6 +40,24 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $resourceManager->flush();
     }
 
+    public function testAutoCreateDirectory()
+    {
+        $resourceManager = StormpathService::getResourceManager();
+
+        $app = new Application;
+
+        $app->setName(md5(rand()));
+        $app->setDescription('phpunit test application');
+        $app->setStatus('ENABLED');
+        $directoryName = md5(rand());
+        $app->setAutoCreateDirectory($directoryName);
+
+        $resourceManager->persist($app);
+        $resourceManager->flush();
+
+        $this->assertEquals($directoryName, $app->getDefaultAccountStoreMapping()->getAccountStore()->getName());
+    }
+
     public function testUpdate()
     {
         $resourceManager = StormpathService::getResourceManager();

@@ -350,6 +350,14 @@ Create a new application
     $resourceManager->flush();
 ```
 
+You may auto-create a directory and assign it to the AccountStore of the defaultAccountStoreMapping for the application when it is created.
+
+```php
+    // directoryName may be true for automatically generated name
+    $app->setAutoCreateDirectory($directoryName);
+```
+
+
 Properties
 
 ```
