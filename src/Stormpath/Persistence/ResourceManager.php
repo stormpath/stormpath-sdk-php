@@ -247,6 +247,11 @@ class ResourceManager implements ObjectManager
                     case 'Stormpath\Resource\PasswordResetToken':
                         $resource->_setUrl(StormpathService::getBaseUrl() . '/applications/' . $resource->getApplication()->getId() . '/passwordResetTokens');
                         break;
+                    case 'Stormpath\Resource\EmailVerificationToken':
+                        // @codeCoverageIgnoreStart
+                        $resource->_setUrl(StormpathService::getBaseUrl() . $resource->getUrl() . '/' . $resource->getToken());
+                        break;
+                        // @codeCoverageIgnoreEnd
                     default:
                         break;
                 }
@@ -257,7 +262,7 @@ class ResourceManager implements ObjectManager
 
                 $client->setRawBody(json_encode($resource->getArrayCopy()));
 
-                // Disabled this; it does not seem to be supported
+                // Resource Expansion on post is not supported
                 /*
                 if ($this->getExpandReferences() and $resource->getExpandString()) {
                     $client->setParameterGet(array(

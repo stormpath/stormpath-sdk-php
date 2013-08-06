@@ -15,6 +15,7 @@ class Account extends AbstractResource
     protected $_expandString = 'directory,tenant';
     protected $username;
     protected $email;
+    protected $emailVerificationToken;
     protected $password;
     protected $givenName;
     protected $middleName;
@@ -67,6 +68,19 @@ class Account extends AbstractResource
 
         $this->_load();
         $this->email = $value;
+        return $this;
+    }
+
+    public function getEmailVerificationToken()
+    {
+        $this->_load();
+        return $this->emailVerificationToken;
+    }
+
+    public function setEmailVerificationToken($value)
+    {
+        $this->_load();
+        $this->emailVerificationToken = $value;
         return $this;
     }
 
@@ -203,6 +217,7 @@ class Account extends AbstractResource
         $this->setHref(isset($data['href']) ? $data['href']: null);
         $this->setUsername(isset($data['username']) ? $data['username']: null);
         $this->setEmail(isset($data['email']) ? $data['email']: null);
+        $this->setEmailVerificationToken(isset($data['emailVerificationToken']) ? $data['emailVerificationToken']: null);
         $this->setPassword(isset($data['password']) ? $data['password']: null);
         $this->setGivenName(isset($data['givenName']) ? $data['givenName']: null);
         $this->setMiddleName(isset($data['middleName']) ? $data['middleName']: null);
@@ -242,6 +257,7 @@ class Account extends AbstractResource
             'href' => $this->getHref(),
             'username' => $this->getUsername(),
             'email' => $this->getEmail(),
+            'emailVerificationToken' => $this->getEmailVerificationToken(),
             'password' => $this->getPassword(),
             'givenName' => $this->getGivenName(),
             'middleName' => $this->getMiddleName(),
