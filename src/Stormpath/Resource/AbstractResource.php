@@ -62,6 +62,12 @@ abstract class AbstractResource
         return $this->_additionalQueryParameters;
     }
 
+    public function resetAdditionalQueryParameters()
+    {
+        $this->_additionalQueryParameters = array();
+        return $this;
+    }
+
     public function getExpandString()
     {
         return $this->_expandString;

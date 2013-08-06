@@ -71,37 +71,38 @@ class ResourceManager implements ObjectManager
     }
 
     // Fetches a GET and hydrates a class
-    public function load($id, $class)
+    public function load($id, $resource)
     {
         $success = false;
         if (!$this->getExpandReferences()) {
-            $cachedJson = $this->getCache()->getItem(get_class($class) . $id, $success);
+            $cachedJson = $this->getCache()->getItem(get_class($resource) . $id, $success);
         }
 
         if ($success) {
-            $class->exchangeArray(json_decode($cachedJson, true));
+            $resource->exchangeArray(json_decode($cachedJson, true));
         } else {
             $client = $this->getHttpClient();
-            $client->setUri($class->_getUrl() . '/' . $id);
+            $client->setUri($resource->_getUrl() . '/' . $id);
             $client->setMethod('GET');
 
-            if ($this->getExpandReferences() and $class->getExpandString()) {
-                $client->getRequest()->getQuery()->set('expand', $class->getExpandString());
+            if ($this->getExpandReferences() and $resource->getExpandString()) {
+                $client->getRequest()->getQuery()->set('expand', $resource->getExpandString());
             }
 
             // Remove code coverage ignore when/if features are added which affect a find
             // @codeCoverageIgnoreStart
-            if ($class->getAdditionalQueryParameters()) {
-                foreach ($class->getAdditionalQueryParameters() as $key => $value) {
+            if ($resource->getAdditionalQueryParameters()) {
+                foreach ($resource->getAdditionalQueryParameters() as $key => $value) {
                     $client->getRequest()->getQuery()->set($key, $value);
                 }
+                $resource->resetAdditionalQueryParameters();
             }
             // @codeCoverageIgnoreEnd
 
             $response = $client->send();
             if ($response->isSuccess()) {
-                $class->exchangeArray(json_decode($response->getBody(), true));
-                $this->getCache()->setItem(get_class($class) . $id, $response->getBody());
+                $resource->exchangeArray(json_decode($response->getBody(), true));
+                $this->getCache()->setItem(get_class($resource) . $id, $response->getBody());
             } else {
                 // @codeCoverageIgnoreStart
                 $this->handleInvalidResponse($response);
@@ -215,10 +216,10 @@ class ResourceManager implements ObjectManager
      *
      * @param object $object The object to refresh.
      */
-    function refresh($object)
+    function refresh($resource)
     {
-        $this->getCache()->removeItem(get_class($object) . $object->getId());
-        $object->_load($object->getId());
+        $this->getCache()->removeItem(get_class($resource) . $resource->getId());
+        $resource->_load($resource->getId());
     }
 
     /**
@@ -275,6 +276,7 @@ class ResourceManager implements ObjectManager
                     foreach ($resource->getAdditionalQueryParameters() as $key => $value) {
                         $client->getRequest()->getQuery()->set($key, $value);
                     }
+                    $resource->resetAdditionalQueryParameters();
                 }
 
                 $response = $client->send();
@@ -312,6 +314,7 @@ class ResourceManager implements ObjectManager
                     foreach ($resource->getAdditionalQueryParameters() as $key => $value) {
                         $client->getRequest()->getQuery()->set($key, $value);
                     }
+                    $resource->resetAdditionalQueryParameters();
                 }
                 // @codeCoverageIgnoreEnd
 
@@ -345,6 +348,7 @@ class ResourceManager implements ObjectManager
                     foreach ($resource->getAdditionalQueryParameters() as $key => $value) {
                         $client->getRequest()->getQuery()->set($key, $value);
                     }
+                    $resource->resetAdditionalQueryParameters();
                 }
                 // @codeCoverageIgnoreEnd
 
