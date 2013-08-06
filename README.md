@@ -12,6 +12,7 @@ This API client is an [Object Relational Mapper](https://en.wikipedia.org/wiki/O
     Stormpath\Resource\Account
     Stormpath\Resource\AccountStoreMapping
     Stormpath\Resource\Application
+    Stormpath\Resource\EmailVerificationToken
     Stormpath\Resource\Directory
     Stormpath\Resource\Group
     Stormpath\Resource\GroupMembership
@@ -497,6 +498,24 @@ To initialize a password reset email create a PasswordResetToken, set the email 
         }
     }
 ```    
+
+Email Verification Token
+------------------------
+
+```php
+use Stormpath\Resource\EmailVerificationToken;
+
+// Obtained from the GET parameter 'verificationToken'
+$verificationToken = 'token'; 
+
+$emailVerificationToken = new EmailVerificationToken;
+$emailVerificationToken->setToken($verificationToken);
+
+$resourceManager->persist($emailVerificationToken);
+$resourceManager->flush();
+
+$account = $emailVerificationToken->getAccount();
+```
 
 
 Tenant
