@@ -93,7 +93,7 @@ class AccountStoreMappingTest extends \PHPUnit_Framework_TestCase
         $resourceManager->flush();
     }
 
-    public function testEagerLoading()
+    public function testGroupAccountStore()
     {
         $resourceManager = StormpathService::getResourceManager();
 
@@ -101,28 +101,35 @@ class AccountStoreMappingTest extends \PHPUnit_Framework_TestCase
         $password = md5(rand()) . strtoupper(md5(rand()));
         $email = md5(rand()) . '@test.stormpath.com';
 
+
         // Create directory and AccountStoreMapping
         $directory = new Directory;
         $directory->setName(md5(rand()));
         $directory->setDescription('phpunit test directory');
         $directory->setStatus('ENABLED');
 
+        $group = new Group;
+        $group->setName(md5(rand()));
+        $group->setDescription('phpunit test directory');
+        $group->setStatus('ENABLED');
+        $group->setDirectory($directory);
+
         $resourceManager->persist($directory);
+        $resourceManager->persist($group);
         $resourceManager->flush();
 
         $accountStoreMapping = new AccountStoreMapping;
         $accountStoreMapping->setApplication($this->application);
-        $accountStoreMapping->setAccountStore($directory);
+        $accountStoreMapping->setAccountStore($group);
         $accountStoreMapping->setIsDefaultAccountStore(true);
 
-        $resourceManager->setExpandReferences(false); // FIXME: Expand references not supported
         $resourceManager->persist($accountStoreMapping);
         $resourceManager->flush();
 
         $this->assertTrue($accountStoreMapping->getApplication()->getId() == $this->application->getId());
 
         $resourceManager->remove($accountStoreMapping);
-        $resourceManager->remove($directory);
+        $resourceManager->remove($group);
         $resourceManager->flush();
     }
 

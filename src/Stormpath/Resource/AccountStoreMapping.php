@@ -107,6 +107,9 @@ class AccountStoreMapping extends AbstractResource
         $this->setIsDefaultGroupStore(isset($data['isDefaultGroupStore']) ? $data['isDefaultGroupStore']: false);
 
         if ($eager) {
+            // @codeCoverageIgnoreStart
+            throw new \Exception('Resource expansion is not enabled for this resource');
+
             // If this resource was fetched with eager loading store the retrieved data in the cache then
             // fetch the object from the cache.
             $this->getResourceManager()->getCache()->setItem('Stormpath\Resource\Application' . substr($data['application']['href'], strrpos($data['application']['href'], '/') + 1), json_encode($data['application']));
@@ -121,6 +124,7 @@ class AccountStoreMapping extends AbstractResource
             } else {
                 throw new \Exception('Invalid accountStore returned.  Neither directory or group.');
             }
+            // @codeCoverageIgnoreEnd
 
         } else {
             $application = new \Stormpath\Resource\Application;
@@ -133,7 +137,9 @@ class AccountStoreMapping extends AbstractResource
                 $accountStore = new \Stormpath\Resource\Group;
                 $accountStore->_lazy($this->getResourceManager(), substr($data['accountStore']['href'], strrpos($data['accountStore']['href'], '/') + 1));
             } else {
+                // @codeCoverageIgnoreStart
                 throw new \Exception('Invalid accountStore returned.  Neither directory or group.');
+                // @codeCoverageIgnoreEnd
             }
         }
         $this->setApplication($application);
