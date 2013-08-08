@@ -1,0 +1,131 @@
+PHP Quickstart Guide
+
+The PHP SDK can be found on Github.
+
+1. Sign up for service.
+
+	1. Provide your first and last name, email address, company, and a password.
+	2. When all fields are complete, click Start. You will receive a registration success email.
+	3. In the confirmation email, click the link.
+	4. Follow the onscreen instructions. After completing this process, you are ready to use Stormpath for free!
+
+2. Download the PHP SDK:
+
+   stormpath-sdk-php - Official PHP SDK for the Stormpath REST+JSON API
+
+3. Follow the installation/configuration directions located on the README.md file.
+
+4. Create your API key.
+
+	All requests to the Stormpath REST API must be authenticated with an API key. To get an API key:
+
+	1. Log in to the Stormpath Admin Console using the email address and password provided during sign-up.
+	2. After logging in, navigate to your account page by clicking Settings, My Account in the top-right corner of the screen.
+	3. On the Account Details page, under Security Credentials, click Create API Key.
+
+		a. This will generate your API key and download it to your computer as an apiKey.properties file.
+		b. If you open the file in a text editor, you will see something similar to the following:
+
+			apiKey.id = 144JVZINOF5EBNCMG9EXAMPLE
+
+			apiKey.secret = lWxOiKqKPNwJmSldbiSkEbkNjgh2uRSNAb+AEXAMPLE
+
+	4. Store your API key file somewhere secure (readable only by you), for example:
+
+			~/.stormpath/apiKey.properties
+
+	   The file contents should contain the following name/value pairs (using your own values of course):
+
+	   $ cat ~/.stormpath/apiKey.properties
+
+	        apiKey.id = YOURAPIKEYIDHEREREPLACEME
+            apiKey.secret = YoUrReAlLyLongSecretValueHereReplaceMeWithYourValue
+
+    5.  edit composer.json file with following contents:
+    	
+    	"repositories": [
+    	{
+        	"type": "vcs",
+        	"url": "https://github.com/TomHAnderson/StormpathClient-PHP"
+    	}
+		],
+		"require": {
+    		"stormpath/stormpath": "dev-master"
+		}
+
+	6. Install composer via curl -s http://getcomposer.org/installer | php (on windows, download http://getcomposer.org/installer and 	 execute it with PHP) and from the terminal:
+
+	   run php composer.phar install
+
+    7. Configure your application to create a Stormpath SDK ApiKey instance based on your API Key. The ApiKey Instance is the 
+       Starting point for all operations with the Stormpath service.
+    		
+    		use Zend\Config\Reader\Ini as ConfigReader;
+    		use Stormpath\Service\StormpathService;
+
+    		$reader = new ConfigReader();
+        	
+        	$config = $reader->fromFile('/Users/vganesh/.stormpath/apiKey.ini');
+        	
+        	$id = $config['apiKey']['id'];
+        	$secret = $config['apiKey']['secret'];
+
+        	StormpathService::configure($id, $secret);
+
+    6.  Use the ResouceManager instance to interact with your applications, directories, accounts, and tenants:
+
+    		$resourceManager = StormpathService::getResourceManager();
+
+    		$account = $resourceManager->find('Stormpath\Resource\Account', $resourceId);
+
+    	More information on how to use the ResourceManager for creating, editing and deleting resources follow the Readme.md file.  
+
+    7.  Register Applications.
+
+    	To register an application, 
+
+    		1. Get the resourceManager instance.
+    		2. Instantiate an application.
+    		3. Set the application properties.
+    		4. Persist the application instance.
+    		5. Flush the resource. 
+
+	    	$resourceManager = StormpathService::getResourceManager();
+
+	        $app = new Application;
+
+	        $app->setName('Application Name');
+	        $app->setDescription('Application Description');
+	        $app->setStatus('ENABLED');
+
+	        $resourceManager->persist($app);
+	        $resourceManager->flush();
+
+	8. Create accounts.
+
+	   To create a user account, you must:
+
+	   		1. Get the resourceManager instance.
+	   		2. Get the directory where you want to create the account from the datastore with the directory href.
+	   		3. Set the account properties.
+	   		4. Create the account from the directory.
+	   		4. Persist the account instance.
+    		5. Flush the resource. 
+
+	   		$resourceManager = StormpathService::getResourceManager();
+
+        	$account = new Account;
+       		$account->setUsername('Username');
+            $account->setEmail('my@email.com');
+            $account->setPassword('Password');
+            $account->setGivenName('Given Name');
+            $account->setMiddleName('Middle Name');
+            $account->setSurname('Surname');
+            $account->setDirectory($directory);
+            $account->setStatus('ENABLED');
+
+            $resourceManager->persist($account1);
+            $resourceManager->flush();
+
+    9.  
+
