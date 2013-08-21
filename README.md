@@ -279,7 +279,7 @@ Create a new account and assign it to an Application
     $account->setGivenName('Test');
     $account->setMiddleName('User');
     $account->setSurname('One');
-    $account->setStatus('ACTIVE');
+    $account->setStatus('Enabled');
     
     $account->setApplication($application);
     
