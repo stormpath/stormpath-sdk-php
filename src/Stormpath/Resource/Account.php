@@ -33,11 +33,8 @@ class Account extends AbstractResource
     public function setHref($value)
     {
         $this->_setUrl(StormpathService::getBaseUrl() . '/accounts');
-        $this->href = $value;
 
-        $this->setId(substr($value, strrpos($value, '/') + 1));
-
-        return $this;
+        return parent::setHref($value);
     }
 
     public function getUsername()
