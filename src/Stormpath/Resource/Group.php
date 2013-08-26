@@ -30,11 +30,8 @@ class Group extends AbstractResource
     public function setHref($value)
     {
         $this->_setUrl(StormpathService::getBaseUrl() . '/groups');
-        $this->href = $value;
 
-        $this->setId(substr($value, strrpos($value, '/') + 1));
-
-        return $this;
+        return parent::setHref($value);
     }
 
     public function getName()
