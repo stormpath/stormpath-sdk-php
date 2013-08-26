@@ -250,7 +250,7 @@ class ResourceManager implements ObjectManager
                         break;
                     case 'Stormpath\Resource\EmailVerificationToken':
                         // @codeCoverageIgnoreStart
-                        $resource->_setUrl(StormpathService::getBaseUrl() . $resource->getUrl() . '/' . $resource->getToken());
+                        $resource->_setUrl(StormpathService::getBaseUrl() . $resource->_getUrl() . '/' . $resource->getToken());
                         break;
                         // @codeCoverageIgnoreEnd
                     default:
