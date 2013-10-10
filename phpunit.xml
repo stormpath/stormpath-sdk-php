@@ -1,0 +1,21 @@
+<phpunit bootstrap="tests/Bootstrap.php"
+         colors="true"
+         testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader">
+
+    <testsuites>
+        <testsuite name="Stormpath SDK Test Suite">
+            <directory>./tests/Stormpath/Tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src/Stormpath</directory>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-html" target="./tests/code-coverage" charset="UTF-8" yui="true" lowUpperBound="50" highLowerBound="90" />
+    </logging>
+
+</phpunit>
