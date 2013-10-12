@@ -31,7 +31,7 @@ class BasicAuthenticator
         $this->dataStore = $dataStore;
     }
 
-    public function authenticate($parentHref, AuthenticationRequest $request)
+    public function authenticate($parentHref, AuthenticationRequest $request, array $options = array())
     {
         if (!$parentHref)
         {
@@ -54,11 +54,10 @@ class BasicAuthenticator
         $value = base64_encode($value);
 
         $attempt = $this->dataStore->instantiate(Stormpath::BASIC_LOGIN_ATTEMPT);
-        $attempt->setType('basic');
         $attempt->setValue($value);
 
         $href = $parentHref . '/loginAttempts';
 
-        return $this->dataStore->create($href, $attempt, Stormpath::AUTHENTICATION_RESULT);
+        return $this->dataStore->create($href, $attempt, Stormpath::AUTHENTICATION_RESULT, $options);
     }
 }

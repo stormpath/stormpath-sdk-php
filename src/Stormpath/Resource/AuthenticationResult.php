@@ -1,6 +1,6 @@
 <?php
 
-namespace Stormpath\Client;
+namespace Stormpath\Resource;
 
 /*
  * Copyright 2013 Stormpath, Inc.
@@ -17,27 +17,15 @@ namespace Stormpath\Client;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-class ApiKey
+
+use Stormpath\Stormpath;
+
+class AuthenticationResult extends Resource
 {
+    const ACCOUNT = "account";
 
-    private $id;
-    private $secret;
-
-    public function __construct($id, $secret)
+    public function getAccount()
     {
-        $this->id = $id;
-        $this->secret = $secret;
+        return $this->getResourceProperty(self::ACCOUNT, Stormpath::ACCOUNT);
     }
-
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getSecret()
-    {
-        return $this->secret;
-    }
-
-
 }

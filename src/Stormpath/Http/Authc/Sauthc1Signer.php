@@ -18,7 +18,7 @@ namespace Stormpath\Http\Authc;
  * limitations under the License.
  */
 
-use Stormpath\Client\ApiKey;
+use Stormpath\ApiKey;
 use Stormpath\Http\Request;
 use Stormpath\Util\RequestUtils;
 use Stormpath\Util\UUID;

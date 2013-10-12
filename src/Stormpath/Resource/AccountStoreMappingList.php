@@ -20,23 +20,11 @@ namespace Stormpath\Resource;
 
 use Stormpath\Stormpath;
 
-class PasswordResetToken extends Resource
-{
-    const EMAIL = "email";
-    const ACCOUNT = "account";
+class AccountStoreMappingList extends AbstractCollectionResource {
 
-    public function getEmail()
+    function getItemClassName()
     {
-        return $this->getProperty(self::EMAIL);
+        return Stormpath::ACCOUNT_STORE_MAPPING;
     }
 
-    public function setEmail($email)
-    {
-        $this->setProperty(self::EMAIL, $email);
-    }
-
-    public function getAccount(array $options = array())
-    {
-        return $this->getResourceProperty(self::ACCOUNT, Stormpath::ACCOUNT, $options);
-    }
 }

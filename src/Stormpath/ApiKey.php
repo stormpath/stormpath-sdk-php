@@ -1,6 +1,6 @@
 <?php
 
-namespace Stormpath\Resource;
+namespace Stormpath;
 
 /*
  * Copyright 2013 Stormpath, Inc.
@@ -17,26 +17,27 @@ namespace Stormpath\Resource;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-use Stormpath\Stormpath;
-
-class PasswordResetToken extends Resource
+class ApiKey
 {
-    const EMAIL = "email";
-    const ACCOUNT = "account";
 
-    public function getEmail()
+    private $id;
+    private $secret;
+
+    public function __construct($id, $secret)
     {
-        return $this->getProperty(self::EMAIL);
+        $this->id = $id;
+        $this->secret = $secret;
     }
 
-    public function setEmail($email)
+    public function getId()
     {
-        $this->setProperty(self::EMAIL, $email);
+        return $this->id;
     }
 
-    public function getAccount(array $options = array())
+    public function getSecret()
     {
-        return $this->getResourceProperty(self::ACCOUNT, Stormpath::ACCOUNT, $options);
+        return $this->secret;
     }
+
+
 }

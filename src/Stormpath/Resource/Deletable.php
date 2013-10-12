@@ -1,6 +1,6 @@
 <?php
 
-namespace Stormpath\Authc;
+namespace Stormpath\Resource;
 
 /*
  * Copyright 2013 Stormpath, Inc.
@@ -18,15 +18,7 @@ namespace Stormpath\Authc;
  * limitations under the License.
  */
 
-use Stormpath\Resource\Resource;
-use Stormpath\Stormpath;
+interface Deletable {
 
-class AuthenticationResult extends Resource
-{
-    const ACCOUNT = "account";
-
-    public function getAccount()
-    {
-        return $this->getResourceProperty(self::ACCOUNT, Stormpath::ACCOUNT);
-    }
+    public function delete();
 }

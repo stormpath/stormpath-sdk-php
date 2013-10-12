@@ -1,6 +1,6 @@
 <?php
 
-namespace Stormpath\Client;
+namespace Stormpath;
 
 /*
  * Copyright 2013 Stormpath, Inc.
@@ -27,12 +27,12 @@ use Stormpath\Util\YAMLUtil;
  * construct {@link Stormpath\Client\Client} instances.
  * <p/>
  * The ClientBuilder is especially useful for constructing Client
- * instances with Stormpath API Key information loaded from an external <i>.yml</i> file (or YAML loadable string)
+ * instances with Stormpath API Key information loaded from an external <i>ini</i> file (or ini loadable string)
  * to ensure the API Key secret (password) does not reside in plaintext in code.
  * <p/>
  * Example usage:
  * <code>
- * $location = '/home/jsmith/.stormpath/apiKey.yml';
+ * $location = '/home/jsmith/.stormpath/apiKey.properties';
  *
  * $clientBuilder = new ClientBuilder;
  * $client = $clientBuilder->setApiKeyFileLocation($location)->build();
@@ -51,7 +51,7 @@ class ClientBuilder
     private $baseURL;
 
     /**
-     * Sets the location of the YAML file to load containing the API Key (Id and secret) used by the
+     * Sets the location of the 'ini' file to load containing the API Key (Id and secret) used by the
      * Client to communicate with the Stormpath REST API.
      * <p/>
      * You may load files from the filesystem, or URLs just specifying the file location.
@@ -76,7 +76,7 @@ class ClientBuilder
      * Assuming you were using these default property names, your <i>ClientBuilder</i> usage might look like the
      * following:
      * <pre>
-     * $location = "/home/jsmith/.stormpath/apiKey.yml";
+     * $location = "/home/jsmith/.stormpath/apiKey.properties";
      *
      * $clientBuilder = new ClientBuilder;
      * $client = $clientBuilder->setApiKeyFileLocation($location)->build();
@@ -87,7 +87,7 @@ class ClientBuilder
      * {@link setApiKeyIdPropertyName} and
      * {@link setApiKeySecretPropertyName}.
      * <p/>
-     * For example, if you had a <i>/home/jsmith/.stormpath/apiKey.yml</i> file with the following
+     * For example, if you had a <i>/home/jsmith/.stormpath/apiKey.properties</i> file with the following
      * name/value pairs:
      * <pre>
      * $myStormpathApiKeyId = 'foo'
@@ -95,7 +95,7 @@ class ClientBuilder
      * </pre>
      * Your <i>ClientBuilder</i> usage would look like the following:
      * <pre>
-     * $location = "/home/jsmith/.stormpath/apiKey.yml";
+     * $location = "/home/jsmith/.stormpath/apiKey.properties";
      *
      * $clientBuilder = new ClientBuilder;
      * $client = $clientBuilder->setApiKeyFileLocation($location)
@@ -104,116 +104,107 @@ class ClientBuilder
      *                         ->build();
      * </pre>
      *
-     * @param apiKeyFileLocation the file or url location of the API Key <i>.yml</i> file to load when
+     * @param apiKeyFileLocation the file or url location of the API Key file to load when
      *                 constructing the API Key to use for communicating with the Stormpath REST API.
      *
      * @return the ClientBuilder instance for method chaining.
      */
     public function setApiKeyFileLocation($apiKeyFileLocation)
     {
+        $this->assertString('$apiKeyFileLocation', $apiKeyFileLocation);
+
         $this->apiKeyFileLocation = $apiKeyFileLocation;
         return $this;
     }
 
     /**
      * <p>
-     * Sets the name used to query for the API Key ID from a YAML content.
+     * Sets the name used to query for the API Key Id from an ini content.
      *
-     * The <b>$apiKeyIdPropertyName</b> key can be a single name or a composed name, as deep as needed,
-     * as long as it comes in the exact path order. If it's a single name, it must be specified as a string;
-     * if it's a composed name, it must be specified in an array.
+     * The <b>$apiKeyIdPropertyName</b> must be a string.
      * </p>
      * <code>
-     * //Example 1: Having the file 'apiKey.yml' with the following content:
+     * //Example 1: Having the file 'apiKey.properties' with the following content:
      *
      *
-     *           apiKey.id: myStormpathApiKeyId
+     *           apiKey.id = myStormpathApiKeyId
      *
      * //The method should be called as follows:
      *
      *           $clientBuilder->setApiKeyIdPropertyName('apiKey.id');
      *
-     * //Example 2: Having the file 'apiKey.yml' with the following content:
+     * //Example 2: Having the file 'apiKey.properties' with the following content:
      *
-     *
-     *           stormpath:
-     *             apiKey:
-     *             id: myStormpathApiKeyId
+     *           stormpath.apiKey.id = myStormpathApiKeyId
      *
      * //The method should be called as follows:
      *
-     *           $keys = array('stormpath', 'apiKey', 'id');
-     *           $clientBuilder->setApiKeyIdPropertyName($keys);
+     *           $clientBuilder->setApiKeyIdPropertyName('stormpath.apiKey.id');
      *
      * </code>
-     * @param string|array $apiKeyIdPropertyName the name used to query for the API Key ID from a YAML content.
+     * @param string $apiKeyIdPropertyName the name used to query for the API Key Id from an ini content.
      * @return the ClientBuilder instance for method chaining.
      */
     public function setApiKeyIdPropertyName($apiKeyIdPropertyName)
     {
+        $this->assertString('$apiKeyIdPropertyName', $apiKeyIdPropertyName);
+
         $this->apiKeyIdPropertyName = $apiKeyIdPropertyName;
         return $this;
     }
 
     /**
      * <p>
-     * Sets the name used to query for the API Key Secret from a YAML content.
+     * Sets the name used to query for the API Key Secret from an ini content.
      *
-     * The <b>$apiKeySecretPropertyName</b> key can be a single name or a composed name, as deep as needed,
-     * as long as it comes in the exact path order. If it's a single name, it must be specified as a string;
-     * if it's a composed name, it must be specified in an array.
+     * The <b>$apiKeySecretPropertyName</b> must be a string.
      * </p>
      * <code>
-     * //Example 1: Having the file 'apiKey.yml' with the following content:
+     * //Example 1: Having the file 'apiKey.properties' with the following content:
      *
-     *
-     *           apiKey.secret: myStormpathApiKeySecret
+     *           apiKey.secret = myStormpathApiKeySecret
      *
      * //The method should be called as follows:
      *
      *           $clientBuilder->setApiKeySecretPropertyName('apiKey.secret');
      *
-     * //Example 2: Having the file 'apiKey.yml' with the following content:
+     * //Example 2: Having the file 'apiKey.properties' with the following content:
      *
      *
-     *           stormpath:
-     *             apiKey:
-     *             secret: myStormpathApiKeySecret
+     *           stormpath.apiKey.secret = myStormpathApiKeySecret
      *
      * //The method should be called as follows:
      *
-     *           $keys = array('stormpath', 'apiKey', 'secret');
-     *           $clientBuilder->setApiKeySecretPropertyName($keys);
+     *           $clientBuilder->setApiKeySecretPropertyName('stormpath.apiKey.secret');
      *
      * </code>
-     * @param string|array $apiKeySecretPropertyName the name used to query for the API Key Secret from a YAML content.
+     * @param string $apiKeySecretPropertyName the name used to query for the API Key Secret from an ini content.
      * @return the ClientBuilder instance for method chaining.
      */
     public function setApiKeySecretPropertyName($apiKeySecretPropertyName)
     {
+        $this->assertString('$apiKeySecretPropertyName', $apiKeySecretPropertyName);
+
         $this->apiKeySecretPropertyName = $apiKeySecretPropertyName;
         return $this;
     }
 
     /**
      * <p>
-     * Allows usage of a YAML compliant string instead of loading a YAML file via
+     * Allows usage of a PHP ini compliant string instead of loading a file via
      * {@link setApiKeyFileLocation} configuration.
      * <p/>
-     * The YAML contents and property name overrides function the same as described in the
+     * The string contents and property name overrides functions are the same as described in the
      * {@link setApiKeyFileLocation} API Documentation.
      *
-     * @param $apiKeyProperties the YAML string to use to load the API Key ID and Secret.
+     * @param $apiKeyProperties the PHP ini string to use to load the API Key ID and Secret.
      *
      * @return the ClientBuilder instance for method chaining.
      *
      */
     public function setApiKeyProperties($apiKeyProperties)
     {
-        if (!is_string($apiKeyProperties))
-        {
-            throw new InvalidArgumentException('The $apiKeyProperties argument must be a string');
-        }
+        $this->assertString('$apiKeyProperties', $apiKeyProperties);
 
         $this->apiKeyProperties = $apiKeyProperties;
         return $this;
@@ -228,38 +219,36 @@ class ClientBuilder
      */
     public function build()
     {
-        $extractFromYml = null;
+        $apiKeyProperties = null;
 
         if ($this->apiKeyProperties)
         {
-            $extractFromYml = Spyc::YAMLLoadString($this->apiKeyProperties);
+            $apiKeyProperties = parse_ini_string($this->apiKeyProperties);
         } else
         {
             // need to load the properties file
-            $file = $this->getAvailableFile();
+            $apiKeyProperties = $this->getFileExtract();
 
-            if (!$file)
+            if (!$apiKeyProperties)
             {
-                throw new InvalidArgumentException('No API Key file could be found or loaded from a file location. ' .
+                throw new \InvalidArgumentException('No API Key file could be found or loaded from a file location. ' .
                     'Please  configure the "apiKeyFileLocation" property or alternatively configure a ' .
-                    'YAML compliant string.');
+                    "PHP 'ini' compliant string, by setting the 'apiKeyProperties' property.");
             }
-
-            $extractFromYml = Spyc::YAMLLoad($file);
         }
 
-        $apiKeyId = $this->getRequiredPropertyValue($extractFromYml, 'apiKeyId', $this->apiKeyIdPropertyName);
+        $apiKeyId = $this->getRequiredPropertyValue($apiKeyProperties, 'apiKeyId', $this->apiKeyIdPropertyName);
 
-        $apiKeySecret = $this->getRequiredPropertyValue($extractFromYml, 'apiKeySecret', $this->apiKeySecretPropertyName);
+        $apiKeySecret = $this->getRequiredPropertyValue($apiKeyProperties, 'apiKeySecret', $this->apiKeySecretPropertyName);
 
         if (!$apiKeyId)
         {
-            throw new InvalidArgumentException('$apiKeyId must have a value when acquiring it from the YAML extract');
+            throw new \InvalidArgumentException('$apiKeyId must have a value when acquiring it from the api key properties.');
         }
 
         if (!$apiKeySecret)
         {
-            throw new InvalidArgumentException('$apiKeySecret must have a value when acquiring it from the YAML extract');
+            throw new \InvalidArgumentException('$apiKeySecret must have a value when acquiring it from the api key properties.');
         }
 
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
@@ -273,19 +262,14 @@ class ClientBuilder
         return $this;
     }
 
-    private function getRequiredPropertyValue(array $extractFromYml, $masterName, $propertyName)
+    private function getRequiredPropertyValue(array $apiKeyProperties, $masterName, $propertyName)
     {
-        if (!is_array($propertyName))
-        {
-            $propertyName = array($propertyName);
-        }
+        $result = $apiKeyProperties[$propertyName];
 
-        $result = YAMLUtil::retrieveNestedValue($extractFromYml, $propertyName);
-
-        if (YAMLUtil::NOT_NESTED_VALUE_FOUND == $result)
+        if (!$result)
         {
-            throw new \InvalidArgumentException("There is no '" . implode(':', $propertyName) . "' property in the " .
-                "configured apiKey YAML.  You can either specify that property or " .
+            throw new \InvalidArgumentException("There is no '" .$propertyName ."' property in the " .
+                "configured apiKey file.  You can either specify that property or " .
                 "configure the " . $masterName . "PropertyName value on the ClientBuilder to specify a " .
                 "custom property name.");
         }
@@ -293,9 +277,9 @@ class ClientBuilder
         return $result;
     }
 
-    private function getAvailableFile()
+    private function getFileExtract()
     {
-        if (stripos($this->apiKeyFileLocation, 'http') !== false)
+        if (stripos($this->apiKeyFileLocation, 'http'))
         {
             $request = new DefaultRequest(Request::METHOD_GET, $this->apiKeyFileLocation);
 
@@ -306,19 +290,23 @@ class ClientBuilder
 
                 if (!$response->isError())
                 {
-                    return $response->getBody();
+                    return parse_ini_string($response->getBody());
 
                 }
             } catch (Exception $e)
             {
-                return null;
+                return false;
             }
-        } else
+        }
+
+        return parse_ini_file($this->apiKeyFileLocation);
+    }
+
+    private function assertString($propertyName, $propertyValue) {
+
+        if (!is_string($propertyValue))
         {
-            if (file_exists($this->apiKeyFileLocation))
-            {
-                return $this->apiKeyFileLocation;
-            }
+            throw new \InvalidArgumentException("The .$propertyName. argument must be a string.");
         }
     }
 }

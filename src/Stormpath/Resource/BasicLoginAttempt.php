@@ -1,6 +1,6 @@
 <?php
 
-namespace Stormpath\Authc;
+namespace Stormpath\Resource;
 
 /*
  * Copyright 2013 Stormpath, Inc.
@@ -18,21 +18,21 @@ namespace Stormpath\Authc;
  * limitations under the License.
  */
 
-use Stormpath\Resource\Resource;
+use Stormpath\DataStore\InternalDataStore;
 
 class BasicLoginAttempt extends Resource
 {
     const TYPE = "type";
     const VALUE = "value";
 
+    public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null) {
+        parent::__construct($dataStore, $properties);
+        $this->setProperty(self::TYPE, 'basic');
+    }
+
     public function getType()
     {
         return $this->getProperty(self::TYPE);
-    }
-
-    public function setType($type)
-    {
-        $this->setProperty(self::TYPE, $type);
     }
 
     public function getValue()

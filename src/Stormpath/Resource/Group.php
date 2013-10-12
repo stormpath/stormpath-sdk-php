@@ -20,7 +20,7 @@ namespace Stormpath\Resource;
 
 use Stormpath\Stormpath;
 
-class Group extends InstanceResource
+class Group extends AccountStore implements Deletable
 {
     const NAME = "name";
     const DESCRIPTION = "description";
@@ -69,23 +69,28 @@ class Group extends InstanceResource
         }
     }
 
-    public function getTenant()
+    public function getTenant(array $options = array())
     {
-        return $this->getResourceProperty(self::TENANT, Stormpath::TENANT);
+        return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
     }
 
-    public function getAccounts()
+    public function getAccounts(array $options = array())
     {
-        return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT_LIST);
+        return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT_LIST, $options);
     }
 
-    public function getDirectory()
+    public function getDirectory(array $options = array())
     {
-        return $this->getResourceProperty(self::DIRECTORY, Stormpath::DIRECTORY);
+        return $this->getResourceProperty(self::DIRECTORY, Stormpath::DIRECTORY, $options);
     }
 
-    public function addAccount(Account $account)
+    public function addAccount(Account $account, array $options = array())
     {
-        return GroupMembership::_create($account, $this, $this->getDataStore());
+        return GroupMembership::_create($account, $this, $this->getDataStore(), $options);
+    }
+
+    public function delete()
+    {
+        $this->getDataStore()->delete($this);
     }
 }

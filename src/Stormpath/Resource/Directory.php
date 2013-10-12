@@ -20,7 +20,7 @@ namespace Stormpath\Resource;
 
 use Stormpath\Stormpath;
 
-class Directory extends InstanceResource
+class Directory extends AccountStore implements Deletable
 {
     const NAME        = "name";
     const DESCRIPTION = "description";
@@ -69,31 +69,31 @@ class Directory extends InstanceResource
         }
     }
 
-    public function createAccount(Account $account, $registrationWorkflowEnabled = true)
+    public function createAccount(Account $account, array $options = array())
     {
         $accounts = $this->getAccounts();
         $href = $accounts->getHref();
 
-        if (!$registrationWorkflowEnabled)
-        {
-            $href .= '?registrationWorkflowEnabled=' . var_export($registrationWorkflowEnabled, true);
-        }
-
-        return $this->getDataStore()->create($href, $account, Stormpath::ACCOUNT);
+        return $this->getDataStore()->create($href, $account, Stormpath::ACCOUNT, $options);
     }
 
-    public function getAccounts()
+    public function getAccounts(array $options = array())
     {
-        return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT_LIST);
+        return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT_LIST, $options);
     }
 
-    public function getGroups()
+    public function getGroups(array $options = array())
     {
-        return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST);
+        return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST, $options);
     }
 
-    public function getTenant()
+    public function getTenant(array $options = array())
     {
-        return $this->getResourceProperty(self::TENANT, Stormpath::TENANT);
+        return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
+    }
+
+    public function delete() {
+
+        $this->getDataStore()->delete($this);
     }
 }

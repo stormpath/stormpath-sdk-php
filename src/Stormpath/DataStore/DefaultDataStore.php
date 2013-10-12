@@ -88,24 +88,28 @@ class DefaultDataStore implements InternalDataStore
      * @param href  the resource URL of the resource to retrieve
      * @param class the <i>Resource</i> sub-interface to instantiate. This can be the fully qualified name or the
      * simple name of the Resource (which is also the simple name of the .php file).
+     * @param options the options to create the resource. This optional argument is useful to specify query strings,
+     * among other options.
      *
      * @return an instance of the specified class based on the data returned from the specified <i>href</i> URL.
      */
-    public function getResource($href, $className)
+    public function getResource($href, $className, array $options = array())
     {
         if ($this->needsToBeFullyQualified($href))
         {
             $href = $this->qualify($href);
         }
 
-        $data = $this->executeRequest(Request::METHOD_GET, $href);
+        $queryString = $this->getQueryString($options);
+        $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
 
         return $this->resourceFactory->instantiate($className, array($data));
     }
 
-    public function create($parentHref, Resource $resource, $returnType)
+    public function create($parentHref, Resource $resource, $returnType, array $options = array())
     {
-        $returnedResource = $this->saveResource($parentHref, $resource, $returnType);
+        $queryString = $this->getQueryString($options);
+        $returnedResource = $this->saveResource($parentHref, $resource, $returnType, $queryString);
 
         $returnTypeClass = $this->resourceFactory->instantiate($returnType, array());
         if ($resource instanceof $returnTypeClass)
@@ -164,12 +168,12 @@ class DefaultDataStore implements InternalDataStore
         return $this->baseUrl .$slashAdded .$href;
     }
 
-    private function executeRequest($httpMethod, $href, $body = '')
+    private function executeRequest($httpMethod, $href, $body = '', array $query = array())
     {
         $request = new DefaultRequest(
                        $httpMethod,
                        $href,
-                       array(),
+                       $query,
                        array(),
                        $body,
                        strlen($body));
@@ -190,7 +194,7 @@ class DefaultDataStore implements InternalDataStore
 
     }
 
-    private function saveResource($href, Resource $resource, $returnType)
+    private function saveResource($href, Resource $resource, $returnType, array $query = array())
     {
         if ($this->needsToBeFullyQualified($href))
         {
@@ -199,7 +203,8 @@ class DefaultDataStore implements InternalDataStore
 
         $response = $this->executeRequest(Request::METHOD_POST,
                                           $href,
-                                          json_encode($this->toStdClass($resource)));
+                                          json_encode($this->toStdClass($resource)),
+                                          $query);
 
         return $this->resourceFactory->instantiate($returnType, array($response));
     }
@@ -255,5 +260,16 @@ class DefaultDataStore implements InternalDataStore
         $toReturn->$hrefPropName = $href;
 
         return $toReturn;
+    }
+
+    private function getQueryString(array $options) {
+
+        $query = array();
+
+        // All of the supported options are query strings right now
+        // so we just return the same array with the values converted
+        // to string.
+        //TODO implement this logic
+        return $options;
     }
 }

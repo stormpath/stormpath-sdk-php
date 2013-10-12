@@ -22,14 +22,19 @@ use Stormpath\Authc\AuthenticationRequest;
 use Stormpath\Authc\BasicAuthenticator;
 use Stormpath\Stormpath;
 
-class Application extends InstanceResource
+class Application extends InstanceResource implements Deletable
 {
-    const NAME                  = "name";
-    const DESCRIPTION           = "description";
-    const STATUS                = "status";
-    const TENANT                = "tenant";
-    const ACCOUNTS              = "accounts";
-    const PASSWORD_RESET_TOKENS = "passwordResetTokens";
+    const NAME                          = "name";
+    const DESCRIPTION                   = "description";
+    const STATUS                        = "status";
+    const TENANT                        = "tenant";
+    const ACCOUNTS                      = "accounts";
+    const PASSWORD_RESET_TOKENS         = "passwordResetTokens";
+    const DEFAULT_ACCOUNT_STORE_MAPPING = "defaultAccountStoreMapping";
+    const DEFAULT_GROUP_STORE_MAPPING   = "defaultGroupStoreMapping";
+    const GROUPS                        = "groups";
+    const ACCOUNT_STORE_MAPPINGS        = "accountStoreMappings";
+    const LOGIN_ATTEMPTS                = "loginAttempts";
 
     public function getName()
     {
@@ -71,14 +76,49 @@ class Application extends InstanceResource
         }
     }
 
-    public function getTenant()
+    public function getTenant(array $options = array())
     {
-        return $this->getResourceProperty(self::TENANT, Stormpath::TENANT);
+        return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
     }
 
-    public function getAccounts()
+    public function getAccounts(array $options = array())
     {
-        return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT_LIST);
+        return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT_LIST, $options);
+    }
+
+    public function getDefaultAccountStoreMapping(array $options = array()) {
+
+        return $this->getResourceProperty(self::DEFAULT_ACCOUNT_STORE_MAPPING, Stormpath::ACCOUNT_STORE_MAPPING, $options);
+    }
+
+    public function getDefaultGroupStoreMapping(array $options = array()) {
+
+        return $this->getResourceProperty(self::DEFAULT_GROUP_STORE_MAPPING, Stormpath::ACCOUNT_STORE_MAPPING, $options);
+    }
+
+    public function getGroups(array $options = array()) {
+
+        return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST, $options);
+    }
+
+    public function getAccountStoreMappings(array $options = array()) {
+
+        return $this->getResourceProperty(self::ACCOUNT_STORE_MAPPINGS, Stormpath::ACCOUNT_STORE_MAPPING_LIST, $options);
+    }
+
+    public function getLoginAttempts(array $options = array()) {
+
+        return $this->getResourceProperty(self::LOGIN_ATTEMPTS, Stormpath::BASIC_LOGIN_ATTEMPT, $options);
+    }
+
+    public function createAccount(Account $account, array $options = array()) {
+
+        return $this->getDataStore()->create($this->getHref(), $account, Stormpath::ACCOUNT, $options);
+    }
+
+    public function createGroup(Group $group, array $options = array()) {
+
+        return $this->getDataStore()->create($this->getHref(), $group, Stormpath::GROUP, $options);
     }
 
     /**
@@ -90,12 +130,13 @@ class Application extends InstanceResource
      * {@link verifyPasswordResetToken} PHPDoc.
      *
      * @param $accountUsernameOrEmail a username or email address of an Account that may login to the application.
+     * @param $options options to pass to this request.
      * @return the account corresponding to the specified username or email address.
      * @see verifyPasswordResetToken
      */
-    public function sendPasswordResetEmail($accountUsernameOrEmail)
+    public function sendPasswordResetEmail($accountUsernameOrEmail, array $options = array())
     {
-        $passwordResetToken = $this->createPasswordResetToken($accountUsernameOrEmail);
+        $passwordResetToken = $this->createPasswordResetToken($accountUsernameOrEmail, $options);
 
         return $passwordResetToken->getAccount();
     }
@@ -132,14 +173,15 @@ class Application extends InstanceResource
      * </pre>
      *
      * @param $token the verification token, usually obtained as a request parameter by your application.
+     * @param $options the options to pass to this request.
      * @return the Account matching the specified token.
      */
-    public function verifyPasswordResetToken($token)
+    public function verifyPasswordResetToken($token, array $options = array())
     {
         $href = $this->getPasswordResetTokensHref();
         $href .= '/' .$token;
 
-        $passwordResetProps = new stdClass();
+        $passwordResetProps = new \stdClass();
 
         $hrefName = self::HREF_PROP_NAME;
 
@@ -147,7 +189,7 @@ class Application extends InstanceResource
 
         $passwordResetToken = $this->getDataStore()->instantiate(Stormpath::PASSWORD_RESET_TOKEN, $passwordResetProps);
 
-        return $passwordResetToken->getAccount();
+        return $passwordResetToken->getAccount($options);
     }
 
     /**
@@ -165,28 +207,34 @@ class Application extends InstanceResource
      *
      * @param $request the authentication request representing an account's principals and credentials (e.g.
      *                username/password) used to verify their identity.
+     * @param $options the options to pass to this request.
      * @return the result of the authentication. The authenticated account can be obtained from the
      *         <i>result</i>. {@link AuthenticationResult::getAccount()}.
      *
      * @throws ResourceError if the authentication attempt fails.
      */
-    public function authenticateAccount(AuthenticationRequest $request)
+    public function authenticateAccount(AuthenticationRequest $request, array $options = array())
     {
         $basicAuthenticator = new BasicAuthenticator($this->getDataStore());
-        return $basicAuthenticator->authenticate($this->getHref(), $request);
+        return $basicAuthenticator->authenticate($this->getHref(), $request, $options);
     }
 
-    private  function createPasswordResetToken($accountUsernameOrEmail)
+    public function delete() {
+
+        $this->getDataStore()->delete($this);
+    }
+
+    private function createPasswordResetToken($accountUsernameOrEmail, array $options = array())
     {
         $href = $this->getPasswordResetTokensHref();
 
-        $passwordResetProps = new stdClass();
+        $passwordResetProps = new \stdClass();
 
         $passwordResetProps->email = $accountUsernameOrEmail;
 
         $passwordResetToken = $this->getDataStore()->instantiate(Stormpath::PASSWORD_RESET_TOKEN, $passwordResetProps);
 
-        return $this->getDataStore()->create($href, $passwordResetToken, Stormpath::PASSWORD_RESET_TOKEN);
+        return $this->getDataStore()->create($href, $passwordResetToken, Stormpath::PASSWORD_RESET_TOKEN, $options);
     }
 
     private function getPasswordResetTokensHref()

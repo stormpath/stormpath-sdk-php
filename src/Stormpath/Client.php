@@ -1,6 +1,6 @@
 <?php
 
-namespace Stormpath\Client;
+namespace Stormpath;
 
 /*
  * Copyright 2013 Stormpath, Inc.

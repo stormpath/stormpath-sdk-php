@@ -20,7 +20,7 @@ namespace Stormpath\Resource;
 
 use Stormpath\Stormpath;
 
-class Account extends InstanceResource
+class Account extends InstanceResource implements Deletable
 {
     const USERNAME                 = "username";
     const EMAIL                    = "email";
@@ -33,6 +33,8 @@ class Account extends InstanceResource
     const DIRECTORY                = "directory";
     const EMAIL_VERIFICATION_TOKEN = "emailVerificationToken";
     const GROUP_MEMBERSHIPS        = "groupMemberships";
+    const FULL_NAME                = "fullName";
+    const TENANT                   = "tenant";
 
     public function getUsername()
     {
@@ -103,34 +105,49 @@ class Account extends InstanceResource
 
     public function setStatus($status)
     {
-        if (array_key_exists($status, Stormpath::$Statuses))
+        if (array_key_exists($status, Stormpath::$AccountStatuses))
         {
-            $this->setProperty(self::STATUS, Stormpath::$Statuses[$status]);
+            $this->setProperty(self::STATUS, Stormpath::$AccountStatuses[$status]);
         }
     }
 
-    public function getGroups()
-    {
-        return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST);
+    public function getFullName() {
+
+        return $this->getProperty(self::FULL_NAME);
     }
 
-    public function getDirectory()
+    public function getGroups(array $options = array())
     {
-        return $this->getResourceProperty(self::DIRECTORY, Stormpath::DIRECTORY);
+        return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST, $options);
     }
 
-    public function getEmailVerificationToken()
+    public function getDirectory(array $options = array())
     {
-        return $this->getResourceProperty(self::EMAIL_VERIFICATION_TOKEN, Stormpath::EMAIL_VERIFICATION_TOKEN);
+        return $this->getResourceProperty(self::DIRECTORY, Stormpath::DIRECTORY, $options);
     }
 
-    public function getGroupMemberShips()
+    public function getEmailVerificationToken(array $options = array())
     {
-        return $this->getResourceProperty(self::GROUP_MEMBERSHIPS, Stormpath::GROUP_MEMBERSHIP_LIST);
+        return $this->getResourceProperty(self::EMAIL_VERIFICATION_TOKEN, Stormpath::EMAIL_VERIFICATION_TOKEN, $options);
     }
 
-    public function addGroup(Group $group)
+    public function getGroupMemberShips(array $options = array())
     {
-        return GroupMembership::_create($this, $group, $this->getDataStore());
+        return $this->getResourceProperty(self::GROUP_MEMBERSHIPS, Stormpath::GROUP_MEMBERSHIP_LIST, $options);
+    }
+
+    public function getTenant(array $options = array()) {
+
+        return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
+    }
+
+    public function addGroup(Group $group, array $options = array())
+    {
+        return GroupMembership::_create($this, $group, $this->getDataStore(), $options);
+    }
+
+    public function delete() {
+
+        $this->getDataStore()->delete($this);
     }
 }

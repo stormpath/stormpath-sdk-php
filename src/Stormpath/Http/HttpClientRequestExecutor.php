@@ -21,7 +21,7 @@ namespace Stormpath\Http;
 
 use Guzzle\Http\Client;
 use Guzzle\Http\Message\RequestInterface;
-use Stormpath\Client\ApiKey;
+use Stormpath\ApiKey;
 use Stormpath\Http\Authc\Sauthc1Signer;
 
 class HttpClientRequestExecutor implements RequestExecutor

@@ -1,7 +1,5 @@
 <?php
 
-namespace Stormpath\Resource;
-
 /*
  * Copyright 2013 Stormpath, Inc.
  *
@@ -18,25 +16,9 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
-use Stormpath\Stormpath;
+namespace Stormpath\Resource;
 
-class PasswordResetToken extends Resource
-{
-    const EMAIL = "email";
-    const ACCOUNT = "account";
 
-    public function getEmail()
-    {
-        return $this->getProperty(self::EMAIL);
-    }
+class AccountStore extends InstanceResource{
 
-    public function setEmail($email)
-    {
-        $this->setProperty(self::EMAIL, $email);
-    }
-
-    public function getAccount(array $options = array())
-    {
-        return $this->getResourceProperty(self::ACCOUNT, Stormpath::ACCOUNT, $options);
-    }
 }

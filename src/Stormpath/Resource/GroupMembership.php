@@ -21,19 +21,19 @@ namespace Stormpath\Resource;
 use Stormpath\DataStore\InternalDataStore;
 use Stormpath\Stormpath;
 
-class GroupMembership extends Resource
+class GroupMembership extends Resource implements Deletable
 {
     const ACCOUNT = "account";
     const GROUP = "group";
 
-    public function getAccount()
+    public function getAccount(array $options = array())
     {
-        return $this->getResourceProperty(self::ACCOUNT, Stormpath::ACCOUNT);
+        return $this->getResourceProperty(self::ACCOUNT, Stormpath::ACCOUNT, $options);
     }
 
-    public function getGroup()
+    public function getGroup(array $options = array())
     {
-        return $this->getResourceProperty(self::GROUP, Stormpath::GROUP);
+        return $this->getResourceProperty(self::GROUP, Stormpath::GROUP, $options);
     }
 
     public function delete()
@@ -48,30 +48,20 @@ class GroupMembership extends Resource
      *
      * @param $account the account to associate with the group.
      * @param $group the group which will contain the account.
-     * @param $dataStore the datastore used to create the membership
+     * @param $dataStore the datastore used to create the membership.
+     * @param $options the options to pass to the group membership creation.
      * @return the created GroupMembership instance.
      */
-    public static function _create(Account $account, Group $group, InternalDataStore $dataStore)
+    public static function _create(Account $account, Group $group, InternalDataStore $dataStore, array $options = array())
     {
         //TODO: enable auto discovery
         $href = "/groupMemberships";
-        $hrefPropName = self::HREF_PROP_NAME;
 
-        $accountProps = new stdClass();
-        $accountProps->$hrefPropName = $account->getHref();
+        $groupMembership = $dataStore->instantiate(Stormpath::GROUP_MEMBERSHIP);
+        $groupMembership->setResourceProperty(self::ACCOUNT, $account);
+        $groupMembership->setResourceProperty(self::GROUP, $group);
 
-        $groupProps = new stdClass();
-        $groupProps->$hrefPropName = $group->getHref();
-
-        $accountsPropName = self::ACCOUNT;
-        $groupsPropName = self::GROUP;
-        $properties = new stdClass();
-        $properties->$accountsPropName = $accountProps;
-        $properties->$groupsPropName = $groupProps;
-
-        $groupMembership = $dataStore->instantiate(Stormpath::GROUP_MEMBERSHIP, $properties);
-
-        return $dataStore->create($href, $groupMembership, Stormpath::GROUP_MEMBERSHIP);
+        return $dataStore->create($href, $groupMembership, Stormpath::GROUP_MEMBERSHIP, $options);
     }
 
 }

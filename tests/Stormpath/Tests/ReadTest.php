@@ -8,8 +8,8 @@ class ReadTest extends \PHPUnit_Framework_TestCase {
 
     public function setUp() {
 
-        $builder = new \Stormpath\Client\ClientBuilder;
-        $this->client = $builder->setApiKeyFileLocation($_SERVER['HOME'].'/.stormpath/apiKey.yml')->setBaseURL('http://localhost:8080/v1')->build();
+        $builder = new \Stormpath\ClientBuilder;
+        $this->client = $builder->setApiKeyFileLocation($_SERVER['HOME'].'/.stormpath/apiKey.properties')->setBaseURL('http://localhost:8080/v1')->build();
 
     }
 
@@ -19,11 +19,11 @@ class ReadTest extends \PHPUnit_Framework_TestCase {
         $tenant = $this->client->getCurrentTenant();
 
         $this->assertInstanceOf($className, $tenant);
-        $this->assertInternalType('string', $tenant->getName());
-        $this->assertInternalType('string', $tenant->getKey());
+        $this->assertInternalType('string', $tenant->name);
+        $this->assertInternalType('string', $tenant->key);
 
         $className = '\Stormpath\Resource\\ApplicationList';
-        $applicationList = $tenant->getApplications();
+        $applicationList = $tenant->applications;
 
         $this->assertInstanceOf($className, $applicationList);
 
@@ -32,11 +32,11 @@ class ReadTest extends \PHPUnit_Framework_TestCase {
         {
             // just checking that at least one
             // application property can be read from here
-            $this->assertInternalType('string', $app->getName());
+            $this->assertInternalType('string', $app->name);
         }
 
         $className = '\Stormpath\Resource\\DirectoryList';
-        $directoryList = $tenant->getDirectories();
+        $directoryList = $tenant->directories;
 
         $this->assertInstanceOf($className, $directoryList);
 
@@ -45,7 +45,7 @@ class ReadTest extends \PHPUnit_Framework_TestCase {
         {
             // just checking that at least one
             // directory property can be read from here
-            $this->assertInternalType('string', $dir->getName());
+            $this->assertInternalType('string', $dir->name);
         }
     }
 

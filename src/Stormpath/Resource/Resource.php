@@ -28,12 +28,16 @@ class Resource
     private $materialized;
     private $dirty;
 
+    /** @var array Hash of methods available to the class (provides fast isset() lookups) */
+    private  $methods;
+
     const HREF_PROP_NAME = "href";
 
     public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null)
     {
         $this->dataStore = $dataStore;
         $this->setProperties($properties);
+        $this->methods = array_flip(get_class_methods(get_class($this)));
     }
 
     public function setProperties(\stdClass $properties = null)
@@ -55,7 +59,7 @@ class Resource
         }
     }
 
-    public function getProperty($name)
+    public function getProperty($name, array $options = array())
     {
         if (self::HREF_PROP_NAME != $name)
         {
@@ -69,7 +73,7 @@ class Resource
                 if (!$present)
                 {
                     // exhausted present properties - we require a server call:
-                    $this->materialize();
+                    $this->materialize($options);
                 }
             }
         }
@@ -92,9 +96,39 @@ class Resource
         return get_class($this);
     }
 
-    protected function getResourceProperty($key, $className)
+    /**
+     * Magic "get" method
+     *
+     * @param string $property Property name
+     * @return mixed|null Property value if it exists, null if not
+     */
+    public function __get($property) {
+
+        $method = 'get' .ucfirst($property);
+        if (isset($this->methods[$method])) {
+            return $this->{$method}();
+        }
+
+        return null;
+    }
+
+    /**
+     * Magic "set" method
+     *
+     * @param string $property Property name
+     * @param mixed $value Property value
+     */
+    public function __set($property, $value)
     {
-        $value = $this->getProperty($key);
+        $method = 'set' .ucfirst($property);
+        if (isset($this->methods[$method])) {
+            $this->{$method}($value);
+        }
+    }
+
+    protected function getResourceProperty($key, $className, array $options = array())
+    {
+        $value = $this->getProperty($key, $options);
 
         $href = self::HREF_PROP_NAME;
 
@@ -107,11 +141,18 @@ class Resource
             $href = false;
         }
 
-
         if ($href)
         {
             return $this->dataStore->instantiate($className, $value);
         }
+    }
+
+    protected function setResourceProperty($name, Resource $resource) {
+
+        $href = $resource->getHref();
+        $properties = new \stdClass();
+        $properties->href = $href;
+        $this->setProperty($name, $properties);
     }
 
     protected function setProperty($name, $value)
@@ -131,11 +172,11 @@ class Resource
         return $this->materialized;
     }
 
-    protected function materialize()
+    protected function materialize(array $options = array())
     {
         $className = get_class($this);
 
-        $resource = $this->dataStore->getResource($this->getHref(), $className);
+        $resource = $this->dataStore->getResource($this->getHref(), $className, $options);
 
         $this->properties = $resource->properties;
 
@@ -146,9 +187,9 @@ class Resource
     }
 
     /**
-     * Returns {@code true} if the resource doesn't yet have an assigned 'href' property, {@code false} otherwise.
+     * Returns {@code true} if the resource does not yet have an assigned 'href' property, {@code false} otherwise.
      *
-     * @return {@code true} if the resource doesn't yet have an assigned 'href' property, {@code false} otherwise.
+     * @return {@code true} if the resource does not yet have an assigned 'href' property, {@code false} otherwise.
      */
      protected function isNew() {
 

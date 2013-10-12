@@ -37,22 +37,41 @@ class Tenant extends InstanceResource
         return $this->getProperty(self::KEY);
     }
 
-    public function createApplication(Application $application)
+    public function createApplication(Application $application, array $options = array())
     {
         //TODO: enable auto discovery
         return $this->getDataStore()->create('/applications',
                                              $application,
-                                             Stormpath::APPLICATION);
+                                             Stormpath::APPLICATION,
+                                             $options);
     }
 
-    public function getApplications()
+    public function createDirectory(Directory $directory, array $options = array())
     {
-        return $this->getResourceProperty(self::APPLICATIONS, Stormpath::APPLICATION_LIST);
+        //TODO: enable auto discovery
+        return $this->getDataStore()->create('/directories',
+                                            $directory,
+                                            Stormpath::DIRECTORY,
+                                            $options);
     }
 
-    public function getDirectories()
+    public function createAccountStoreMapping(AccountStoreMapping $accountStoreMapping, array $options = array())
     {
-        return $this->getResourceProperty(self::DIRECTORIES, Stormpath::DIRECTORY_LIST);
+        //TODO: enable auto discovery
+        return $this->getDataStore()->create('/accountStoreMappings',
+                                            $accountStoreMapping,
+                                            Stormpath::ACCOUNT_STORE_MAPPING,
+                                            $options);
+    }
+
+    public function getApplications(array $options = array())
+    {
+        return $this->getResourceProperty(self::APPLICATIONS, Stormpath::APPLICATION_LIST, $options);
+    }
+
+    public function getDirectories(array $options = array())
+    {
+        return $this->getResourceProperty(self::DIRECTORIES, Stormpath::DIRECTORY_LIST, $options);
     }
 
     public function verifyAccountEmail($token)
