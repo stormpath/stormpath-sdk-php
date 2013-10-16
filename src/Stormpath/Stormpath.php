@@ -57,6 +57,10 @@ class Stormpath
     const UNVERIFIED                    = 'UNVERIFIED';
     const LOCKED                        = 'LOCKED';
 
+    const OFFSET                        = 'offset';
+    const LIMIT                         = 'limit';
+    const EXPAND                        = 'expand';
+
     public static $Statuses             = array(self::DISABLED => self::DISABLED,
                                             self::ENABLED => self::ENABLED);
 

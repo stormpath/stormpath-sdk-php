@@ -38,9 +38,7 @@ class DefaultRequest extends AbstractHttpMessage implements Request
                                 $contentLength = -1)
     {
 
-
         $this->method = $method;
-
 
         $this->queryString = $query;
 
@@ -129,10 +127,13 @@ class DefaultRequest extends AbstractHttpMessage implements Request
     function toStrQueryString($canonical)
     {
         $result = '';
+        $queryString = $this->getQueryString();
 
-        if ($this->getQueryString())
+        if ($queryString)
         {
-            foreach($this->getQueryString() as $key => $value)
+            //need to sort the query string to authenticate using Sauthc1
+            ksort($queryString);
+            foreach($queryString as $key => $value)
             {
                 $encodedKey = RequestUtils::encodeUrl($key, false, $canonical);
                 $encodedValue = RequestUtils::encodeUrl($value, false, $canonical);

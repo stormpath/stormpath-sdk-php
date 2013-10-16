@@ -259,11 +259,12 @@ class ReadTest extends \PHPUnit_Framework_TestCase {
 
         $name = 'Name Before Materialization';
 
-        $directory->setName($name);
+        $directory->name = $name;
 
-        $this->assertInternalType('string', $directory->getDescription());
+        $this->assertInternalType('string', $directory->name);
 
-        $this->assertTrue($directory->getName() == $name);
+        $this->assertTrue($directory->name == $name);
+
     }
 
 }

@@ -186,7 +186,16 @@ class DefaultDataStore implements InternalDataStore
 
         if ($response->isError())
         {
-            $error = new Error($result);
+            $errorResult = $result;
+
+            //if the response does not come with a body, we create the error with the http status
+            if (!$errorResult) {
+                $status = $response->getHttpStatus();
+                $errorResult = new \stdClass();
+                $errorResult->$status = $status;
+            }
+
+            $error = new Error($errorResult);
             throw new ResourceError($error);
         }
 
@@ -250,7 +259,7 @@ class DefaultDataStore implements InternalDataStore
 
         if (!isset($properties->$hrefPropName))
         {
-            throw new InvalidArgumentException("Nested resource '$propertyName' must have an 'href' property.");
+            throw new \InvalidArgumentException("Nested resource '$propertyName' must have an 'href' property.");
         }
 
         $href = $properties->$hrefPropName;
@@ -269,7 +278,14 @@ class DefaultDataStore implements InternalDataStore
         // All of the supported options are query strings right now
         // so we just return the same array with the values converted
         // to string.
-        //TODO implement this logic
+        while($opt = current($query)) {
+
+            $query[key($opt)] = !is_bool($opt) ? //only support a boolean or an object that has a __toString implementation
+                                strval($opt) :
+                                var_export($opt, true);
+            next($options);
+        }
+
         return $options;
     }
 }

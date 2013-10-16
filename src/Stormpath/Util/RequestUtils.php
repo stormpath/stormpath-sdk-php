@@ -38,6 +38,11 @@ class RequestUtils
 
     public static function encodeUrl($value, $path, $canonical)
     {
+        if (is_numeric($value))
+        {
+            return strval($value);
+        }
+
         if (!$value)
         {
             return '';
