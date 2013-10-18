@@ -18,7 +18,9 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
-class Page
+use Stormpath\Util\Magic;
+
+class Page extends Magic
 {
 
     private $offset;
@@ -27,6 +29,7 @@ class Page
 
     public function __construct($offset, $limit, array $items)
     {
+        parent::__construct();
         $this->items = $items;
         $this->limit = $limit;
         $this->offset = $offset;

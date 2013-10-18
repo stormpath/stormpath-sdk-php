@@ -28,13 +28,15 @@ class PaginatedIterator implements \Iterator {
     private $currentPage;
     private $currentItemIndex;
     private $dataStore;
+    private $options;
 
-    public function __construct(AbstractCollectionResource $collectionResource, InternalDataStore $dataStore)
+    public function __construct(AbstractCollectionResource $collectionResource, InternalDataStore $dataStore, array $options = array())
     {
         $this->collectionResource = $collectionResource;
         $this->currentPage = $collectionResource->getCurrentPage();
         $this->currentItemIndex = 0;
         $this->dataStore = $dataStore;
+        $this->options = $options;
     }
 
     /**
@@ -97,7 +99,9 @@ class PaginatedIterator implements \Iterator {
 
             $query = array('offset' => $offset, 'limit' => $pageLimit);
 
-            $nextResource = $this->dataStore->getResource($this->collectionResource->getHref(), get_class($this->collectionResource), $query);
+            $this->options = array_replace($this->options, $query);
+
+            $nextResource = $this->dataStore->getResource($this->collectionResource->getHref(), get_class($this->collectionResource), $this->options);
             $nextPage = $nextResource->getCurrentPage();
 
             if (count($nextPage->getItems()))

@@ -24,8 +24,8 @@ class AuthenticationResult extends Resource
 {
     const ACCOUNT = "account";
 
-    public function getAccount()
+    public function getAccount(array $options = array())
     {
-        return $this->getResourceProperty(self::ACCOUNT, Stormpath::ACCOUNT);
+        return $this->getResourceProperty(self::ACCOUNT, Stormpath::ACCOUNT, $options);
     }
 }

@@ -20,17 +20,18 @@ namespace Stormpath;
 use Stormpath\DataStore\DefaultDataStore;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Stormpath;
+use Stormpath\Util\Magic;
 
 /**
  * The {@code Client} is the main entry point to the Stormpath PHP SDK.  A PHP project wishing to
- * communicate with the Stormpath REST API service must instantiate a {@code Client} instance.
- * After obtaining a {@code Client instance}, the REST API may be used by making simple PHP calls
+ * communicate with the Stormpath REST API service must instantiate a <i>Client</i> instance.
+ * After obtaining a <i>Client</i> instance, the REST API may be used by making simple PHP calls
  * on objects returned from the Client (or any children objects obtained therein).
  * <p/>
  * For example:
  * <pre>
- * $accessId = //<a href="http://www.stormpath.com/docs/quickstart/connect">Your Stormpath API Key's Access ID</a>
- * $secret = //<a href="http://www.stormpath.com/docs/quickstart/connect">Your Stormpath API Key's Secret</a>
+ * $accessId = //<a href="http://docs.stormpath.com/console/product-guide/#manage-api-keys">Your Stormpath API Key's Access ID</a>
+ * $secret = //<a href="http://docs.stormpath.com/console/product-guide/#manage-api-keys">Your Stormpath API Key's Secret</a>
  *
  * //create the Client instance:
  * $client = new Client(new ApiKey($accessId, $secret));
@@ -49,8 +50,21 @@ use Stormpath\Stormpath;
  * @since 0.1.0
  * @see <a href="http://docs.stormpath.com/rest/quickstart/#get-an-api-key">Communicating with Stormpath: Get your API Key</a>
  */
-class Client
+class Client extends Magic
 {
+
+    public static $apiKeyFileLocation;
+
+    public static $apiKeyProperties = '';
+
+    public static $apiKeyIdPropertyName = "apiKey.id";
+
+    public static $apiKeySecretPropertyName = "apiKey.secret";
+
+    public static $baseUrl;
+
+    private static $instance;
+
     private $dataStore;
 
     /**
@@ -65,13 +79,53 @@ class Client
      */
     public function __construct(ApiKey $apiKey, $baseUrl = null)
     {
+        parent::__construct();
         $requestExecutor = new HttpClientRequestExecutor($apiKey);
         $this->dataStore = new DefaultDataStore($requestExecutor, $baseUrl);
+        self::$instance = $this;
     }
 
-    public function getCurrentTenant()
+    public static function get($href, $className, $path = null, array $options = array())
     {
-        return $this->dataStore->getResource('/tenants/current', Stormpath::TENANT);
+
+        $resultingHref = $href;
+        if ($path and stripos($href, $path) === false)
+        {
+            $resultingHref = is_numeric(stripos($href, $path)) ? $href : "$path/$href";
+        }
+
+        return self::getInstance()->dataStore->getResource($resultingHref, $className, $options);
+    }
+
+    public static function instantiate($className, $properties = null)
+    {
+        return self::getInstance()->dataStore->instantiate($className, toObject($properties));
+    }
+
+    public static function getInstance()
+    {
+        if (!self::$instance)
+        {
+            $builder = new ClientBuilder();
+            $builder->setApiKeyFileLocation(self::$apiKeyFileLocation)->
+                      setApiKeyProperties(self::$apiKeyProperties)->
+                      setApiKeyIdPropertyName(self::$apiKeyIdPropertyName)->
+                      setApiKeySecretPropertyName(self::$apiKeySecretPropertyName)->
+                      setBaseURL(self::$baseUrl);
+            self::$instance = $builder->build();
+        }
+
+        return self::$instance;
+    }
+
+    public function getTenant(array $options = array())
+    {
+        return $this->getCurrentTenant($options);
+    }
+
+    public function getCurrentTenant(array $options = array())
+    {
+        return $this->dataStore->getResource('/tenants/current', Stormpath::TENANT, $options);
     }
 
     public function getDataStore()
@@ -79,4 +133,19 @@ class Client
         return $this->dataStore;
     }
 
+}
+
+function toObject($properties)
+{
+    if (is_array($properties)) {
+        /*
+        * Return array converted to object
+        * Using __FUNCTION__ (Magic constant)
+        * for recursive call
+        */
+        return (object) array_map(__FUNCTION__, $properties);
+    }
+
+    // if it's not an array, it's assumed to be an object
+    return $properties;
 }

@@ -26,8 +26,6 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
     const LIMIT  = Stormpath::LIMIT;
     const ITEMS  = "items";
 
-    abstract function getItemClassName();
-
     public function getOffset()
     {
         return $this->getProperty(self::OFFSET);
@@ -43,8 +41,56 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
         $values = $this->getProperty(self::ITEMS);
         $items = $this->toResourceArray($values);
 
-        return new Page($this->getOffset(), $this->getLimit(), $items);
+        return new Page($this->offset, $this->limit, $items);
     }
+
+    public function setSearch($search)
+    {
+        $searchArr = array();
+        if ($search instanceof Search)
+        {
+            $searchArr = $search->toSearchArray();
+
+        }elseif (is_string($search))
+        {
+            $searchArr[Stormpath::FILTER] = $search;
+
+        } elseif (is_array($search))
+        {
+            $searchArr = $search;
+        }
+
+        $this->options = array_replace($this->options, $searchArr);
+        return $this;
+    }
+
+    public function setOffset($offset)
+    {
+        $this->options = array_replace($this->options, array(OFFSET, $offset));
+        return $this;
+    }
+
+    public function setLimit($limit)
+    {
+        $this->options = array_replace($this->options, array(LIMIT, $limit));
+        return $this;
+    }
+
+    public function setOrder(array $statement)
+    {
+        if ($statement instanceof Order)
+        {
+            $this->options = array_replace($this->options, $statement->toOrderArray());
+
+        } elseif (is_string($statement))
+        {
+            $this->options = array_replace($this->options, array(Stormpath::ORDER_BY => $statement));
+        }
+
+        return $this;
+    }
+
+    abstract function getItemClassName();
 
     private function toResourceArray(array $values)
     {
@@ -60,16 +106,15 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
         }
 
         return $resourceArray;
-
     }
 
     protected function toResource($className, \stdClass $properties)
     {
-        return $this->getDataStore()->instantiate($className, $properties);
+        return $this->dataStore->instantiate($className, $properties);
     }
 
     public function getIterator()
     {
-        return new PaginatedIterator($this, $this->getDataStore());
+        return new PaginatedIterator($this, $this->dataStore, $this->options);
     }
 }

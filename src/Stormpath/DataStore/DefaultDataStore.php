@@ -36,8 +36,7 @@ class DefaultDataStore implements InternalDataStore
     const DEFAULT_SERVER_HOST = 'api.stormpath.com';
     const DEFAULT_API_VERSION = '1';
 
-    public function __construct(RequestExecutor $requestExecutor,
-                                $baseUrl = null)
+    public function __construct(RequestExecutor $requestExecutor, $baseUrl = null)
     {
         $this->requestExecutor = $requestExecutor;
         $this->resourceFactory = new DefaultResourceFactory($this);
@@ -57,23 +56,20 @@ class DefaultDataStore implements InternalDataStore
      * Instantiates and returns a new instance of the specified Resource type name.  The instance is merely instantiated
      * and is not saved/synchronized with the server in any way.
      * <p/>
-     * This method effectively replaces the {@code new} keyword that would have been used otherwise if the concrete
+     * This method effectively replaces the <i>new</i> keyword that would have been used otherwise if the concrete
      * implementation was known (Resource implementation classes are intentionally not exposed to SDK end-users).
      *
      * @param $className the Resource class name (as a String) to instantiate. This can be the fully qualified name or the
      * simple name of the Resource (which is also the simple name of the .php file).
-     * @param $properties the optional Properties of the Resource to instantiate.
+     * @param object $properties the optional Properties of the Resource to instantiate.
+     * @param array options the options to create the resource. This optional argument is useful to specify query strings,
+     * among other options.
      *
      * @return a new instance of the specified Resource.
      */
-    public function instantiate($className, \stdClass $properties = null)
+    public function instantiate($className, \stdClass $properties = null, array $options = array())
     {
-        $propertiesArr = array();
-
-        if ($properties)
-        {
-            $propertiesArr[0] = $properties;
-        }
+        $propertiesArr = array($properties, $options);
 
        return $this->resourceFactory->instantiate($className, $propertiesArr);
     }
@@ -103,7 +99,7 @@ class DefaultDataStore implements InternalDataStore
         $queryString = $this->getQueryString($options);
         $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
 
-        return $this->resourceFactory->instantiate($className, array($data));
+        return $this->resourceFactory->instantiate($className, array($data, $queryString));
     }
 
     public function create($parentHref, Resource $resource, $returnType, array $options = array())
@@ -215,7 +211,7 @@ class DefaultDataStore implements InternalDataStore
                                           json_encode($this->toStdClass($resource)),
                                           $query);
 
-        return $this->resourceFactory->instantiate($returnType, array($response));
+        return $this->resourceFactory->instantiate($returnType, array($response, $query));
     }
 
     private function applyDefaultRequestHeaders(Request $request)
@@ -259,7 +255,7 @@ class DefaultDataStore implements InternalDataStore
 
         if (!isset($properties->$hrefPropName))
         {
-            throw new \InvalidArgumentException("Nested resource '$propertyName' must have an 'href' property.");
+            throw new \InvalidArgumentException("Nested resource '#{$propertyName}' must have an 'href' property.");
         }
 
         $href = $properties->$hrefPropName;
@@ -275,7 +271,7 @@ class DefaultDataStore implements InternalDataStore
 
         $query = array();
 
-        // All of the supported options are query strings right now
+        // All of the supported options are query strings right now,
         // so we just return the same array with the values converted
         // to string.
         while($opt = current($query)) {

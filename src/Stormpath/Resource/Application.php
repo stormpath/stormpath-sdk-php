@@ -20,6 +20,7 @@ namespace Stormpath\Resource;
 
 use Stormpath\Authc\AuthenticationRequest;
 use Stormpath\Authc\BasicAuthenticator;
+use Stormpath\Authc\UsernamePasswordRequest;
 use Stormpath\Stormpath;
 
 class Application extends InstanceResource implements Deletable
@@ -217,6 +218,20 @@ class Application extends InstanceResource implements Deletable
     {
         $basicAuthenticator = new BasicAuthenticator($this->getDataStore());
         return $basicAuthenticator->authenticate($this->getHref(), $request, $options);
+    }
+
+    /**
+     * @param string $username the username of the account to authenticate.
+     * @param string $password the raw password to authenticate.
+     * @param array $options the options to pass to this request.
+     * @return the result of the authentication.
+     *
+     * @see #authenticateAccount()
+     */
+    public function authenticate($username, $password, array $options = array())
+    {
+        $request = new UsernamePasswordRequest($username, $password);
+        return $this->authenticateAccount($request, $options);
     }
 
     public function delete() {

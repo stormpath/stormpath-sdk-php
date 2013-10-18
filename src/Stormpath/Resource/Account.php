@@ -1,7 +1,5 @@
 <?php
 
-namespace Stormpath\Resource;
-
 /*
  * Copyright 2013 Stormpath, Inc.
  *
@@ -18,6 +16,9 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
+namespace Stormpath\Resource;
+
+use Stormpath\Client;
 use Stormpath\Stormpath;
 
 class Account extends InstanceResource implements Deletable
@@ -35,6 +36,18 @@ class Account extends InstanceResource implements Deletable
     const GROUP_MEMBERSHIPS        = "groupMemberships";
     const FULL_NAME                = "fullName";
     const TENANT                   = "tenant";
+
+    const PATH                     = "accounts";
+
+    public static function get($href, array $options = array())
+    {
+        return Client::get($href, Stormpath::ACCOUNT, self::PATH, $options);
+    }
+
+    public static function instantiate($properties = null)
+    {
+        return Client::instantiate(Stormpath::ACCOUNT, $properties);
+    }
 
     public function getUsername()
     {
@@ -105,9 +118,10 @@ class Account extends InstanceResource implements Deletable
 
     public function setStatus($status)
     {
-        if (array_key_exists($status, Stormpath::$AccountStatuses))
+        $uprStatus = strtoupper($status);
+        if (array_key_exists($uprStatus, Stormpath::$AccountStatuses))
         {
-            $this->setProperty(self::STATUS, Stormpath::$AccountStatuses[$status]);
+            $this->setProperty(self::STATUS, Stormpath::$AccountStatuses[$uprStatus]);
         }
     }
 

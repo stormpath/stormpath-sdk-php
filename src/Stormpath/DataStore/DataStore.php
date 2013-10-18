@@ -28,11 +28,13 @@ interface DataStore
      *
      * @param $className the Resource class name (as a String) to instantiate. This can be the fully qualified name or the
      * simple name of the Resource (which is also the simple name of the .php file).
-     * @param $properties the optional Properties of the Resource to instantiate.
+     * @param object $properties the optional Properties of the Resource to instantiate.
+     * @param array options the options to create the resource. This optional argument is useful to specify query strings,
+     * among other options.
      *
      * @return a new instance of the specified Resource.
      */
-    public function instantiate($className, \stdClass $properties = null);
+    public function instantiate($className, \stdClass $properties = null, array $options = array());
 
     /**
      * Looks up (retrieves) the resource at the specified <i>href</i> URL and returns the resource as an instance
@@ -44,7 +46,7 @@ interface DataStore
      * @param href  the resource URL of the resource to retrieve
      * @param class the <i>Resource</i> sub-interface to instantiate. This can be the fully qualified name or the
      * simple name of the Resource (which is also the simple name of the .php file).
-     * @param options the options to create the resource. This optional argument is useful to specify query strings,
+     * @param array options the options to create the resource. This optional argument is useful to specify query strings,
      * among other options.
      * @return an instance of the specified class based on the data returned from the specified {@code href} URL.
      */

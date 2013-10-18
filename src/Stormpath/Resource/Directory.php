@@ -18,6 +18,7 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
+use Stormpath\Client;
 use Stormpath\Stormpath;
 
 class Directory extends AccountStore implements Deletable
@@ -28,6 +29,18 @@ class Directory extends AccountStore implements Deletable
     const ACCOUNTS    = "accounts";
     const GROUPS      = "groups";
     const TENANT      = "tenant";
+
+    const PATH        = "directories";
+
+    public static function get($href, array $options = array())
+    {
+        return Client::get($href, Stormpath::DIRECTORY, self::PATH, $options);
+    }
+
+    public static function instantiate($properties = null)
+    {
+        return Client::instantiate(Stormpath::DIRECTORY, $properties);
+    }
 
     public function getName()
     {
@@ -75,6 +88,14 @@ class Directory extends AccountStore implements Deletable
         $href = $accounts->getHref();
 
         return $this->getDataStore()->create($href, $account, Stormpath::ACCOUNT, $options);
+    }
+
+    public function createGroup(Group $group, array $options = array())
+    {
+        $groups = $this->getGroups();
+        $href = $groups->getHref();
+
+        return $this->getDataStore()->create($href, $group, Stormpath::GROUP, $options);
     }
 
     public function getAccounts(array $options = array())

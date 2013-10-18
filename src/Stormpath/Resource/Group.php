@@ -18,16 +18,29 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
+use Stormpath\Client;
 use Stormpath\Stormpath;
 
 class Group extends AccountStore implements Deletable
 {
-    const NAME = "name";
-    const DESCRIPTION = "description";
-    const STATUS = "status";
-    const TENANT = "tenant";
-    const DIRECTORY = "directory";
-    const ACCOUNTS = "accounts";
+    const NAME          = "name";
+    const DESCRIPTION   = "description";
+    const STATUS        = "status";
+    const TENANT        = "tenant";
+    const DIRECTORY     = "directory";
+    const ACCOUNTS      = "accounts";
+
+    const PATH          = "groups";
+
+    public static function get($href, array $options = array())
+    {
+        return Client::get($href, Stormpath::GROUP, self::PATH, $options);
+    }
+
+    public static function instantiate($properties = null)
+    {
+        return Client::instantiate(Stormpath::GROUP, $properties);
+    }
 
     public function getName()
     {

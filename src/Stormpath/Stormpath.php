@@ -60,14 +60,21 @@ class Stormpath
     const OFFSET                        = 'offset';
     const LIMIT                         = 'limit';
     const EXPAND                        = 'expand';
+    const FILTER                        = 'q';
+    const ORDER_BY                      = 'orderBy';
+    const ASCENDING                     = 'asc';
+    const DESCENDING                    = 'desc';
 
     public static $Statuses             = array(self::DISABLED => self::DISABLED,
                                             self::ENABLED => self::ENABLED);
 
     public static $AccountStatuses      = array(self::DISABLED => self::DISABLED,
                                             self::ENABLED => self::ENABLED,
-                                            self::UNVERIFIED,
-                                            self::LOCKED);
+                                            self::UNVERIFIED => self::UNVERIFIED,
+                                            self::LOCKED => self::LOCKED);
+
+    public static $Sorts                = array(self::ASCENDING => self::ASCENDING,
+                                            self::DESCENDING => self::DESCENDING);
 
     public static function createClient($accessId, $secretKey, $baseUrl = null)
     {

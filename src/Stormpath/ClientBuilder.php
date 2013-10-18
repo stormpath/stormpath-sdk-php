@@ -19,6 +19,7 @@ namespace Stormpath;
  */
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\HttpClientRequestExecutor;
+use Stormpath\Util\Magic;
 use Stormpath\Util\Spyc;
 use Stormpath\Util\YAMLUtil;
 
@@ -42,7 +43,7 @@ use Stormpath\Util\YAMLUtil;
  *
  * @see setApiKeyFileLocation() for more information.
  */
-class ClientBuilder
+class ClientBuilder extends Magic
 {
     private $apiKeyIdPropertyName = "apiKey.id";
     private $apiKeySecretPropertyName = "apiKey.secret";
@@ -268,9 +269,9 @@ class ClientBuilder
 
         if (!$result)
         {
-            throw new \InvalidArgumentException("There is no '" .$propertyName ."' property in the " .
+            throw new \InvalidArgumentException("There is no '$propertyName' property in the " .
                 "configured apiKey file.  You can either specify that property or " .
-                "configure the " . $masterName . "PropertyName value on the ClientBuilder to specify a " .
+                "configure the '$masterName' PropertyName value on the ClientBuilder to specify a " .
                 "custom property name.");
         }
 
@@ -306,7 +307,7 @@ class ClientBuilder
 
         if (!is_string($propertyValue))
         {
-            throw new \InvalidArgumentException("The .$propertyName. argument must be a string.");
+            throw new \InvalidArgumentException("The '$propertyName' argument must be a string.");
         }
     }
 }

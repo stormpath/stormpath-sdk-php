@@ -19,25 +19,26 @@ namespace Stormpath\Resource;
  */
 
 use Stormpath\DataStore\InternalDataStore;
+use Stormpath\Util\Magic;
 
-class Resource
+class Resource extends Magic
 {
+
     private $dataStore;
     private $properties;
     private $dirtyProperties;
     private $materialized;
     private $dirty;
-
-    /** @var array Hash of methods available to the class (provides fast isset() lookups) */
-    private  $methods;
+    private $options;
 
     const HREF_PROP_NAME = "href";
 
-    public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null)
+    public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null, array $options = array())
     {
+        parent::__construct();
         $this->dataStore = $dataStore;
         $this->setProperties($properties);
-        $this->methods = array_flip(get_class_methods(get_class($this)));
+        $this->options = $options;
     }
 
     public function setProperties(\stdClass $properties = null)
@@ -59,7 +60,7 @@ class Resource
         }
     }
 
-    public function getProperty($name, array $options = array())
+    public function getProperty($name)
     {
         if (self::HREF_PROP_NAME != $name)
         {
@@ -73,7 +74,7 @@ class Resource
                 if (!$present)
                 {
                     // exhausted present properties - we require a server call:
-                    $this->materialize($options);
+                    $this->materialize();
                 }
             }
         }
@@ -91,44 +92,49 @@ class Resource
         return $this->getProperty(self::HREF_PROP_NAME);
     }
 
+    /**
+     * @param array $options
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    public function setExpansion($expansion)
+    {
+        if ($expansion instanceof Expansion)
+        {
+            $this->options = array_replace($this->options, $expansion->toExpansionArray());
+
+        } elseif (is_array($expansion))
+        {
+            $this->options = array_replace($this->options, Expansion::format($expansion)->toExpansionArray());
+
+        } elseif (is_string($expansion))
+        {
+            $this->options = array_replace($this->options, array(Stormpath::EXPAND => $expansion));
+        }
+
+        return $this;
+    }
+
     public function __toString()
     {
         return get_class($this);
     }
 
-    /**
-     * Magic "get" method
-     *
-     * @param string $property Property name
-     * @return mixed|null Property value if it exists, null if not
-     */
-    public function __get($property) {
-
-        $method = 'get' .ucfirst($property);
-        if (isset($this->methods[$method])) {
-            return $this->{$method}();
-        }
-
-        return null;
-    }
-
-    /**
-     * Magic "set" method
-     *
-     * @param string $property Property name
-     * @param mixed $value Property value
-     */
-    public function __set($property, $value)
-    {
-        $method = 'set' .ucfirst($property);
-        if (isset($this->methods[$method])) {
-            $this->{$method}($value);
-        }
-    }
-
     protected function getResourceProperty($key, $className, array $options = array())
     {
-        $value = $this->getProperty($key, $options);
+        $this->options = array_replace($this->options, $options);
+        $value = $this->getProperty($key);
 
         $href = self::HREF_PROP_NAME;
 
@@ -143,7 +149,7 @@ class Resource
 
         if ($href)
         {
-            return $this->dataStore->instantiate($className, $value);
+            return $this->dataStore->instantiate($className, $value, $this->options);
         }
     }
 
@@ -172,11 +178,11 @@ class Resource
         return $this->materialized;
     }
 
-    protected function materialize(array $options = array())
+    protected function materialize()
     {
         $className = get_class($this);
 
-        $resource = $this->dataStore->getResource($this->getHref(), $className, $options);
+        $resource = $this->dataStore->getResource($this->getHref(), $className, $this->options);
 
         $this->properties = $resource->properties;
 

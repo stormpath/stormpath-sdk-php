@@ -39,11 +39,15 @@ class Expansion {
         {
             $offset = $options[$offsetName];
             $limit = $options[$limitName];
-            $optString = $offset and $limit ? "(#{$offsetName}=#{$offset},#{$limitName}=#{$limit})" : $offset ? "#({$offset})" : "(#{$limit})";
+            $optString = $offset and $limit ? "($offsetName:$offset,$limitName:$limit)" :
+                         $offset ? "($offsetName:$offset)" : "($limitName:$limit)";
             $optCompound[$name] = $optString;
+        } else
+        {
+            $optCompound[$name] = '';
         }
 
-        array_replace($this->properties, $optCompound);
+        $this->properties = array_replace($this->properties, $optCompound);
 
         return $this;
     }
@@ -56,6 +60,19 @@ class Expansion {
     public function toExpansionString()
     {
         return Stormpath::EXPAND . '=' . strval($this);
+    }
+
+    public static function format(array $expansions)
+    {
+        $expansion = new Expansion;
+        foreach($expansions as $exp)
+        {
+            $currentKey = key($expansion);
+            $expansion->addProperty(is_string($currentKey) ? $currentKey : $exp,
+                                    is_array($exp) ? $exp : array($exp));
+        }
+
+        return $expansion;
     }
 
     public function __toString()
