@@ -35,10 +35,10 @@ class Expansion {
         $optCompound = array();
         $offsetName = Stormpath::OFFSET;
         $limitName = Stormpath::LIMIT;
-        if ($options[$offsetName] or $options[$limitName])
+        if (array_key_exists($offsetName, $options) or array_key_exists($limitName, $options))
         {
-            $offset = $options[$offsetName];
-            $limit = $options[$limitName];
+            $offset = array_key_exists($offsetName, $options) ?: $options[$offsetName];
+            $limit = array_key_exists($limitName, $options) ?: $options[$limitName];
             $optString = $offset and $limit ? "($offsetName:$offset,$limitName:$limit)" :
                          $offset ? "($offsetName:$offset)" : "($limitName:$limit)";
             $optCompound[$name] = $optString;
@@ -67,7 +67,7 @@ class Expansion {
         $expansion = new Expansion;
         foreach($expansions as $exp)
         {
-            $currentKey = key($expansion);
+            $currentKey = key($expansions);
             $expansion->addProperty(is_string($currentKey) ? $currentKey : $exp,
                                     is_array($exp) ? $exp : array($exp));
         }
@@ -79,7 +79,7 @@ class Expansion {
     {
         if (!$this->properties)
         {
-            throw new \IllegalStateException("At least one property needs to be set to convert the expansion to string.");
+            throw new \InvalidArgumentException("At least one property needs to be set to convert the expansion to string.");
         }
 
         $query = '';
@@ -87,7 +87,8 @@ class Expansion {
         foreach($this->properties as $prop)
         {
             $query .= $query ? ',' : $query;
-            $query .= $this->properties[$prop] . $prop;
+            $property = strlen($prop) == 0 ? key($this->properties) : '' . $this->properties[$prop] . $prop;
+            $query .= $property;
         }
 
         return $query;

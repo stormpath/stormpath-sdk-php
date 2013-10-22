@@ -42,6 +42,18 @@ class Directory extends AccountStore implements Deletable
         return Client::instantiate(Stormpath::DIRECTORY, $properties);
     }
 
+    public static function create($properties, array $options = array())
+    {
+        $directory = $properties;
+
+        if (!($directory instanceof Directory))
+        {
+            $directory = self::instantiate($properties);
+        }
+
+        return Client::create('/'.self::PATH, $directory, $options);
+    }
+
     public function getName()
     {
         return $this->getProperty(self::NAME);
@@ -76,9 +88,10 @@ class Directory extends AccountStore implements Deletable
 
     public function setStatus($status)
     {
-        if (array_key_exists($status, Stormpath::$Statuses))
+        $uprStatus = strtoupper($status);
+        if (array_key_exists($uprStatus, Stormpath::$Statuses))
         {
-            $this->setProperty(self::STATUS, Stormpath::$Statuses[$status]);
+            $this->setProperty(self::STATUS, Stormpath::$Statuses[$uprStatus]);
         }
     }
 

@@ -150,6 +150,10 @@ class Resource extends Magic
         if ($href)
         {
             return $this->dataStore->instantiate($className, $value, $this->options);
+
+        } elseif($value instanceof Resource) // in case we are getting a property that was set as a resource (for example: as an array value)
+        {
+            return $value;
         }
     }
 

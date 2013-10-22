@@ -18,6 +18,7 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
+use Stormpath\Client;
 use Stormpath\Stormpath;
 
 class Tenant extends InstanceResource
@@ -26,6 +27,11 @@ class Tenant extends InstanceResource
     const KEY          = "key";
     const APPLICATIONS = "applications";
     const DIRECTORIES  = "directories";
+
+    public static function get(array $options = array())
+    {
+        return Client::getInstance()->getTenant($options);
+    }
 
     public function getName()
     {
@@ -40,7 +46,7 @@ class Tenant extends InstanceResource
     public function createApplication(Application $application, array $options = array())
     {
         //TODO: enable auto discovery
-        return $this->getDataStore()->create('/applications',
+        return $this->getDataStore()->create('/'.Application::PATH,
                                              $application,
                                              Stormpath::APPLICATION,
                                              $options);
@@ -49,18 +55,9 @@ class Tenant extends InstanceResource
     public function createDirectory(Directory $directory, array $options = array())
     {
         //TODO: enable auto discovery
-        return $this->getDataStore()->create('/directories',
+        return $this->getDataStore()->create('/'.Directory::PATH,
                                             $directory,
                                             Stormpath::DIRECTORY,
-                                            $options);
-    }
-
-    public function createAccountStoreMapping(AccountStoreMapping $accountStoreMapping, array $options = array())
-    {
-        //TODO: enable auto discovery
-        return $this->getDataStore()->create('/accountStoreMappings',
-                                            $accountStoreMapping,
-                                            Stormpath::ACCOUNT_STORE_MAPPING,
                                             $options);
     }
 
@@ -74,18 +71,10 @@ class Tenant extends InstanceResource
         return $this->getResourceProperty(self::DIRECTORIES, Stormpath::DIRECTORY_LIST, $options);
     }
 
-    public function verifyAccountEmail($token)
+    // @codeCoverageIgnoreStart
+    public function verifyEmailToken($token)
     {
-        //TODO: enable auto discovery via Tenant resource (should be just /emailVerificationTokens)
-        $href = "/accounts/emailVerificationTokens/" . $token;
-
-        $tokenProperties = new stdClass();
-        $hrefName = self::HREF_PROP_NAME;
-        $tokenProperties->$hrefName = $href;
-
-        $evToken = $this->getDataStore()->instantiate(Stormpath::EMAIL_VERIFICATION_TOKEN, $tokenProperties);
-
-        //execute a POST (should clean this up / make it more obvious)
-        return $this->getDataStore()->save($evToken, Stormpath::ACCOUNT);
+        return Client::verifyEmailToken($token);
     }
+    // @codeCoverageIgnoreEnd
 }

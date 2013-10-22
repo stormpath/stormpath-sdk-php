@@ -274,14 +274,15 @@ class DefaultDataStore implements InternalDataStore
         // All of the supported options are query strings right now,
         // so we just return the same array with the values converted
         // to string.
-        while($opt = current($query)) {
+        foreach ($options as $opt) {
 
-            $query[key($opt)] = !is_bool($opt) ? //only support a boolean or an object that has a __toString implementation
-                                strval($opt) :
-                                var_export($opt, true);
-            next($options);
+           $query[key($options)] = !is_bool($opt)? //only support a boolean or an object that has a __toString implementation
+                                    strval($opt) :
+                                    var_export($opt, true);
+           next($options);
+
         }
 
-        return $options;
+        return $query;
     }
 }

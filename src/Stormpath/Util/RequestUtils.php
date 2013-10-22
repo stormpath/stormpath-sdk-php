@@ -43,11 +43,6 @@ class RequestUtils
             return strval($value);
         }
 
-        if (!$value)
-        {
-            return '';
-        }
-
         $encoded = urlencode($value);
 
         if ($canonical)

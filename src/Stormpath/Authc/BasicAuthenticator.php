@@ -35,12 +35,12 @@ class BasicAuthenticator
     {
         if (!$parentHref)
         {
-            throw new InvalidArgumentException('$parentHref argument must be specified');
+            throw new \InvalidArgumentException('$parentHref argument must be specified');
         }
 
         if (!($request instanceof UsernamePasswordRequest))
         {
-            throw new InvalidArgumentException('Only UsernamePasswordRequest instances are supported.');
+            throw new \InvalidArgumentException('Only UsernamePasswordRequest instances are supported.');
         }
 
         $username = $request->getPrincipals();

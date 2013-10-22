@@ -66,17 +66,17 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
 
     public function setOffset($offset)
     {
-        $this->options = array_replace($this->options, array(OFFSET, $offset));
+        $this->options = array_replace($this->options, array(self::OFFSET => $offset));
         return $this;
     }
 
     public function setLimit($limit)
     {
-        $this->options = array_replace($this->options, array(LIMIT, $limit));
+        $this->options = array_replace($this->options, array(self::LIMIT => $limit));
         return $this;
     }
 
-    public function setOrder(array $statement)
+    public function setOrder($statement)
     {
         if ($statement instanceof Order)
         {

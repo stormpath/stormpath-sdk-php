@@ -18,13 +18,38 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
+use Stormpath\Client;
 use Stormpath\DataStore\InternalDataStore;
 use Stormpath\Stormpath;
 
 class GroupMembership extends Resource implements Deletable
 {
     const ACCOUNT = "account";
-    const GROUP = "group";
+    const GROUP   = "group";
+
+    const PATH    = "groupMemberships";
+
+    public static function get($href, array $options = array())
+    {
+        return Client::get($href, Stormpath::GROUP_MEMBERSHIP, self::PATH, $options);
+    }
+
+    public static function instantiate($properties = null)
+    {
+        return Client::instantiate(Stormpath::GROUP_MEMBERSHIP, $properties);
+    }
+
+    public static function create($properties, array $options = array())
+    {
+        $groupMembership = $properties;
+
+        if (!($groupMembership instanceof GroupMembership))
+        {
+            $groupMembership = self::instantiate($properties);
+        }
+
+        return self::_create($groupMembership->getAccount(), $groupMembership->getGroup(), Client::getInstance()->getDataStore(), $options);
+    }
 
     public function getAccount(array $options = array())
     {
@@ -34,6 +59,16 @@ class GroupMembership extends Resource implements Deletable
     public function getGroup(array $options = array())
     {
         return $this->getResourceProperty(self::GROUP, Stormpath::GROUP, $options);
+    }
+
+    public function setAccount(Account $account)
+    {
+        $this->setResourceProperty(self::ACCOUNT, $account);
+    }
+
+    public function setGroup(Group $group)
+    {
+        $this->setResourceProperty(self::GROUP, $group);
     }
 
     public function delete()
@@ -55,7 +90,7 @@ class GroupMembership extends Resource implements Deletable
     public static function _create(Account $account, Group $group, InternalDataStore $dataStore, array $options = array())
     {
         //TODO: enable auto discovery
-        $href = "/groupMemberships";
+        $href = '/' .self::PATH;
 
         $groupMembership = $dataStore->instantiate(Stormpath::GROUP_MEMBERSHIP);
         $groupMembership->setResourceProperty(self::ACCOUNT, $account);

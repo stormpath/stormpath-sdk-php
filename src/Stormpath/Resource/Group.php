@@ -23,14 +23,15 @@ use Stormpath\Stormpath;
 
 class Group extends AccountStore implements Deletable
 {
-    const NAME          = "name";
-    const DESCRIPTION   = "description";
-    const STATUS        = "status";
-    const TENANT        = "tenant";
-    const DIRECTORY     = "directory";
-    const ACCOUNTS      = "accounts";
+    const NAME                = "name";
+    const DESCRIPTION         = "description";
+    const STATUS              = "status";
+    const TENANT              = "tenant";
+    const DIRECTORY           = "directory";
+    const ACCOUNTS            = "accounts";
+    const ACCOUNT_MEMBERSHIPS = 'accountMemberships';
 
-    const PATH          = "groups";
+    const PATH                = "groups";
 
     public static function get($href, array $options = array())
     {
@@ -76,9 +77,10 @@ class Group extends AccountStore implements Deletable
 
     public function setStatus($status)
     {
-        if (array_key_exists($status, Stormpath::$Statuses))
+        $uprStatus = strtoupper($status);
+        if (array_key_exists($uprStatus, Stormpath::$Statuses))
         {
-            $this->setProperty(self::STATUS, Stormpath::$Statuses[$status]);
+            $this->setProperty(self::STATUS, Stormpath::$Statuses[$uprStatus]);
         }
     }
 
@@ -95,6 +97,11 @@ class Group extends AccountStore implements Deletable
     public function getDirectory(array $options = array())
     {
         return $this->getResourceProperty(self::DIRECTORY, Stormpath::DIRECTORY, $options);
+    }
+
+    public function getAccountMemberships(array $options = array())
+    {
+        return $this->getResourceProperty(self::ACCOUNT_MEMBERSHIPS, Stormpath::GROUP_MEMBERSHIP_LIST, $options);
     }
 
     public function addAccount(Account $account, array $options = array())

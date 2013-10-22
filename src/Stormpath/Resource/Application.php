@@ -21,6 +21,7 @@ namespace Stormpath\Resource;
 use Stormpath\Authc\AuthenticationRequest;
 use Stormpath\Authc\BasicAuthenticator;
 use Stormpath\Authc\UsernamePasswordRequest;
+use Stormpath\Client;
 use Stormpath\Stormpath;
 
 class Application extends InstanceResource implements Deletable
@@ -36,6 +37,30 @@ class Application extends InstanceResource implements Deletable
     const GROUPS                        = "groups";
     const ACCOUNT_STORE_MAPPINGS        = "accountStoreMappings";
     const LOGIN_ATTEMPTS                = "loginAttempts";
+
+    const PATH                          = "applications";
+
+    public static function get($href, array $options = array())
+    {
+        return Client::get($href, Stormpath::APPLICATION, self::PATH, $options);
+    }
+
+    public static function instantiate($properties = null)
+    {
+        return Client::instantiate(Stormpath::APPLICATION, $properties);
+    }
+
+    public static function create($properties, array $options = array())
+    {
+        $application = $properties;
+
+        if (!($application instanceof Application))
+        {
+            $application = self::instantiate($properties);
+        }
+
+        return Client::create('/'.self::PATH, $application, $options);
+    }
 
     public function getName()
     {
@@ -71,9 +96,10 @@ class Application extends InstanceResource implements Deletable
 
     public function setStatus($status)
     {
-        if (array_key_exists($status, Stormpath::$Statuses))
+        $uprStatus = strtoupper($status);
+        if (array_key_exists($uprStatus, Stormpath::$Statuses))
         {
-            $this->setProperty(self::STATUS, Stormpath::$Statuses[$status]);
+            $this->setProperty(self::STATUS, Stormpath::$Statuses[$uprStatus]);
         }
     }
 
@@ -114,12 +140,17 @@ class Application extends InstanceResource implements Deletable
 
     public function createAccount(Account $account, array $options = array()) {
 
-        return $this->getDataStore()->create($this->getHref(), $account, Stormpath::ACCOUNT, $options);
+        return $this->getDataStore()->create($this->getHref() .'/'.Account::PATH, $account, Stormpath::ACCOUNT, $options);
     }
 
     public function createGroup(Group $group, array $options = array()) {
 
-        return $this->getDataStore()->create($this->getHref(), $group, Stormpath::GROUP, $options);
+        return $this->getDataStore()->create($this->getHref() .'/'.Group::PATH, $group, Stormpath::GROUP, $options);
+    }
+
+    public function createAccountStoreMapping(AccountStoreMapping $accountStoreMapping, array $options = array()) {
+
+        return AccountStoreMapping::_create($accountStoreMapping, $this, $this->dataStore, $options);
     }
 
     /**
@@ -133,7 +164,7 @@ class Application extends InstanceResource implements Deletable
      * @param $accountUsernameOrEmail a username or email address of an Account that may login to the application.
      * @param $options options to pass to this request.
      * @return the account corresponding to the specified username or email address.
-     * @see verifyPasswordResetToken
+     * @see #verifyPasswordResetToken()
      */
     public function sendPasswordResetEmail($accountUsernameOrEmail, array $options = array())
     {
@@ -177,6 +208,7 @@ class Application extends InstanceResource implements Deletable
      * @param $options the options to pass to this request.
      * @return the Account matching the specified token.
      */
+    // @codeCoverageIgnoreStart
     public function verifyPasswordResetToken($token, array $options = array())
     {
         $href = $this->getPasswordResetTokensHref();
@@ -192,6 +224,7 @@ class Application extends InstanceResource implements Deletable
 
         return $passwordResetToken->getAccount($options);
     }
+    // @codeCoverageIgnoreStart
 
     /**
      * Authenticates an account's submitted principals and credentials (e.g. username and password).  The account must
@@ -252,6 +285,7 @@ class Application extends InstanceResource implements Deletable
         return $this->getDataStore()->create($href, $passwordResetToken, Stormpath::PASSWORD_RESET_TOKEN, $options);
     }
 
+    // @codeCoverageIgnoreStart
     private function getPasswordResetTokensHref()
     {
         $passwordResetTokensRef = $this->getProperty(self::PASSWORD_RESET_TOKENS);
@@ -263,4 +297,5 @@ class Application extends InstanceResource implements Deletable
             return $passwordResetTokensRef->$hrefName;
         }
     }
+    // @codeCoverageIgnoreEnd
 }

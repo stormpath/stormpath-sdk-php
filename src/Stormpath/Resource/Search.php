@@ -68,7 +68,7 @@ class Search extends Magic {
         $filter = $this->filter;
         if (!is_numeric($filter) and !is_bool($filter) and !$filter and !$this->properties)
         {
-            throw new \IllegalStateException("At least one search criteria or a filter is required to convert the search to array.");
+            throw new \InvalidArgumentException("At least one search criteria or a filter is required to convert the search to array.");
         }
 
         $searchArray = array();

@@ -19,12 +19,14 @@ namespace Stormpath\Tests\Resource;
 
 class AccountTest extends \Stormpath\Tests\BaseTest {
 
+    const GROUPS_COUNT = 45;
+
     private static $directory;
     private static $groups;
     private static $account;
-    const GROUPS_COUNT = 45;
+    private static $inited;
 
-    public static function setUpBeforeClass() {
+    protected static function init() {
 
         self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time())));
 
@@ -50,15 +52,20 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
             $groups[$groupsCount] = $group;
             $groupsCount++;
         }
+
+        self::$inited = true;
+    }
+
+    public function setUp()
+    {
+        if (!self::$inited)
+        {
+            self::init();
+        }
     }
 
     public static function tearDownAfterClass()
     {
-        if (self::$account)
-        {
-            self::$account->delete();
-        }
-
         if (self::$directory)
         {
             self::$directory->delete();
@@ -67,10 +74,43 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
 
     public function testGet() {
 
+        // get it from full href
         $account = \Stormpath\Resource\Account::get(self::$account->href);
 
         $this->assertInstanceOf('Stormpath\Resource\Account', $account);
+        $this->assertEquals('Account Name', $account->givenName);
 
+        $path = \Stormpath\Resource\Account::PATH;
+
+        //get it from id (ACCOUNT_ID)
+        $accountId =  substr($account->href, strpos($account->href, $path) + strlen($path) + 1);
+        $account = \Stormpath\Resource\Account::get($accountId);
+
+        $this->assertInstanceOf('Stormpath\Resource\Account', $account);
+        $this->assertEquals('Account Name', $account->givenName);
+
+        //get it from path with no slash (accounts/ACCOUNT_ID)
+        $accountPath =  substr($account->href, strpos($account->href, $path));
+        $account = \Stormpath\Resource\Account::get($accountPath);
+
+        $this->assertInstanceOf('Stormpath\Resource\Account', $account);
+        $this->assertEquals('Account Name', $account->givenName);
+
+        //get it from path with slash (/accounts/ACCOUNT_ID)
+        $accountPath =  substr($account->href, strpos($account->href, "/$path"));
+        $account = \Stormpath\Resource\Account::get($accountPath);
+
+        $this->assertInstanceOf('Stormpath\Resource\Account', $account);
+        $this->assertEquals('Account Name', $account->givenName);
+
+    }
+
+    /**
+     * @expectedException \Stormpath\Resource\ResourceError
+     */
+    public function testGetNotFound()
+    {
+        \Stormpath\Resource\Account::get('unknown');
     }
 
     public function testGetOptions() {
@@ -83,6 +123,16 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
 
     }
 
+    /**
+     * @expectedException \Stormpath\Resource\ResourceError
+     */
+    public function testGetWithBadOptions() {
+
+        // bad expansion format
+        $options = array('expand' => 'groups(5,30)');
+        \Stormpath\Resource\Account::get(self::$account->href, $options);
+    }
+
     public function testGetters()
     {
         $account = self::$account;
@@ -93,7 +143,9 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $this->assertEquals(\Stormpath\Stormpath::ENABLED, $account->status);
         $this->assertContains('username', $account->username);
         $this->assertContains('@unknown123.kot', $account->email);
+        $this->assertInstanceOf('\Stormpath\Resource\Tenant', $account->tenant);
         $this->assertEquals(self::$client->tenant->name, $account->tenant->name);
+        $this->assertInstanceOf('\Stormpath\Resource\Directory', $account->directory);
         $this->assertEquals(self::$directory->name, $account->directory->name);
         $account->emailVerificationToken;
 
@@ -107,7 +159,7 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $this->assertEquals(self::GROUPS_COUNT, $groupsCount);
 
         $groupsCount = 0;
-        foreach($account->groupMemberShips as $groupMembership)
+        foreach($account->groupMemberships as $groupMembership)
         {
             $this->assertInstanceOf('\Stormpath\Resource\GroupMembership', $groupMembership);
             $groupsCount++;
@@ -187,6 +239,110 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
             // but we set the offset at 1 so the total items we'll get should be 3.
             $this->assertTrue($groupsCount <= 3);
         }
+    }
+
+    public function testGroupsCollectionOptions()
+    {
+        $account = self::$account;
+
+        $groups = $account->getGroups();
+        $groups->offset = 1;
+        $groups->limit = 2;
+        $groups->order = \Stormpath\Resource\Order::format(array('name'), 'desc');
+        $search = new \Stormpath\Resource\Search();
+        $groups->search = $search->setFilter(9);
+        $groups->expansion = \Stormpath\Resource\Expansion::format(array('directory'));
+
+        $groupsCount = 0;
+        foreach($groups as $group)
+        {
+            $this->assertInstanceOf('\Stormpath\Resource\Group', $group);
+            $groupsCount++;
+
+            // testing the expansion
+            $this->assertTrue(count(array_intersect(array('name', 'description', 'status'), $group->directory->propertyNames)) == 3);
+
+            // testing the order (desc) and pagination of the collection
+            if ($groupsCount == 1)
+            {
+                $this->assertEquals('39 Group Name', $group->name);
+            }
+
+            if ($groupsCount == 2)
+            {
+                $this->assertEquals('29 Group Name', $group->name);
+            }
+
+            if ($groupsCount == 3)
+            {
+                $this->assertEquals('19 Group Name', $group->name);
+            }
+
+            // we should receive 4 groups that match the filter q=9,
+            // but we set the offset at 1 so the total items we'll get should be 3.
+            $this->assertTrue($groupsCount <= 3);
+        }
+    }
+
+    public function testAddGroup()
+    {
+
+        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+                                                                  'middleName' => 'Middle Name',
+                                                                  'surname' => 'Surname',
+                                                                  'username' => md5(time()) . 'username',
+                                                                  'email' => md5(time()) .'@unknown123.kot',
+                                                                  'password' => 'superP4ss'));
+
+        self::$directory->createAccount($account);
+
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => md5(time()) . "Group Name"));
+        self::$directory->createGroup($group);
+
+        $account->addGroup($group);
+
+        $this->assertEquals(1, count($account->groups->currentPage->items));
+        foreach($account->groups as $grp)
+        {
+            $this->assertInstanceOf('\Stormpath\Resource\Group', $grp);
+        }
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testAddGroupNonExistent()
+    {
+        self::$account->addGroup(\Stormpath\Resource\Group::instantiate());
+    }
+
+    /**
+     * @expectedException \Stormpath\Resource\ResourceError
+     */
+    public function testDelete()
+    {
+
+        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+                                                                  'middleName' => 'Middle Name',
+                                                                  'surname' => 'Surname',
+                                                                  'username' => md5(time()) . 'username',
+                                                                  'email' => md5(time()) .'@unknown123.kot',
+                                                                  'password' => 'superP4ss'));
+
+        self::$directory->createAccount($account);
+
+        $href = $account->href;
+
+        $account = \Stormpath\Resource\Account::get($href);
+
+        // make sure the account exists before deleting
+        $this->assertInstanceOf('Stormpath\Resource\Account', $account);
+        $this->assertEquals('Account Name', $account->givenName);
+
+        $account->delete();
+
+        // should throw the expected exception after deleting
+        \Stormpath\Resource\Account::get($href);
     }
 
 }

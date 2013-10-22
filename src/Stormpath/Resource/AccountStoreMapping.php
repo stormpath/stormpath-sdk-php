@@ -19,6 +19,8 @@
 namespace Stormpath\Resource;
 
 
+use Stormpath\Client;
+use Stormpath\DataStore\InternalDataStore;
 use Stormpath\Stormpath;
 
 class AccountStoreMapping extends InstanceResource implements Deletable {
@@ -28,6 +30,37 @@ class AccountStoreMapping extends InstanceResource implements Deletable {
     const LIST_INDEX                = "listIndex";
     const IS_DEFAULT_ACCOUNT_STORE  = "isDefaultAccountStore";
     const IS_DEFAULT_GROUP_STORE    = "isDefaultGroupStore";
+
+    const PATH                      = "accountStoreMappings";
+
+    public static function get($href, array $options = array())
+    {
+        return Client::get($href, Stormpath::ACCOUNT_STORE_MAPPING, self::PATH, $options);
+    }
+
+    public static function instantiate($properties = null)
+    {
+        return Client::instantiate(Stormpath::ACCOUNT_STORE_MAPPING, $properties);
+    }
+
+    public static function create($properties, array $options = array())
+    {
+        $accountStoreMapping = $properties;
+
+        if (!($accountStoreMapping instanceof AccountStoreMapping))
+        {
+            $accountStoreMapping = self::instantiate($properties);
+        }
+
+        $application = $accountStoreMapping->application;
+
+        if (!($application instanceof Application))
+        {
+            throw new \InvalidArgumentException('The application property must be an existing application resource and instance of "Stormpath\Resource\Application".');
+        }
+
+        return $application->createAccountStoreMapping($accountStoreMapping, $options);
+    }
 
     public function getApplication(array $options = array()) {
 
@@ -42,7 +75,7 @@ class AccountStoreMapping extends InstanceResource implements Deletable {
 
             $href = $accountStore->getHref();
 
-            if (stristr($href, 'groups')) {
+            if (stristr($href, Group::PATH)) {
                 $propertyNames = $accountStore->getPropertyNames();
                 $accountStoreProperties = new \stdClass();
 
@@ -51,7 +84,7 @@ class AccountStoreMapping extends InstanceResource implements Deletable {
                     $accountStoreProperties->$name = $accountStore->getProperty($name);
                 }
 
-                $accountStore = $this->getDataStore()->instantiate(Stormpath::GROUP, $accountStoreProperties);
+                $accountStore = $this->getDataStore()->instantiate(Stormpath::GROUP, $accountStoreProperties, $options);
             }
         }
 
@@ -83,14 +116,14 @@ class AccountStoreMapping extends InstanceResource implements Deletable {
         return $this->getDefaultGroupStore();
     }
 
-    public function setApplication(Application $application) {
-
-        $this->setResourceProperty(self::APPLICATION, $application);
-    }
-
     public function setAccountStore(AccountStore $accountStore) {
 
         $this->setResourceProperty(self::ACCOUNT_STORE, $accountStore);
+    }
+
+    public function setApplication(Application $application) {
+
+        $this->setResourceProperty(self::APPLICATION, $application);
     }
 
     public function setListIndex($listIndex) {
@@ -111,5 +144,28 @@ class AccountStoreMapping extends InstanceResource implements Deletable {
     public function delete() {
 
         $this->getDataStore()->delete($this);
+    }
+
+    /**
+     * THIS IS NOT PART OF THE STORMPATH PUBLIC API.  SDK end-users should not call it - it could be removed or
+     * changed at any time.  It has the public modifier only as an implementation technique to be accessible to other
+     * resource implementations.
+     *
+     * @param $accountStoreMapping the account store mapping to create.
+     * @param $application the application to associate with the account store mapping.
+     * @param $dataStore the data store used to create the account store mapping.
+     * @param $options the options to pass to the group mapping creation.
+     * @return the created AccountStoreMapping instance.
+     */
+    public static function _create(AccountStoreMapping $accountStoreMapping, Application $application, InternalDataStore $dataStore, array $options = array())
+    {
+        //TODO: enable auto discovery
+        $href = "/" . self::PATH;
+
+        // properly setting the resource properties
+        $accountStoreMapping->setResourceProperty(self::APPLICATION, $application);
+        $accountStoreMapping->accountStore = $accountStoreMapping->accountStore;
+
+        return $dataStore->create($href, $accountStoreMapping, Stormpath::ACCOUNT_STORE_MAPPING, $options);
     }
 }

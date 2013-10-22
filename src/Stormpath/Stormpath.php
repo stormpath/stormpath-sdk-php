@@ -18,7 +18,6 @@ namespace Stormpath;
  * limitations under the License.
  */
 
-use Stormpath\ApiKey;
 use Stormpath\Client;
 
 function Stormpath_autoload($className) {
@@ -75,12 +74,5 @@ class Stormpath
 
     public static $Sorts                = array(self::ASCENDING => self::ASCENDING,
                                             self::DESCENDING => self::DESCENDING);
-
-    public static function createClient($accessId, $secretKey, $baseUrl = null)
-    {
-        $apiKey = new ApiKey($accessId, $secretKey);
-
-        return new Client($apiKey, $baseUrl);
-    }
 
 }

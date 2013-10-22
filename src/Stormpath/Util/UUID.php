@@ -57,6 +57,7 @@ namespace Stormpath\Util;
  *
  * Implements version 1, 3, 4 and 5
  */
+// @codeCoverageIgnoreStart
 class UUID
 {
     /* UUID versions */
@@ -347,3 +348,4 @@ class UUID
         return self::conv_byte2binary($byte);
     }
 }
+// @codeCoverageIgnoreEnd

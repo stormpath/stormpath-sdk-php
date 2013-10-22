@@ -75,9 +75,9 @@ class HttpClientRequestExecutor implements RequestExecutor
         }
 
         return new DefaultResponse($response->getStatusCode(),
-                                   $response->getHeader('Content-Type'),
+                                   $response->getContentType(),
                                    $response->getBody(true),
-                                   $response->getHeader('Content-Length'));
+                                   $response->getContentLength());
 
     }
 

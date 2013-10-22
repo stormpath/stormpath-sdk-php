@@ -17,10 +17,27 @@ namespace Stormpath;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 use Stormpath\DataStore\DefaultDataStore;
 use Stormpath\Http\HttpClientRequestExecutor;
+use Stormpath\Resource\Resource;
 use Stormpath\Stormpath;
 use Stormpath\Util\Magic;
+
+function toObject($properties)
+{
+    if (is_array($properties)) {
+        /*
+        * Return array converted to object
+        * Using __FUNCTION__ (Magic constant)
+        * for recursive call
+        */
+        return (object) array_map(__FUNCTION__, $properties);
+    }
+
+    // if it's not an array, it's assumed to be an object
+    return $properties;
+}
 
 /**
  * The {@code Client} is the main entry point to the Stormpath PHP SDK.  A PHP project wishing to
@@ -102,6 +119,27 @@ class Client extends Magic
         return self::getInstance()->dataStore->instantiate($className, toObject($properties));
     }
 
+    public static function create($parentHref, Resource $resource, array $options = array())
+    {
+        return self::getInstance()->dataStore->create($parentHref, $resource, get_class($resource), $options);
+    }
+
+    // @codeCoverageIgnoreStart
+    public static function verifyEmailToken($token)
+    {
+        //TODO: enable auto discovery via Tenant resource (should be just /emailVerificationTokens)
+        $href = "/accounts/emailVerificationTokens/" . $token;
+
+        $tokenProperties = new \stdClass();
+        $hrefName = Resource::HREF_PROP_NAME;
+        $tokenProperties->$hrefName = $href;
+
+        $evToken = self::getInstance()->dataStore->instantiate(Stormpath::EMAIL_VERIFICATION_TOKEN, $tokenProperties);
+
+        return self::getInstance()->dataStore->save($evToken, Stormpath::ACCOUNT);
+    }
+    // @codeCoverageIgnoreEnd
+
     public static function getInstance()
     {
         if (!self::$instance)
@@ -133,19 +171,4 @@ class Client extends Magic
         return $this->dataStore;
     }
 
-}
-
-function toObject($properties)
-{
-    if (is_array($properties)) {
-        /*
-        * Return array converted to object
-        * Using __FUNCTION__ (Magic constant)
-        * for recursive call
-        */
-        return (object) array_map(__FUNCTION__, $properties);
-    }
-
-    // if it's not an array, it's assumed to be an object
-    return $properties;
 }

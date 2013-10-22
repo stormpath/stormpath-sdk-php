@@ -29,6 +29,7 @@ class Order extends Magic {
     public function __construct(array $properties = array(), $sort = null)
     {
         parent::__construct();
+        $this->properties = $properties;
         foreach($properties as $prop)
         {
             $this->addProperty($prop);
@@ -49,7 +50,7 @@ class Order extends Magic {
 
     public function setSort($sort)
     {
-        if (Stormpath::$Sorts[$sort])
+        if (array_key_exists($sort, Stormpath::$Sorts))
         {
             $this->sort = Stormpath::$Sorts[$sort];
         }
@@ -85,7 +86,7 @@ class Order extends Magic {
     {
         if (!$this->properties)
         {
-            throw new \IllegalStateException("At least one property needs to be set to convert the order statement to string.");
+            throw new \InvalidArgumentException("At least one property needs to be set to convert the order statement to string.");
         }
 
         $statement = implode(',', $this->properties);

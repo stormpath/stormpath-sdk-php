@@ -145,7 +145,7 @@ class Account extends InstanceResource implements Deletable
         return $this->getResourceProperty(self::EMAIL_VERIFICATION_TOKEN, Stormpath::EMAIL_VERIFICATION_TOKEN, $options);
     }
 
-    public function getGroupMemberShips(array $options = array())
+    public function getGroupMemberships(array $options = array())
     {
         return $this->getResourceProperty(self::GROUP_MEMBERSHIPS, Stormpath::GROUP_MEMBERSHIP_LIST, $options);
     }
