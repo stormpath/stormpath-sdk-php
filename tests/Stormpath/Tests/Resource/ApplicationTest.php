@@ -105,6 +105,12 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertInstanceOf('Stormpath\Resource\GroupList', $application->groups);
         $this->assertInstanceOf('Stormpath\Resource\AccountStoreMappingList', $application->accountStoreMappings);
         $this->assertInstanceOf('Stormpath\Resource\BasicLoginAttempt', $application->loginAttempts);
+
+        foreach($application->accountStoreMappings as $acm)
+        {
+            $this->assertInstanceOf('Stormpath\Resource\AccountStoreMapping', $acm);
+            $this->assertContains('Main App', $acm->accountStore->name);
+        }
     }
 
     public function testCreateAccount()
@@ -224,6 +230,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         $this->assertContains('Main App for the tests changed', $application->name);
         $this->assertContains('Description of Main App changed', $application->description);
+        $this->assertEquals('DISABLED', $application->status);
 
         $application->status = 'enabled';
 

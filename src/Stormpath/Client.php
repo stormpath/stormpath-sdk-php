@@ -72,7 +72,7 @@ class Client extends Magic
 
     public static $apiKeyFileLocation;
 
-    public static $apiKeyProperties = '';
+    public static $apiKeyProperties;
 
     public static $apiKeyIdPropertyName = "apiKey.id";
 
@@ -99,7 +99,6 @@ class Client extends Magic
         parent::__construct();
         $requestExecutor = new HttpClientRequestExecutor($apiKey);
         $this->dataStore = new DefaultDataStore($requestExecutor, $baseUrl);
-        self::$instance = $this;
     }
 
     public static function get($href, $className, $path = null, array $options = array())
@@ -145,12 +144,12 @@ class Client extends Magic
         if (!self::$instance)
         {
             $builder = new ClientBuilder();
-            $builder->setApiKeyFileLocation(self::$apiKeyFileLocation)->
-                      setApiKeyProperties(self::$apiKeyProperties)->
-                      setApiKeyIdPropertyName(self::$apiKeyIdPropertyName)->
-                      setApiKeySecretPropertyName(self::$apiKeySecretPropertyName)->
-                      setBaseURL(self::$baseUrl);
-            self::$instance = $builder->build();
+            self::$instance = $builder->setApiKeyFileLocation(self::$apiKeyFileLocation)->
+                              setApiKeyProperties(self::$apiKeyProperties)->
+                              setApiKeyIdPropertyName(self::$apiKeyIdPropertyName)->
+                              setApiKeySecretPropertyName(self::$apiKeySecretPropertyName)->
+                              setBaseURL(self::$baseUrl)->
+                              build();
         }
 
         return self::$instance;

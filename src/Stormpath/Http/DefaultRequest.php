@@ -60,7 +60,7 @@ class DefaultRequest extends AbstractHttpMessage implements Request
 
                 $explodedPair = explode('=', $value);
 
-                $this->queryString[$explodedPair[0]] = $explodedPair[1];
+                $this->queryString[trim($explodedPair[0])] = trim($explodedPair[1]);
 
             }
 

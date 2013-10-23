@@ -186,9 +186,11 @@ class DefaultDataStore implements InternalDataStore
 
             //if the response does not come with a body, we create the error with the http status
             if (!$errorResult) {
+                // @codeCoverageIgnoreStart
                 $status = $response->getHttpStatus();
                 $errorResult = new \stdClass();
                 $errorResult->$status = $status;
+                // @codeCoverageIgnoreEnd
             }
 
             $error = new Error($errorResult);
@@ -274,12 +276,11 @@ class DefaultDataStore implements InternalDataStore
         // All of the supported options are query strings right now,
         // so we just return the same array with the values converted
         // to string.
-        foreach ($options as $opt) {
+        foreach ($options as $key => $opt) {
 
-           $query[key($options)] = !is_bool($opt)? //only support a boolean or an object that has a __toString implementation
-                                    strval($opt) :
-                                    var_export($opt, true);
-           next($options);
+           $query[$key] = !is_bool($opt)? //only support a boolean or an object that has a __toString implementation
+                          strval($opt) :
+                          var_export($opt, true);
 
         }
 

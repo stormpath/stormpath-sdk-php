@@ -25,10 +25,12 @@ class PasswordResetToken extends Resource
     const EMAIL = "email";
     const ACCOUNT = "account";
 
+    // @codeCoverageIgnoreStart
     public function getEmail()
     {
         return $this->getProperty(self::EMAIL);
     }
+    // @codeCoverageIgnoreEnd
 
     public function setEmail($email)
     {

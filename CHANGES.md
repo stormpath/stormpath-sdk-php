@@ -1,6 +1,18 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.0.0.beta
+------------------
+
+Released on October 24, 2013
+
+- Major overhaul of SDK that includes using namespaces, make it psr-0 compliant, changing the HTTP library (using Guzzle) and API changes.
+- New test suite that runs from an apiKey.properties file.
+- Added support for pagination, search, expansion and ordering.
+- Implemented application centric operations.
+- Implemented account store mappings functionalities.
+
+
 Version 0.3.2
 -------------
 

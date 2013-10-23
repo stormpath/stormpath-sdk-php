@@ -32,14 +32,20 @@ class BaseTest extends \PHPUnit_Framework_TestCase
             return;
         }
 
-        $apiKeyFileLocation = $_SERVER[self::API_KEY_FILE_LOCATION] ?: $_ENV[self::API_KEY_FILE_LOCATION];
+        if (array_key_exists(self::API_KEY_FILE_LOCATION, $_SERVER) or array_key_exists(self::API_KEY_FILE_LOCATION, $_ENV))
+        {
+            $apiKeyFileLocation = $_SERVER[self::API_KEY_FILE_LOCATION] ?: $_ENV[self::API_KEY_FILE_LOCATION];
 
-        if(!$apiKeyFileLocation)
+        } else
         {
             throw new \InvalidArgumentException("The '" . self::API_KEY_FILE_LOCATION . "' environment variable needs to be set before running the tests.");
         }
 
-        $baseUrl = $_SERVER[self::BASE_URL] ?: $_ENV[self::BASE_URL];
+        $baseUrl = '';
+        if (array_key_exists(self::BASE_URL, $_SERVER) or array_key_exists(self::BASE_URL, $_ENV))
+        {
+            $baseUrl = $_SERVER[self::BASE_URL] ?: $_ENV[self::BASE_URL];
+        }
 
         \Stormpath\Client::$apiKeyFileLocation = $apiKeyFileLocation;
         \Stormpath\Client::$baseUrl = $baseUrl;
@@ -50,6 +56,49 @@ class BaseTest extends \PHPUnit_Framework_TestCase
         self::$client = \Stormpath\Client::getInstance();
 
         $this->assertInstanceOf('Stormpath\Client', self::$client);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testNoApiKeyFile()
+    {
+        $builder = new \Stormpath\ClientBuilder();
+        $builder->build();
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInvalidApiKeyId()
+    {
+        $builder = new \Stormpath\ClientBuilder();
+        $builder->
+            setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
+            setApiKeyIdPropertyName('badId')->
+            build();
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInvalidApiKeySecret()
+    {
+        $builder = new \Stormpath\ClientBuilder();
+        $builder->
+            setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
+            setApiKeySecretPropertyName('badSecret')->
+            build();
+    }
+
+    public function testClientFromPropertiesString()
+    {
+        $builder = new \Stormpath\ClientBuilder();
+        $result = $builder->
+                    setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
+                    setApiKeyProperties("apiKey.id=something\napiKey.secret=somethingSecret")->
+                    build();
+        $this->assertInstanceOf('Stormpath\Client', $result);
     }
 
     protected static function createResource($parentHref, \Stormpath\Resource\Resource $resource, array $options = array())

@@ -17,7 +17,8 @@ namespace Stormpath\Resource;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+// @codeCoverageIgnoreStart
 class EmailVerificationToken extends InstanceResource
 {
 }
+// @codeCoverageIgnoreEnd

@@ -46,7 +46,7 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $groupsCount = 0;
         while($groupsCount < self::GROUPS_COUNT)
         {
-            $group = \Stormpath\Resource\Group::instantiate(array('name' => "$groupsCount Group Name"));
+            $group = \Stormpath\Resource\Group::instantiate(array('name' => "$groupsCount Group Name", 'description' => "The Group Description $groupsCount"));
             self::$directory->createGroup($group);
             self::$account->addGroup($group);
             $groups[$groupsCount] = $group;
@@ -121,6 +121,28 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         // testing that the groups collection was successfully expanded
         $this->assertEquals(30, count($account->groups->currentPage->items));
 
+        //testing some expansion use cases
+        $expansion = new \Stormpath\Resource\Expansion();
+        $expansion->addProperty('groupMemberships', array('limit' => 2));
+        $account = \Stormpath\Resource\Account::get(self::$account->href, $expansion->toExpansionArray());
+        $this->assertEquals(2, $account->groupMemberships->currentPage->limit);
+
+        $expansion->addProperty('groupMemberships', array('offset' => 1));
+        $account = \Stormpath\Resource\Account::get(self::$account->href, $expansion->toExpansionArray());
+        $this->assertEquals(1, $account->groupMemberships->currentPage->offset);
+
+        $expansion->addProperty('groupMemberships', array('limit' => 10, 'offset' => 2));
+        $expansion->addProperty('directory');
+        $account = \Stormpath\Resource\Account::get(self::$account->href, $expansion->toExpansionArray());
+        $this->assertEquals(10, $account->groupMemberships->currentPage->limit);
+        $this->assertEquals(2, $account->groupMemberships->currentPage->offset);
+        $this->assertEquals(3, count(array_intersect(array('name', 'description', 'status'), $account->directory->propertyNames)));
+
+        $expansion = '?expand = directory,groupMemberships';
+        $account = \Stormpath\Resource\Account::get(self::$account->href . $expansion);
+        $this->assertEquals(25, $account->groupMemberships->currentPage->limit);
+        $this->assertEquals(0, $account->groupMemberships->currentPage->offset);
+        $this->assertEquals(3, count(array_intersect(array('name', 'description', 'status'), $account->directory->propertyNames)));
     }
 
     /**
@@ -166,6 +188,7 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         }
 
         $this->assertEquals(self::GROUPS_COUNT, $groupsCount);
+
     }
 
     public function testSetters()
@@ -210,35 +233,7 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $options = array('offset' => 1, 'limit' => 2, 'orderBy' => 'name desc', 'q' => '9', 'expand' => 'directory');
         $groups = $account->getGroups($options);
 
-        $groupsCount = 0;
-        foreach($groups as $group)
-        {
-            $this->assertInstanceOf('\Stormpath\Resource\Group', $group);
-            $groupsCount++;
-
-            // testing the expansion
-            $this->assertTrue(count(array_intersect(array('name', 'description', 'status'), $group->directory->propertyNames)) == 3);
-
-            // testing the order (desc) and pagination of the collection
-            if ($groupsCount == 1)
-            {
-                $this->assertEquals('39 Group Name', $group->name);
-            }
-
-            if ($groupsCount == 2)
-            {
-                $this->assertEquals('29 Group Name', $group->name);
-            }
-
-            if ($groupsCount == 3)
-            {
-                $this->assertEquals('19 Group Name', $group->name);
-            }
-
-            // we should receive 4 groups that match the filter q=9,
-            // but we set the offset at 1 so the total items we'll get should be 3.
-            $this->assertTrue($groupsCount <= 3);
-        }
+        $this->assertGroupOptions($groups);
     }
 
     public function testGroupsCollectionOptions()
@@ -253,6 +248,41 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $groups->search = $search->setFilter(9);
         $groups->expansion = \Stormpath\Resource\Expansion::format(array('directory'));
 
+        $this->assertGroupOptions($groups);
+
+        $groups->search = 'q=9';
+        $groups->order = 'name desc';
+        $groups->expansion = array('directory');
+
+        $this->assertGroupOptions($groups);
+
+        $groups->search = array('q' => 9);
+        $groups->expansion = 'directory';
+
+        $this->assertGroupOptions($groups);
+
+        $order = new \Stormpath\Resource\Order(array('name'), 'd');
+        $groups->order = strval($order);
+
+        $search = new \Stormpath\Resource\Search();
+        $groups->search = $search->addStartsWith('description', 'group description')->
+                                    addEndsWith('name', 'name')->
+                                    addEquals('status', 'enabled');
+
+        $this->assertGroupOptions($groups);
+
+        $groups->search = $search->addMatchAnywhere('name', 9);
+
+        $this->assertGroupOptions($groups);
+    }
+
+    /*
+     * This function expects the following criteria:
+     * offset=1 & limit=2 & orderBy=name desc & q=9 & expand=directory
+     * or equivalent.
+     */
+    private function assertGroupOptions($groups)
+    {
         $groupsCount = 0;
         foreach($groups as $group)
         {

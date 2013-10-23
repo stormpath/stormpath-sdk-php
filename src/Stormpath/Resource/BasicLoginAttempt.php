@@ -30,6 +30,7 @@ class BasicLoginAttempt extends Resource
         $this->setProperty(self::TYPE, 'basic');
     }
 
+    // @codeCoverageIgnoreStart
     public function getType()
     {
         return $this->getProperty(self::TYPE);
@@ -39,6 +40,7 @@ class BasicLoginAttempt extends Resource
     {
         return $this->getProperty(self::VALUE);
     }
+    // @codeCoverageIgnoreEnd
 
     public function setValue($value)
     {

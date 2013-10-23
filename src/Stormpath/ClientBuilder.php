@@ -19,6 +19,7 @@ namespace Stormpath;
  */
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\HttpClientRequestExecutor;
+use Stormpath\Http\Request;
 use Stormpath\Util\Magic;
 use Stormpath\Util\Spyc;
 use Stormpath\Util\YAMLUtil;
@@ -112,8 +113,6 @@ class ClientBuilder extends Magic
      */
     public function setApiKeyFileLocation($apiKeyFileLocation)
     {
-        $this->assertString('$apiKeyFileLocation', $apiKeyFileLocation);
-
         $this->apiKeyFileLocation = $apiKeyFileLocation;
         return $this;
     }
@@ -148,8 +147,6 @@ class ClientBuilder extends Magic
      */
     public function setApiKeyIdPropertyName($apiKeyIdPropertyName)
     {
-        $this->assertString('$apiKeyIdPropertyName', $apiKeyIdPropertyName);
-
         $this->apiKeyIdPropertyName = $apiKeyIdPropertyName;
         return $this;
     }
@@ -184,8 +181,6 @@ class ClientBuilder extends Magic
      */
     public function setApiKeySecretPropertyName($apiKeySecretPropertyName)
     {
-        $this->assertString('$apiKeySecretPropertyName', $apiKeySecretPropertyName);
-
         $this->apiKeySecretPropertyName = $apiKeySecretPropertyName;
         return $this;
     }
@@ -205,8 +200,6 @@ class ClientBuilder extends Magic
      */
     public function setApiKeyProperties($apiKeyProperties)
     {
-        $this->assertString('$apiKeyProperties', $apiKeyProperties);
-
         $this->apiKeyProperties = $apiKeyProperties;
         return $this;
     }
@@ -225,6 +218,7 @@ class ClientBuilder extends Magic
         if ($this->apiKeyProperties)
         {
             $apiKeyProperties = parse_ini_string($this->apiKeyProperties);
+
         } else
         {
             // need to load the properties file
@@ -242,16 +236,6 @@ class ClientBuilder extends Magic
 
         $apiKeySecret = $this->getRequiredPropertyValue($apiKeyProperties, 'apiKeySecret', $this->apiKeySecretPropertyName);
 
-        if (!$apiKeyId)
-        {
-            throw new \InvalidArgumentException('$apiKeyId must have a value when acquiring it from the api key properties.');
-        }
-
-        if (!$apiKeySecret)
-        {
-            throw new \InvalidArgumentException('$apiKeySecret must have a value when acquiring it from the api key properties.');
-        }
-
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
 
         return new Client($apiKey, $this->baseURL);
@@ -265,12 +249,12 @@ class ClientBuilder extends Magic
 
     private function getRequiredPropertyValue(array $apiKeyProperties, $masterName, $propertyName)
     {
-        $result = $apiKeyProperties[$propertyName];
+        $result = array_key_exists($propertyName, $apiKeyProperties) ? $apiKeyProperties[$propertyName] : false;
 
         if (!$result)
         {
             throw new \InvalidArgumentException("There is no '$propertyName' property in the " .
-                "configured apiKey file.  You can either specify that property or " .
+                "configured apiKey file or properties string.  You can either specify that property or " .
                 "configure the '$masterName' PropertyName value on the ClientBuilder to specify a " .
                 "custom property name.");
         }
@@ -280,7 +264,8 @@ class ClientBuilder extends Magic
 
     private function getFileExtract()
     {
-        if (stripos($this->apiKeyFileLocation, 'http'))
+        // @codeCoverageIgnoreStart
+        if (stripos($this->apiKeyFileLocation, 'http') === 0)
         {
             $request = new DefaultRequest(Request::METHOD_GET, $this->apiKeyFileLocation);
 
@@ -299,15 +284,11 @@ class ClientBuilder extends Magic
                 return false;
             }
         }
+        // @codeCoverageIgnoreEnd
 
-        return parse_ini_file($this->apiKeyFileLocation);
-    }
-
-    private function assertString($propertyName, $propertyValue) {
-
-        if (!is_string($propertyValue))
+        if ($this->apiKeyFileLocation)
         {
-            throw new \InvalidArgumentException("The '$propertyName' argument must be a string.");
+            return parse_ini_file($this->apiKeyFileLocation);
         }
     }
 }

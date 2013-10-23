@@ -74,7 +74,16 @@ class Tenant extends InstanceResource
     // @codeCoverageIgnoreStart
     public function verifyEmailToken($token)
     {
-        return Client::verifyEmailToken($token);
+        //TODO: enable auto discovery via Tenant resource (should be just /emailVerificationTokens)
+        $href = "/accounts/emailVerificationTokens/" . $token;
+
+        $tokenProperties = new \stdClass();
+        $hrefName = Resource::HREF_PROP_NAME;
+        $tokenProperties->$hrefName = $href;
+
+        $evToken = $this->dataStore->instantiate(Stormpath::EMAIL_VERIFICATION_TOKEN, $tokenProperties);
+
+        return $this->dataStore->save($evToken, Stormpath::ACCOUNT);
     }
     // @codeCoverageIgnoreEnd
 }

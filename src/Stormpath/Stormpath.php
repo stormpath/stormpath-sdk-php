@@ -18,6 +18,7 @@ namespace Stormpath;
  * limitations under the License.
  */
 
+// @codeCoverageIgnoreStart
 use Stormpath\Client;
 
 function Stormpath_autoload($className) {
@@ -27,6 +28,7 @@ function Stormpath_autoload($className) {
     $file = str_replace('\\', '/', $className);
     return include dirname(__FILE__) . "$file";
 }
+// @codeCoverageIgnoreEnd
 
 spl_autoload_register('Stormpath\Stormpath_autoload');
 

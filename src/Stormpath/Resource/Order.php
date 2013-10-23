@@ -63,11 +63,6 @@ class Order extends Magic {
         return array(Stormpath::ORDER_BY => strval($this));
     }
 
-    public function toOrderString()
-    {
-        return Stormpath::ORDER_BY . '=' . strval($this);
-    }
-
     public static function format(array $properties, $sort= null)
     {
         $order = new Order();

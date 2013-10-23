@@ -30,17 +30,18 @@ class UsernamePasswordRequest implements AuthenticationRequest
         $this->username = $username;
     }
 
-    function getPrincipals()
+    public function getPrincipals()
     {
         return $this->username;
     }
 
-    function getCredentials()
+    public function getCredentials()
     {
         return $this->password;
     }
 
-    function getHost()
+    // @codeCoverageIgnoreStart
+    public function getHost()
     {
         return $this->host;
     }
@@ -49,7 +50,7 @@ class UsernamePasswordRequest implements AuthenticationRequest
      * Clears out (nulls) the username, password, and host.  The password bytes are explicitly set to
      * <tt>0x00</tt> to eliminate the possibility of memory access at a later time.
      */
-    function clear()
+    public function clear()
     {
         $this->host = null;
         $this->username = null;
@@ -65,7 +66,7 @@ class UsernamePasswordRequest implements AuthenticationRequest
                 $char = 0x00;
             }
         }
-
     }
+    // @codeCoverageIgnoreEnd
 
 }

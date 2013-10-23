@@ -276,11 +276,8 @@ class Application extends InstanceResource implements Deletable
     {
         $href = $this->getPasswordResetTokensHref();
 
-        $passwordResetProps = new \stdClass();
-
-        $passwordResetProps->email = $accountUsernameOrEmail;
-
-        $passwordResetToken = $this->getDataStore()->instantiate(Stormpath::PASSWORD_RESET_TOKEN, $passwordResetProps);
+        $passwordResetToken = $this->getDataStore()->instantiate(Stormpath::PASSWORD_RESET_TOKEN);
+        $passwordResetToken->email = $accountUsernameOrEmail;
 
         return $this->getDataStore()->create($href, $passwordResetToken, Stormpath::PASSWORD_RESET_TOKEN, $options);
     }

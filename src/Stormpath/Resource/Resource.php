@@ -108,24 +108,6 @@ class Resource extends Magic
         return $this->options;
     }
 
-    public function setExpansion($expansion)
-    {
-        if ($expansion instanceof Expansion)
-        {
-            $this->options = array_replace($this->options, $expansion->toExpansionArray());
-
-        } elseif (is_array($expansion))
-        {
-            $this->options = array_replace($this->options, Expansion::format($expansion)->toExpansionArray());
-
-        } elseif (is_string($expansion))
-        {
-            $this->options = array_replace($this->options, array(Stormpath::EXPAND => $expansion));
-        }
-
-        return $this;
-    }
-
     public function __toString()
     {
         return get_class($this);

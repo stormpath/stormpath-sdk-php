@@ -37,10 +37,22 @@ class Expansion {
         $limitName = Stormpath::LIMIT;
         if (array_key_exists($offsetName, $options) or array_key_exists($limitName, $options))
         {
-            $offset = array_key_exists($offsetName, $options) ?: $options[$offsetName];
-            $limit = array_key_exists($limitName, $options) ?: $options[$limitName];
-            $optString = $offset and $limit ? "($offsetName:$offset,$limitName:$limit)" :
-                         $offset ? "($offsetName:$offset)" : "($limitName:$limit)";
+            $offset = array_key_exists($offsetName, $options) ? $options[$offsetName] : false;
+            $limit = array_key_exists($limitName, $options) ? $options[$limitName] : false;
+
+            if ($offset and $limit)
+            {
+                $optString = "($offsetName:$offset,$limitName:$limit)";
+
+            } elseif ($offset)
+            {
+                $optString = "($offsetName:$offset)";
+
+            } else
+            {
+                $optString = "($limitName:$limit)";
+            }
+
             $optCompound[$name] = $optString;
         } else
         {
@@ -57,18 +69,12 @@ class Expansion {
         return array(Stormpath::EXPAND => strval($this));
     }
 
-    public function toExpansionString()
-    {
-        return Stormpath::EXPAND . '=' . strval($this);
-    }
-
     public static function format(array $expansions)
     {
         $expansion = new Expansion;
-        foreach($expansions as $exp)
+        foreach($expansions as $key => $exp)
         {
-            $currentKey = key($expansions);
-            $expansion->addProperty(is_string($currentKey) ? $currentKey : $exp,
+            $expansion->addProperty(is_string($key) ? $key : $exp,
                                     is_array($exp) ? $exp : array($exp));
         }
 
@@ -82,13 +88,12 @@ class Expansion {
             throw new \InvalidArgumentException("At least one property needs to be set to convert the expansion to string.");
         }
 
+        $properties = $this->properties;
         $query = '';
-
-        foreach($this->properties as $prop)
+        foreach($properties as $key => $prop)
         {
             $query .= $query ? ',' : $query;
-            $property = strlen($prop) == 0 ? key($this->properties) : '' . $this->properties[$prop] . $prop;
-            $query .= $property;
+            $query .= $key . $prop;
         }
 
         return $query;

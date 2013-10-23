@@ -42,6 +42,11 @@ class TenantTest extends \Stormpath\Tests\BaseTest {
         $this->assertEquals($tenant->name, $application->tenant->name);
         $this->assertContains('App for this test', $application->name);
 
+        foreach($tenant->applications as $app)
+        {
+            $this->assertInstanceOf('\Stormpath\Resource\Application', $app);
+        }
+
         $application->delete();
     }
 
@@ -56,6 +61,11 @@ class TenantTest extends \Stormpath\Tests\BaseTest {
         $this->assertInstanceOf('\Stormpath\Resource\Directory', $directory);
         $this->assertEquals($tenant->name, $directory->tenant->name);
         $this->assertContains('Dir for this test', $directory->name);
+
+        foreach($tenant->directories as $dir)
+        {
+            $this->assertInstanceOf('\Stormpath\Resource\Directory', $dir);
+        }
 
         $directory->delete();
     }

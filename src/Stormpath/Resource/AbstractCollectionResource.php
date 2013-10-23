@@ -90,6 +90,24 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
         return $this;
     }
 
+    public function setExpansion($expansion)
+    {
+        if ($expansion instanceof Expansion)
+        {
+            $this->options = array_replace($this->options, $expansion->toExpansionArray());
+
+        } elseif (is_array($expansion))
+        {
+            $this->options = array_replace($this->options, Expansion::format($expansion)->toExpansionArray());
+
+        } elseif (is_string($expansion))
+        {
+            $this->options = array_replace($this->options, array(Stormpath::EXPAND => $expansion));
+        }
+
+        return $this;
+    }
+
     abstract function getItemClassName();
 
     private function toResourceArray(array $values)
