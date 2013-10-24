@@ -29,6 +29,17 @@ class Expansion {
         $this->properties = array();
     }
 
+    /**
+     * Adds an expansion property.
+     * @param string $name the property name.
+     * @param array $options <p>with the offset
+     * and/or limit, if it applies. The offset
+     * and/or limit must be the key(s) and the
+     * value should be the desired number.
+     * For example: $exp->addProperty('groups', array('offset' => 2, 'limit' =>10));
+     * </p>
+     * @return $this for method chaining.
+     */
     public function addProperty($name, array $options = array())
     {
 
@@ -64,11 +75,27 @@ class Expansion {
         return $this;
     }
 
+    /**
+     * <p>Creates and return an expansion array, where the
+     * key is the expansion keyword (expand), and the value
+     * is the resulting string of all the added properties.</p>
+     * @return array the constructed array.
+     */
     public function toExpansionArray()
     {
         return array(Stormpath::EXPAND => strval($this));
     }
 
+    /**
+     * <p>Creates an Expansion object from an array.</p>
+     *
+     * @param array $expansions <p>If the property does not have offset or
+     * limit, the property name must be the value; if it does, the
+     * key must be the property name and the value must be a nested
+     * array with 'offset' and/or 'limit' as key(s) and
+     * the number(s) as value(s).</p>
+     * @return Expansion the created expansion object.
+     */
     public static function format(array $expansions)
     {
         $expansion = new Expansion;
@@ -81,6 +108,11 @@ class Expansion {
         return $expansion;
     }
 
+    /**
+     * Creates a formatted expansion string, without the 'expand' keyword.
+     * @return string the formatted expansion string, without the 'expand' keyword.
+     * @throws \InvalidArgumentException if no properties were added to the expansion object.
+     */
     public function __toString()
     {
         if (!$this->properties)

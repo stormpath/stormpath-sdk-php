@@ -44,6 +44,19 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
         return new Page($this->offset, $this->limit, $items);
     }
 
+    /**
+     * Sets the search criteria to this collection resource.
+     * @param Search object|string|array $search <p>
+     * The search statement. If it's a string, it
+     * is considered a filter (q=$search); so in this case,
+     * a string should never contain the filter key (q) nor
+     * a resource property name.
+     * </p>
+     * <p>If it's an array, the keys must be the resource
+     * property names, and the values must be the search criteria
+     * including the wildcard (*), if desired.</p>
+     * @return $this for method chaining.
+     */
     public function setSearch($search)
     {
         $searchArr = array();
@@ -76,6 +89,14 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
         return $this;
     }
 
+    /**
+     * Sets the order statement to this collection resource.
+     * @param Order object|string $statement <p>
+     * The order statement. If it's a string,
+     * it should not contain the 'orderBy' clause.
+     * </p>
+     * @return $this for method chaining.
+     */
     public function setOrder($statement)
     {
         if ($statement instanceof Order)
@@ -90,6 +111,16 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
         return $this;
     }
 
+    /**
+     * Sets the expansion criteria for this collection resource.
+     * @param Expansion object|array|string $expansion<p>
+     * If it's an array, and the property does not have offset or
+     * limit, the property name and the value must be a nested
+     * array with 'offset' and/or 'limit' as key(s) and
+     * the number(s) as value(s).</p>
+     * <p>If it's a string, it must not contain the 'expand' clause.</p>
+     * @return $this for method chaining.
+     */
     public function setExpansion($expansion)
     {
         if ($expansion instanceof Expansion)

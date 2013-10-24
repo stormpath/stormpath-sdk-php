@@ -33,36 +33,85 @@ class Search extends Magic {
         $this->filter = '';
     }
 
+    /**
+     * Adds a 'starts with' criteria, from a property
+     * name and a value, in the format of:
+     * 'propertyName=value*'
+     *
+     * @param string $name the property name.
+     * @param string $search the search value.
+     * @return $this for method chaining.
+     */
     public function addStartsWith($name, $search)
     {
         $this->properties = array_replace($this->properties, array($name => "$search*"));
         return $this;
     }
 
+    /**
+     * Adds an 'ends with' criteria, from a property
+     * name and a value, in the format of:
+     * 'propertyName=*value'
+     *
+     * @param string $name the property name.
+     * @param string $search the search value.
+     * @return $this for method chaining.
+     */
     public function addEndsWith($name, $search)
     {
         $this->properties = array_replace($this->properties, array($name => "*$search"));
         return $this;
     }
 
+    /**
+     * Adds an 'equals' criteria, from a property
+     * name and a value, in the format of:
+     * 'propertyName=value'
+     *
+     * @param string $name the property name.
+     * @param string $search the search value.
+     * @return $this for method chaining.
+     */
     public function addEquals($name, $search)
     {
         $this->properties = array_replace($this->properties, array($name => "$search"));
         return $this;
     }
 
+    /**
+     * Adds a 'match anywhere' criteria, from a property
+     * name and a value, in the format of:
+     * 'propertyName=*value*'
+     *
+     * @param string $name the property name.
+     * @param string $search the search value.
+     * @return $this for method chaining.
+     */
     public function addMatchAnywhere($name, $search)
     {
         $this->properties = array_replace($this->properties, array($name => "*$search*"));
         return $this;
     }
 
+    /**
+     * Sets the filter of the search: q=value.
+     *
+     * @param $filter the filter to set.
+     * @return $this for method chaining.
+     */
     public function setFilter($filter)
     {
         $this->filter = $filter;
         return $this;
     }
 
+    /**
+     * Creates an array with all the properties that were
+     * set in the object, with the keys being the property names (or filter keyword 'q'),
+     * their the corresponding values.
+     * @return array the created array.
+     * @throws \InvalidArgumentException if no properties were added to the object.
+     */
     public function toSearchArray()
     {
         $filter = $this->filter;
@@ -81,9 +130,21 @@ class Search extends Magic {
         return array_merge($searchArray, $this->properties);
     }
 
+    /**
+     * Creates the string representation of the search.
+     * @return string the string representation of the object,
+     * with the key=value pairs separated by '&'.
+     */
     public function __toString()
     {
-        return implode('&', $this->toSearchArray());
+        $str = '';
+        foreach($this->toSearchArray() as $key => $value)
+        {
+            $str .= $str ? '&' : $str;
+            $str .= $key . '=' . $value;
+        }
+
+        return $str;
     }
 
 }

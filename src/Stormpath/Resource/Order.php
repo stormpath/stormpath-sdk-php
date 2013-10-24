@@ -26,10 +26,16 @@ class Order extends Magic {
     private $properties;
     private $sort;
 
-    public function __construct(array $properties = array(), $sort = null)
+    /**
+     * Constructs the Order object.
+     * @param null|array $properties optional argument containing
+     * the property names.
+     * @param null|string $sort optional property to determine the sorting (asc or desc).
+     */
+    public function __construct($properties = null, $sort = null)
     {
         parent::__construct();
-        $this->properties = $properties;
+        $this->properties = $properties ? $properties : array();
         foreach($properties as $prop)
         {
             $this->addProperty($prop);
@@ -38,6 +44,10 @@ class Order extends Magic {
         $this->setSort($sort);
     }
 
+    /**
+     * @param $name the property name of the order statement.
+     * @return $this for method chaining.
+     */
     public function addProperty($name)
     {
         if ($name)
@@ -48,6 +58,12 @@ class Order extends Magic {
         return $this;
     }
 
+    /**
+     * Sets the sorting (asc or desc).
+     *
+     * @param string $sort the sorting (asc or desc).
+     * @return $this for method chaining.
+     */
     public function setSort($sort)
     {
         if (array_key_exists($sort, Stormpath::$Sorts))
@@ -58,11 +74,25 @@ class Order extends Magic {
         return $this;
     }
 
+    /**
+     * <p>Creates and return an order array, where the
+     * key is the order keyword (orderBy), and the value
+     * is the resulting string of all the added properties,
+     * and the sorting (if any).</p>
+     * @return array the constructed array.
+     */
     public function toOrderArray()
     {
         return array(Stormpath::ORDER_BY => strval($this));
     }
 
+    /**
+     * Creates an Order object based on an array of property
+     * names and an optional sort value.
+     * @param array $properties the property names.
+     * @param null|string $sort optional, asc or desc.
+     * @return Order the created order object.
+     */
     public static function format(array $properties, $sort= null)
     {
         $order = new Order();
@@ -77,6 +107,11 @@ class Order extends Magic {
         return $order;
     }
 
+    /**
+     * Creates a formatted order string, without the 'orderBy' keyword.
+     * @return string the formatted order string, without the 'orderBy' keyword.
+     * @throws \InvalidArgumentException if no properties were added to the order object.
+     */
     public function __toString()
     {
         if (!$this->properties)
