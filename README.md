@@ -680,6 +680,9 @@ Alternatively, configure the api key id and secret and run the tests:
     export STORMPATH_SDK_TEST_API_KEY_SECRET=API_KEY_SECRET_VALUE
     vendor/bin/phpunit
 
+After running the tests, find the code coverage information
+in the following directory: <code>tests/code-coverage</code>
+
 ## Contributing
 
 You can make your own contributions by forking the <code>dev</code>
