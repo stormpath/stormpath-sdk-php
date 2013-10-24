@@ -1,3 +1,5 @@
+[![Build Status](https://api.travis-ci.org/stormpath/stormpath-sdk-php.png)](https://travis-ci.org/stormpath/stormpath-sdk-php)
+
 # Stormpath PHP SDK
 Stormpath is the first easy, secure user management and authentication service for developers. This is the PHP SDK to ease integration of its features with any PHP language based application.
 
