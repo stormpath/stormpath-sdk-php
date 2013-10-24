@@ -107,19 +107,22 @@ If you have not already done so, register as a developer on
 5.  **Create an application** and auto create a directory as the account store.
 
     ```php
-    $application = \Stormpath\Resource\Application::create(array('name' => 'May Application',
-                                                                 'description' => 'My Application Description'),
-                                                           array('createDirectory' => true));
+    $application = \Stormpath\Resource\Application::create(
+      array('name' => 'May Application',
+            'description' => 'My Application Description'),
+      array('createDirectory' => true)
+       );
     ```
 
 6.  **Create an account for a user** on the directory.
 
     ```php
-    $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'John',
-                                                              'surname' => 'Smith',
-                                                              'username' => 'johnsmith',
-                                                              'email' => 'john.smith@example.com',
-                                                              'password' => '4P@$$w0rd!'));
+    $account = \Stormpath\Resource\Account::instantiate(
+      array('givenName' => 'John',
+            'surname' => 'Smith',
+            'username' => 'johnsmith',
+            'email' => 'john.smith@example.com',
+            'password' => '4P@$$w0rd!'));
 
     $application->createAccount($account);
     ```
@@ -177,7 +180,8 @@ If you have not already done so, register as a developer on
 
     foreach($account->groups->setSearch(array) as $group)
     {
-        // if one group was returned, the account is in the group based on the search criteria
+        // if one group was returned, the account is in
+        // the group based on the search criteria
         $isAdmin = true;
     }
     ```
@@ -196,7 +200,8 @@ when configuring the Client:
 * The location of API key properties file:
 
   ```php
-  $apiKeyFileLocation = '/some/path/to/apiKey.properties'; // This can also be an http location
+  // This can also be an http location
+  $apiKeyFileLocation = '/some/path/to/apiKey.properties';
   \Stormpath\Client::$apiKeyFileLocation = $apiKeyFileLocation;
 
   //Or
@@ -268,9 +273,13 @@ to access them with their REST URL, or via the data store of the client instance
 
   //Or
 
-  $application = $client->dataStore->getResource($applicationHref, \Stormpath\Stormpath::APPLICATION);
+  $application = $client->
+                dataStore->
+                getResource($applicationHref, \Stormpath\Stormpath::APPLICATION);
 
-  $directory = $client->dataStore->getResource($directoryHref, \Stormpath\Stormpath::DIRECTORY);
+  $directory = $client->
+               dataStore->
+               getResource($directoryHref, \Stormpath\Stormpath::DIRECTORY);
   ```
 
 Additional resources are <code>Account</code>, <code>Group</code>,
@@ -283,25 +292,40 @@ Applications, directories and account store mappings can be created directly off
 or from the tenant resource (or from the application, in the case of account store mapping).
 
   ```php
-  $application = \Stormpath\Resource\Application::create(array('name' => 'My App', 'description' => 'App Description'));
+  $application = \Stormpath\Resource\Application::create(
+    array('name' => 'My App',
+          'description' => 'App Description')
+    );
 
-  $directory = \Stormpath\Resource\Directory::create(array('name' => 'My directory', 'description' => 'My directory description'));
+  $directory = \Stormpath\Resource\Directory::create(
+    array('name' => 'My directory',
+          'description' => 'My directory description')
+    );
 
-  $accountStoreMapping = \Stormpath\Resource\AccountStoreMapping::create(array('accountStore' => $directory, 'application' => $application));
+  $accountStoreMapping = \Stormpath\Resource\AccountStoreMapping::create(
+    array('accountStore' => $directory,
+          'application' => $application)
+    );
 
   //Or
 
-  $application = $client->dataStore->instantiate(\Stormpath\Stormpath::APPLICATION);
+  $application = $client->
+                 dataStore->
+                 instantiate(\Stormpath\Stormpath::APPLICATION);
   $application->name = 'My App';
   $application->description = 'App Description';
   $tenant->createApplication($application);
 
-  $directory = $client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+  $directory = $client->
+               dataStore->
+               instantiate(\Stormpath\Stormpath::DIRECTORY);
   $directory->name = 'My directory';
   $directory->description = 'Directory Description';
   $tenant->createDirectory($directory);
 
-  $accountStoreMapping = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT_STORE_MAPPING);
+  $accountStoreMapping = $client->
+                         dataStore->
+                         instantiate(\Stormpath\Stormpath::ACCOUNT_STORE_MAPPING);
   $accountStoreMapping->accountStore = $directory; // this could also be a group
   $application->createAccountStoreMapping($accountStoreMapping);
   ```
@@ -326,12 +350,16 @@ Passing a string to the search method will filter by any attribute on the collec
 To search a specific attribute or attributes, pass an array:
 
   ```php
-  $tenant->applications->search = array('name' => '*foo*', 'description' => 'bar*', 'status' => 'enabled');
+  $tenant->applications->search = array('name' => '*foo*',
+                                        'description' => 'bar*',
+                                        'status' => 'enabled');
 
   //Or
 
   $search = new \Stormpath\Resource\Search();
-  $tenant->applications->search = $search->addMatchAnywhere('name', 'foo')->addStartsWith('description', 'bar')->addEquals('status', 'enabled');
+  $tenant->applications->search = $search->addMatchAnywhere('name', 'foo')->
+                                           addStartsWith('description', 'bar')->
+                                           addEquals('status', 'enabled');
   ```
 Now you can loop throw the collection resource and get the results according to the specified search:
 
@@ -413,11 +441,17 @@ A resource's children can be eagerly loaded by passing the expansion string in t
 or setting the expansion in a collection resource.
 
   ```php
-  $account = \Stormpath\Resource\Account::get($accountHref, array('expand' => 'groups,groupMemberships'));
+  $account = \Stormpath\Resource\Account::get(
+    $accountHref,
+    array('expand' => 'groups,groupMemberships'));
 
   //Or
 
-  $account = $client->dataStore->getResource($accountHref, \Stormpath\Stormpath::ACCOUNT, array('expand' => 'groups,groupMemberships'));
+  $account = $client->
+             dataStore->
+             getResource($accountHref,
+                        \Stormpath\Stormpath::ACCOUNT,
+                        array('expand' => 'groups,groupMemberships'));
   ```
 
 For a collection resource:
@@ -446,11 +480,15 @@ For a collection resource:
   ```php
   $expansion = new \Stormpath\Resource\Expansion();
   $expansion->addProperty('groups', array('offset' => 5, 'limit' => 10));
-  $account = \Stormpath\Resource\Account::get($accountHref, $expansion->toExpansionArray());
+  $account = \Stormpath\Resource\Account::get(
+    $accountHref,
+    $expansion->toExpansionArray());
 
   //Or
 
-  $account = $client->dataStore->getResource($accountHref, \Stormpath\Stormpath::ACCOUNT, $expansion->toExpansionArray());
+  $account = $client->
+             dataStore->
+             getResource($accountHref, \Stormpath\Stormpath::ACCOUNT, $expansion->toExpansionArray());
   ```
 
 ### Registering Accounts
@@ -460,10 +498,11 @@ Accounts are created on a directory instance. They can be created in two ways:
 * Directly from a <code>directory</code> resource:
 
   ```php
-  $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'John',
-                                                             'surname' => 'Smith',
-                                                             'email' => 'johnsmith@example.com',
-                                                             'password' => '4P@$$w0rd!'));
+  $account = \Stormpath\Resource\Account::instantiate(
+    array('givenName' => 'John',
+          'surname' => 'Smith',
+          'email' => 'johnsmith@example.com',
+          'password' => '4P@$$w0rd!'));
 
   $directory->createAccount($account);
   ```
@@ -495,11 +534,13 @@ method with the same name on the <code>Tenant</code> resource.
 
 
  ```php
-  $account = \Stormpath\Client::verifyEmailToken('the_token_from_query_string'); // this call returns an account object
+  // this call returns an account object
+  $account = \Stormpath\Client::verifyEmailToken('the_token_from_query_string');
 
   //Or
 
-  $account = $tenant->verifyEmailToken('the_token_from_query_string'); // this call returns an account object
+// this call returns an account object
+  $account = $tenant->verifyEmailToken('the_token_from_query_string');
   ```
 
 ### Authentication
@@ -535,7 +576,8 @@ registered on, can be kicked off with the
 <code>sendPasswordResetEmail</code> method on an application:
 
 ```php
-$account = $application->sendPasswordResetEmail('super_unique_email@unknown123.kot'); // this method returns the account
+// this method returns the account
+$account = $application->sendPasswordResetEmail('super_unique_email@unknown123.kot');
 ```
 
 If the workflow has been configured to verify through a non-Stormpath
@@ -544,7 +586,8 @@ URL, you can verify the token sent in the query parameter
 method on the application.
 
 ```php
-$account = $application->verifyPasswordResetToken('the_token_from_query_string'); // this method returns the account
+// this method returns the account
+$account = $application->verifyPasswordResetToken('the_token_from_query_string');
 end
 ```
 
@@ -571,7 +614,8 @@ $search = array('name' => 'Admins');
 
 foreach($account->groups->setSearch(array) as $group)
 {
-    // if one group was returned, the account is in the group based on the search criteria
+    // if one group was returned, the account is
+    // in the group based on the search criteria
     $isAdmin = true;
 }
 ```
@@ -595,7 +639,8 @@ Group membership can be created by:
 * Explicitly creating a group membership from its resource class:
 
   ```php
-  // the $account and $group variables must be actual resource instances of their corresponding types
+  // the $account and $group variables must be actual
+  // resource instances of their corresponding types
   $groupMembership = \Stormpath\Resource\GroupMembership::create(array('account' => $account, 'group' => $group));
   ```
 
