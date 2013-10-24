@@ -178,7 +178,7 @@ If you have not already done so, register as a developer on
     $isAdmin = false;
     $search = array('name' => 'Admins');
 
-    foreach($account->groups->setSearch(array) as $group)
+    foreach($account->groups->setSearch($search) as $group)
     {
         // if one group was returned, the account is in
         // the group based on the search criteria
@@ -274,8 +274,8 @@ to access them with their REST URL, or via the data store of the client instance
   //Or
 
   $application = $client->
-                dataStore->
-                getResource($applicationHref, \Stormpath\Stormpath::APPLICATION);
+                 dataStore->
+                 getResource($applicationHref, \Stormpath\Stormpath::APPLICATION);
 
   $directory = $client->
                dataStore->
@@ -303,7 +303,7 @@ or from the tenant resource (or from the application, in the case of account sto
     );
 
   $accountStoreMapping = \Stormpath\Resource\AccountStoreMapping::create(
-    array('accountStore' => $directory,
+    array('accountStore' => $directory, // this could also be a group
           'application' => $application)
     );
 
@@ -488,7 +488,8 @@ For a collection resource:
 
   $account = $client->
              dataStore->
-             getResource($accountHref, \Stormpath\Stormpath::ACCOUNT, $expansion->toExpansionArray());
+             getResource($accountHref,
+                         \Stormpath\Stormpath::ACCOUNT, $expansion->toExpansionArray());
   ```
 
 ### Registering Accounts
@@ -612,7 +613,7 @@ to determine the account is associated with it:
 $isAdmin = false;
 $search = array('name' => 'Admins');
 
-foreach($account->groups->setSearch(array) as $group)
+foreach($account->groups->setSearch($search) as $group)
 {
     // if one group was returned, the account is
     // in the group based on the search criteria
@@ -624,7 +625,8 @@ You can create groups and assign them to accounts using the Stormpath
 web console, or programmatically. Groups are created on directories:
 
 ```php
-$group = \Stormpath\Resource\Group::instantiate(array('name' => 'Admins', 'description' => 'Admins Group'));
+$group = \Stormpath\Resource\Group::instantiate(
+    array('name' => 'Admins', 'description' => 'Admins Group'));
 
 // Or
 $group = $client->dataStore->instantiate(\Stormpath\Stormpath::GROUP);
@@ -641,7 +643,8 @@ Group membership can be created by:
   ```php
   // the $account and $group variables must be actual
   // resource instances of their corresponding types
-  $groupMembership = \Stormpath\Resource\GroupMembership::create(array('account' => $account, 'group' => $group));
+  $groupMembership = \Stormpath\Resource\GroupMembership::create(
+    array('account' => $account, 'group' => $group));
   ```
 
 * Using the <code>addGroup</code> method on the account instance:
