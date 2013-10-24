@@ -7,6 +7,6 @@ before_script:
 - composer install --dev
 script: vendor/bin/phpunit
 env:
-  matrix:
-  - secure: T0acIfrbr256UPviOkJ0c+z4qLkE/UxBgWIhOkNTMS5WXi+3UMxQAbRCzofyyQXGGmTmAbuTgCbvKl+xgpMAukBfQaI8P3V1lDIxflqKtH4EnAa+iV4JxQP8dqZ6y9s1FB81yNVgYuP70xrGf2Ul32CyJtjaHUNkbL9KKaLxPgs=
-  - secure: OYRVFYAMWqO+/ivS2wppkG4TTMIbvDLc6k+kf8rEVfqUkA2l1CCyQ+iYTu4YfL9VvYtlSBsqwRDUrl1f0i1TuU1o16RspZAOS2krjjJqEtOk8AxEvuF8Fr8SRyi4c/vaA65ykOgsQLeq0Ogrs8hCDUXAvS9VXF36sU/pJDz+Dzc=
+  global:
+  - secure: VyVDCEAexHfV/k4FEToKsVoC23FxT9ngf1UuOnp9ddfr52uHppDnUeHKJ0AMAPsKyPvYCaCHC0+JSOIx2vK2/pZCWkCk12KQ8d4ytPuiNCmnLKn1sOJBn/rcXznE41/DbYA3344dv3wE+W4j4bxD3rJw5NI7NiypnyCp9S6Z6qo=
+  - secure: JenTQgFLF8ZgyRvk7y/v2brrJTwEemTcrzG9Brej6U+2mQCthSQIUgYcTsRKKf/VN3nxPK4soPGcx1Y726fLsGPiDR4zyGDEKbFLyz7lFR3N8mybIcaWZOWOx77hmXxzi/XW+UDThSuuRQuWRHubRCpBFB4KaW4dgAq7G7QlYng=
