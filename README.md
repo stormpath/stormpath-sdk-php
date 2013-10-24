@@ -621,7 +621,13 @@ To perform the installation:
 
 Now configure the api key file location and run the tests:
 
-    export STORMPATH_API_KEY_FILE_LOCATION=/path/to/file/apiKey.properties
+    export STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION=/path/to/file/apiKey.properties
+    vendor/bin/phpunit
+
+Alternatively, configure the api key id and secret and run the tests:
+
+    export STORMPATH_SDK_TEST_API_KEY_ID=API_KEY_ID_VALUE
+    export STORMPATH_SDK_TEST_API_KEY_SECRET=API_KEY_SECRET_VALUE
     vendor/bin/phpunit
 
 ## Contributing

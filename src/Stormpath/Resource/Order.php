@@ -36,9 +36,13 @@ class Order extends Magic {
     {
         parent::__construct();
         $this->properties = $properties ? $properties : array();
-        foreach($properties as $prop)
+
+        if (is_array($properties))
         {
-            $this->addProperty($prop);
+            foreach($properties as $prop)
+            {
+                $this->addProperty($prop);
+            }
         }
 
         $this->setSort($sort);

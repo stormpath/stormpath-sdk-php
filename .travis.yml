@@ -1,0 +1,12 @@
+language: php
+php:
+- 5.5
+- 5.4
+- 5.3
+before_script:
+- composer install --dev
+script: vendor/bin/phpunit
+env:
+  matrix:
+  - secure: T0acIfrbr256UPviOkJ0c+z4qLkE/UxBgWIhOkNTMS5WXi+3UMxQAbRCzofyyQXGGmTmAbuTgCbvKl+xgpMAukBfQaI8P3V1lDIxflqKtH4EnAa+iV4JxQP8dqZ6y9s1FB81yNVgYuP70xrGf2Ul32CyJtjaHUNkbL9KKaLxPgs=
+  - secure: OYRVFYAMWqO+/ivS2wppkG4TTMIbvDLc6k+kf8rEVfqUkA2l1CCyQ+iYTu4YfL9VvYtlSBsqwRDUrl1f0i1TuU1o16RspZAOS2krjjJqEtOk8AxEvuF8Fr8SRyi4c/vaA65ykOgsQLeq0Ogrs8hCDUXAvS9VXF36sU/pJDz+Dzc=

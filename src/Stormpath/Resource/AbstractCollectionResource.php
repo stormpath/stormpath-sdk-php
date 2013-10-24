@@ -93,7 +93,7 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
      * Sets the order statement to this collection resource.
      * @param Order object|string $statement <p>
      * The order statement. If it's a string,
-     * it should not contain the 'orderBy' clause.
+     * it should not contain the 'orderBy' keyword.
      * </p>
      * @return $this for method chaining.
      */
@@ -118,7 +118,7 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
      * limit, the property name and the value must be a nested
      * array with 'offset' and/or 'limit' as key(s) and
      * the number(s) as value(s).</p>
-     * <p>If it's a string, it must not contain the 'expand' clause.</p>
+     * <p>If it's a string, it must not contain the 'expand' keyword.</p>
      * @return $this for method chaining.
      */
     public function setExpansion($expansion)
