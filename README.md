@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.org/stormpath/stormpath-sdk-php.png)](https://travis-ci.org/stormpath/stormpath-sdk-php)
+[![Build Status](https://api.travis-ci.org/stormpath/stormpath-sdk-php.png?branch=master,dev)](https://travis-ci.org/stormpath/stormpath-sdk-php)
 
 # Stormpath PHP SDK
 Stormpath is the first easy, secure user management and authentication service for developers. This is the PHP SDK to ease integration of its features with any PHP language based application.
@@ -140,7 +140,8 @@ If you have not already done so, register as a developer on
     ```php
     try {
 
-        $application->authenticate('johnsmith', '4P@$$w0rd!');
+        $result = $application->authenticate('johnsmith', '4P@$$w0rd!');
+        $account = $result->account;
 
     } catch (\Stormpath\Resource\ResourceError $re)
     {
@@ -338,42 +339,43 @@ Resource collections can be searched by a general query string, or by attribute 
 Passing a string to the search method will filter by any attribute on the collection:
 
   ```php
-  $tenant->applications->search = 'foo';
+  $applications = $tenant->applications;
+  $applications->search = 'foo';
 
-  //Or
+  //Or, use the Search object
 
   $search = new \Stormpath\Resource\Search();
   $search->filter = 'foo';
-  $tenant->applications->search = $search;
+  $applications = $tenant->applications;
+  $applications->search = $search;
   ```
 
 To search a specific attribute or attributes, pass an array:
 
   ```php
-  $tenant->applications->search = array('name' => '*foo*',
-                                        'description' => 'bar*',
-                                        'status' => 'enabled');
+  $applications = $tenant->applications;
+  $applications->search = array('name' => '*foo*',
+                                'description' => 'bar*',
+                                'status' => 'enabled');
 
-  //Or
+  //Or, use the Search object
 
   $search = new \Stormpath\Resource\Search();
-  $tenant->applications->search = $search->addMatchAnywhere('name', 'foo')->
-                                           addStartsWith('description', 'bar')->
-                                           addEquals('status', 'enabled');
-  ```
-Now you can loop throw the collection resource and get the results according to the specified search:
-
-  ```php
-  foreach($tenant->applications as $app)
-  {
-    print $app->name;
-  }
+  $applications = $tenant->applications;
+  $applications->search = $search->addMatchAnywhere('name', 'foo')->
+                                   addStartsWith('description', 'bar')->
+                                   addEquals('status', 'enabled');
   ```
 
 Alternatively, you can use the collection getter options to specify the search:
 
   ```php
   $applications = $tenant->getApplications(array('q' => 'foo'));
+  ```
+
+Now you can loop through the collection resource and get the results according to the specified search:
+
+  ```php
   foreach($applications as $app)
   {
     print $app->name;
@@ -407,28 +409,26 @@ Alternatively, you can use the collection getter options to specify the paginati
 Collections can be ordered. In the following example, a paginated collection is ordered.
 
   ```php
-  $tenant->applications->order = new \Stormpath\Resource\Order(array('name'), 'desc');
+  $applications = $tenant->applications;
+  $applications->order = new \Stormpath\Resource\Order(array('name'), 'desc');
   ```
 
 Or specify the order by string:
 
   ```php
-  $tenant->applications->order = 'name desc';
-  ```
-
-Now you can loop throw the collection resource and get the results according to the specified order:
-
-  ```php
-  foreach($tenant->applications as $app)
-  {
-    print $app->name;
-  }
+  $applications = $tenant->applications;
+  $applications->order = 'name desc';
   ```
 
 Alternatively, you can use the collection getter options to specify the order:
 
   ```php
   $applications = $tenant->getApplications(array('orderBy' => 'name desc'));
+  ```
+
+Now you can loop through the collection resource and get the results according to the specified order:
+
+  ```php
   foreach($applications as $app)
   {
     print $app->name;
@@ -540,7 +540,7 @@ method with the same name on the <code>Tenant</code> resource.
 
   //Or
 
-// this call returns an account object
+  // this call returns an account object
   $account = $tenant->verifyEmailToken('the_token_from_query_string');
   ```
 
