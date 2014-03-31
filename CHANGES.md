@@ -1,6 +1,14 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.0.1.beta
+------------------
+
+Released on March 31, 2014
+
+- Fixed create account and create group tests.
+- Fixed warning about variables not initialized in BaseTest class.
+
 Version 1.0.0.beta
 ------------------
 

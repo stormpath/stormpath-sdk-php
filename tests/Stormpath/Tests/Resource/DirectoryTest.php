@@ -89,6 +89,8 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
     public function testCreateAccount()
     {
         $directory = self::$directory;
+        $directory->status = 'enabled';
+        $directory->save();
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                    'surname' => 'Surname',
@@ -108,6 +110,8 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
     public function testCreateGroup()
     {
         $directory = self::$directory;
+        $directory->status = 'enabled';
+        $directory->save();
 
         $group = \Stormpath\Resource\Group::instantiate(array('name' => 'New Group' . md5(time())));
 
