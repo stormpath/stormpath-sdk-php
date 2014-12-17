@@ -353,6 +353,7 @@ Array caching system.
          public function getCache() { ... }
     }
     ```
+    
     ```php
     class ArrayCache implements Cache {
         public function get($key) { ... }
