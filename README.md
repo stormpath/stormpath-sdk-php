@@ -348,20 +348,18 @@ files that are required.  A file that implements `Stormpath\Cache\Cache` and a f
 implements `Stormpath\Cache\CacheManager`.  Take the following if we wanted to create an 
 Array caching system.
 
-    ```php
+  ```php
     class ArrayCacheManager implements CacheManager {
-         public function getCache() {  }
+         public function getCache() { ... }
     }
-    ```
-    
-    ```php
+  
     class ArrayCache implements Cache {
-        public function get($key) {  }
-        public function put($key, $value, $minutes) {  }
-        public function delete($key) {  }
-        public function clear() {  }
+        public function get($key) { ... }
+        public function put($key, $value, $minutes) { ... }
+        public function delete($key) { ... }
+        public function clear() { ... }
     }
-    ```
+  ```
     
 Then you would call it the same way you do for a cache manager normally.  
 
