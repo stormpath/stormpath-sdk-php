@@ -342,6 +342,11 @@ You can also call it without static calls as follows:
  the key 'cachemanager' in the $cacheManagerOptions array will be ignored.
  
  
+### Disable Cache
+Although this is not suggested as it will make more calls and slow your application, you can disble the Cache.
+ This can be accomplished by doing any of the above for setting the cache manager, however you will set it to 
+ be the null cache manager.  This can be done by setting the manager to `Stormpath\Cache\NullCacheManager`
+ 
 ### Extending Cache
 Extending the Cache Manager to supply your own caching is very easy.  There are only a couple
 files that are required.  A file that implements `Stormpath\Cache\Cache` and a file that
