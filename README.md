@@ -352,7 +352,8 @@ Array caching system.
     class ArrayCacheManager implements CacheManager {
          public function getCache() { ... }
     }
-    
+    ```
+    ```php
     class ArrayCache implements Cache {
         public function get($key) { ... }
         public function put($key, $value, $minutes) { ... }
