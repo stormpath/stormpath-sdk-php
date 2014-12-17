@@ -350,16 +350,16 @@ Array caching system.
 
     ```php
     class ArrayCacheManager implements CacheManager {
-         public function getCache() { ... }
+         public function getCache() {  }
     }
     ```
     
     ```php
     class ArrayCache implements Cache {
-        public function get($key) { ... }
-        public function put($key, $value, $minutes) { ... }
-        public function delete($key) { ... }
-        public function clear() { ... }
+        public function get($key) {  }
+        public function put($key, $value, $minutes) {  }
+        public function delete($key) {  }
+        public function clear() {  }
     }
     ```
     
