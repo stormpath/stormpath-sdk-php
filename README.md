@@ -274,7 +274,7 @@ The following is the default array that is provided to the ClientBuilder if no o
 
   ```php
   $cacheManagerOptions = array(
-      'cachemanager' => 'Stormpath\Cache\MemoryCacheManager', //The full namespaced CacheManager instance
+      'cachemanager' => 'Memory', //Memory, Memcached, Redis, Null, or the full namespaced CacheManager instance
       'ttl' => 60, // This value is set in minutes
       'tti' => 120, // This value is set in minutes
       'regions' => array(
@@ -324,7 +324,7 @@ It is just as easy to set a cache manager to override the default Shared Memory.
 You could configure the client with the following:
 
   ```php
-  \Stormpath\Client::$cacheManager = 'Stormpath\Cache\MemcachedCacheManager';
+  \Stormpath\Client::$cacheManager = 'Memcached';
   \Stormpath\Client::$cacheManagerOptions = $cacheManagerOptions;
   ```
 Doing it this way, the option in the array for the CacheManager will not be used.  Setting
@@ -333,7 +333,7 @@ the CacheManger statically will override the option set in the CacheManagerOptio
 You can also call it without static calls as follows:
    ```php
    $builder = new \Stormpath\ClientBuilder();
-   $client = $builder->setCacheManager('Stormpath\Cache\MemcachedCacheManager')-> //setting this will ignore the 'cachemanager' in options array
+   $client = $builder->setCacheManager('Memcached')-> //setting this will ignore the 'cachemanager' in options array
                        setCacheManagerOptions($cacheManagerOptions)->
                      build();
    ```
@@ -343,9 +343,9 @@ You can also call it without static calls as follows:
  
  
 ### Disable Cache
-Although this is not suggested as it will make more calls and slow your application, you can disble the Cache.
+Although this is not suggested as it will make more calls and slow your application, you can disable the Cache.
  This can be accomplished by doing any of the above for setting the cache manager, however you will set it to 
- be the null cache manager.  This can be done by setting the manager to `Stormpath\Cache\NullCacheManager`
+ be the null cache manager.  This can be done by setting the manager to `Null`
  
 ### Extending Cache
 Extending the Cache Manager to supply your own caching is very easy.  There are only a couple
