@@ -35,11 +35,5 @@ interface Cache {
      */
     public function clear();
 
-    /**
-     * Check existence of a key in cache.
-     *
-     * @param string $key
-     * @return void
-     */
-    public function has($key);
+
 }
