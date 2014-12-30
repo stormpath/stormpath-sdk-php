@@ -5,6 +5,6 @@ class NullCacheManager implements CacheManager {
 
     public function getCache()
     {
-        // TODO: Implement getCache() method.
+        return new NullCache();
     }
 }
