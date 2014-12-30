@@ -3,6 +3,13 @@
 
 class MemoryCache implements Cache {
 
+    protected $storage = array();
+
+    public function __construct()
+    {
+        $this->storage = isset($_SESSION['STORMPATH_CACHE']) ? $_SESSION['STORMPATH_CACHE'] : $this->storage;
+    }
+
     /**
      * Retrieve an item from the cache by key.
      *
@@ -11,7 +18,10 @@ class MemoryCache implements Cache {
      */
     public function get($key)
     {
-        // TODO: Implement get() method.
+        if (array_key_exists($key, $this->storage))
+        {
+            return $this->storage[$key];
+        }
     }
 
     /**
@@ -24,7 +34,8 @@ class MemoryCache implements Cache {
      */
     public function put($key, $value, $minutes)
     {
-        // TODO: Implement put() method.
+        $this->storage[$key] = $value;
+        $_SESSION['STORMPATH_CACHE'] = $this->storage;
     }
 
     /**
@@ -35,7 +46,9 @@ class MemoryCache implements Cache {
      */
     public function delete($key)
     {
-        // TODO: Implement delete() method.
+        unset($this->storage[$key]);
+        $_SESSION['STORMPATH_CACHE'] = $this->storage;
+        return true;
     }
 
     /**
@@ -45,17 +58,8 @@ class MemoryCache implements Cache {
      */
     public function clear()
     {
-        // TODO: Implement clear() method.
+        $this->storage = array();
+        $_SESSION['STORMPATH_CACHE'] = $this->storage;
     }
 
-    /**
-     * Check existence of a key in cache.
-     *
-     * @param string $key
-     * @return void
-     */
-    public function has($key)
-    {
-        // TODO: Implement has() method.
-    }
 }

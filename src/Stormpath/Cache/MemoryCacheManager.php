@@ -3,8 +3,13 @@
 
 class MemoryCacheManager implements CacheManager {
 
+    public function __construct()
+    {
+        session_start();
+    }
+
     public function getCache()
     {
-        // TODO: Implement getCache() method.
+        return new MemoryCache();
     }
 }
