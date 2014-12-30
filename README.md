@@ -302,7 +302,7 @@ The following is the default array that is provided to the ClientBuilder if no o
       ) 
   );
   ```
-Only the values you with to override would need to be supplied in the array that 
+Only the values you wish to override would need to be supplied in the array that 
 is passed to the ClientBuilder.
 
 
