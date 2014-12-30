@@ -51,6 +51,8 @@ class ClientBuilder extends Magic
     private $apiKeyProperties;
     private $apiKeyFileLocation;
     private $baseURL;
+    private $cacheManager = null;
+    private $cacheManagerOptions;
 
     /**
      * Sets the location of the 'ini' file to load containing the API Key (Id and secret) used by the
@@ -204,6 +206,24 @@ class ClientBuilder extends Magic
         return $this;
     }
 
+    public function setCacheManager($cacheManager)
+    {
+        $this->cacheManager = $this->getCacheManager($cacheManager);
+
+        return $this;
+    }
+
+    public function setCacheManagerOptions(Array $cacheManagerOptions = [])
+    {
+        $this->cacheManagerOptions = $this->setCacheOptionsArray($cacheManagerOptions);
+
+        if(!$this->cacheManager) {
+            $this->cacheManager = $this->getCacheManager($cacheManagerOptions['cachemanager']);
+        }
+
+        return $this;
+    }
+
     /**
      * Constructs a new {@link Stormpath\Client\Client} instance based on the ClientBuilder's
      * current configuration state.
@@ -232,13 +252,20 @@ class ClientBuilder extends Magic
             }
         }
 
+        if (!$this->cacheManager)
+        {
+            $this->setCacheManagerOptions();
+        }
+
         $apiKeyId = $this->getRequiredPropertyValue($apiKeyProperties, 'apiKeyId', $this->apiKeyIdPropertyName);
 
         $apiKeySecret = $this->getRequiredPropertyValue($apiKeyProperties, 'apiKeySecret', $this->apiKeySecretPropertyName);
 
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
 
-        return new Client($apiKey, $this->baseURL);
+        $cacheManager = new $this->cacheManager($this->cacheManagerOptions);
+
+        return new Client($apiKey, $cacheManager, $this->baseURL);
     }
 
     public function setBaseURL($baseURL)
@@ -290,5 +317,54 @@ class ClientBuilder extends Magic
         {
             return parse_ini_file($this->apiKeyFileLocation);
         }
+    }
+
+    private function setCacheOptionsArray($overrides)
+    {
+        $defaults = array(
+            'cachemanager' => 'Memory', //Memory, Memcached, Redis, Null, or the full namespaced CacheManager instance
+            'ttl' => 60, // This value is set in minutes
+            'tti' => 120, // This value is set in minutes
+            'regions' => array(
+                'accounts' => array(
+                    'ttl' => 60,
+                    'tti' => 120
+                ),
+                'applications' => array(
+                    'ttl' => 60,
+                    'tti' => 120
+                ),
+                'directories' => array(
+                    'ttl' => 60,
+                    'tti' => 120
+                ),
+                'groups' => array(
+                    'ttl' => 60,
+                    'tti' => 120
+                ),
+                'tenants' => array(
+                    'ttl' => 60,
+                    'tti' => 120
+                ),
+
+            )
+        );
+
+        return array_replace($defaults, $overrides);
+    }
+
+    private function getCacheManager($cacheManager)
+    {
+        $cacheManagerPath = "Stormpath\\Cache\\{$cacheManager}CacheManager";
+        if(class_exists($cacheManagerPath)) return $cacheManagerPath;
+
+        if(class_exists($cacheManager)) return $cacheManager;
+
+
+    }
+
+    protected function getCacheManagerOptions()
+    {
+        return 'hello world';
     }
 }
