@@ -1,19 +1,22 @@
 <?php namespace Stormpath\Cache;
 
 
+
 class MemcachedCacheManager implements CacheManager {
 
-    protected $servers = [];
+
+    public function __construct($options)
+    {
+        $this->options = $options;
+    }
 
     public function getCache()
     {
-        return new MemcachedCache();
+
+        return new MemcachedCache($this->options);
     }
 
-    public function addServer($host, $port, $weight)
-    {
-        $this->servers[] = array('host' => $host, 'port' => $port, 'weight' => $weight);
 
-        return $this;
-    }
+
+
 }

@@ -4,6 +4,16 @@ use Memcached;
 
 class MemcachedCache implements Cache {
 
+    private $memcached;
+
+    public function __construct($options)
+    {
+        $this->memcached = new Memcached();
+        $this->memcached->addServers($options['memcached']);
+        $this->prefix = "stormpath/";
+
+    }
+
     /**
      * Retrieve an item from the cache by key.
      *
@@ -12,7 +22,12 @@ class MemcachedCache implements Cache {
      */
     public function get($key)
     {
-        // TODO: Implement get() method.
+        $value = $this->memcached->get($this->prefix.$key);
+        if ($this->memcached->getResultCode() == 0)
+        {
+            return $value;
+        }
+
     }
 
     /**
@@ -20,12 +35,12 @@ class MemcachedCache implements Cache {
      *
      * @param  string $key
      * @param  mixed $value
-     * @param  int $minutes
+     * @param  int $minutes //memcached runs in seconds by default so this will be multiplied by 60
      * @return void
      */
     public function put($key, $value, $minutes)
     {
-        // TODO: Implement put() method.
+        $this->memcached->set($this->prefix.$key, $value, $minutes * 60 );
     }
 
     /**
@@ -36,7 +51,7 @@ class MemcachedCache implements Cache {
      */
     public function delete($key)
     {
-        // TODO: Implement delete() method.
+        return $this->memcached->delete($this->prefix.$key);
     }
 
     /**
@@ -46,17 +61,7 @@ class MemcachedCache implements Cache {
      */
     public function clear()
     {
-        // TODO: Implement clear() method.
+        $this->memcached->flush();
     }
 
-    /**
-     * Check existence of a key in cache.
-     *
-     * @param string $key
-     * @return void
-     */
-    public function has($key)
-    {
-        // TODO: Implement has() method.
-    }
 }
