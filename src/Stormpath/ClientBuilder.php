@@ -217,8 +217,9 @@ class ClientBuilder extends Magic
     {
         $this->cacheManagerOptions = $this->setCacheOptionsArray($cacheManagerOptions);
 
+
         if(!$this->cacheManager) {
-            $this->cacheManager = $this->getCacheManager($cacheManagerOptions['cachemanager']);
+            $this->cacheManager = $this->getCacheManager($this->cacheManagerOptions['cachemanager']);
         }
 
         return $this;
@@ -321,6 +322,7 @@ class ClientBuilder extends Magic
 
     private function setCacheOptionsArray($overrides)
     {
+
         $defaults = array(
             'cachemanager' => 'Memory', //Memory, Memcached, Redis, Null, or the full namespaced CacheManager instance
             'ttl' => 60, // This value is set in minutes
@@ -355,6 +357,7 @@ class ClientBuilder extends Magic
 
     private function getCacheManager($cacheManager)
     {
+
         $cacheManagerPath = "Stormpath\\Cache\\{$cacheManager}CacheManager";
         if(class_exists($cacheManagerPath)) return $cacheManagerPath;
 
