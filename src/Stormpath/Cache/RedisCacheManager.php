@@ -3,8 +3,14 @@
 
 class RedisCacheManager implements CacheManager {
 
+    public function __construct($options)
+    {
+        $this->options = $options;
+    }
+
     public function getCache()
     {
-        // TODO: Implement getCache() method.
+
+        return new RedisCache($this->options);
     }
 }

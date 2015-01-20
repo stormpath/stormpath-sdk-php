@@ -7,7 +7,7 @@ class MemoryCache implements Cache {
 
     public function __construct()
     {
-        $this->storage = isset($_SESSION['STORMPATH_CACHE']) ? $_SESSION['STORMPATH_CACHE'] : $this->storage;
+        $this->storage = $this->storage;
     }
 
     /**
@@ -35,7 +35,6 @@ class MemoryCache implements Cache {
     public function put($key, $value, $minutes)
     {
         $this->storage[$key] = $value;
-        $_SESSION['STORMPATH_CACHE'] = $this->storage;
     }
 
     /**
@@ -47,7 +46,6 @@ class MemoryCache implements Cache {
     public function delete($key)
     {
         unset($this->storage[$key]);
-        $_SESSION['STORMPATH_CACHE'] = $this->storage;
         return true;
     }
 
@@ -59,7 +57,6 @@ class MemoryCache implements Cache {
     public function clear()
     {
         $this->storage = array();
-        $_SESSION['STORMPATH_CACHE'] = $this->storage;
     }
 
 }

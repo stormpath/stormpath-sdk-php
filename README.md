@@ -275,6 +275,14 @@ The following is the default array that is provided to the ClientBuilder if no o
   ```php
   $cacheManagerOptions = array(
       'cachemanager' => 'Memory', //Memory, Memcached, Redis, Null, or the full namespaced CacheManager instance
+      'memcached' => array(
+          array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
+      ),
+      'redis' => array(
+          'host' => '127.0.0.1',
+          'port' => 6379,
+          'password' => NULL
+      ),
       'ttl' => 60, // This value is set in minutes
       'tti' => 120, // This value is set in minutes
       'regions' => array(

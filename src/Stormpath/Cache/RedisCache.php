@@ -1,7 +1,22 @@
 <?php namespace Stormpath\Cache;
 
+use Redis;
 
 class RedisCache implements Cache {
+
+    private $redis;
+
+    public function __construct($options)
+    {
+        $this->redis = new Redis();
+        $this->redis->connect($options['redis']['host']);
+
+        if($options['redis']['password'] != NULL) {
+            $this->redis->auth($options['redis']['password']);
+        }
+        $this->prefix = "stormpath/";
+
+    }
 
     /**
      * Retrieve an item from the cache by key.
@@ -11,7 +26,7 @@ class RedisCache implements Cache {
      */
     public function get($key)
     {
-        // TODO: Implement get() method.
+        $this->redis->get($key);
     }
 
     /**
@@ -24,7 +39,7 @@ class RedisCache implements Cache {
      */
     public function put($key, $value, $minutes)
     {
-        // TODO: Implement put() method.
+        $this->redis->set($key, $value, $minutes);
     }
 
     /**
@@ -35,7 +50,7 @@ class RedisCache implements Cache {
      */
     public function delete($key)
     {
-        // TODO: Implement delete() method.
+        $this->redis->delete($key);
     }
 
     /**
@@ -45,17 +60,8 @@ class RedisCache implements Cache {
      */
     public function clear()
     {
-        // TODO: Implement clear() method.
+        $this->redis->flushAll();
     }
 
-    /**
-     * Check existence of a key in cache.
-     *
-     * @param string $key
-     * @return void
-     */
-    public function has($key)
-    {
-        // TODO: Implement has() method.
-    }
+
 }
