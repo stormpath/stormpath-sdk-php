@@ -366,8 +366,4 @@ class ClientBuilder extends Magic
 
     }
 
-    protected function getCacheManagerOptions()
-    {
-        return 'hello world';
-    }
 }

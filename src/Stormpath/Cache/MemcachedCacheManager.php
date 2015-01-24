@@ -10,6 +10,12 @@ class MemcachedCacheManager implements CacheManager {
         $this->options = $options;
     }
 
+    /**
+     * @return MemcachedCache
+     * Privide region
+     * cache per region
+     * Singleton for the regions cache
+     */
     public function getCache()
     {
 
