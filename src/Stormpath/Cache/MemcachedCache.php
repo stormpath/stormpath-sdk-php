@@ -10,7 +10,7 @@ class MemcachedCache implements Cache {
     {
         $this->memcached = new Memcached();
         $this->memcached->addServers($options['memcached']);
-        $this->prefix = "stormpath/";
+
 
     }
 
@@ -22,7 +22,7 @@ class MemcachedCache implements Cache {
      */
     public function get($key)
     {
-        $value = $this->memcached->get($this->prefix.$key);
+        $value = $this->memcached->get($key);
         if ($this->memcached->getResultCode() == 0)
         {
             return $value;
@@ -40,7 +40,7 @@ class MemcachedCache implements Cache {
      */
     public function put($key, $value, $minutes)
     {
-        $this->memcached->set($this->prefix.$key, $value, $minutes * 60 );
+        $this->memcached->set($key, $value, $minutes * 60 );
     }
 
     /**
@@ -51,7 +51,7 @@ class MemcachedCache implements Cache {
      */
     public function delete($key)
     {
-        return $this->memcached->delete($this->prefix.$key);
+        return $this->memcached->delete($key);
     }
 
     /**
