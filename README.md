@@ -262,7 +262,7 @@ instantiated (using the ClientBuilder or the Client constructor), the Client
 instance must be used to start interactions with Stormpath.
 
 ### Cache
-By default all items will be cached.  This will use Shared Memory caching if nothing is defined.
+By default all items will be cached.  This will use Memory caching if nothing is defined.
 The caching happens automatically for you so you do not have to think about it.  There are many
 reason why you may want to cache api calls to the Stormpath API where the main reason is speed.
 Caching allows you to make one api call over a set amount of time while all subsequent calls to
@@ -315,7 +315,7 @@ is passed to the ClientBuilder.
 
 
 The following coule be used to on the Client to set options for the default
-Shared Memory cacheManager:
+Memory cacheManager:
 
  ```php
   \Stormpath\Client::$cacheManagerOptions = $cacheManagerOptions;
@@ -327,7 +327,7 @@ Shared Memory cacheManager:
                       build();
   ```
   
-It is just as easy to set a cache manager to override the default Shared Memory.
+It is just as easy to set a cache manager to override the default Memory.
 
 You could configure the client with the following:
 
