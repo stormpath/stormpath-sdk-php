@@ -122,7 +122,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $queryString = $this->getQueryString($options);
         $returnedResource = $this->saveResource($parentHref, $resource, $returnType, $queryString);
 
-        $this->addDataToCache($returnedResource, $returnedResource->href);
+        $this->createCachableResource($returnedResource, $parentHref);
 
         $returnTypeClass = $this->resourceFactory->instantiate($returnType, array());
         if ($resource instanceof $returnTypeClass)
@@ -152,6 +152,8 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         $returnedResource = $this->saveResource($href, $resource, $returnType);
 
+        $this->saveCachableResource($resource);
+
         //ensure the caller's argument is updated with what is returned from the server:
         $resource->setProperties($this->toStdClass($returnedResource));
 
@@ -161,6 +163,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     public function delete(Resource $resource)
     {
+        $this->deleteCachableResource($resource);
         return $this->executeRequest(Request::METHOD_DELETE, $resource->getHref());
     }
 

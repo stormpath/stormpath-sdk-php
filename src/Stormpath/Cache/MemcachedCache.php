@@ -11,7 +11,6 @@ class MemcachedCache implements Cache {
         $this->memcached = new Memcached();
         $this->memcached->addServers($options['memcached']);
 
-
     }
 
     /**
