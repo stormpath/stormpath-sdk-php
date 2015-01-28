@@ -264,9 +264,9 @@ class ClientBuilder extends Magic
 
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
 
-        $cacheManager = new $this->cacheManager($this->cacheManagerOptions);
+        //$cacheManager = new $this->cacheManager($this->cacheManagerOptions);
 
-        return new Client($apiKey, $cacheManager, $this->baseURL);
+        return new Client($apiKey, $this->cacheManager, $this->cacheManagerOptions, $this->baseURL);
     }
 
     public function setBaseURL($baseURL)
@@ -365,5 +365,7 @@ class ClientBuilder extends Magic
 
 
     }
+
+
 
 }
