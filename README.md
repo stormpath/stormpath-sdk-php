@@ -261,6 +261,121 @@ the static calls to resources will run successfully. If the Client is directly
 instantiated (using the ClientBuilder or the Client constructor), the Client
 instance must be used to start interactions with Stormpath.
 
+### Cache
+By default all items will be cached.  This will use Memory caching if nothing is defined.
+The caching happens automatically for you so you do not have to think about it.  There are many
+reason why you may want to cache api calls to the Stormpath API where the main reason is speed.
+Caching allows you to make one api call over a set amount of time while all subsequent calls to
+the same endpoint will pull data that was cached.  By default, the time to live is set to 1 hour, 
+while the time to idle is set to 2 hours.
+
+All of you default options can be overridden by passing an options array during the ClientBuilder.
+The following is the default array that is provided to the ClientBuilder if no options are overridden.
+
+  ```php
+  $cacheManagerOptions = array(
+      'cachemanager' => 'Memory', //Memory, Memcached, Redis, Null, or the full namespaced CacheManager instance
+      'memcached' => array(
+          array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
+      ),
+      'redis' => array(
+          'host' => '127.0.0.1',
+          'port' => 6379,
+          'password' => NULL
+      ),
+      'ttl' => 60, // This value is set in minutes
+      'tti' => 120, // This value is set in minutes
+      'regions' => array(
+        'accounts' => array(
+            'ttl' => 60,
+            'tti' => 120
+         ),
+        'applications' => array(
+            'ttl' => 60,
+            'tti' => 120
+         ),
+        'directories' => array(
+            'ttl' => 60,
+            'tti' => 120
+         ),
+        'groups' => array(
+            'ttl' => 60,
+            'tti' => 120
+         ),
+        'tenants' => array(
+            'ttl' => 60,
+            'tti' => 120
+         ),
+        
+      ) 
+  );
+  ```
+Only the values you wish to override would need to be supplied in the array that 
+is passed to the ClientBuilder.
+
+
+The following coule be used to on the Client to set options for the default
+Memory cacheManager:
+
+ ```php
+  \Stormpath\Client::$cacheManagerOptions = $cacheManagerOptions;
+
+  //Or
+
+  $builder = new \Stormpath\ClientBuilder();
+  $client = $builder->setCacheManagerOptions($cacheManagerOptions)->
+                      build();
+  ```
+  
+It is just as easy to set a cache manager to override the default Memory.
+
+You could configure the client with the following:
+
+  ```php
+  \Stormpath\Client::$cacheManager = 'Memcached';
+  \Stormpath\Client::$cacheManagerOptions = $cacheManagerOptions;
+  ```
+Doing it this way, the option in the array for the CacheManager will not be used.  Setting
+the CacheManger statically will override the option set in the CacheManagerOptions.
+
+You can also call it without static calls as follows:
+   ```php
+   $builder = new \Stormpath\ClientBuilder();
+   $client = $builder->setCacheManager('Memcached')-> //setting this will ignore the 'cachemanager' in options array
+                       setCacheManagerOptions($cacheManagerOptions)->
+                     build();
+   ```
+   
+ In the previous examples, setting the CacheManager either statically or in the 'setCacheManager' method,
+ the key 'cachemanager' in the $cacheManagerOptions array will be ignored.
+ 
+ 
+### Disable Cache
+Although this is not suggested as it will make more calls and slow your application, you can disable the Cache.
+ This can be accomplished by doing any of the above for setting the cache manager, however you will set it to 
+ be the null cache manager.  This can be done by setting the manager to `Null`
+ 
+### Extending Cache
+Extending the Cache Manager to supply your own caching is very easy.  There are only a couple
+files that are required.  A file that implements `Stormpath\Cache\Cache` and a file that
+implements `Stormpath\Cache\CacheManager`.  Take the following if we wanted to create an 
+Array caching system.
+
+  ```php
+    class ArrayCacheManager implements CacheManager {
+         public function getCache() { ... }
+    }
+  
+    class ArrayCache implements Cache {
+        public function get($key) { ... }
+        public function put($key, $value, $minutes) { ... }
+        public function delete($key) { ... }
+        public function clear() { ... }
+    }
+  ```
+    
+Then you would call it the same way you do for a cache manager normally.  
+
 ### Accessing Resources
 
 Most of the work you do with Stormpath is done through the applications
@@ -741,4 +856,4 @@ For additional information, please see the full [Project Documentation](http://d
   [stormpath-admin-login]: http://api.stormpath.com/login
   [concepts]: http://docs.stormpath.com/php/product-guide/#glossary-of-terms
   [sdk-zip]: https://github.com/stormpath/stormpath-sdk-php/archive/master.zip
-  [guzzle-installation-pear]: http://guzzlephp.org/getting-started/installation.html#pear
+  [guzzle-installation-pear]: http://guzzle.readthedocs.org/en/latest/overview.html#installation

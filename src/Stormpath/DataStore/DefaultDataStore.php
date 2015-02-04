@@ -18,6 +18,8 @@ namespace Stormpath\DataStore;
  * limitations under the License.
  */
 
+use Stormpath\Cache\Cacheable;
+use Stormpath\Cache\CacheManager;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\Request;
 use Stormpath\Http\RequestExecutor;
@@ -26,20 +28,24 @@ use Stormpath\Resource\Resource;
 use Stormpath\Resource\ResourceError;
 use Stormpath\Util\Version;
 
-class DefaultDataStore implements InternalDataStore
+class DefaultDataStore extends Cacheable implements InternalDataStore
 {
 
     private $requestExecutor;
     private $resourceFactory;
     private $baseUrl;
+    protected $cacheManager;
+    protected $cache;
 
     const DEFAULT_SERVER_HOST = 'api.stormpath.com';
     const DEFAULT_API_VERSION = '1';
 
-    public function __construct(RequestExecutor $requestExecutor, $baseUrl = null)
+    public function __construct(RequestExecutor $requestExecutor, CacheManager $cacheManager, $baseUrl = null)
     {
         $this->requestExecutor = $requestExecutor;
         $this->resourceFactory = new DefaultResourceFactory($this);
+        $this->cacheManager = $cacheManager;
+        $this->cache = $this->cacheManager->getCache();
 
         if(!$baseUrl)
         {
@@ -91,15 +97,23 @@ class DefaultDataStore implements InternalDataStore
      */
     public function getResource($href, $className, array $options = array())
     {
-        if ($this->needsToBeFullyQualified($href))
-        {
+        if ($this->needsToBeFullyQualified($href)) {
             $href = $this->qualify($href);
         }
 
         $queryString = $this->getQueryString($options);
-        $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
 
-        return $this->resourceFactory->instantiate($className, array($data, $queryString));
+        if (!$data = $this->isResourceCached($href)) {
+            $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
+        }
+
+        if($this->resourceIsCacheable($data)) {
+            $this->addDataToCache($data);
+        }
+
+        $result = $this->resourceFactory->instantiate($className, array($data, $queryString));
+
+        return $result;
     }
 
     public function create($parentHref, Resource $resource, $returnType, array $options = array())
@@ -107,11 +121,17 @@ class DefaultDataStore implements InternalDataStore
         $queryString = $this->getQueryString($options);
         $returnedResource = $this->saveResource($parentHref, $resource, $returnType, $queryString);
 
+
+
         $returnTypeClass = $this->resourceFactory->instantiate($returnType, array());
         if ($resource instanceof $returnTypeClass)
         {
             //ensure the caller's argument is updated with what is returned from the server:
             $resource->setProperties($this->toStdClass($returnedResource));
+        }
+
+        if($this->resourceIsCacheable($returnedResource)) {
+            $this->addDataToCache($returnedResource);
         }
 
         return $returnedResource;
@@ -135,6 +155,10 @@ class DefaultDataStore implements InternalDataStore
 
         $returnedResource = $this->saveResource($href, $resource, $returnType);
 
+        if($this->resourceIsCacheable($returnedResource)) {
+            $this->addDataToCache($returnedResource);
+        }
+
         //ensure the caller's argument is updated with what is returned from the server:
         $resource->setProperties($this->toStdClass($returnedResource));
 
@@ -144,7 +168,11 @@ class DefaultDataStore implements InternalDataStore
 
     public function delete(Resource $resource)
     {
-        return $this->executeRequest(Request::METHOD_DELETE, $resource->getHref());
+        $delete = $this->executeRequest(Request::METHOD_DELETE, $resource->getHref());
+
+        $this->removeResourceFromCache($resource);
+
+        return $delete;
     }
 
     protected function needsToBeFullyQualified($href)
@@ -196,6 +224,8 @@ class DefaultDataStore implements InternalDataStore
             $error = new Error($errorResult);
             throw new ResourceError($error);
         }
+
+
 
         return $result;
 
