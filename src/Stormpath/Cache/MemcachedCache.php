@@ -8,7 +8,6 @@ class MemcachedCache implements Cache {
 
     public function __construct($options)
     {
-        $this->limit = $options['maxitems'];
         $this->memcached = new Memcached();
         $this->memcached->addServers($options['memcached']);
     }

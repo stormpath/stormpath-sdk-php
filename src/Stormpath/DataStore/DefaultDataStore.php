@@ -97,16 +97,15 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
      */
     public function getResource($href, $className, array $options = array())
     {
-        if ($this->needsToBeFullyQualified($href))
-        {
+        if ($this->needsToBeFullyQualified($href)) {
             $href = $this->qualify($href);
         }
 
         $queryString = $this->getQueryString($options);
 
-
-        $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
-
+        if (!$data = $this->isResourceCached($href)) {
+            $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
+        }
 
         if($this->resourceIsCacheable($data)) {
             $this->addDataToCache($data);

@@ -15,6 +15,11 @@ abstract class Cacheable {
 
     }
 
+    protected function isResourceCached($href)
+    {
+        return $this->cache->get($href);
+    }
+
     protected function addDataToCache($data)
     {
         $key = $data->href;
