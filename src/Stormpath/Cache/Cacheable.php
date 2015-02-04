@@ -2,54 +2,29 @@
 
 abstract class Cacheable {
 
-    protected function addDataToCache($data, $href)
+    protected function resourceIsCacheable($resource)
     {
-        $key = $this->generateKey($href);
+        $cache = true;
+
+        // Check to see if it is a collection
+        // All collections will have an items array in the data
+        // If it is a collection, we do not want to cache it;
+        if(isset($resource->items)) $cache = false;
+
+        return $cache;
+
+    }
+
+    protected function addDataToCache($data)
+    {
+        $key = $data->href;
         $this->cache->put($key, $data, $this->cacheManager->options['ttl']);
     }
 
-    protected function cachedData($href)
+    protected function removeResourceFromCache($resource)
     {
-        $key = $this->generateKey($href);
-        return $this->cache->get($key);
+        $this->cache->delete($resource->getHref());
     }
 
-    protected function createCachableResource($resource, $parentHref)
-    {
-        $tenantKey = $this->generateKey($resource->tenant->href);
-        $key = $tenantKey . str_replace('/', ':', $parentHref);
 
-
-        $this->cache->delete($key);
-    }
-
-    protected function saveCachableResource($resource)
-    {
-        $tenantKey = $this->generateKey($resource->tenant->href);
-        $key = $tenantKey . ':' . $this->getResourceType($resource->href);
-
-        $this->cache->delete($key);
-    }
-
-    protected function deleteCachableResource($resource)
-    {
-        $tenantKey = $this->generateKey($resource->tenant->href);
-        $key = $tenantKey . ':' . $this->getResourceType($resource->href);
-
-        $this->cache->delete($key);
-    }
-
-    private function generateKey($href)
-    {
-        $href = explode('/', $href);
-        $href = array_slice($href, 4);
-        return implode(':', $href);
-    }
-
-    private function getResourceType($href)
-    {
-        $href = explode('/', $href);
-        $href = array_slice($href, 4);
-        return array_shift($href);
-    }
 }

@@ -8,9 +8,9 @@ class MemcachedCache implements Cache {
 
     public function __construct($options)
     {
+        $this->limit = $options['maxitems'];
         $this->memcached = new Memcached();
         $this->memcached->addServers($options['memcached']);
-
     }
 
     /**
@@ -21,6 +21,7 @@ class MemcachedCache implements Cache {
      */
     public function get($key)
     {
+
         $value = $this->memcached->get($key);
         if ($this->memcached->getResultCode() == 0)
         {
@@ -39,6 +40,7 @@ class MemcachedCache implements Cache {
      */
     public function put($key, $value, $minutes)
     {
+
         $this->memcached->set($key, $value, $minutes * 60 );
     }
 

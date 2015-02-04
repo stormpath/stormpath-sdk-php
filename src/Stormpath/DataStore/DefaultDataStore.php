@@ -103,13 +103,13 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         }
 
         $queryString = $this->getQueryString($options);
-        $data = $this->cachedData($href);
 
 
-        if(null === $data) {
+        $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
 
-            $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
-            $this->addDataToCache($data, $href);
+
+        if($this->resourceIsCacheable($data)) {
+            $this->addDataToCache($data);
         }
 
         $result = $this->resourceFactory->instantiate($className, array($data, $queryString));
@@ -122,13 +122,17 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $queryString = $this->getQueryString($options);
         $returnedResource = $this->saveResource($parentHref, $resource, $returnType, $queryString);
 
-        $this->createCachableResource($returnedResource, $parentHref);
+
 
         $returnTypeClass = $this->resourceFactory->instantiate($returnType, array());
         if ($resource instanceof $returnTypeClass)
         {
             //ensure the caller's argument is updated with what is returned from the server:
             $resource->setProperties($this->toStdClass($returnedResource));
+        }
+
+        if($this->resourceIsCacheable($returnedResource)) {
+            $this->addDataToCache($returnedResource);
         }
 
         return $returnedResource;
@@ -152,7 +156,9 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         $returnedResource = $this->saveResource($href, $resource, $returnType);
 
-        $this->saveCachableResource($resource);
+        if($this->resourceIsCacheable($returnedResource)) {
+            $this->addDataToCache($returnedResource);
+        }
 
         //ensure the caller's argument is updated with what is returned from the server:
         $resource->setProperties($this->toStdClass($returnedResource));
@@ -163,8 +169,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     public function delete(Resource $resource)
     {
-        $this->deleteCachableResource($resource);
-        return $this->executeRequest(Request::METHOD_DELETE, $resource->getHref());
+        $delete = $this->executeRequest(Request::METHOD_DELETE, $resource->getHref());
+
+        $this->removeResourceFromCache($resource);
+
+        return $delete;
     }
 
     protected function needsToBeFullyQualified($href)
