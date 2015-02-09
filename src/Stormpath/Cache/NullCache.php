@@ -48,14 +48,4 @@ class NullCache implements Cache {
         // TODO: Implement clear() method.
     }
 
-    /**
-     * Check existence of a key in cache.
-     *
-     * @param string $key
-     * @return void
-     */
-    public function has($key)
-    {
-        // TODO: Implement has() method.
-    }
 }

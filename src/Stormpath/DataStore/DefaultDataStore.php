@@ -124,6 +124,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $resource->setProperties($this->toStdClass($returnedResource));
         }
 
+        if($this->resourceIsCacheable($returnedResource)) {
+            $this->addDataToCache($returnedResource);
+        }
+
+
         return $returnedResource;
     }
 
@@ -145,6 +150,10 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         $returnedResource = $this->saveResource($href, $resource, $returnType);
 
+        if($this->resourceIsCacheable($returnedResource)) {
+            $this->addDataToCache($returnedResource);
+        }
+
         //ensure the caller's argument is updated with what is returned from the server:
         $resource->setProperties($this->toStdClass($returnedResource));
 
@@ -154,7 +163,9 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     public function delete(Resource $resource)
     {
-        return $this->executeRequest(Request::METHOD_DELETE, $resource->getHref());
+        $delete = $this->executeRequest(Request::METHOD_DELETE, $resource->getHref());
+        $this->removeResourceFromCache($resource);
+        return $delete;
     }
 
     protected function needsToBeFullyQualified($href)
