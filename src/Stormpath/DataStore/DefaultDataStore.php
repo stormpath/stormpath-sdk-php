@@ -18,6 +18,8 @@ namespace Stormpath\DataStore;
  * limitations under the License.
  */
 
+use Stormpath\Cache\Cacheable;
+use Stormpath\Cache\CacheManager;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\Request;
 use Stormpath\Http\RequestExecutor;
@@ -26,20 +28,24 @@ use Stormpath\Resource\Resource;
 use Stormpath\Resource\ResourceError;
 use Stormpath\Util\Version;
 
-class DefaultDataStore implements InternalDataStore
+class DefaultDataStore extends Cacheable implements InternalDataStore
 {
 
     private $requestExecutor;
     private $resourceFactory;
     private $baseUrl;
+    protected $cacheManager;
 
     const DEFAULT_SERVER_HOST = 'api.stormpath.com';
     const DEFAULT_API_VERSION = '1';
 
-    public function __construct(RequestExecutor $requestExecutor, $baseUrl = null)
+    public function __construct(RequestExecutor $requestExecutor, $cacheManager, $baseUrl = null)
     {
         $this->requestExecutor = $requestExecutor;
         $this->resourceFactory = new DefaultResourceFactory($this);
+        $this->cacheManager = $cacheManager;
+        $this->cache = $this->cacheManager->getCache();
+
 
         if(!$baseUrl)
         {
@@ -97,8 +103,12 @@ class DefaultDataStore implements InternalDataStore
         }
 
         $queryString = $this->getQueryString($options);
-        $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
-
+        if (!$data = $this->isResourceCached($href)) {
+            $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
+        }
+        if($this->resourceIsCacheable($data)) {
+            $this->addDataToCache($data);
+        }
         return $this->resourceFactory->instantiate($className, array($data, $queryString));
     }
 

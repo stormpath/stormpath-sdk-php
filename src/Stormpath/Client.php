@@ -80,7 +80,13 @@ class Client extends Magic
 
     public static $baseUrl;
 
+    public static $cacheManager = 'Null';
+
+    public static $cacheManagerOptions = array();
+
     private static $instance;
+
+    private $cacheManagerInstance;
 
     private $dataStore;
 
@@ -94,11 +100,15 @@ class Client extends Magic
      * @param $baseUrl optional parameter for specifying the base URL when not using the default one
      *         (https://api.stormpath.com/v1).
      */
-    public function __construct(ApiKey $apiKey, $baseUrl = null)
+    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null)
     {
         parent::__construct();
+        self::$cacheManager = $cacheManager;
+        self::$cacheManagerOptions = $cacheManagerOptions;
+
         $requestExecutor = new HttpClientRequestExecutor($apiKey);
-        $this->dataStore = new DefaultDataStore($requestExecutor, $baseUrl);
+        $this->cacheManagerInstance = new $cacheManager($cacheManagerOptions);
+        $this->dataStore = new DefaultDataStore($requestExecutor, $this->cacheManagerInstance, $baseUrl);
     }
 
     public static function get($href, $className, $path = null, array $options = array())
@@ -148,6 +158,8 @@ class Client extends Magic
                               setApiKeyProperties(self::$apiKeyProperties)->
                               setApiKeyIdPropertyName(self::$apiKeyIdPropertyName)->
                               setApiKeySecretPropertyName(self::$apiKeySecretPropertyName)->
+                              setCacheManager(self::$cacheManager)->
+                              setCacheManagerOptions(self::$cacheManagerOptions)->
                               setBaseURL(self::$baseUrl)->
                               build();
         }
@@ -169,5 +181,11 @@ class Client extends Magic
     {
         return $this->dataStore;
     }
+
+    public function getCacheManager()
+    {
+        return $this->cacheManagerInstance;
+    }
+
 
 }

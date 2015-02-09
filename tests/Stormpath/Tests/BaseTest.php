@@ -77,7 +77,6 @@ class BaseTest extends \PHPUnit_Framework_TestCase
     public function testClient()
     {
         self::$client = \Stormpath\Client::getInstance();
-
         $this->assertInstanceOf('Stormpath\Client', self::$client);
     }
 
@@ -121,7 +120,29 @@ class BaseTest extends \PHPUnit_Framework_TestCase
                     setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
                     setApiKeyProperties("apiKey.id=something\napiKey.secret=somethingSecret")->
                     build();
+
         $this->assertInstanceOf('Stormpath\Client', $result);
+    }
+
+    public function testCacheManagerCanBeSetStatically()
+    {
+        \Stormpath\Client::$cacheManager = 'Memcached';
+
+        $this->assertEquals('Memcached', \Stormpath\Client::$cacheManager);
+    }
+
+    public function testCacheManagerOptionsCanBeSetStatically()
+    {
+        \Stormpath\Client::$cacheManagerOptions = array('item1' => true);
+
+        $this->assertEquals(array('item1' => true), \Stormpath\Client::$cacheManagerOptions);
+    }
+
+    public function testClientInstanceDefaultsCacheIfNoCacheItemsAreSet()
+    {
+        $client = \Stormpath\Client::getInstance();
+        $this->assertInstanceOf('Stormpath\Cache\NullCacheManager', $client->getCacheManager());
+
     }
 
     protected static function createResource($parentHref, \Stormpath\Resource\Resource $resource, array $options = array())

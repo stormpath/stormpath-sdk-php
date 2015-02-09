@@ -17,6 +17,7 @@ namespace Stormpath;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+use Stormpath\Cache\Exceptions\InvalidCacheManagerException;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Http\Request;
@@ -50,6 +51,8 @@ class ClientBuilder extends Magic
     private $apiKeySecretPropertyName = "apiKey.secret";
     private $apiKeyProperties;
     private $apiKeyFileLocation;
+    private $cacheManager = NULL;
+    private $cacheManagerOptions = array();
     private $baseURL;
 
     /**
@@ -204,6 +207,22 @@ class ClientBuilder extends Magic
         return $this;
     }
 
+    public function setCacheManager($cacheManager)
+    {
+        $this->cacheManager = $this->qualifyCacheManager($cacheManager);
+
+        return $this;
+    }
+
+    public function setCacheManagerOptions(Array $cacheManagerOptions = [])
+    {
+        $this->cacheManagerOptions = $this->setCacheOptionsArray($cacheManagerOptions);
+        if(!$this->cacheManager) {
+            $this->cacheManager = $this->qualifyCacheManager($this->cacheManagerOptions['cachemanager']);
+        }
+        return $this;
+    }
+
     /**
      * Constructs a new {@link Stormpath\Client\Client} instance based on the ClientBuilder's
      * current configuration state.
@@ -217,10 +236,12 @@ class ClientBuilder extends Magic
 
         if ($this->apiKeyProperties)
         {
+
             $apiKeyProperties = parse_ini_string($this->apiKeyProperties);
 
         } else
         {
+
             // need to load the properties file
             $apiKeyProperties = $this->getFileExtract();
 
@@ -232,13 +253,19 @@ class ClientBuilder extends Magic
             }
         }
 
+        if (!$this->cacheManager)
+        {
+            $this->setCacheManagerOptions();
+        }
+
+
         $apiKeyId = $this->getRequiredPropertyValue($apiKeyProperties, 'apiKeyId', $this->apiKeyIdPropertyName);
 
         $apiKeySecret = $this->getRequiredPropertyValue($apiKeyProperties, 'apiKeySecret', $this->apiKeySecretPropertyName);
 
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
 
-        return new Client($apiKey, $this->baseURL);
+        return new Client($apiKey, $this->cacheManager, $this->cacheManagerOptions, $this->baseURL);
     }
 
     public function setBaseURL($baseURL)
@@ -290,5 +317,47 @@ class ClientBuilder extends Magic
         {
             return parse_ini_file($this->apiKeyFileLocation);
         }
+    }
+
+    private function setCacheOptionsArray($overrides)
+    {
+        $defaults = array(
+            'cachemanager' => 'Null', //Memory, Memcached, Redis, Null, or the full namespaced CacheManager instance
+            'ttl' => 60, // This value is set in minutes
+            'tti' => 120, // This value is set in minutes
+            'regions' => array(
+                'accounts' => array(
+                    'ttl' => 60,
+                    'tti' => 120
+                ),
+                'applications' => array(
+                    'ttl' => 60,
+                    'tti' => 120
+                ),
+                'directories' => array(
+                    'ttl' => 60,
+                    'tti' => 120
+                ),
+                'groups' => array(
+                    'ttl' => 60,
+                    'tti' => 120
+                ),
+                'tenants' => array(
+                    'ttl' => 60,
+                    'tti' => 120
+                ),
+            )
+        );
+        return array_replace($defaults, $overrides);
+    }
+
+    private function qualifyCacheManager($cacheManager)
+    {
+        $cacheManagerPath = "Stormpath\\Cache\\{$cacheManager}CacheManager";
+
+        if(class_exists($cacheManagerPath)) return $cacheManagerPath;
+
+        if(class_exists($cacheManager)) return $cacheManager;
+
     }
 }
