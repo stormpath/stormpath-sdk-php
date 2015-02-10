@@ -3,13 +3,13 @@
 namespace Stormpath\Tests\Cache;
 
 
-class MemoryCacheTest extends \PHPUnit_Framework_TestCase {
+class ArrayCacheTest extends \PHPUnit_Framework_TestCase {
 
     public $cache;
 
     public function setUp()
     {
-        $cacheManager = new \Stormpath\Cache\MemoryCacheManager(array());
+        $cacheManager = new \Stormpath\Cache\ArrayCacheManager(array());
 
         $this->cache = $cacheManager->getCache();
 

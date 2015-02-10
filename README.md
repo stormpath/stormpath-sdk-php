@@ -262,9 +262,11 @@ instantiated (using the ClientBuilder or the Client constructor), the Client
 instance must be used to start interactions with Stormpath.
 
 ### Cache
-By default all items will be cached.  This will use Memory caching if nothing is defined.
-The caching happens automatically for you so you do not have to think about it.  There are many
-reason why you may want to cache api calls to the Stormpath API where the main reason is speed.
+By default all items will be cached.  This will use Array caching if nothing is defined.
+The caching happens automatically for you so you do not have to think about it.  NOTE: Array caching will 
+only store an item in cache within an array.  This means an item will only be available within the cache
+for a single request in the application.  Array Caching does not persist across multiple requests.
+There are many reason why you may want to cache api calls to the Stormpath API where the main reason is speed.
 Caching allows you to make one api call over a set amount of time while all subsequent calls to
 the same endpoint will pull data that was cached.  By default, the time to live is set to 1 hour, 
 while the time to idle is set to 2 hours.
@@ -274,7 +276,7 @@ The following is the default array that is provided to the ClientBuilder if no o
 
   ```php
   $cacheManagerOptions = array(
-      'cachemanager' => 'Memory', //Memory, Memcached, Redis, Null, or the full namespaced CacheManager instance
+      'cachemanager' => 'Array', //Array, Memcached, Redis, Null, or the full namespaced CacheManager instance
       'memcached' => array(
           array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
       ),

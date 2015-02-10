@@ -1,7 +1,7 @@
 <?php namespace Stormpath\Cache;
 
 
-class MemoryCache implements Cache {
+class ArrayCache implements Cache {
 
     protected $storage = array();
 
