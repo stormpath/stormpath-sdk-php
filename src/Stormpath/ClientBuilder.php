@@ -322,7 +322,7 @@ class ClientBuilder extends Magic
     private function setCacheOptionsArray($overrides)
     {
         $defaults = array(
-            'cachemanager' => 'Null', //Memory, Memcached, Redis, Null, or the full namespaced CacheManager instance
+            'cachemanager' => 'Array', //Array, Memcached, Redis, Null, or the full namespaced CacheManager instance
             'ttl' => 60, // This value is set in minutes
             'tti' => 120, // This value is set in minutes
             'regions' => array(

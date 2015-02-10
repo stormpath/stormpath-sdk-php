@@ -11,9 +11,9 @@ class RedisCache implements Cache {
         $this->redis = new Redis();
         $this->redis->connect($options['redis']['host']);
 
-        if($options['redis']['password'] != NULL) {
+        //if($options['redis']['password'] != NULL) {
             $this->redis->auth($options['redis']['password']);
-        }
+        //}
         $this->prefix = "stormpath/";
 
     }

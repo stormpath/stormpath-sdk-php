@@ -141,7 +141,7 @@ class BaseTest extends \PHPUnit_Framework_TestCase
     public function testClientInstanceDefaultsCacheIfNoCacheItemsAreSet()
     {
         $client = \Stormpath\Client::getInstance();
-        $this->assertInstanceOf('Stormpath\Cache\NullCacheManager', $client->getCacheManager());
+        $this->assertInstanceOf('Stormpath\Cache\ArrayCacheManager', $client->getCacheManager());
 
     }
 

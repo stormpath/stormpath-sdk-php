@@ -80,7 +80,7 @@ class Client extends Magic
 
     public static $baseUrl;
 
-    public static $cacheManager = 'Null';
+    public static $cacheManager = 'Array';
 
     public static $cacheManagerOptions = array();
 
