@@ -15,20 +15,35 @@ abstract class Cacheable {
 
     }
 
-    protected function isResourceCached($href)
+    protected function isResourceCached($href, $options = array())
     {
-        return $this->cache->get($href);
+        $key = $this->createKey($href, $options);
+        $data = $this->cache->get($key);
+
+        return $data;
     }
 
-    protected function addDataToCache($data)
+    protected function addDataToCache($data, $options = array())
     {
-        $key = $data->href;
+        if(!isset($data->href)) return true;
+
+        $key = $this->createKey($data->href, $options);
         $this->cache->put($key, $data, $this->cacheManager->options['ttl']);
     }
 
     protected function removeResourceFromCache($resource)
     {
         $this->cache->delete($resource->getHref());
+    }
+
+    private function createKey($href, $options)
+    {
+        $key = $href;
+        if(!empty($options)) {
+            $key .= ':' . implode(':',$options);
+        }
+
+        return $key;
     }
 
 
