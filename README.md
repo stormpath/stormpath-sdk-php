@@ -741,4 +741,4 @@ For additional information, please see the full [Project Documentation](http://d
   [stormpath-admin-login]: http://api.stormpath.com/login
   [concepts]: http://docs.stormpath.com/php/product-guide/#glossary-of-terms
   [sdk-zip]: https://github.com/stormpath/stormpath-sdk-php/archive/master.zip
-  [guzzle-installation-pear]: http://guzzlephp.org/getting-started/installation.html#pear
+  [guzzle-installation-pear]: http://guzzle.readthedocs.org/en/latest/overview.html#installation
