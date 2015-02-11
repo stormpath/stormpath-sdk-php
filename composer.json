@@ -27,7 +27,7 @@
     },
     "require": {
         "php": ">=5.3.3",
-        "guzzle/http": "v3.7.4"
+        "guzzle/http": "3.9.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
