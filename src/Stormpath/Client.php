@@ -187,5 +187,10 @@ class Client extends Magic
         return $this->cacheManagerInstance;
     }
 
+    public static function tearDown()
+    {
+        static::$instance = NULL;
+    }
+
 
 }
