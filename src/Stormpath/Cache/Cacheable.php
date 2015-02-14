@@ -11,6 +11,9 @@ abstract class Cacheable {
         // If it is a collection, we do not want to cache it;
         if(isset($resource->items)) $cache = false;
 
+        // We dont want to cache if it does not have a href.
+        if(!isset($resource->href)) $cache = false;
+
         return $cache;
 
     }
@@ -25,7 +28,7 @@ abstract class Cacheable {
 
     protected function addDataToCache($data, $options = array())
     {
-        if(!isset($data->href)) return true;
+
 
         $key = $this->createKey($data->href, $options);
         $this->cache->put($key, $data, $this->cacheManager->options['ttl']);

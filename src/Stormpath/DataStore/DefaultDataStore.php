@@ -110,7 +110,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         }
 
         if($this->resourceIsCacheable($data)) {
-            $this->addDataToCache($data, $options);
+            $this->addDataToCache($data, $queryString);
         }
 
         return $this->resourceFactory->instantiate($className, array($data, $queryString));
@@ -129,9 +129,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $resource->setProperties($this->toStdClass($returnedResource));
         }
 
-        if($this->resourceIsCacheable($returnedResource)) {
-            $this->addDataToCache($returnedResource, $options);
-        }
+
 
         return $returnedResource;
     }
@@ -154,9 +152,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         $returnedResource = $this->saveResource($href, $resource, $returnType);
 
-        if($this->resourceIsCacheable($returnedResource)) {
-            $this->addDataToCache($returnedResource);
-        }
+
 
         //ensure the caller's argument is updated with what is returned from the server:
         $resource->setProperties($this->toStdClass($returnedResource));
@@ -223,6 +219,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         }
 
 
+
         return $result;
 
     }
@@ -239,6 +236,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
                                           json_encode($this->toStdClass($resource)),
                                           $query);
         $this->removeResourceFromCache($resource);
+
+        if($this->resourceIsCacheable($response)) {
+            $this->addDataToCache($response, $query);
+        }
+
         return $this->resourceFactory->instantiate($returnType, array($response, $query));
     }
 
