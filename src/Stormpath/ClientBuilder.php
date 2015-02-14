@@ -323,6 +323,8 @@ class ClientBuilder extends Magic
     {
         $defaults = array(
             'cachemanager' => 'Array', //Array, Memcached, Redis, Null, or the full namespaced CacheManager instance
+            'memcached' => array(),
+            'redis' => array(),
             'ttl' => 60, // This value is set in minutes
             'tti' => 120, // This value is set in minutes
             'regions' => array(
