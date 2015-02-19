@@ -214,7 +214,7 @@ class ClientBuilder extends Magic
         return $this;
     }
 
-    public function setCacheManagerOptions(Array $cacheManagerOptions = [])
+    public function setCacheManagerOptions(Array $cacheManagerOptions = array())
     {
         $this->cacheManagerOptions = $this->setCacheOptionsArray($cacheManagerOptions);
         if(!$this->cacheManager) {
