@@ -67,4 +67,33 @@ class CacheTest extends BaseTest
         $this->assertContains('Another App for Cache', $application->name);
 
     }
+
+    public function testDeletesFromCacheWhenResourceIsDeleted()
+    {
+        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Delete '. md5(time())));
+        $cache = parent::$client->dataStore->cache;
+
+        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
+        $this->assertContains('Another App for Cache Delete', $application->name);
+
+        $application->delete();
+
+        $appInCache = $cache->get($application->href);
+
+        $this->assertNull($appInCache);
+    }
+
+    public function testWillUpdateCacheWhenResourceUpdates()
+    {
+        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Update '. md5(time())));
+       
+        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
+        $this->assertContains('Another App for Cache Update', $application->name);
+
+        $application->name = 'Test Update';
+        $application->save();
+
+        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
+        $this->assertEquals('Test Update', $application->name);
+    }
 }
