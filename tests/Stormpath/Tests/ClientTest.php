@@ -49,9 +49,11 @@ class ClientTest extends BaseTest {
 
     public function testCacheManagerCanBeSetStatically()
     {
+        $origCacheManager =  \Stormpath\Client::$cacheManager;
         \Stormpath\Client::$cacheManager = 'Memcached';
 
         $this->assertEquals('Memcached', \Stormpath\Client::$cacheManager);
+        \Stormpath\Client::$cacheManager = $origCacheManager;
     }
 
     public function testCacheManagerOptionsCanBeSetStatically()
@@ -63,6 +65,7 @@ class ClientTest extends BaseTest {
 
     public function testClientInstanceDefaultsCacheIfNoCacheItemsAreSet()
     {
+        \Stormpath\Client::tearDown();
         $client = \Stormpath\Client::getInstance();
         $this->assertInstanceOf('Stormpath\Cache\ArrayCacheManager', $client->getCacheManager());
 

@@ -31,6 +31,7 @@ class CacheTest extends BaseTest
         if (self::$application) {
             self::$application->delete();
         }
+        parent::tearDownAfterClass();
 
     }
 
@@ -99,5 +100,26 @@ class CacheTest extends BaseTest
 
         $this->assertContains('Test Update', $appInCache->name);
         $application->delete();
+    }
+
+    public function testNullCacheDoesNotCache()
+    {
+        $origClient = parent::$client->dataStore->cache;
+        parent::$client->tearDown();
+        \Stormpath\Client::$cacheManager = 'Null';
+
+        $client = \Stormpath\Client::getInstance();
+        $cache = $client->cacheManager->getCache();
+
+        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Null Cache '. md5(time())));
+
+        $appInCache = $cache->get($application->href);
+
+        $this->assertNull($appInCache);
+
+        $application->delete();
+
+
+        parent::$client = $origClient;
     }
 }

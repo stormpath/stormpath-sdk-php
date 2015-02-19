@@ -355,11 +355,12 @@ class ClientBuilder extends Magic
 
     private function qualifyCacheManager($cacheManager)
     {
+        if(class_exists($cacheManager)) return $cacheManager;
+
         $cacheManagerPath = "Stormpath\\Cache\\{$cacheManager}CacheManager";
 
         if(class_exists($cacheManagerPath)) return $cacheManagerPath;
 
-        if(class_exists($cacheManager)) return $cacheManager;
 
     }
 }
