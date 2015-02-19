@@ -72,56 +72,13 @@ class BaseTest extends \PHPUnit_Framework_TestCase
         \Stormpath\Client::$apiKeyFileLocation = $apiKeyFileLocation;
         \Stormpath\Client::$apiKeyProperties = $apiKeyProperties;
         \Stormpath\Client::$baseUrl = $baseUrl;
+        \Stormpath\Client::$cacheManager = 'Array';
     }
 
     public function testClient()
     {
         self::$client = \Stormpath\Client::getInstance();
-
         $this->assertInstanceOf('Stormpath\Client', self::$client);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testNoApiKeyFile()
-    {
-        $builder = new \Stormpath\ClientBuilder();
-        $builder->build();
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testInvalidApiKeyId()
-    {
-        $builder = new \Stormpath\ClientBuilder();
-        $builder->
-            setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
-            setApiKeyIdPropertyName('badId')->
-            build();
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testInvalidApiKeySecret()
-    {
-        $builder = new \Stormpath\ClientBuilder();
-        $builder->
-            setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
-            setApiKeySecretPropertyName('badSecret')->
-            build();
-    }
-
-    public function testClientFromPropertiesString()
-    {
-        $builder = new \Stormpath\ClientBuilder();
-        $result = $builder->
-                    setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
-                    setApiKeyProperties("apiKey.id=something\napiKey.secret=somethingSecret")->
-                    build();
-        $this->assertInstanceOf('Stormpath\Client', $result);
     }
 
     protected static function createResource($parentHref, \Stormpath\Resource\Resource $resource, array $options = array())

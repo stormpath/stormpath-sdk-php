@@ -18,6 +18,8 @@ namespace Stormpath\DataStore;
  * limitations under the License.
  */
 
+use Stormpath\Cache\Cacheable;
+use Stormpath\Cache\CacheManager;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\Request;
 use Stormpath\Http\RequestExecutor;
@@ -26,20 +28,24 @@ use Stormpath\Resource\Resource;
 use Stormpath\Resource\ResourceError;
 use Stormpath\Util\Version;
 
-class DefaultDataStore implements InternalDataStore
+class DefaultDataStore extends Cacheable implements InternalDataStore
 {
 
     private $requestExecutor;
     private $resourceFactory;
     private $baseUrl;
+    protected $cacheManager;
 
     const DEFAULT_SERVER_HOST = 'api.stormpath.com';
     const DEFAULT_API_VERSION = '1';
 
-    public function __construct(RequestExecutor $requestExecutor, $baseUrl = null)
+    public function __construct(RequestExecutor $requestExecutor, $cacheManager, $baseUrl = null)
     {
         $this->requestExecutor = $requestExecutor;
         $this->resourceFactory = new DefaultResourceFactory($this);
+        $this->cacheManager = $cacheManager;
+        $this->cache = $this->cacheManager->getCache();
+
 
         if(!$baseUrl)
         {
@@ -97,13 +103,22 @@ class DefaultDataStore implements InternalDataStore
         }
 
         $queryString = $this->getQueryString($options);
-        $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
+
+
+        if (!$data = $this->isResourceCached($href, $options)) {
+            $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
+        }
+
+        if($this->resourceIsCacheable($data)) {
+            $this->addDataToCache($data, $queryString);
+        }
 
         return $this->resourceFactory->instantiate($className, array($data, $queryString));
     }
 
     public function create($parentHref, Resource $resource, $returnType, array $options = array())
     {
+
         $queryString = $this->getQueryString($options);
         $returnedResource = $this->saveResource($parentHref, $resource, $returnType, $queryString);
 
@@ -113,6 +128,8 @@ class DefaultDataStore implements InternalDataStore
             //ensure the caller's argument is updated with what is returned from the server:
             $resource->setProperties($this->toStdClass($returnedResource));
         }
+
+
 
         return $returnedResource;
     }
@@ -135,6 +152,8 @@ class DefaultDataStore implements InternalDataStore
 
         $returnedResource = $this->saveResource($href, $resource, $returnType);
 
+
+
         //ensure the caller's argument is updated with what is returned from the server:
         $resource->setProperties($this->toStdClass($returnedResource));
 
@@ -144,7 +163,9 @@ class DefaultDataStore implements InternalDataStore
 
     public function delete(Resource $resource)
     {
-        return $this->executeRequest(Request::METHOD_DELETE, $resource->getHref());
+        $delete = $this->executeRequest(Request::METHOD_DELETE, $resource->getHref());
+        $this->removeResourceFromCache($resource);
+        return $delete;
     }
 
     protected function needsToBeFullyQualified($href)
@@ -197,6 +218,8 @@ class DefaultDataStore implements InternalDataStore
             throw new ResourceError($error);
         }
 
+
+
         return $result;
 
     }
@@ -212,6 +235,11 @@ class DefaultDataStore implements InternalDataStore
                                           $href,
                                           json_encode($this->toStdClass($resource)),
                                           $query);
+        $this->removeResourceFromCache($resource);
+
+        if($this->resourceIsCacheable($response)) {
+            $this->addDataToCache($response, $query);
+        }
 
         return $this->resourceFactory->instantiate($returnType, array($response, $query));
     }
