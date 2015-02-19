@@ -86,14 +86,18 @@ class CacheTest extends BaseTest
     public function testWillUpdateCacheWhenResourceUpdates()
     {
         $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Update '. md5(time())));
-       
+        $cache = parent::$client->dataStore->cache;
+
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
         $this->assertContains('Another App for Cache Update', $application->name);
 
-        $application->name = 'Test Update';
+        $application->name = 'Test Update '. md5(time());
         $application->save();
 
-        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertEquals('Test Update', $application->name);
+        $appInCache = $cache->get($application->href);
+
+
+        $this->assertContains('Test Update', $appInCache->name);
+        $application->delete();
     }
 }
