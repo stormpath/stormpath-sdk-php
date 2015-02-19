@@ -5,6 +5,9 @@ php:
 - 5.3
 before_script:
 - composer install --dev
+- echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+- echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
 script: vendor/bin/phpunit
 services:
   - redis-server
