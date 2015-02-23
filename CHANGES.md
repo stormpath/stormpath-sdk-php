@@ -1,6 +1,13 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.1.0.beta
+------------------
+
+Released on February 23, 2015
+
+- Added cache support, with built in support for Array, Redis and Memcache cache stores.
+
 Version 1.0.1.beta
 ------------------
 
