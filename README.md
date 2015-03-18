@@ -495,20 +495,20 @@ An example of creating an account with custom data
   $account->username = 'johnsmith';
   
   $customData = $account->customData;
-  $customData->put("rank", "Captain");
-  $customData->put("birthDate", "2305-07-13");
-  $customData->put("favoriteDrink", "favoriteDrink");
+  $customData->rank = "Captain";
+  $customData->birthDate = "2305-07-13";
+  $customData->favoriteDrink = "favoriteDrink";
   
   $directory->createAccount($account);
   ```
   
-  You are also able to use our magic methods to set custom data.  The same custom data as above would look like the following:
+  Custom Data uses Magic methods of setting the data.  You can also use the put() method to accomplish the same solution. 
   
 ```php
     $customData = $account->customData;
-    $customData->rank = "Captain";
-    $customData->birthDate = "2305-07-13";
-    $customData->favoriteDrink = "favoriteDrink";
+    $customData->put("rank", "Captain");
+    $customData->put("birthDate", "2305-07-13");
+    $customData->put("favoriteDrink", "favoriteDrink");
     ```
 
 #### Retrieve Custom Data
@@ -523,12 +523,20 @@ An example of retrieving custom data for an application.
   ```
           
 #### Update Custom Data
-
+//TODO: Update to magic method
+```php
+  $customData->favoriteColor = "red";
+  $customData->hobby = "Kendo";
+  $customData->save();
+  ```
+  
+  OR use the put() method on Custom Data
 ```php
   $customData->put("favoriteColor", "red");
   $customData->put("hobby", "Kendo");
   $customData->save();
   ```
+  
 #### Delete Custom Data
 You may delete all of a resource's custom data by invoking the delete() method to the resource's CustomData
 ```php
@@ -544,8 +552,8 @@ You may also delete an individual custom data field entirely by calling the remo
 CustomData while stating the custom data field as a parameter and then saving it.
 
 ```php
-  $customData.remove("favoriteColor");
-  $customData.save();
+  $customData->remove("favoriteColor");
+  $customData->save();
   ```
 
 
