@@ -453,13 +453,13 @@ You may find it useful to store your own custom data on resource's.  With the St
 All resource's support a Custom Data collection for your own custom use.  The CustomData resource is a schema-less JSON 
 object (aka ‘map’, ‘associative array’, or ‘dictionary’) that allows you to specify whatever name/value pairs you wish.
 
-The CustomData resource is always connected to a resource and you can always reach it by calling the 
-getCustomData() method on the resource instance:
+The CustomData resource is always connected to a resource and you can always reach it by calling customData magic method 
+(alias to getCustomData()) on the resource instance:
 
 ```php
   $application = \Stormpath\Resource\Application::get($applicationHref);
 
-  $applicationCustomData = $application->getCustomData();
+  $applicationCustomData = $application->customData;
 
   //Or
 
