@@ -449,8 +449,8 @@ or from the tenant resource (or from the application, in the case of account sto
   ```
   
 ### Custom Data
-You may find it useful to store your own custom data on resources.  With the Stormpath SDK, we make it easy to do so. 
-All resources support a Custom Data collection for your own custom use.  The CustomData resource is a schema-less JSON 
+You may find it useful to store your own custom data on resource's.  With the Stormpath SDK, we make it easy to do so. 
+All resource's support a Custom Data collection for your own custom use.  The CustomData resource is a schema-less JSON 
 object (aka ‘map’, ‘associative array’, or ‘dictionary’) that allows you to specify whatever name/value pairs you wish.
 
 The CustomData resource is always connected to a resource and you can always reach it by calling the 
@@ -467,7 +467,7 @@ getCustomData() method on the resource instance:
                  dataStore->
                  getResource($applicationHref, \Stormpath\Stormpath::APPLICATION);
                  
-  $applicationCustomData = $application->getCustomData();
+  $applicationCustomData = $application->customData;
 
   ```
   
@@ -485,7 +485,7 @@ You can store an unlimited number of additional name/value pairs in the CustomDa
     * may not equal any of the following reserved names: href, createdAt, modifiedAt, meta, spMeta, spmeta, ionmeta, or ionMeta.
     
 #### Create Custom Data
-An example of creating an application with custom data
+An example of creating an account with custom data
 ```php 
   $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
   $account->email = 'john.smith@example.com';
@@ -494,13 +494,22 @@ An example of creating an application with custom data
   $account->surname = 'Smith';
   $account->username = 'johnsmith';
   
-  $customData = $account->getCustomData();
+  $customData = $account->customData;
   $customData->put("rank", "Captain");
   $customData->put("birthDate", "2305-07-13");
   $customData->put("favoriteDrink", "favoriteDrink");
   
   $directory->createAccount($account);
   ```
+  
+  You are also able to use our magic methods to set custom data.  The same custom data as above would look like the following:
+  
+```php
+    $customData = $account->customData;
+    $customData->rank = "Captain";
+    $customData->birthDate = "2305-07-13";
+    $customData->favoriteDrink = "favoriteDrink";
+    ```
 
 #### Retrieve Custom Data
 An example of retrieving custom data for an application.
@@ -510,7 +519,7 @@ An example of retrieving custom data for an application.
                      dataStore->
                      getResource($applicationHref, \Stormpath\Stormpath::APPLICATION);
                      
-  $applicationCustomData = $application->getCustomData();
+  $applicationCustomData = $application->customData;
   ```
           
 #### Update Custom Data
@@ -521,17 +530,17 @@ An example of retrieving custom data for an application.
   $customData->save();
   ```
 #### Delete Custom Data
-You may delete all of a resources custom data by invoking the delete() method to the resources CustomData
+You may delete all of a resource's custom data by invoking the delete() method to the resource's CustomData
 ```php
-   ${RESOURCE}->getCustomData()->delete();
+   ${RESOURCE}->customData->delete();
    ```
 
-This will delete all of the respective resources custom data fields, but it leaves the CustomData 
+This will delete all of the respective resource's custom data fields, but it leaves the CustomData 
 placeholder in the resource. You cannot delete the CustomData resource entirely – it will be 
 automatically permanently deleted when the resource is deleted.
 
 #### Delete Custom Data Field
-You may also delete an individual custom data field entirely by calling the remove() method on the resources 
+You may also delete an individual custom data field entirely by calling the remove() method on the resource's 
 CustomData while stating the custom data field as a parameter and then saving it.
 
 ```php
