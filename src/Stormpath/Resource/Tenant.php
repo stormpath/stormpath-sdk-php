@@ -27,6 +27,7 @@ class Tenant extends InstanceResource
     const KEY          = "key";
     const APPLICATIONS = "applications";
     const DIRECTORIES  = "directories";
+    const CUSTOM_DATA  = "customData";
 
     public static function get(array $options = array())
     {
@@ -69,6 +70,18 @@ class Tenant extends InstanceResource
     public function getDirectories(array $options = array())
     {
         return $this->getResourceProperty(self::DIRECTORIES, Stormpath::DIRECTORY_LIST, $options);
+    }
+
+    public function getCustomData(array $options = array())
+    {
+        $customData =  $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
+
+        if(!$customData) {
+            $customData = new CustomData();
+            $this->setProperty(self::CUSTOM_DATA, $customData);
+        }
+
+        return $customData;
     }
 
     // @codeCoverageIgnoreStart

@@ -31,11 +31,19 @@ class DefaultResourceFactory implements ResourceFactory
 
     public function instantiate($className, array $constructorArgs)
     {
+
         $class = new \ReflectionClass($this->qualifyClassName($className));
 
         array_unshift($constructorArgs, $this->dataStore);
 
-        return $class->newInstanceArgs($constructorArgs);
+        $newClass = $class->newInstanceArgs($constructorArgs);
+
+        if($class->hasConstant ( "CUSTOM_DATA" ))
+        {
+            $newClass->customData;
+        }
+
+        return $newClass;
     }
 
     private function qualifyClassName($className)

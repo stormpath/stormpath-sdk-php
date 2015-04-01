@@ -77,7 +77,10 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     {
         $propertiesArr = array($properties, $options);
 
-       return $this->resourceFactory->instantiate($className, $propertiesArr);
+        $resource = $this->resourceFactory->instantiate($className, $propertiesArr);
+
+        return $resource;
+
     }
 
     /**
@@ -164,6 +167,13 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     public function delete(Resource $resource)
     {
         $delete = $this->executeRequest(Request::METHOD_DELETE, $resource->getHref());
+        $this->removeResourceFromCache($resource);
+        return $delete;
+    }
+
+    public function removeCustomDataItem(Resource $resource, $key)
+    {
+        $delete = $this->executeRequest(Request::METHOD_DELETE, $resource->getHref().'/'.$key);
         $this->removeResourceFromCache($resource);
         return $delete;
     }
@@ -258,20 +268,32 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $request->setHeaders($headers);
     }
 
-    private function toStdClass(Resource $resource)
+    private function toStdClass(Resource $resource, $customData = false)
     {
+        if($resource instanceof \Stormpath\Resource\CustomData)
+        {
+            $customData = true;
+        }
         $propertyNames = $resource->getPropertyNames();
 
         $properties = new \stdClass();
 
         foreach($propertyNames as $name)
         {
-            $property = $resource->getProperty($name);
 
-            if ($property instanceof \stdClass)
+            $property = $resource->getProperty($name);
+            var_dump($property, $customData);
+            if ($property instanceof \Stormpath\Resource\CustomData)
+            {
+                $property = $this->toStdClass($property, true);
+            }
+
+            else if ($property instanceof \stdClass && $customData === false)
             {
                 $property = $this->toSimpleReference($name, $property);
             }
+
+
 
             $properties->$name = $property;
         }
