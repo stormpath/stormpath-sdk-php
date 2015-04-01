@@ -282,7 +282,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         {
 
             $property = $resource->getProperty($name);
-            var_dump($property, $customData);
+
             if ($property instanceof \Stormpath\Resource\CustomData)
             {
                 $property = $this->toStdClass($property, true);

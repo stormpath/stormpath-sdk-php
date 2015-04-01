@@ -1,7 +1,6 @@
 <?php namespace Stormpath\Resource;
 
 
-use Stormpath\Client;
 use Stormpath\Stormpath;
 
 class CustomData extends AbstractCollectionResource implements Saveable {
@@ -24,20 +23,17 @@ class CustomData extends AbstractCollectionResource implements Saveable {
 
     public function save()
     {
-        var_dump($this->getDataStore()->save($this));
-        die();
+        return $this->getDataStore()->save($this);
     }
 
     public function delete()
     {
-        var_dump($this->getDataStore()->delete($this));
-        die();
+        return $this->getDataStore()->delete($this);
     }
 
     public function remove($key)
     {
-        var_dump($this->getDataStore()->removeCustomDataItem($this, $key));
-        die();
+        return $this->getDataStore()->removeCustomDataItem($this, $key);
     }
 
 
