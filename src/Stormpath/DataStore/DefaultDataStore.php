@@ -174,7 +174,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     public function removeCustomDataItem(Resource $resource, $key)
     {
         $delete = $this->executeRequest(Request::METHOD_DELETE, $resource->getHref().'/'.$key);
-        $this->removeResourceFromCache($resource);
+        $this->removeCustomDataItemFromCache($resource, $key);
         return $delete;
     }
 
@@ -223,7 +223,6 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
                 $errorResult->$status = $status;
                 // @codeCoverageIgnoreEnd
             }
-
             $error = new Error($errorResult);
             throw new ResourceError($error);
         }
@@ -240,7 +239,6 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         {
             $href = $this->qualify($href);
         }
-
         $response = $this->executeRequest(Request::METHOD_POST,
                                           $href,
                                           json_encode($this->toStdClass($resource)),

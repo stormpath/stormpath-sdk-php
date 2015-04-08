@@ -39,6 +39,12 @@ abstract class Cacheable {
         $this->cache->delete($resource->getHref());
     }
 
+    protected function removeCustomDataItemFromCache($resource, $key)
+    {
+        $cache = $this->cache->get($resource->getHref());
+        unset($cache->$key);
+    }
+
     private function createKey($href, $options)
     {
         $key = $href;

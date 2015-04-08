@@ -346,6 +346,71 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         self::$account->addGroup(\Stormpath\Resource\Group::instantiate());
     }
 
+
+
+    public function testAddingCustomData()
+    {
+        $cd = self::$account->customData;
+
+        $cd->unitTest = "unit Test";
+        $cd->save();
+
+        $account = \Stormpath\Resource\Account::get(self::$account->href);
+        $customData = $account->customData;
+        $this->assertEquals('unit Test', $customData->unitTest);
+
+
+
+    }
+
+    public function testUpdatingCustomData()
+    {
+        $cd = self::$account->customData;
+
+        $cd->unitTest = "some change";
+        $cd->save();
+
+        $account = \Stormpath\Resource\Account::get(self::$account->href);
+        $customData = $account->customData;
+        $this->assertEquals('some change', $customData->unitTest);
+
+    }
+
+    public function testRemovingCustomData()
+    {
+        $cd = self::$account->customData;
+
+        $cd->remove('unitTest');
+
+        $account = \Stormpath\Resource\Account::get(self::$account->href);
+        $customData = $account->customData;
+        $this->assertNull($customData->unitTest);
+    }
+
+    public function testDeletingAllCustomData()
+    {
+        $cd = self::$account->customData;
+        $cd->unitTest = "some change";
+        $cd->rank = "Captain";
+        $cd->birthDate = "2305-07-13";
+        $cd->favoriteDrink = "favoriteDrink";
+        $cd->save();
+
+        $cd->delete();
+
+        $account = \Stormpath\Resource\Account::get(self::$account->href);
+        $customData = $account->customData;
+        $this->assertNull($customData->unitTest);
+        $this->assertNull($customData->rank);
+        $this->assertNull($customData->birthDate);
+        $this->assertNull($customData->favoriteDrink);
+    }
+
+
+
+
+
+
     /**
      * @expectedException \Stormpath\Resource\ResourceError
      */

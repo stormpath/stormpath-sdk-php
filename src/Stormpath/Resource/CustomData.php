@@ -3,7 +3,7 @@
 
 use Stormpath\Stormpath;
 
-class CustomData extends AbstractCollectionResource implements Saveable {
+class CustomData extends InstanceResource implements Saveable {
     const PATH = 'customData';
 
     public function __get($key)
@@ -14,11 +14,6 @@ class CustomData extends AbstractCollectionResource implements Saveable {
     public function __set($key, $value)
     {
         $this->setProperty($key, $value);
-    }
-
-    public function getItemClassName()
-    {
-        return Stormpath::CUSTOM_DATA;
     }
 
     public function save()
@@ -33,8 +28,11 @@ class CustomData extends AbstractCollectionResource implements Saveable {
 
     public function remove($key)
     {
+
         return $this->getDataStore()->removeCustomDataItem($this, $key);
+
     }
+
 
 
 }

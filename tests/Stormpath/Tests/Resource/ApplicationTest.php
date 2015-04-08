@@ -237,6 +237,64 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $application->save();
     }
 
+    public function testAddingCustomData()
+    {
+        $cd = self::$application->customData;
+
+        $cd->unitTest = "unit Test";
+        $cd->save();
+
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+        $customData = $application->customData;
+        $this->assertEquals('unit Test', $customData->unitTest);
+
+
+
+    }
+
+    public function testUpdatingCustomData()
+    {
+        $cd = self::$application->customData;
+
+        $cd->unitTest = "some change";
+        $cd->save();
+
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+        $customData = $application->customData;
+        $this->assertEquals('some change', $customData->unitTest);
+
+    }
+
+    public function testRemovingCustomData()
+    {
+        $cd = self::$application->customData;
+
+        $cd->remove('unitTest');
+
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+        $customData = $application->customData;
+        $this->assertNull($customData->unitTest);
+    }
+
+    public function testDeletingAllCustomData()
+    {
+        $cd = self::$application->customData;
+        $cd->unitTest = "some change";
+        $cd->rank = "Captain";
+        $cd->birthDate = "2305-07-13";
+        $cd->favoriteDrink = "favoriteDrink";
+        $cd->save();
+
+        $cd->delete();
+
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+        $customData = $application->customData;
+        $this->assertNull($customData->unitTest);
+        $this->assertNull($customData->rank);
+        $this->assertNull($customData->birthDate);
+        $this->assertNull($customData->favoriteDrink);
+    }
+
     /**
      * @expectedException \Stormpath\Resource\ResourceError
      */
