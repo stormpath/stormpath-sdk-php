@@ -1,10 +1,7 @@
 <?php namespace Stormpath\Resource;
 
 
-use Stormpath\Stormpath;
-
 class CustomData extends InstanceResource implements Saveable {
-    const PATH = 'customData';
 
     public function __get($key)
     {
