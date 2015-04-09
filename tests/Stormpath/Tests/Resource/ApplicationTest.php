@@ -209,10 +209,10 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         } catch (\Stormpath\Resource\ResourceError $re)
         {
             $this->assertEquals(400, $re->getStatus());
-            $this->assertEquals(400, $re->getErrorCode());
+            $this->assertEquals(7100, $re->getErrorCode());
             $this->assertContains('Invalid', $re->getMessage());
-            $this->assertContains('Invalid', $re->getDeveloperMessage());
-            $this->assertContains('mailto', $re->getMoreInfo());
+            $this->assertEquals('Login attempt failed because the specified password is incorrect.', $re->getDeveloperMessage());
+            $this->assertContains('7100', $re->getMoreInfo());
         }
 
         $account->delete();
