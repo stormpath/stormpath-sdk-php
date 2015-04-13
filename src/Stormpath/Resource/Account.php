@@ -31,6 +31,7 @@ class Account extends InstanceResource implements Deletable
     const SURNAME                  = "surname";
     const STATUS                   = "status";
     const GROUPS                   = "groups";
+    const CUSTOM_DATA              = "customData";
     const DIRECTORY                = "directory";
     const EMAIL_VERIFICATION_TOKEN = "emailVerificationToken";
     const GROUP_MEMBERSHIPS        = "groupMemberships";
@@ -133,6 +134,18 @@ class Account extends InstanceResource implements Deletable
     public function getGroups(array $options = array())
     {
         return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST, $options);
+    }
+
+    public function getCustomData(array $options = array())
+    {
+        $customData =  $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
+
+        if(!$customData) {
+            $customData = new CustomData();
+            $this->setProperty(self::CUSTOM_DATA, $customData);
+        }
+
+        return $customData;
     }
 
     public function getDirectory(array $options = array())

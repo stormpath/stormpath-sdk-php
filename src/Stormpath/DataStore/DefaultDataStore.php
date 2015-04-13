@@ -77,7 +77,10 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     {
         $propertiesArr = array($properties, $options);
 
-       return $this->resourceFactory->instantiate($className, $propertiesArr);
+        $resource = $this->resourceFactory->instantiate($className, $propertiesArr);
+
+        return $resource;
+
     }
 
     /**
@@ -168,6 +171,13 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         return $delete;
     }
 
+    public function removeCustomDataItem(Resource $resource, $key)
+    {
+        $delete = $this->executeRequest(Request::METHOD_DELETE, $resource->getHref().'/'.$key);
+        $this->removeCustomDataItemFromCache($resource, $key);
+        return $delete;
+    }
+
     protected function needsToBeFullyQualified($href)
     {
         return stripos($href, 'http') === false;
@@ -213,7 +223,6 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
                 $errorResult->$status = $status;
                 // @codeCoverageIgnoreEnd
             }
-
             $error = new Error($errorResult);
             throw new ResourceError($error);
         }
@@ -230,7 +239,6 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         {
             $href = $this->qualify($href);
         }
-
         $response = $this->executeRequest(Request::METHOD_POST,
                                           $href,
                                           json_encode($this->toStdClass($resource)),
@@ -258,20 +266,32 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $request->setHeaders($headers);
     }
 
-    private function toStdClass(Resource $resource)
+    private function toStdClass(Resource $resource, $customData = false)
     {
+        if($resource instanceof \Stormpath\Resource\CustomData)
+        {
+            $customData = true;
+        }
         $propertyNames = $resource->getPropertyNames();
 
         $properties = new \stdClass();
 
         foreach($propertyNames as $name)
         {
+
             $property = $resource->getProperty($name);
 
-            if ($property instanceof \stdClass)
+            if ($property instanceof \Stormpath\Resource\CustomData)
+            {
+                $property = $this->toStdClass($property, true);
+            }
+
+            else if ($property instanceof \stdClass && $customData === false)
             {
                 $property = $this->toSimpleReference($name, $property);
             }
+
+
 
             $properties->$name = $property;
         }

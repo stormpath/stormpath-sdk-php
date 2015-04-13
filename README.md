@@ -447,6 +447,106 @@ or from the tenant resource (or from the application, in the case of account sto
   $accountStoreMapping->accountStore = $directory; // this could also be a group
   $application->createAccountStoreMapping($accountStoreMapping);
   ```
+  
+### Custom Data
+You may find it useful to store your own custom data on resource's.  With the Stormpath SDK, we make it easy to do so. 
+All resource's support a Custom Data collection for your own custom use.  The CustomData resource is a schema-less JSON 
+object (aka ‘map’, ‘associative array’, or ‘dictionary’) that allows you to specify whatever name/value pairs you wish.
+
+The CustomData resource is always connected to a resource and you can always reach it by calling customData magic method 
+(alias to getCustomData()) on the resource instance:
+
+```php
+  $application = \Stormpath\Resource\Application::get($applicationHref);
+
+  $applicationCustomData = $application->customData;
+
+  //Or
+
+  $application = $client->
+                 dataStore->
+                 getResource($applicationHref, \Stormpath\Stormpath::APPLICATION);
+                 
+  $applicationCustomData = $application->customData;
+
+  ```
+  
+In addition to your custom name/value pairs, a CustomData resource will always contain 3 reserved read-only fields:
+* href: The fully qualified location of the custom data resource
+* createdAt: the UTC timestamp with millisecond precision of when the resource was created in Stormpath as an ISO 8601 formatted string, for example 2017-04-01T14:35:16.235Z
+* modifiedAt: the UTC timestamp with millisecond precision of when the resource was last updated in Stormpath as an ISO 8601 formatted string.
+
+You can store an unlimited number of additional name/value pairs in the CustomData resource, with the following restrictions:
+
+* The total storage size of a single CustomData resource cannot exceed 10 MB (megabytes). The href, createdAt and modifiedAt field names and values do not count against your resource size quota.
+* Field names must:
+    * be 1 or more characters long, but less than or equal to 255 characters long (1 <= N <= 255).
+    * contain only alphanumeric characters 0-9A-Za-z, underscores _ or dashes - but cannot start with a dash -.
+    * may not equal any of the following reserved names: href, createdAt, modifiedAt, meta, spMeta, spmeta, ionmeta, or ionMeta.
+    
+#### Create Custom Data
+An example of creating an account with custom data
+```php 
+  $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
+  $account->email = 'john.smith@example.com';
+  $account->givenName = 'John';
+  $account->password ='4P@$$w0rd!';
+  $account->surname = 'Smith';
+  $account->username = 'johnsmith';
+  
+  $customData = $account->customData;
+  $customData->rank = "Captain";
+  $customData->birthDate = "2305-07-13";
+  $customData->favoriteDrink = "favoriteDrink";
+  
+  $directory->createAccount($account);
+  ```
+  
+
+#### Retrieve Custom Data
+An example of retrieving custom data for an application.
+
+```php
+  $application = $client->
+                     dataStore->
+                     getResource($applicationHref, \Stormpath\Stormpath::APPLICATION);
+                     
+  $applicationCustomData = $application->customData;
+  ```
+  
+After you have access to the whole custom data resource, you can then retrieve a specific property with the following
+
+```php
+    $property = $applicationCustomData->property;
+    ```
+          
+#### Update Custom Data
+//TODO: Update to magic method
+```php
+  $customData->favoriteColor = "red";
+  $customData->hobby = "Kendo";
+  $customData->save();
+  ```
+ 
+  
+#### Delete Custom Data
+You may delete all of a resource's custom data by invoking the delete() method to the resource's CustomData
+```php
+   ${RESOURCE}->customData->delete();
+   ```
+
+This will delete all of the respective resource's custom data fields, but it leaves the CustomData 
+placeholder in the resource. You cannot delete the CustomData resource entirely – it will be 
+automatically permanently deleted when the resource is deleted.
+
+#### Delete Custom Data Field
+You may also delete an individual custom data field entirely by calling the remove() method on the resource's 
+CustomData while stating the custom data field as a parameter.
+
+```php
+  $customData->remove("favoriteColor");
+  ```
+
 
 ### Collections
 #### Search

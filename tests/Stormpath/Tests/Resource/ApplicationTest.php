@@ -209,10 +209,10 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         } catch (\Stormpath\Resource\ResourceError $re)
         {
             $this->assertEquals(400, $re->getStatus());
-            $this->assertEquals(400, $re->getErrorCode());
+            $this->assertEquals(7100, $re->getErrorCode());
             $this->assertContains('Invalid', $re->getMessage());
-            $this->assertContains('Invalid', $re->getDeveloperMessage());
-            $this->assertContains('mailto', $re->getMoreInfo());
+            $this->assertEquals('Login attempt failed because the specified password is incorrect.', $re->getDeveloperMessage());
+            $this->assertContains('7100', $re->getMoreInfo());
         }
 
         $account->delete();
@@ -235,6 +235,64 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $application->status = 'enabled';
 
         $application->save();
+    }
+
+    public function testAddingCustomData()
+    {
+        $cd = self::$application->customData;
+
+        $cd->unitTest = "unit Test";
+        $cd->save();
+
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+        $customData = $application->customData;
+        $this->assertEquals('unit Test', $customData->unitTest);
+
+
+
+    }
+
+    public function testUpdatingCustomData()
+    {
+        $cd = self::$application->customData;
+
+        $cd->unitTest = "some change";
+        $cd->save();
+
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+        $customData = $application->customData;
+        $this->assertEquals('some change', $customData->unitTest);
+
+    }
+
+    public function testRemovingCustomData()
+    {
+        $cd = self::$application->customData;
+
+        $cd->remove('unitTest');
+
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+        $customData = $application->customData;
+        $this->assertNull($customData->unitTest);
+    }
+
+    public function testDeletingAllCustomData()
+    {
+        $cd = self::$application->customData;
+        $cd->unitTest = "some change";
+        $cd->rank = "Captain";
+        $cd->birthDate = "2305-07-13";
+        $cd->favoriteDrink = "favoriteDrink";
+        $cd->save();
+
+        $cd->delete();
+
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+        $customData = $application->customData;
+        $this->assertNull($customData->unitTest);
+        $this->assertNull($customData->rank);
+        $this->assertNull($customData->birthDate);
+        $this->assertNull($customData->favoriteDrink);
     }
 
     /**

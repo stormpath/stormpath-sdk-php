@@ -37,6 +37,7 @@ class Application extends InstanceResource implements Deletable
     const GROUPS                        = "groups";
     const ACCOUNT_STORE_MAPPINGS        = "accountStoreMappings";
     const LOGIN_ATTEMPTS                = "loginAttempts";
+    const CUSTOM_DATA                   = "customData";
 
     const PATH                          = "applications";
 
@@ -126,6 +127,18 @@ class Application extends InstanceResource implements Deletable
     public function getGroups(array $options = array()) {
 
         return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST, $options);
+    }
+
+    public function getCustomData(array $options = array())
+    {
+        $customData =  $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
+
+        if(!$customData) {
+            $customData = new CustomData();
+            $this->setProperty(self::CUSTOM_DATA, $customData);
+        }
+
+        return $customData;
     }
 
     public function getAccountStoreMappings(array $options = array()) {
@@ -266,6 +279,8 @@ class Application extends InstanceResource implements Deletable
         $request = new UsernamePasswordRequest($username, $password);
         return $this->authenticateAccount($request, $options);
     }
+
+
 
     public function delete() {
 

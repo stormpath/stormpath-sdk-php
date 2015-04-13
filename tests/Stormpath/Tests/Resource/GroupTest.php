@@ -115,6 +115,64 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
 
     }
 
+    public function testAddingCustomData()
+    {
+        $cd = self::$group->customData;
+
+        $cd->unitTest = "unit Test";
+        $cd->save();
+
+        $group = \Stormpath\Resource\Group::get(self::$group->href);
+        $customData = $group->customData;
+        $this->assertEquals('unit Test', $customData->unitTest);
+
+
+
+    }
+
+    public function testUpdatingCustomData()
+    {
+        $cd = self::$group->customData;
+
+        $cd->unitTest = "some change";
+        $cd->save();
+
+        $group = \Stormpath\Resource\Group::get(self::$group->href);
+        $customData = $group->customData;
+        $this->assertEquals('some change', $customData->unitTest);
+
+    }
+
+    public function testRemovingCustomData()
+    {
+        $cd = self::$group->customData;
+
+        $cd->remove('unitTest');
+
+        $group = \Stormpath\Resource\Group::get(self::$group->href);
+        $customData = $group->customData;
+        $this->assertNull($customData->unitTest);
+    }
+
+    public function testDeletingAllCustomData()
+    {
+        $cd = self::$group->customData;
+        $cd->unitTest = "some change";
+        $cd->rank = "Captain";
+        $cd->birthDate = "2305-07-13";
+        $cd->favoriteDrink = "favoriteDrink";
+        $cd->save();
+
+        $cd->delete();
+
+        $group = \Stormpath\Resource\Group::get(self::$group->href);
+        $customData = $group->customData;
+        $this->assertNull($customData->unitTest);
+        $this->assertNull($customData->rank);
+        $this->assertNull($customData->birthDate);
+        $this->assertNull($customData->favoriteDrink);
+    }
+
     /**
      * @expectedException \Stormpath\Resource\ResourceError
      */

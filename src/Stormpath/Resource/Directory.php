@@ -29,6 +29,7 @@ class Directory extends AccountStore implements Deletable
     const ACCOUNTS    = "accounts";
     const GROUPS      = "groups";
     const TENANT      = "tenant";
+    const CUSTOM_DATA = "customData";
 
     const PATH        = "directories";
 
@@ -119,6 +120,18 @@ class Directory extends AccountStore implements Deletable
     public function getGroups(array $options = array())
     {
         return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST, $options);
+    }
+
+    public function getCustomData(array $options = array())
+    {
+        $customData =  $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
+
+        if(!$customData) {
+            $customData = new CustomData();
+            $this->setProperty(self::CUSTOM_DATA, $customData);
+        }
+
+        return $customData;
     }
 
     public function getTenant(array $options = array())

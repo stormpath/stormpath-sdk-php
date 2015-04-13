@@ -34,8 +34,8 @@ class Magic {
      * @param string $property Property name
      * @return mixed|null Property value if it exists, null if not
      */
-    public function __get($property) {
-
+    public function __get($property)
+    {
         $method = 'get' .ucfirst($property);
         if (isset($this->methods[$method])) {
             return $this->{$method}();

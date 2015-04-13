@@ -43,6 +43,7 @@ class Stormpath
     const APPLICATION_LIST              = 'ApplicationList';
     const AUTHENTICATION_RESULT         = 'AuthenticationResult';
     const BASIC_LOGIN_ATTEMPT           = 'BasicLoginAttempt';
+    const CUSTOM_DATA                   = 'CustomData';
     const DIRECTORY                     = 'Directory';
     const DIRECTORY_LIST                = 'DirectoryList';
     const EMAIL_VERIFICATION_TOKEN      = 'EmailVerificationToken';
