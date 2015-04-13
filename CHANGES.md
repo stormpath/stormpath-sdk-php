@@ -1,6 +1,13 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.2.0.beta
+------------------
+
+Released on April 13, 2015
+
+- Added custom data support for Account, Application, Directory, Group and Tenant resources.
+
 Version 1.1.0.beta
 ------------------
 
