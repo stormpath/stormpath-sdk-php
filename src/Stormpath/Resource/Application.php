@@ -18,11 +18,16 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
+use JWT;
 use Stormpath\Authc\AuthenticationRequest;
 use Stormpath\Authc\BasicAuthenticator;
 use Stormpath\Authc\UsernamePasswordRequest;
 use Stormpath\Client;
+use Stormpath\Exceptions\IdSite\InvalidCallbackUriException;
+use Stormpath\Exceptions\IdSite\JWTUsedAlreadyException;
 use Stormpath\Stormpath;
+use Stormpath\Util\NonceStore;
+use Stormpath\Util\UUID;
 
 class Application extends InstanceResource implements Deletable
 {
@@ -278,6 +283,74 @@ class Application extends InstanceResource implements Deletable
     {
         $request = new UsernamePasswordRequest($username, $password);
         return $this->authenticateAccount($request, $options);
+    }
+
+
+    public function createIdSiteUrl(array $options = array())
+    {
+        if( ! isset( $options['callbackUri'] ) )
+            throw new InvalidCallbackUriException('Please provide a \'callbackUri\' in the $options array.');
+
+        $client = Client::getInstance();
+
+        $p = parse_url ( $this->href );
+        $base = $p['scheme'] . '://' . $p['host'];
+
+        $apiId = $client->dataStore->getRequestExecutor()->getApiKey()->getId();
+        $apiSecret = $client->dataStore->getRequestExecutor()->getApiKey()->getSecret();
+
+        $token = array(
+            'jti'       => UUID::v4(),
+            'iat'       => microtime(true),
+            'iss'       => $apiId,  //API ID
+            'sub'       => $this->href,
+            'state'     => isset($options['state']) ? $options['state'] : '',
+            'path'      => isset($options['path']) ? $options['path'] : '/',
+            'cb_uri'    => $options['callbackUri']
+        );
+
+        $jwt = JWT::encode($token, $apiSecret);
+
+        $redirectUrl = $base . "/sso";
+
+        if(isset($options['logout']))
+            $redirectUrl .= "/logout";
+
+        return $redirectUrl . "?jwtRequest=$jwt";
+
+    }
+
+    public function handleIdSiteCallback($responseUri)
+    {
+        $client = Client::getInstance();
+        $urlParse = parse_url ( $responseUri );
+        parse_str($urlParse['query'], $params);
+        $token = isset($params['jwtResponse']) ? $params['jwtResponse'] : '';
+        $apiSecret = $client->dataStore->getRequestExecutor()->getApiKey()->getSecret();
+        $apiId = $client->dataStore->getRequestExecutor()->getApiKey()->getId();
+
+        $jwt = JWT::decode($token, $apiSecret, array('HS256'));
+
+        // Check to see if Nonce is already used
+        $nonceStore = new NonceStore($client->dataStore);
+        $nonceUsed = $nonceStore->getNonce($jwt->irt);
+
+        if($nonceUsed)
+            throw new JWTUsedAlreadyException('The ID Site JWT has already been used.');
+
+        $nonceStore->putNonce($jwt->irt);
+
+
+        $account = Account::get($jwt->sub);
+
+        $return = new \StdClass();
+
+        $return->account = $account;
+        $return->state = $jwt->state;
+        $return->isNew = $jwt->isNewSub;
+        $return->status = $jwt->status;
+
+        return $return;
     }
 
 

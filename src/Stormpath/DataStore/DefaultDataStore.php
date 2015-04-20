@@ -178,6 +178,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         return $delete;
     }
 
+    public function getRequestExecutor()
+    {
+        return $this->requestExecutor;
+    }
+
     protected function needsToBeFullyQualified($href)
     {
         return stripos($href, 'http') === false;
@@ -333,5 +338,9 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         }
 
         return $query;
+    }
+
+    public function getCacheManager() {
+        return $this->cacheManager;
     }
 }
