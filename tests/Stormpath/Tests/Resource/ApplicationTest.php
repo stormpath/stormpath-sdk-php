@@ -18,6 +18,10 @@
 namespace Stormpath\Tests\Resource;
 
 
+use JWT;
+use Stormpath\Client;
+use Stormpath\Util\UUID;
+
 class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
     private static $application;
@@ -65,6 +69,47 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
         $this->assertContains('Main App', $application->name);
     }
+
+    public function testCreateIdSiteURLReturnsURLWithJWT()
+    {
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+
+        $redirectUrl = $application->createIdSiteUrl(array(
+            'callbackUri' => 'https://stormpath.com',
+            'state' => UUID::v4()
+        ));
+
+        $this->assertContains('https://api.stormpath.com/sso?jwtRequest=', $redirectUrl);
+    }
+
+
+    public function testCreateIdSiteUrlReturnsCorrectPathForLogoutRequest()
+    {
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+
+        $redirectUrl = $application->createIdSiteUrl(array(
+            'callbackUri' => 'https://stormpath.com',
+            'logout'=>true,
+            'state' => UUID::v4()
+        ));
+
+        $this->assertContains('https://api.stormpath.com/sso/logout?jwtRequest=', $redirectUrl);
+    }
+
+    /**
+     * @expectedException \Stormpath\Exceptions\IdSite\InvalidCallbackUriException
+     */
+    public function testCreateIdSiteUrlThrowsExceptionIfNoCallbackURIPrivided()
+    {
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+
+        $redirectUrl = $application->createIdSiteUrl(array(
+            'logout'=>true,
+            'state' => UUID::v4()
+        ));
+    }
+
+   
 
     /**
      * @expectedException \Stormpath\Resource\ResourceError
