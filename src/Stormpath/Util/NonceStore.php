@@ -4,7 +4,7 @@
 use Stormpath\DataStore\DataStore;
 
 class NonceStore {
-
+    // @codeCoverageIgnoreStart
     private $cache;
 
     public static function generateNonce()
@@ -26,5 +26,5 @@ class NonceStore {
     {
         $this->cache->put('nonce_'.$nonce,$nonce,1);
     }
-
+    // @codeCoverageIgnoreStart
 }

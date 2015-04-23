@@ -291,13 +291,14 @@ class Application extends InstanceResource implements Deletable
         if( ! isset( $options['callbackUri'] ) )
             throw new InvalidCallbackUriException('Please provide a \'callbackUri\' in the $options array.');
 
-        $client = Client::getInstance();
+
 
         $p = parse_url ( $this->href );
         $base = $p['scheme'] . '://' . $p['host'];
 
-        $apiId = $client->dataStore->getRequestExecutor()->getApiKey()->getId();
-        $apiSecret = $client->dataStore->getRequestExecutor()->getApiKey()->getSecret();
+        $apiId = $this->getDataStore()->getApiKey()->getId();
+        $apiSecret = $this->getDataStore()->getApiKey()->getSecret();
+
 
         $token = array(
             'jti'       => UUID::v4(),
@@ -322,17 +323,18 @@ class Application extends InstanceResource implements Deletable
 
     public function handleIdSiteCallback($responseUri)
     {
-        $client = Client::getInstance();
+
         $urlParse = parse_url ( $responseUri );
+
         parse_str($urlParse['query'], $params);
         $token = isset($params['jwtResponse']) ? $params['jwtResponse'] : '';
-        $apiSecret = $client->dataStore->getRequestExecutor()->getApiKey()->getSecret();
-        $apiId = $client->dataStore->getRequestExecutor()->getApiKey()->getId();
+        $apiSecret = $this->getDataStore()->getApiKey()->getSecret();
+        $apiId = $this->getDataStore()->getApiKey()->getId();
 
         $jwt = JWT::decode($token, $apiSecret, array('HS256'));
 
         // Check to see if Nonce is already used
-        $nonceStore = new NonceStore($client->dataStore);
+        $nonceStore = new NonceStore($this->getDataStore());
         $nonceUsed = $nonceStore->getNonce($jwt->irt);
 
         if($nonceUsed)
@@ -341,7 +343,7 @@ class Application extends InstanceResource implements Deletable
         $nonceStore->putNonce($jwt->irt);
 
 
-        $account = Account::get($jwt->sub);
+        $account = $this->getDataStore()->getResource($jwt->sub, Stormpath::ACCOUNT);
 
         $return = new \StdClass();
 

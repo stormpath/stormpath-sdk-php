@@ -343,4 +343,9 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     public function getCacheManager() {
         return $this->cacheManager;
     }
+
+    public function getApiKey()
+    {
+        return $this->requestExecutor->getApiKey();
+    }
 }

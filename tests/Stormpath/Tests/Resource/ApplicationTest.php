@@ -20,6 +20,7 @@ namespace Stormpath\Tests\Resource;
 
 use JWT;
 use Stormpath\Client;
+use Stormpath\Resource\Application;
 use Stormpath\Util\UUID;
 
 class ApplicationTest extends \Stormpath\Tests\BaseTest {
@@ -109,7 +110,6 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         ));
     }
 
-   
 
     /**
      * @expectedException \Stormpath\Resource\ResourceError
@@ -355,5 +355,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         \Stormpath\Resource\Application::get($href);
     }
+
+
 
 }
