@@ -28,6 +28,9 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
     private static $application;
     private static $inited;
 
+    private static $directory;
+    private static $account;
+
     protected static function init()
     {
         self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for the tests' .md5(time()), 'description' => 'Description of Main App', 'status' => 'enabled'));
@@ -108,6 +111,75 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
             'logout'=>true,
             'state' => UUID::v4()
         ));
+    }
+
+    protected function createAccount()
+    {
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time())));
+
+        self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
+
+        self::$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+            'middleName' => 'Middle Name',
+            'surname' => 'Surname',
+            'username' => md5(time()) . 'username',
+            'email' => md5(time()) .'@unknown123.kot',
+            'password' => 'superP4ss'));
+
+        self::$directory->createAccount(self::$account);
+    }
+
+    protected function deleteAccount()
+    {
+        if (self::$directory)
+        {
+            self::$directory->delete();
+        }
+    }
+
+    protected function generateResponseUrl()
+    {
+        $jwt = array();
+        $jwt['iss'] = 'https://stormpath.com';
+        $jwt['sub'] = self::$account->href;
+        $jwt['aud'] = UUID::v4();
+        $jwt['exp'] = time() + 60;
+        $jwt['iat'] = time();
+        $jwt['jti'] = UUID::v4();
+        $jwt['irt'] = UUID::v4();
+        $jwt['state'] = "";
+        $jwt['isNewSub'] = false;
+        $jwt['status'] = "AUTHENTICATED";
+
+        $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+
+        $token = JWT::encode($jwt, $apiSecret);
+
+
+        return 'https://stormpath.com?jwtResponse='.$token;
+
+
+    }
+
+    public function testHandleIdSiteCallbackReturnsExpectedItems()
+    {
+        $this->createAccount();
+
+        $responseUrl = $this->generateResponseUrl();
+
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+
+        $response = $application->handleIdSiteCallback($responseUrl);
+
+        $this->assertEquals('AUTHENTICATED', $response->status);
+        $this->assertFalse($response->isNew);
+        $this->assertEquals("", $response->state);
+        $this->assertEquals(self::$account->href, $response->account->href);
+
+
+        $this->deleteAccount();
+
+
     }
 
 
