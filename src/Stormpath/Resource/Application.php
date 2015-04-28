@@ -286,20 +286,24 @@ class Application extends InstanceResource implements Deletable
     }
 
 
+    /**
+     * Generate the url for ID Site.
+     *
+     * @param array $options
+     * @return string
+     * @throws InvalidCallbackUriException
+     */
     public function createIdSiteUrl(array $options = array())
     {
         if( ! isset( $options['callbackUri'] ) )
             throw new InvalidCallbackUriException('Please provide a \'callbackUri\' in the $options array.');
-
-
 
         $p = parse_url ( $this->href );
         $base = $p['scheme'] . '://' . $p['host'];
 
         $apiId = $this->getDataStore()->getApiKey()->getId();
         $apiSecret = $this->getDataStore()->getApiKey()->getSecret();
-
-
+        
         $token = array(
             'jti'       => UUID::v4(),
             'iat'       => microtime(true),
@@ -321,6 +325,14 @@ class Application extends InstanceResource implements Deletable
 
     }
 
+
+    /**
+     * Handle the response from Stormpath and return a parsed JWT.
+     *
+     * @param $responseUri
+     * @return \StdClass
+     * @throws JWTUsedAlreadyException
+     */
     public function handleIdSiteCallback($responseUri)
     {
 
