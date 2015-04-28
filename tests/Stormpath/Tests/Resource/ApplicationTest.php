@@ -218,6 +218,74 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $account->delete();
     }
 
+    public function testAuthenticateWithAccountStore()
+    {
+        $application = self::$application;
+
+        $groupA = new \stdClass();
+        $groupA->name = 'New Group in town A: '.md5(time());
+        $groupA = \Stormpath\Resource\Group::instantiate($groupA);
+        $application->createGroup($groupA);
+
+        $groupB = new \stdClass();
+        $groupB->name = 'New Group in town B: '.md5(time());
+        $groupB = \Stormpath\Resource\Group::instantiate($groupB);
+        $application->createGroup($groupB);
+
+        $accountStoreMappingA = \Stormpath\Resource\AccountStoreMapping::instantiate(array('accountStore' => $groupA));
+        $application->createAccountStoreMapping($accountStoreMappingA);
+
+        $accountStoreMappingB = \Stormpath\Resource\AccountStoreMapping::instantiate(array('accountStore' => $groupB));
+        $application->createAccountStoreMapping($accountStoreMappingB);
+
+        $account = \Stormpath\Resource\Account::instantiate(array(
+            'givenName' => 'Account Name',
+            'surname' => 'Surname',
+            'username' => 'super_unique_username',
+            'email' => 'super_dupper_unique_email@unknown123.kot',
+            'password' => 'superP4ss'));
+
+        $application->createAccount($account);
+        $groupA->addAccount($account);
+
+        $authenticationRequest = new \Stormpath\Authc\UsernamePasswordRequest(
+            'super_dupper_unique_email@unknown123.kot',
+            'superP4ss',
+            array('accountStore' => $accountStoreMappingA->getAccountStore()));
+        $result = $application->authenticateAccount($authenticationRequest);
+        $this->assertEquals('super_dupper_unique_email@unknown123.kot', $result->account->email);
+
+        try {
+            $authenticationRequest = new \Stormpath\Authc\UsernamePasswordRequest(
+                'super_dupper_unique_email@unknown123.kot',
+                'superP4ss',
+                array('accountStore' => $accountStoreMappingB->getAccountStore()));
+            $application->authenticateAccount($authenticationRequest);
+
+            $account->delete();
+            $accountStoreMappingB->delete();
+            $accountStoreMappingA->delete();
+            $groupB->delete();
+            $groupA->delete();
+
+            $this->fail('Authentication should have failed.');
+        }
+        catch (\Stormpath\Resource\ResourceError $re)
+        {
+            $this->assertEquals(400, $re->getStatus());
+            $this->assertEquals(7104, $re->getErrorCode());
+            $this->assertContains('Invalid', $re->getMessage());
+            $this->assertEquals("Login attempt failed because there is no Account in the Application's associated Account Stores with the specified username or email.", $re->getDeveloperMessage());
+            $this->assertContains('7104', $re->getMoreInfo());
+        }
+
+        $account->delete();
+        $accountStoreMappingB->delete();
+        $accountStoreMappingA->delete();
+        $groupB->delete();
+        $groupA->delete();
+    }
+
     public function testSave()
     {
         $application = self::$application;

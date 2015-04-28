@@ -797,7 +797,8 @@ At the time you create the request, it is likely that you may know the account s
 
 ```php
 $accountStore = $anAccountStoreMapping->getAccountStore();
-$authenticationRequest = new UsernamePasswordRequest('usernameOrEmail', 'password', $accountStore);
+$authenticationRequest = new UsernamePasswordRequest('usernameOrEmail', 'password', 
+    array('accountStore' => $accountStore));
 $result = $application->authenticateAccount($authenticationRequest);
 ```
 

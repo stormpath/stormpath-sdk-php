@@ -22,12 +22,15 @@ class UsernamePasswordRequest implements AuthenticationRequest
     private $username;
     private $password;
     private $host;
+    private $accountStore;
 
-    public function __construct($username, $password, $host = null)
+    public function __construct($username, $password, array $options = array())
     {
-        $this->host = $host;
         $this->password = $password ? str_split($password) : array();
         $this->username = $username;
+
+        $this->host = isset($options['host']) ? $options['host'] : null;
+        $this->accountStore = isset($options['accountStore']) ? $options['accountStore'] : null;
     }
 
     public function getPrincipals()
@@ -40,6 +43,11 @@ class UsernamePasswordRequest implements AuthenticationRequest
         return $this->password;
     }
 
+    public function getAccountStore()
+    {
+        return $this->accountStore;
+    }
+
     // @codeCoverageIgnoreStart
     public function getHost()
     {
@@ -47,7 +55,7 @@ class UsernamePasswordRequest implements AuthenticationRequest
     }
 
     /**
-     * Clears out (nulls) the username, password, and host.  The password bytes are explicitly set to
+     * Clears out (nulls) the username, password, and options.  The password bytes are explicitly set to
      * <tt>0x00</tt> to eliminate the possibility of memory access at a later time.
      */
     public function clear()
