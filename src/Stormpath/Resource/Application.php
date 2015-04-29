@@ -174,6 +174,14 @@ class Application extends InstanceResource implements Deletable
      * handle the link requests and then reset the account's password as described in the
      * {@link verifyPasswordResetToken} PHPDoc.
      *
+     * <p>It is possible to include an <code>AccountStore</code> in the <code>$options</code> array as a performance
+     * enhancement if the application might be mapped to many (dozens, hundreds or thousands) of account stores.
+     * This can be common in multi-tenant applications where each mapped
+     * AccountStore represents a specific tenant or customer organization.  Specifying the AccountStore
+     * in these scenarios bypasses the general email-only-based account search and performs a more-efficient direct
+     * lookup directly against the specified AccountStore.  The AccountStore is usually discovered before calling this
+     * method by inspecting a submitted tenant id or subdomain, e.g. http://ACCOUNT_STORE_NAME.foo.com </p>
+     *
      * @param $accountUsernameOrEmail a username or email address of an Account that may login to the application.
      * @param $options options to pass to this request.
      * @return the account corresponding to the specified username or email address.
@@ -293,6 +301,15 @@ class Application extends InstanceResource implements Deletable
 
         $passwordResetToken = $this->getDataStore()->instantiate(Stormpath::PASSWORD_RESET_TOKEN);
         $passwordResetToken->email = $accountUsernameOrEmail;
+
+        if (isset($options['accountStore']))
+        {
+            $accountStore = $options['accountStore'];
+            if ($accountStore instanceof AccountStore)
+            {
+                $passwordResetToken->setAccountStore($accountStore);
+            }
+        }
 
         return $this->getDataStore()->create($href, $passwordResetToken, Stormpath::PASSWORD_RESET_TOKEN, $options);
     }

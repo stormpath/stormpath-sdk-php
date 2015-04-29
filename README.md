@@ -799,15 +799,16 @@ $account = $application->sendPasswordResetEmail('super_unique_email@unknown123.k
 ```
 
 Alternatively, if you know the account store where the account matching the 
-specified email address resides, you can include it in the call to 
-<code>sendPasswordResetEmail</code>. This is useful as a performance enhancement 
-if the application might be mapped to many (dozens, hundreds or thousands) of 
-account stores, a common scenario in multi-tenant applications.
+specified email address resides, you can include it as part of the `$options` array
+in the call to <code>sendPasswordResetEmail</code>. This is useful as a performance 
+enhancement if the application might be mapped to many (dozens, hundreds or 
+thousands) of account stores, a common scenario in multi-tenant applications.
 
 ```php
 $accountStore = $anAccountStoreMapping->getAccountStore();
 // this method returns the account
-$account = $application->sendPasswordResetEmail('super_unique_email@unknown123.kot', $accountStore);
+$account = $application->sendPasswordResetEmail('super_unique_email@unknown123.kot', 
+    array('accountStore' => $accountStore);
 ```
 
 If the workflow has been configured to verify through a non-Stormpath
