@@ -132,6 +132,27 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $account->delete();
     }
 
+    public function testCreateAccountWithCustomData()
+    {
+        $application = self::$application;
+
+        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+            'surname' => 'Surname',
+            'username' => md5(time()) . 'username',
+            'email' => md5(time()) .'@unknown123.kot',
+            'password' => 'superP4ss'));
+
+        $customData = $account->customData;
+        $customData->phone = "12345";
+
+        $application->createAccount($account);
+
+        $account = \Stormpath\Resource\Account::get($account->href);
+        $this->assertEquals("12345", $account->customData->phone);
+
+        $account->delete();
+    }
+
     public function testCreateGroup()
     {
         $application = self::$application;
