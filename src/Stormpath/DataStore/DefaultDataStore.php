@@ -345,10 +345,16 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         return $query;
     }
 
+    /** This method is not for use by enduser.
+     *  The method will be removed without warning
+     *  at a future time.  */
     public function getCacheManager() {
         return $this->cacheManager;
     }
 
+    /** This method is not for use by enduser.
+     *  The method will be removed without warning
+     *  at a future time.  */
     public function getApiKey() {
         return $this->apiKey;
     }

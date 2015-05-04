@@ -91,9 +91,5 @@ class HttpClientRequestExecutor implements RequestExecutor
         }
     }
 
-    public function getApiKey()
-    {
-        return $this->apiKey;
-    }
 
 }
