@@ -279,6 +279,24 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
             $this->assertContains('7104', $re->getMoreInfo());
         }
 
+        try
+        {
+            new \Stormpath\Authc\UsernamePasswordRequest(
+                'super_dupper_unique_email@unknown123.kot',
+                'superP4ss',
+                array('accountStore' => 'not an instance of AccountStore'));
+
+            $this->fail('UsernamePasswordRequest instantiation should have failed.');
+        }
+        catch (\InvalidArgumentException $iae)
+        {
+            $this->assertEquals("The value for accountStore in the \$options array should be an instance of \\Stormpath\\Resource\\AccountStore", $iae->getMessage());
+        }
+        catch (\Exception $e)
+        {
+            $this->fail('UsernamePasswordRequest instantiation with wrong type for account store should have thrown InvalidArgumentException.');
+        }
+
         $account->delete();
         $accountStoreMappingB->delete();
         $accountStoreMappingA->delete();

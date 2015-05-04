@@ -17,6 +17,9 @@ namespace Stormpath\Authc;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+use Stormpath\Resource\Account;
+use Stormpath\Resource\AccountStore;
+
 class UsernamePasswordRequest implements AuthenticationRequest
 {
     private $username;
@@ -30,7 +33,19 @@ class UsernamePasswordRequest implements AuthenticationRequest
         $this->username = $username;
 
         $this->host = isset($options['host']) ? $options['host'] : null;
-        $this->accountStore = isset($options['accountStore']) ? $options['accountStore'] : null;
+
+        if (isset($options['accountStore']))
+        {
+            $accountStore = $options['accountStore'];
+            if ($accountStore instanceof AccountStore)
+            {
+                $this->accountStore = $accountStore;
+            }
+            else
+            {
+                throw new \InvalidArgumentException("The value for accountStore in the \$options array should be an instance of \\Stormpath\\Resource\\AccountStore");
+            }
+        }
     }
 
     public function getPrincipals()
