@@ -108,7 +108,7 @@ class Client extends Magic
 
         $requestExecutor = new HttpClientRequestExecutor($apiKey);
         $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
-        $this->dataStore = new DefaultDataStore($requestExecutor, $this->cacheManagerInstance, $baseUrl);
+        $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
     }
 
     public static function get($href, $className, $path = null, array $options = array())

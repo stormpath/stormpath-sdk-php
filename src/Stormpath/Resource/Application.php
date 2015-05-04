@@ -340,8 +340,8 @@ class Application extends InstanceResource implements Deletable
 
         parse_str($urlParse['query'], $params);
         $token = isset($params['jwtResponse']) ? $params['jwtResponse'] : '';
-        $apiSecret = $this->getDataStore()->getApiKey()->getSecret();
         $apiId = $this->getDataStore()->getApiKey()->getId();
+        $apiSecret = $this->getDataStore()->getApiKey()->getSecret();
 
         $jwt = JWT::decode($token, $apiSecret, array('HS256'));
 

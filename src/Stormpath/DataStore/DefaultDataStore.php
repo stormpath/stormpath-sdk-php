@@ -18,6 +18,7 @@ namespace Stormpath\DataStore;
  * limitations under the License.
  */
 
+use Stormpath\ApiKey;
 use Stormpath\Cache\Cacheable;
 use Stormpath\Cache\CacheManager;
 use Stormpath\Http\DefaultRequest;
@@ -36,15 +37,19 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     private $baseUrl;
     protected $cacheManager;
 
+    protected $apiKey;
+
     const DEFAULT_SERVER_HOST = 'api.stormpath.com';
     const DEFAULT_API_VERSION = '1';
 
-    public function __construct(RequestExecutor $requestExecutor, $cacheManager, $baseUrl = null)
+    public function __construct(RequestExecutor $requestExecutor, ApiKey $apiKey, $cacheManager, $baseUrl = null)
     {
         $this->requestExecutor = $requestExecutor;
         $this->resourceFactory = new DefaultResourceFactory($this);
         $this->cacheManager = $cacheManager;
         $this->cache = $this->cacheManager->getCache();
+
+        $this->apiKey = $apiKey;
 
 
         if(!$baseUrl)
@@ -344,8 +349,8 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         return $this->cacheManager;
     }
 
-    public function getApiKey()
-    {
-        return $this->requestExecutor->getApiKey();
+    public function getApiKey() {
+        return $this->apiKey;
     }
+
 }
