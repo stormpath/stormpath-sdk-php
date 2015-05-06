@@ -1,6 +1,14 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.2.1.beta
+------------------
+
+Released on April 22, 2015
+
+- Upgraded dependency version of the guzzle/http library to 3.9.*.
+
+
 Version 1.2.0.beta
 ------------------
 
