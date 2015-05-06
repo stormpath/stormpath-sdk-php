@@ -30,29 +30,26 @@ class HttpClientRequestExecutor implements RequestExecutor
     private $httpClient;
     private $signer;
 
-    public function __construct(ApiKey $apiKey = null)
+    public function __construct()
     {
         $this->httpClient = new Client();
-
-        if ($apiKey)
-        {
-            $this->apiKey = $apiKey;
-            $this->signer = new Sauthc1Signer;
-            $this->httpClient->setConfig(array(Client::REQUEST_OPTIONS => array(
-                                                   'allow_redirects' => false,
-                                                   'exceptions' => false, // do not throw exceptions from the client
-                                                   'verify' => false // do not verify SSL certificate
-                                         )));
-        }
-
     }
 
     public function executeRequest(Request $request, $redirectsLimit = 10)
     {
         $requestHeaders = $request->getHeaders();
+        $this->apiKey = $request->getApiKey();
         if ($this->apiKey)
         {
+            $this->signer = new Sauthc1Signer;
             $this->signer->signRequest($request, $this->apiKey);
+
+            $this->httpClient->setConfig(array(Client::REQUEST_OPTIONS => array(
+                'allow_redirects' => false,
+                'exceptions' => false, // do not throw exceptions from the client
+                'verify' => false // do not verify SSL certificate
+            )));
+
             $this->httpClient->setUserAgent($requestHeaders['User-Agent']);
         }
 

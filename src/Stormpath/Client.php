@@ -106,7 +106,7 @@ class Client extends Magic
         self::$cacheManager = $cacheManager;
         self::$cacheManagerOptions = $cacheManagerOptions;
 
-        $requestExecutor = new HttpClientRequestExecutor($apiKey);
+        $requestExecutor = new HttpClientRequestExecutor();
         $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
         $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
     }

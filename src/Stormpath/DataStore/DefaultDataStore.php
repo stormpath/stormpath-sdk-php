@@ -37,7 +37,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     private $baseUrl;
     protected $cacheManager;
 
-    protected $apiKey;
+    private $apiKey;
 
     const DEFAULT_SERVER_HOST = 'api.stormpath.com';
     const DEFAULT_API_VERSION = '1';
@@ -208,6 +208,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     private function executeRequest($httpMethod, $href, $body = '', array $query = array())
     {
         $request = new DefaultRequest(
+                       $this->apiKey,
                        $httpMethod,
                        $href,
                        $query,
@@ -352,9 +353,6 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         return $this->cacheManager;
     }
 
-    /** This method is not for use by enduser.
-     *  The method will be removed without warning
-     *  at a future time.  */
     public function getApiKey() {
         return $this->apiKey;
     }

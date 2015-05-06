@@ -35,4 +35,6 @@ interface InternalDataStore extends DataStore
 
     public function delete(Resource $resource);
 
+    public function getApiKey();
+
 }
