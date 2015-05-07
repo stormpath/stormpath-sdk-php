@@ -521,7 +521,6 @@ After you have access to the whole custom data resource, you can then retrieve a
     ```
           
 #### Update Custom Data
-//TODO: Update to magic method
 ```php
   $customData->favoriteColor = "red";
   $customData->hobby = "Kendo";

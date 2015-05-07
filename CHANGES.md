@@ -1,13 +1,20 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.3.0.beta
+------------------
+
+Released on May 7, 2015
+
+- Added Id Site support.
+- Added the capability to support the specification of an account store for account authentication.
+
 Version 1.2.1.beta
 ------------------
 
 Released on April 22, 2015
 
 - Upgraded dependency version of the guzzle/http library to 3.9.*.
-
 
 Version 1.2.0.beta
 ------------------
@@ -42,7 +49,6 @@ Released on October 24, 2013
 - Implemented application centric operations.
 - Implemented account store mappings functionalities.
 
-
 Version 0.3.2
 -------------
 
@@ -50,14 +56,12 @@ Released on June 27, 2013
 
 - Added http redirection support to Services_Stormpath_Http_HttpClientRequestExecutor to fix current tenant retrieval issue.
 
-
 Version 0.3.1
 -------------
 
 Released on March 27, 2013
 
 - Fixing bug where the createAccount() method of the Services_Stormpath_Resource_Directory class was not returning the created account.
-
 
 Version 0.3.0
 -------------
@@ -69,7 +73,6 @@ Released on December 21, 2012
 - The addGroup() method implementation of the Services_Stormpath_Resource_Account class was updated to reflect the previously mentioned changes.
 - The addAccount() method implementation of the Services_Stormpath_Resource_Group class was updated to reflect the previously mentioned changes.
 
-
 Version 0.2.0
 -------------
 
@@ -80,7 +83,6 @@ Released on August 31, 2012
 - Logic to retain non-persisted properties was added (dirty properties).
 - A resource's property can now be removed by setting it to null.
 - The Services_Stormpath_Client_ClientApplicationBuilder class was added and implemented to produce a Services_Stormpath_Client_ClientApplication from a single URL with the credentials on it.
-
 
 Version 0.1.0
 -------------
