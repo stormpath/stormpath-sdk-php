@@ -517,8 +517,8 @@ An example of retrieving custom data for an application.
 After you have access to the whole custom data resource, you can then retrieve a specific property with the following
 
 ```php
-    $property = $applicationCustomData->property;
-    ```
+  $property = $applicationCustomData->property;
+  ```
           
 #### Update Custom Data
 ```php
