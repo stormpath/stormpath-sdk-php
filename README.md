@@ -787,6 +787,21 @@ try {
 }
 ```
 
+#### Log In (Authenticate) an Account with Specific AccountStore
+
+When you submit an authentication request to Stormpath, instead of executing the default login logic that cycles through account stores to find an account match, you can specify the `AccountStore` where the login attempt will be issued to.
+
+At the time you create the request, it is likely that you may know the account store where the account resides, therefore you can target it directly. This will speed up the authentication attempt (especially if you have a very large number of account stores).
+
+##### Example Request
+
+```php
+$accountStore = $anAccountStoreMapping->getAccountStore();
+$authenticationRequest = new UsernamePasswordRequest('usernameOrEmail', 'password', 
+    array('accountStore' => $accountStore));
+$result = $application->authenticateAccount($authenticationRequest);
+```
+
 ### Password Reset
 
 A password reset workflow, if configured on the directory the account is

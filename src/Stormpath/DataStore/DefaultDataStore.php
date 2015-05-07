@@ -291,6 +291,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
                 $property = $this->toSimpleReference($name, $property);
             }
 
+            else if ($property instanceof \Stormpath\Resource\Resource)
+            {
+                $property = $this->toStdClass($property);
+            }
+
 
 
             $properties->$name = $property;
