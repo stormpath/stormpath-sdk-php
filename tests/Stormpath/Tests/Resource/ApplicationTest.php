@@ -18,10 +18,18 @@
 namespace Stormpath\Tests\Resource;
 
 
+use JWT;
+use Stormpath\Client;
+use Stormpath\Resource\Application;
+use Stormpath\Util\UUID;
+
 class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
     private static $application;
     private static $inited;
+
+    private static $directory;
+    private static $account;
 
     protected static function init()
     {
@@ -65,6 +73,115 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
         $this->assertContains('Main App', $application->name);
     }
+
+    public function testCreateIdSiteURLReturnsURLWithJWT()
+    {
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+
+        $redirectUrl = $application->createIdSiteUrl(array(
+            'callbackUri' => 'https://stormpath.com',
+            'state' => UUID::v4()
+        ));
+
+        $this->assertContains('https://api.stormpath.com/sso?jwtRequest=', $redirectUrl);
+    }
+
+
+    public function testCreateIdSiteUrlReturnsCorrectPathForLogoutRequest()
+    {
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+
+        $redirectUrl = $application->createIdSiteUrl(array(
+            'callbackUri' => 'https://stormpath.com',
+            'logout'=>true,
+            'state' => UUID::v4()
+        ));
+
+        $this->assertContains('https://api.stormpath.com/sso/logout?jwtRequest=', $redirectUrl);
+    }
+
+    /**
+     * @expectedException \Stormpath\Exceptions\IdSite\InvalidCallbackUriException
+     */
+    public function testCreateIdSiteUrlThrowsExceptionIfNoCallbackURIPrivided()
+    {
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+
+        $redirectUrl = $application->createIdSiteUrl(array(
+            'logout'=>true,
+            'state' => UUID::v4()
+        ));
+    }
+
+    protected function createAccount()
+    {
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time())));
+
+        self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
+
+        self::$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+            'middleName' => 'Middle Name',
+            'surname' => 'Surname',
+            'username' => md5(time()) . 'username',
+            'email' => md5(time()) .'@unknown123.kot',
+            'password' => 'superP4ss'));
+
+        self::$directory->createAccount(self::$account);
+    }
+
+    protected function deleteAccount()
+    {
+        if (self::$directory)
+        {
+            self::$directory->delete();
+        }
+    }
+
+    protected function generateResponseUrl()
+    {
+        $jwt = array();
+        $jwt['iss'] = 'https://stormpath.com';
+        $jwt['sub'] = self::$account->href;
+        $jwt['aud'] = UUID::v4();
+        $jwt['exp'] = time() + 60;
+        $jwt['iat'] = time();
+        $jwt['jti'] = UUID::v4();
+        $jwt['irt'] = UUID::v4();
+        $jwt['state'] = "";
+        $jwt['isNewSub'] = false;
+        $jwt['status'] = "AUTHENTICATED";
+
+        $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+
+        $token = JWT::encode($jwt, $apiSecret);
+
+
+        return 'https://stormpath.com?jwtResponse='.$token;
+
+
+    }
+
+    public function testHandleIdSiteCallbackReturnsExpectedItems()
+    {
+        $this->createAccount();
+
+        $responseUrl = $this->generateResponseUrl();
+
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+
+        $response = $application->handleIdSiteCallback($responseUrl);
+
+        $this->assertEquals('AUTHENTICATED', $response->status);
+        $this->assertFalse($response->isNew);
+        $this->assertEquals("", $response->state);
+        $this->assertEquals(self::$account->href, $response->account->href);
+
+
+        $this->deleteAccount();
+
+
+    }
+
 
     /**
      * @expectedException \Stormpath\Resource\ResourceError
@@ -396,5 +513,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         \Stormpath\Resource\Application::get($href);
     }
+
+
 
 }

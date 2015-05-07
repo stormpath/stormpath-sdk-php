@@ -37,4 +37,6 @@ interface Request extends HttpMessage {
     function toStrQueryString($canonical);
 
     function setResourceUrl($resourceUrl);
+
+    public function getApiKey();
 }
