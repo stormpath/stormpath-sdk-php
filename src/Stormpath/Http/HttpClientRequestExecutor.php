@@ -26,7 +26,6 @@ use Stormpath\Http\Authc\Sauthc1Signer;
 
 class HttpClientRequestExecutor implements RequestExecutor
 {
-    private $apiKey;
     private $httpClient;
     private $signer;
 
@@ -38,11 +37,12 @@ class HttpClientRequestExecutor implements RequestExecutor
     public function executeRequest(Request $request, $redirectsLimit = 10)
     {
         $requestHeaders = $request->getHeaders();
-        $this->apiKey = $request->getApiKey();
-        if ($this->apiKey)
+        $apiKey = $request->getApiKey();
+
+        if ($apiKey)
         {
             $this->signer = new Sauthc1Signer;
-            $this->signer->signRequest($request, $this->apiKey);
+            $this->signer->signRequest($request, $apiKey);
 
             $this->httpClient->setConfig(array(Client::REQUEST_OPTIONS => array(
                 'allow_redirects' => false,
