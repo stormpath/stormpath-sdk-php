@@ -32,6 +32,7 @@ class HttpClientRequestExecutor implements RequestExecutor
     public function __construct()
     {
         $this->httpClient = new Client();
+        $this->signer = new Sauthc1Signer;
     }
 
     public function executeRequest(Request $request, $redirectsLimit = 10)
@@ -41,7 +42,6 @@ class HttpClientRequestExecutor implements RequestExecutor
 
         if ($apiKey)
         {
-            $this->signer = new Sauthc1Signer;
             $this->signer->signRequest($request, $apiKey);
 
             $this->httpClient->setConfig(array(Client::REQUEST_OPTIONS => array(
