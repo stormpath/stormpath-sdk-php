@@ -24,6 +24,7 @@ class BasicLoginAttempt extends Resource
 {
     const TYPE = "type";
     const VALUE = "value";
+    const ACCOUNT_STORE = "accountStore";
 
     public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null) {
         parent::__construct($dataStore, $properties);
@@ -45,5 +46,15 @@ class BasicLoginAttempt extends Resource
     public function setValue($value)
     {
         $this->setProperty(self::VALUE, $value);
+    }
+
+    public function getAccountStore()
+    {
+        $this->getProperty(self::ACCOUNT_STORE);
+    }
+
+    public function setAccountStore($accountStore)
+    {
+        $this->setProperty(self::ACCOUNT_STORE, $accountStore);
     }
 }

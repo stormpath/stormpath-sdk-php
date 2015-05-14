@@ -18,11 +18,13 @@ namespace Stormpath\Http;
  * limitations under the License.
  */
 
+use Stormpath\ApiKey;
 use Stormpath\Util\RequestUtils;
 
 class DefaultRequest extends AbstractHttpMessage implements Request
 {
 
+    private $apiKey;
     private $method;
     private $resourceUrl;
     private $headers;
@@ -30,13 +32,16 @@ class DefaultRequest extends AbstractHttpMessage implements Request
     private $body;
     private $contentLength;
 
-    public function __construct($method,
+    public function __construct(ApiKey $apiKey,
+                                $method,
                                 $href,
                                 array $query = array(),
                                 array $headers = array(),
                                 $body = null,
                                 $contentLength = -1)
     {
+
+        $this->apiKey = $apiKey;
 
         $this->method = $method;
 
@@ -148,5 +153,10 @@ class DefaultRequest extends AbstractHttpMessage implements Request
         }
 
         return $result;
+    }
+
+    public function getApiKey()
+    {
+        return $this->apiKey;
     }
 }
