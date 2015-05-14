@@ -132,6 +132,32 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $account->delete();
     }
 
+    public function testCreateAccountWithCustomData()
+    {
+        $application = self::$application;
+        // Per issue #39: disable cache to make sure the custom data is actually getting all the way to the server
+        $cacheManager = \Stormpath\Client::$cacheManager;
+        \Stormpath\Client::$cacheManager = null;
+
+        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+                                                                  'surname' => 'Surname',
+                                                                  'username' => md5(time()) . 'username',
+                                                                  'email' => md5(time()) .'@unknown123.kot',
+                                                                  'password' => 'superP4ss'));
+
+        $customData = $account->customData;
+        $customData->phone = "12345";
+
+        $application->createAccount($account);
+
+        $account = \Stormpath\Resource\Account::get($account->href);
+        $this->assertEquals("12345", $account->customData->phone);
+
+        $account->delete();
+
+        \Stormpath\Client::$cacheManager = $cacheManager;
+    }
+
     public function testCreateGroup()
     {
         $application = self::$application;

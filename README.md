@@ -905,7 +905,7 @@ follows:
 
 ```PHP
 $provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q/provider",
-    \Stormpath\Stormpath::GOOGLE_PROVIDER);
+    \Stormpath\Stormpath::PROVIDER);
 ```
 
 or, by means of the directory Resource:
@@ -976,7 +976,7 @@ shows how you use `ProviderRequest` to get an `Account` for a given authorizatio
 ```PHP
 $applicationHref = "https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu";
 $application = $client->getResource(applicationHref, \Stormpath\Stormpath::APPLICATION);
-$providerRequest = new GoogleProviderRequest(array(
+$providerRequest = new GoogleProviderAccountRequest(array(
     "code" => "4/a3p_fn0sMDQlyFVTYwfl5GAj0Obd.oiruVLbQZSwU3oEBd8DOtNApQzTCiwI"
 ));
 

@@ -47,11 +47,19 @@ class Stormpath
     const DIRECTORY                     = 'Directory';
     const DIRECTORY_LIST                = 'DirectoryList';
     const EMAIL_VERIFICATION_TOKEN      = 'EmailVerificationToken';
+    const FACEBOOK_PROVIDER               = 'GoogleProvider';
+    const FACEBOOK_PROVIDER_DATA          = "GoogleProviderData";
+    const GOOGLE_PROVIDER               = 'GoogleProvider';
+    const GOOGLE_PROVIDER_DATA          = "GoogleProviderData";
     const GROUP                         = 'Group';
     const GROUP_LIST                    = 'GroupList';
     const GROUP_MEMBERSHIP              = 'GroupMembership';
     const GROUP_MEMBERSHIP_LIST         = 'GroupMembershipList';
     const PASSWORD_RESET_TOKEN          = 'PasswordResetToken';
+    const PROVIDER                      = 'Provider';
+    const PROVIDER_ACCOUNT_ACCESS       = 'ProviderAccountAccess';
+    const PROVIDER_ACCOUNT_RESULT       = 'ProviderAccountResult';
+    const PROVIDER_DATA                 = 'ProviderData';
     const TENANT                        = 'Tenant';
 
     const ENABLED                       = 'ENABLED';
