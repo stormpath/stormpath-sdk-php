@@ -300,6 +300,69 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         $account->delete();
     }
+    
+    public function testSendPasswordResetEmailWithAccountStore()
+    {
+        $application = self::$application;
+
+        $groupA = new \stdClass();
+        $groupA->name = 'New Group in town A: '.md5(time());
+        $groupA = \Stormpath\Resource\Group::instantiate($groupA);
+        $application->createGroup($groupA);
+
+        $groupB = new \stdClass();
+        $groupB->name = 'New Group in town B: '.md5(time());
+        $groupB = \Stormpath\Resource\Group::instantiate($groupB);
+        $application->createGroup($groupB);
+
+        $accountStoreMappingA = \Stormpath\Resource\AccountStoreMapping::instantiate(array('accountStore' => $groupA));
+        $application->createAccountStoreMapping($accountStoreMappingA);
+
+        $accountStoreMappingB = \Stormpath\Resource\AccountStoreMapping::instantiate(array('accountStore' => $groupB));
+        $application->createAccountStoreMapping($accountStoreMappingB);
+
+        $account = \Stormpath\Resource\Account::instantiate(array(
+            'givenName' => 'Account Name',
+            'surname' => 'Surname',
+            'username' => 'super_unique_username',
+            'email' => 'super_dupper_unique_email@unknown123.kot',
+            'password' => 'superP4ss'));
+
+        $application->createAccount($account);
+        $groupA->addAccount($account);
+
+        $account = $application->sendPasswordResetEmail('super_dupper_unique_email@unknown123.kot',
+            array("accountStore" => $accountStoreMappingA->getAccountStore()));
+        $this->assertEquals('super_dupper_unique_email@unknown123.kot', $account->email);
+
+        try {
+            // lookup email address in an AccountStore that doesn't contain the corresponding account
+            $account = $application->sendPasswordResetEmail('super_dupper_unique_email@unknown123.kot',
+                array("accountStore" => $accountStoreMappingB->getAccountStore()));
+
+            $account->delete();
+            $accountStoreMappingB->delete();
+            $accountStoreMappingA->delete();
+            $groupB->delete();
+            $groupA->delete();
+
+            $this->fail('sendPasswordResetEmail should have failed.');
+        }
+        catch (\Stormpath\Resource\ResourceError $re)
+        {
+            $this->assertEquals(400, $re->getStatus());
+            $this->assertEquals(2016, $re->getErrorCode());
+            $this->assertContains('does not match a known resource', $re->getMessage());
+            $this->assertContains('does not match a known resource', $re->getDeveloperMessage());
+            $this->assertContains('2016', $re->getMoreInfo());
+        }
+
+        $account->delete();
+        $accountStoreMappingB->delete();
+        $accountStoreMappingA->delete();
+        $groupB->delete();
+        $groupA->delete();
+    }
 
     public function testAuthenticate()
     {
