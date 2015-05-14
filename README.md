@@ -18,7 +18,7 @@ On your project root, install Composer
 Configure the **stormpath/sdk** dependency in your 'composer.json' file:
 
     "require": {
-        "stormpath/sdk": "1.0.*@beta"
+        "stormpath/sdk": "1.3.*@beta"
     }
 
 On your project root, install the the SDK with its dependencies:
@@ -517,11 +517,10 @@ An example of retrieving custom data for an application.
 After you have access to the whole custom data resource, you can then retrieve a specific property with the following
 
 ```php
-    $property = $applicationCustomData->property;
-    ```
+  $property = $applicationCustomData->property;
+  ```
           
 #### Update Custom Data
-//TODO: Update to magic method
 ```php
   $customData->favoriteColor = "red";
   $customData->hobby = "Kendo";
@@ -546,7 +545,80 @@ CustomData while stating the custom data field as a parameter.
 ```php
   $customData->remove("favoriteColor");
   ```
+  
+  
+### ID Site
+ID Site allows you to easily add authentication to your application.  It is also very easy to use.  
+To use ID Site, You need to use the SDK to generate a url with a JWT.  This is very simple but you want to make sure your
+application does not generate that on the page with the login link but rather a transfer thru page that generates the link 
+then redirects the user to the ID Site URL. 
 
+
+
+#### ID Site Login
+As an example, you have a link on your page for Login which goes go login.php.  Your login.php file would include the following
+code which generates the JWT URL
+
+```php
+$application = \Stormpath\Resource\Application::get('{APPLICATION_ID}');	
+$loginLink = $application->createIdSiteUrl(['callbackUri'=>'{CALLBACK_URI}']);
+header('Location:'.$loginLink);  //or any other form of redirect to the $loginLink you want to use.
+```
+
+That is all you will need for generating the login link
+
+> NOTE:
+> In order for you to be directed back to the Callback URL, you need to make sure you are explicit in the Stormpath
+> Dashboard.  Include the full url on the [ID Site settings page](https://api.stormpath.com/ui2/index.html#/id-site)
+
+For the example above, you would replace `{APPLICATION_ID}` with the id for the applicaiton you want to allow a user
+to sign in to.  You then replace `{CALLBACK_URI}` with the url you want to handle the ID Site information.  
+
+#### Handle ID Site Callback
+For any request you make for ID Site, you need to specify a callback uri.  This is where the logic is stored for any
+information you want to receive from the JWT about the logged in user.  To do this and get the response back from the 
+Stormpath servers, you call the method handleIdSite on the application object while passing in the full Request URI
+ 
+```php
+$application = \Stormpath\Resource\Application::get('{APPLICATION_ID}');	
+$response = $application->handleIdSiteCallback($_SERVER['REQUEST_URI']);	
+```
+
+> NOTE:
+> A JWT Response Token can only be used once.  This is to prevent replay attacks.  It will also only be valid for a total
+> of 60 seconds.  After which time, You will need to restart the workflow you were in.
+
+#### Other ID Site Options
+There are a few other methods that you will need to concern yourself with when using ID Site.  Logging out a User, 
+Registering a User, and a User who has forgotten their password.  These methods will use the same information from 
+the login method but a few more items will need to be passed into the array.
+
+Logging Out a User
+```php
+$application = \Stormpath\Resource\Application::get('{APPLICATION_ID}');
+$logoutLink = $application->createIdSiteUrl(['logout'=>true, 'callbackUri'=>'{CALLBACK_URI}']);
+header('Location:'.$logoutLink);  //or any other form of redirect to the $loginLink you want to use.
+```
+
+Registering a User
+```php
+$application = \Stormpath\Resource\Application::get('{APPLICATION_ID}');
+$registerLink = $application->createIdSiteUrl(['path'=>'/#/register','callbackUri'=>'{CALLBACK_URI}']);
+header('Location:'.$registerLink);  //or any other form of redirect to the $loginLink you want to use.
+```
+
+Forgot Link
+```php
+$application = \Stormpath\Resource\Application::get('{APPLICATION_ID}');
+$forgotLink = $application->createIdSiteUrl(['path'=>'/#/forgot','callbackUri'=>'{CALLBACK_URI}']);
+header('Location:'.$forgotLink);  //or any other form of redirect to the $loginLink you want to use.
+```
+
+Again, with all these methods, You will want your application to link to an internal page where the JWT is created at 
+that time.  Without doing this, a user will only have 60 seconds to click on the link before the JWT expires.
+
+> NOTE:
+> A JWT will expire after 60 seconds of creation.
 
 ### Collections
 #### Search
@@ -785,6 +857,21 @@ try {
     print $re->getDeveloperMessage();
     print $re->getMoreInfo();
 }
+```
+
+#### Log In (Authenticate) an Account with Specific AccountStore
+
+When you submit an authentication request to Stormpath, instead of executing the default login logic that cycles through account stores to find an account match, you can specify the `AccountStore` where the login attempt will be issued to.
+
+At the time you create the request, it is likely that you may know the account store where the account resides, therefore you can target it directly. This will speed up the authentication attempt (especially if you have a very large number of account stores).
+
+##### Example Request
+
+```php
+$accountStore = $anAccountStoreMapping->getAccountStore();
+$authenticationRequest = new UsernamePasswordRequest('usernameOrEmail', 'password', 
+    array('accountStore' => $accountStore));
+$result = $application->authenticateAccount($authenticationRequest);
 ```
 
 ### Password Reset

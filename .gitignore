@@ -9,4 +9,3 @@ composer.phar
 *.zip
 tests/code-coverage
 .envrc
-

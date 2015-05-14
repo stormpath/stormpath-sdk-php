@@ -18,6 +18,7 @@ namespace Stormpath\DataStore;
  * limitations under the License.
  */
 
+use Stormpath\ApiKey;
 use Stormpath\Cache\Cacheable;
 use Stormpath\Cache\CacheManager;
 use Stormpath\Http\DefaultRequest;
@@ -36,15 +37,19 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     private $baseUrl;
     protected $cacheManager;
 
+    private $apiKey;
+
     const DEFAULT_SERVER_HOST = 'api.stormpath.com';
     const DEFAULT_API_VERSION = '1';
 
-    public function __construct(RequestExecutor $requestExecutor, $cacheManager, $baseUrl = null)
+    public function __construct(RequestExecutor $requestExecutor, ApiKey $apiKey, $cacheManager, $baseUrl = null)
     {
         $this->requestExecutor = $requestExecutor;
         $this->resourceFactory = new DefaultResourceFactory($this);
         $this->cacheManager = $cacheManager;
         $this->cache = $this->cacheManager->getCache();
+
+        $this->apiKey = $apiKey;
 
 
         if(!$baseUrl)
@@ -178,6 +183,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         return $delete;
     }
 
+    public function getRequestExecutor()
+    {
+        return $this->requestExecutor;
+    }
+
     protected function needsToBeFullyQualified($href)
     {
         return stripos($href, 'http') === false;
@@ -198,6 +208,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     private function executeRequest($httpMethod, $href, $body = '', array $query = array())
     {
         $request = new DefaultRequest(
+                       $this->apiKey,
                        $httpMethod,
                        $href,
                        $query,
@@ -291,6 +302,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
                 $property = $this->toSimpleReference($name, $property);
             }
 
+            else if ($property instanceof \Stormpath\Resource\Resource)
+            {
+                $property = $this->toStdClass($property);
+            }
+
 
 
             $properties->$name = $property;
@@ -334,4 +350,16 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         return $query;
     }
+
+    /** This method is not for use by enduser.
+     *  The method will be removed without warning
+     *  at a future time.  */
+    public function getCacheManager() {
+        return $this->cacheManager;
+    }
+
+    public function getApiKey() {
+        return $this->apiKey;
+    }
+
 }

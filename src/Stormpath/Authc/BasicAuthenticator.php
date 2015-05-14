@@ -56,6 +56,10 @@ class BasicAuthenticator
         $attempt = $this->dataStore->instantiate(Stormpath::BASIC_LOGIN_ATTEMPT);
         $attempt->setValue($value);
 
+        if ($request->getAccountStore() != null) {
+            $attempt->setAccountStore($request->getAccountStore());
+        }
+
         $href = $parentHref . '/loginAttempts';
 
         return $this->dataStore->create($href, $attempt, Stormpath::AUTHENTICATION_RESULT, $options);
