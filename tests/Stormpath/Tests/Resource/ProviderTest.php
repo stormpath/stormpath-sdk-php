@@ -1,0 +1,184 @@
+<?php
+/*
+ * Copyright 2013 Stormpath, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+namespace Stormpath\Tests\Resource;
+
+
+use Stormpath\Cache\NullCacheManager;
+use Stormpath\Resource\Account;
+use Stormpath\Resource\Application;
+use Stormpath\Resource\FacebookProvider;
+use Stormpath\Resource\GoogleProvider;
+use Stormpath\Resource\Provider;
+use Stormpath\Stormpath;
+
+class ProviderTest extends \Stormpath\Tests\BaseTest
+{
+    public function testGetGoogleProvider()
+    {
+        $clientId = "mockClientId".md5(time());
+        $clientSecret = "mockClientSecret".md5(time());
+        $redirectUri = "https://www.example.com/oauth2callback";
+
+        $provider = self::$client->dataStore->instantiate(\Stormpath\Stormpath::GOOGLE_PROVIDER);
+        $provider->setClientId($clientId);
+        $provider->setClientSecret($clientSecret);
+        $provider->setRedirectUri($redirectUri);
+
+        $directoryName = "my-google-directory-2".md5(time());
+        $directoryDescription = "A Google directory".md5(time());
+
+        $directory = self::$client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+        $directory->setName($directoryName);
+        $directory->setDescription($directoryDescription);
+        $directory->setProvider($provider);
+
+        $tenant = self::$client->getCurrentTenant();
+        $returnedDirectory = $tenant->createDirectory($directory);
+
+        $this->assertNotNull($returnedDirectory);
+
+        $returnedProvider = self::$client->dataStore->getResource(
+            $returnedDirectory->href."/".Provider::PATH,
+            \Stormpath\Stormpath::GOOGLE_PROVIDER
+        );
+
+        $this->assertEquals(GoogleProvider::GOOGLE_PROVIDER_ID,
+            $returnedProvider->getProviderId());
+        $this->assertNotEmpty($returnedProvider->getCreatedAt());
+        $this->assertNotEmpty($returnedProvider->getModifiedAt());
+        $this->assertEquals($clientId, $returnedProvider->getClientId());
+        $this->assertEquals($clientSecret, $returnedProvider->getClientSecret());
+        $this->assertEquals($redirectUri, $returnedProvider->getRedirectUri());
+
+        $returnedDirectory->delete();
+    }
+
+    public function testGetFacebookProvider()
+    {
+        $clientId = "mockClientId".md5(time());
+        $clientSecret = "mockClientSecret".md5(time());
+
+        $provider = self::$client->dataStore->instantiate(\Stormpath\Stormpath::FACEBOOK_PROVIDER);
+        $provider->setClientId($clientId);
+        $provider->setClientSecret($clientSecret);
+
+        $directoryName = "my-facebook-directory-2".md5(time());
+        $directoryDescription = "A Facebook directory".md5(time());
+
+        $directory = self::$client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+        $directory->setName($directoryName);
+        $directory->setDescription($directoryDescription);
+        $directory->setProvider($provider);
+
+        $tenant = self::$client->getCurrentTenant();
+        $returnedDirectory = $tenant->createDirectory($directory);
+
+        $this->assertNotNull($returnedDirectory);
+
+        $returnedProvider = self::$client->dataStore->getResource(
+            $returnedDirectory->href."/".Provider::PATH,
+            \Stormpath\Stormpath::FACEBOOK_PROVIDER
+        );
+
+        $this->assertEquals(FacebookProvider::FACEBOOK_PROVIDER_ID,
+            $returnedProvider->getProviderId());
+        $this->assertNotEmpty($returnedProvider->getCreatedAt());
+        $this->assertNotEmpty($returnedProvider->getModifiedAt());
+        $this->assertEquals($clientId, $returnedProvider->getClientId());
+        $this->assertEquals($clientSecret, $returnedProvider->getClientSecret());
+
+        $returnedDirectory->delete();
+    }
+
+    public function testGoogleProviderAccount()
+    {
+        $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
+        $cacheManager = $this->getMock('\Stormpath\Cache\CacheManager');
+        $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
+            array('create'), array($requestExecutor, $cacheManager));
+
+        $code = "4/XrsKzIJuy3ye57eqbanlQDN1wZHYfaUV-MFyC6dRjRw.wnCoOEKwnlwXXmXvfARQvthKMCbPmgI";
+        $providerAccountRequest = new \Stormpath\Provider\GoogleProviderAccountRequest(array(
+            "code" => $code
+        ));
+
+        $providerData = $providerAccountRequest->getProviderData($dataStore);
+
+        $this->assertEquals(GoogleProvider::GOOGLE_PROVIDER_ID, $providerData->getProviderId());
+        $this->assertEquals($code, $providerData->getCode());
+        $this->assertEmpty($providerData->getAccessToken());
+
+        $providerAccountAccess = $dataStore->instantiate(Stormpath::PROVIDER_ACCOUNT_ACCESS);
+        $providerAccountAccess->providerData = $providerData;
+
+        $application = new Application($dataStore);
+
+        $providerAccountResult = $this->getMock('\Stormpath\Resource\ProviderAccountResult');
+        $dataStore->expects($this->once())
+            ->method('create')
+            ->with(
+                $this->equalTo($application->getHref().'/'.Account::PATH),
+                $this->equalTo($providerAccountAccess),
+                $this->equalTo(Stormpath::PROVIDER_ACCOUNT_RESULT)
+            )
+            ->will($this->returnValue($providerAccountResult));
+
+
+        $returnedResult = $application->getAccount($providerAccountRequest);
+
+        $this->assertEquals($providerAccountResult, $returnedResult);
+    }
+
+    public function testFacebookProviderAccount()
+    {
+        $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
+        $cacheManager = $this->getMock('\Stormpath\Cache\CacheManager');
+        $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
+            array('create'), array($requestExecutor, $cacheManager));
+
+        $accessToken = "4/XrsKzIJuy3ye57eqbanlQDN1wZHYfaUV-MFyC6dRjRw.wnCoOEKwnlwXXmXvfARQvthKMCbPmgI";
+        $providerAccountRequest = new \Stormpath\Provider\FacebookProviderAccountRequest(array(
+            "accessToken" => $accessToken
+        ));
+
+        $providerData = $providerAccountRequest->getProviderData($dataStore);
+
+        $this->assertEquals(FacebookProvider::FACEBOOK_PROVIDER_ID, $providerData->getProviderId());
+        $this->assertEquals($accessToken, $providerData->getAccessToken());
+
+        $providerAccountAccess = $dataStore->instantiate(Stormpath::PROVIDER_ACCOUNT_ACCESS);
+        $providerAccountAccess->providerData = $providerData;
+
+        $application = new Application($dataStore);
+
+        $providerAccountResult = $this->getMock('\Stormpath\Resource\ProviderAccountResult');
+        $dataStore->expects($this->once())
+            ->method('create')
+            ->with(
+                $this->equalTo($application->getHref().'/'.Account::PATH),
+                $this->equalTo($providerAccountAccess),
+                $this->equalTo(Stormpath::PROVIDER_ACCOUNT_RESULT)
+            )
+            ->will($this->returnValue($providerAccountResult));
+
+
+        $returnedResult = $application->getAccount($providerAccountRequest);
+
+        $this->assertEquals($providerAccountResult, $returnedResult);
+    }
+}

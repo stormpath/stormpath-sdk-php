@@ -22,13 +22,14 @@ use Stormpath\DataStore\InternalDataStore;
 
 class FacebookProvider extends Provider
 {
-    const CLIENT_ID = 'clientId';
-    const CLIENT_SECRET = 'clientSecret';
-    const REDIRECT_URI = 'redirectUri';
+    const CLIENT_ID             = 'clientId';
+    const CLIENT_SECRET         = 'clientSecret';
+    const REDIRECT_URI          = 'redirectUri';
+    const FACEBOOK_PROVIDER_ID  = 'facebook';
 
     public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null) {
         parent::__construct($dataStore, $properties);
-        $this->setProperty(self::PROVIDER_ID, 'facebook');
+        $this->setProperty(self::PROVIDER_ID, self::FACEBOOK_PROVIDER_ID);
     }
 
     public function getClientId()

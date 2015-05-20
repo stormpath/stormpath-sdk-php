@@ -26,9 +26,11 @@ class GoogleProvider extends Provider
     const CLIENT_SECRET = 'clientSecret';
     const REDIRECT_URI = 'redirectUri';
 
+    const GOOGLE_PROVIDER_ID = 'google';
+
     public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null) {
         parent::__construct($dataStore, $properties);
-        $this->setProperty(self::PROVIDER_ID, 'google');
+        $this->setProperty(self::PROVIDER_ID, self::GOOGLE_PROVIDER_ID);
     }
 
     public function getClientId()

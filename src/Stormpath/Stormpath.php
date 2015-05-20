@@ -47,8 +47,8 @@ class Stormpath
     const DIRECTORY                     = 'Directory';
     const DIRECTORY_LIST                = 'DirectoryList';
     const EMAIL_VERIFICATION_TOKEN      = 'EmailVerificationToken';
-    const FACEBOOK_PROVIDER               = 'GoogleProvider';
-    const FACEBOOK_PROVIDER_DATA          = "GoogleProviderData";
+    const FACEBOOK_PROVIDER             = 'FacebookProvider';
+    const FACEBOOK_PROVIDER_DATA        = "FacebookProviderData";
     const GOOGLE_PROVIDER               = 'GoogleProvider';
     const GOOGLE_PROVIDER_DATA          = "GoogleProviderData";
     const GROUP                         = 'Group';

@@ -20,10 +20,11 @@ namespace Stormpath\Resource;
 
 class Provider extends Resource
 {
-    const CREATED_AT = "createdAt";
-    const MODIFIED_AT = "modifiedAt";
-    const PROVIDER_ID = "providerId";
+    const CREATED_AT    = "createdAt";
+    const MODIFIED_AT   = "modifiedAt";
+    const PROVIDER_ID   = "providerId";
 
+    const PATH          = "provider";
     /**
      * Returns the provider's created date.
      *
