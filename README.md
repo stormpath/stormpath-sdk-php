@@ -904,8 +904,8 @@ A provider resource can be obtained by accessing the directory’s provider as
 follows:
 
 ```PHP
-$provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/bckhcGMXQDujIXpbCDRb2Q/provider",
-    \Stormpath\Stormpath::PROVIDER);
+$provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv/provider",
+    \Stormpath\Stormpath::GOOGLE_PROVIDER);
 ```
 
 or, by means of the directory Resource:
@@ -947,10 +947,10 @@ $provider->setClientId("857385-m8vk0fn2r7jmjo.apps.googleusercontent.com");
 $provider->setClientSecret("ehs7_-bA7OWQSQ4");
 $provider->setRedirectUri("https://myapplication.com/authenticate");
 
-$directory = $client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY, 
-    array("provider" => $provider));
+$directory = $client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
 $directory->setName("my-google-directory");
 $directory->setDescription("A Google directory");
+$directory->setProvider($provider);
 
 $tenant = $client->getCurrentTenant();
 $directory = $tenant->createDirectory($directory);
@@ -1020,6 +1020,138 @@ $account = $result->getAccount();
 
 The refreshToken will only be present if your application asked for offline access. 
 Review Google’s documentation for more information regarding OAuth offline access.
+
+### Integrating with Facebook
+
+Stormpath supports accessing accounts from a number of different locations including 
+Facebook. Facebook uses OAuth 2.0 protocol for authentication / authorization and 
+Stormpath can leverage their or access tokens to return an Account for a given code.
+
+The steps to enable this functionality into your application include:
+
+* Create a Facebook Directory
+* Create an Account Store Mapping between a Facebook Directory and your Application
+* Accessing Accounts with Facebook User Access Tokens
+
+Facebook Directories follow behavior similar to mirror directories, but have a
+Provider resource that contains information regarding the Facebook application that
+the directory is configured for.
+
+#### FACEBOOK PROVIDER RESOURCE
+
+A FacebookProvider resource holds specific information needed for working with a 
+Facebook Directory. It is important to understand the format of the provider resource 
+when creating and updating a Facebook Directory.
+
+A provider resource can be obtained by accessing the directory’s provider as follows:
+
+Example Request
+
+```
+$provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/72N2MjJSIXuln56sNngcvr/provider",
+    \Stormpath\Stormpath::FACEBOOK_PROVIDER);
+```
+
+or, by means of the directory Resource:
+
+```
+$provider = $directory->getProvider();
+```
+
+##### Resource Attributes
+
+* `clientId` : The App ID for your Facebook application
+* `clientSecret` : The App Secret for your Facebook application
+* `providerId` : The provider ID is the Stormpath ID for the Directory’s account provider
+
+In addition to your application specific attributes, a Provider resource will always contain 3 reserved read-only fields:
+
+* `href` : The fully qualified location of the custom data resource
+* `createdAt` : the UTC timestamp with millisecond precision of when the resource was created in Stormpath as an ISO 8601 formatted string
+* `modifiedAt` : the UTC timestamp with millisecond precision of when the resource was created in Stormpath as an ISO 8601 formatted string
+
+#### CREATING A FACEBOOK DIRECTORY
+
+Creating a Facebook Directory requires that you gather some information beforehand 
+from Facebook’s Developer Console regarding your application.
+
+* Client ID
+* Client Secret
+
+Creating a Facebook Directory is very similar to creating a directory within Stormpath.
+ For a Facebook Directory to be configured correctly, you must specify the correct 
+ Provider information.
+
+Example Request
+
+```
+$provider = $client->dataStore->instantiate(\Stormpath\Stormpath::FACEBOOK_PROVIDER);
+$provider->setClientId("1011854538839621");
+$provider->setClientSecret("82c16954b0d88216127d66ac44bbc3a8");
+$provider->setRedirectUri("https://apps.facebook.com/sampleapp");
+
+$directory = $client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+$directory->setName("my-fb-directory");
+$directory->setDescription("A Facebook directory");
+$directory->setProvider($provider);
+
+$tenant = $client->getCurrentTenant();
+$directory = $tenant->createDirectory($directory);
+```
+
+After the Facebook Directory has been created, it needs to be mapped with an 
+application as an account store. The Facebook Directory cannot be a default account 
+store or a default group store. Once the directory is mapped to an account store for 
+an application, you are ready to access Accounts with Facebook User Access Tokens.
+
+#### ACCESSING ACCOUNTS WITH FACEBOOK USER ACCESS TOKENS
+To access or create an account in an already created Facebook Directory, it is 
+required to gather the User Access Token on behalf of the user. This usually requires 
+leveraging Facebook’s javascript library and the user’s consent for your application’s 
+permissions.
+
+It is required that your Facebook application request for the email permission from 
+Facebook. If the access token does not grant email permissions, you will not be able 
+to get an Account with an access token.
+
+Once the Authorization Code is gathered, you can get or create the Account by means of 
+the Application and specifying its ProviderData. The following example shows how you 
+use ProviderData to get an Account for a given authorization code:
+
+Example Request
+
+```
+$applicationHref = "https://api.stormpath.com/v1/applications/2k1aegw9UbLX4ZfMH4kCkR";
+$application = \Stormpath\Resource\Application::get($applicationHref);
+
+$providerAccountRequest = new \Stormpath\Provider\FacebookProviderAccountRequest(array(
+    "accessToken" => "CABTmZxAZBxBADbr1l7ZCwHpjivBt9T0GZBqjQdTmgyO0OkUq37HYaBi4F23f49f5"
+));
+
+$result = $application->getAccount($providerRequest);
+$account = $result->getAccount();
+```
+
+In order to know if the account was created or if it already existed in the 
+Stormpath’s Facebook Directory you can do: `$result->isNewAccount();`. It will return 
+`true` if it is a newly created account; `false` otherwise.
+
+Once an `Account` is retrieved, Stormpath maps common fields for the Facebook User to 
+the `Account`. The access token for any additional calls in the `FacebookProviderData` 
+resource and can be retrieved by:
+
+```PHP
+$providerData = $account->getProviderData();
+```
+The returned FacebookProviderData will include:
+
+```PHP
+$providerData->getAccessToken(); //-> CABTmZxAZBxBADbr1l7ZCwHpjivBt9T0GZBqjQdTmgyO0OkUq37HYaBi4F23f49f5
+$providerData->getCreatedAt(); //-> 2014-04-01T17:00:09.154Z
+$providerData->getHref(); //-> https://api.stormpath.com/v1/accounts/ciYmtETytH0tbHRBas1D5/providerData
+$providerData->getModifiedAt(); //-> 2014-04-01T17:00:09.189Z
+$providerData->getProviderId(); //-> facebook
+```
 
 ## Run the tests
 
