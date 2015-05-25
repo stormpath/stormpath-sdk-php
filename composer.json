@@ -25,6 +25,11 @@
             "Stormpath\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Stormpath\\Tests\\": "tests/"
+        }
+    },
     "require": {
         "php": ">=5.3.3",
         "guzzle/http": "v3.7.4"
