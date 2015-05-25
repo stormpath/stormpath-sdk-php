@@ -14,9 +14,6 @@ $library = "$root/src";
 $path = array($library, get_include_path());
 set_include_path(implode(PATH_SEPARATOR, $path));
 
-require_once 'PHPUnit/TextUI/TestRunner.php';
-require_once 'Stormpath/Stormpath.php';
-
 // Include the composer autoloader
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
