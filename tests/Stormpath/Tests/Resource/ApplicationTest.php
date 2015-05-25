@@ -252,6 +252,8 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
     public function testCreateAccountWithCustomData()
     {
+        $application = self::$application;
+
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
             'surname' => 'Surname',
             'username' => md5(time()) . 'username',
@@ -261,10 +263,10 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $customData = $account->customData;
         $customData->phone = "12345";
 
-        $newClient = self::newClientInstance();
-        $account = $newClient->getDataStore()->create(\Stormpath\Resource\Account::PATH, $account, Stormpath::ACCOUNT);
+        $account = $application->createAccount($account);
 
-        $account = \Stormpath\Resource\Account::get($account->href);
+        $newClient = self::newClientInstance();        
+        $account = $newClient->get($account->href, Stormpath::ACCOUNT);
         $this->assertEquals("12345", $account->customData->phone);
 
         $account->delete();
