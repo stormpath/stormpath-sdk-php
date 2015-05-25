@@ -48,4 +48,13 @@ class NullCache implements Cache {
         // TODO: Implement clear() method.
     }
 
+    /**
+     * Get all items from cache
+     *
+     * @return array
+     */
+    public function all()
+    {
+        // TODO: Implement all() method.
+    }
 }

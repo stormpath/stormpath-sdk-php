@@ -59,4 +59,14 @@ class ArrayCache implements Cache {
         $this->storage = array();
     }
 
+
+    /**
+     * Get all items from cache
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return $this->storage;
+    }
 }
