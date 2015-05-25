@@ -4,7 +4,7 @@
 
     <testsuites>
         <testsuite name="Stormpath SDK Test Suite">
-            <directory>./tests/Stormpath/Tests</directory>
+            <directory suffix="Test.php">./tests/</directory>
         </testsuite>
     </testsuites>
 
