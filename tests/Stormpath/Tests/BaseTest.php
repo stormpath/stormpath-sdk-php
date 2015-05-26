@@ -75,6 +75,26 @@ class BaseTest extends \PHPUnit_Framework_TestCase
         \Stormpath\Client::$cacheManager = 'Array';
     }
 
+    /**
+     * This function instantiates a new client but doesn't modify
+     * the BaseTest::$client variable.
+     */
+    protected function newClientInstance()
+    {
+        $builder = new \Stormpath\ClientBuilder();
+
+        $newClient = $builder->setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
+            setApiKeyProperties(\Stormpath\Client::$apiKeyProperties)->
+            setApiKeyIdPropertyName(\Stormpath\Client::$apiKeyIdPropertyName)->
+            setApiKeySecretPropertyName(\Stormpath\Client::$apiKeySecretPropertyName)->
+            setCacheManager(\Stormpath\Client::$cacheManager)->
+            setCacheManagerOptions(\Stormpath\Client::$cacheManagerOptions)->
+            setBaseURL(\Stormpath\Client::$baseUrl)->
+            build();
+
+        return $newClient;
+    }
+
     public function testClient()
     {
         self::$client = \Stormpath\Client::getInstance();

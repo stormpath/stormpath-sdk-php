@@ -21,6 +21,7 @@ namespace Stormpath\Tests\Resource;
 use JWT;
 use Stormpath\Client;
 use Stormpath\Resource\Application;
+use Stormpath\Stormpath;
 use Stormpath\Util\UUID;
 
 class ApplicationTest extends \Stormpath\Tests\BaseTest {
@@ -245,6 +246,28 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $account = \Stormpath\Resource\Account::get($account->href);
 
         $this->assertEquals('Account Name', $account->givenName);
+
+        $account->delete();
+    }
+
+    public function testCreateAccountWithCustomData()
+    {
+        $application = self::$application;
+
+        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+            'surname' => 'Surname',
+            'username' => md5(time()) . 'username',
+            'email' => md5(time()) .'@unknown123.kot',
+            'password' => 'superP4ss'));
+
+        $customData = $account->customData;
+        $customData->phone = "12345";
+
+        $account = $application->createAccount($account);
+
+        $newClient = self::newClientInstance();        
+        $account = $newClient->get($account->href, Stormpath::ACCOUNT);
+        $this->assertEquals("12345", $account->customData->phone);
 
         $account->delete();
     }
