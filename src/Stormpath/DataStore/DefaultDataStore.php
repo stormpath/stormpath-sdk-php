@@ -267,7 +267,6 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     {
         $headers = $request->getHeaders();
         $headers['Accept'] = 'application/json';
-//        $headers['User-Agent'] = 'Stormpath-PhpSDK/' .Version::SDK_VERSION;
         $headers['User-Agent'] = $this->setUserAgent();
 
 
