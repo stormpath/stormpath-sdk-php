@@ -21,5 +21,5 @@ interface ResourceFactory
 {
 
     public function instantiate($className, array $constructorArgs);
-
+    public function instantiateChildClass($className, $childClassName, array $constructorArgs);
 }

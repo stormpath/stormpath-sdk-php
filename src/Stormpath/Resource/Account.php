@@ -37,6 +37,7 @@ class Account extends InstanceResource implements Deletable
     const GROUP_MEMBERSHIPS        = "groupMemberships";
     const FULL_NAME                = "fullName";
     const TENANT                   = "tenant";
+    const PROVIDER_DATA			   = "providerData";
 
     const PATH                     = "accounts";
 
@@ -166,6 +167,34 @@ class Account extends InstanceResource implements Deletable
     public function getTenant(array $options = array()) {
 
         return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
+    }
+    
+    public function getProviderData(array $options = array())
+    {
+    	$value = $this->getProperty(self::PROVIDER_DATA);
+    	
+    	if ($value instanceof ProviderData)
+    	{
+    		return $value;
+    	}
+    	
+    	if ($value instanceof \stdClass)
+    	{
+    		$href = $value->href;
+    		
+    		if (empty($href))
+    		{
+    			throw new \InvalidArgumentException("providerData resource does not contain its required href property.");    			
+    		}
+    		
+    		$providerData = $this->getDataStore()->getResourceUsingClassResolver($href, Stormpath::PROVIDER_DATA, 
+    				'providerId', ProviderData::PROVIDER_ID_RESOLVER);
+    		$this->setProperty(self::PROVIDER_DATA, $providerData);
+    		
+    		return $providerData;
+    	}
+    	
+    	throw new \InvalidArgumentException("providerData does not match expected type ProviderData or stdClass");
     }
 
     public function addGroup(Group $group, array $options = array())

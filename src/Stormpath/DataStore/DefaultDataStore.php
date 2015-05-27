@@ -27,6 +27,7 @@ use Stormpath\Resource\Error;
 use Stormpath\Resource\Resource;
 use Stormpath\Resource\ResourceError;
 use Stormpath\Util\Version;
+use Stormpath\Stormpath;
 
 class DefaultDataStore extends Cacheable implements InternalDataStore
 {
@@ -83,6 +84,37 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     }
 
+	/**
+	 * Retrieves a resource at the specified {@code href} URL and returns a {@code stdClass} object containing its data.
+	 *  
+     * @param href  the resource URL of the resource to retrieve
+     * @param options the options to create the resource. This optional argument is useful to specify query strings, among other options.
+     * @return an array containing the resource's <code>data</code> and a <code>queryString</code> based on the given <code>options</code>
+	 */
+	private function getResourceData($href, array $options) 
+	{
+		if ($this->needsToBeFullyQualified($href))
+        {
+            $href = $this->qualify($href);
+        }
+
+        $queryString = $this->getQueryString($options);
+
+        if (!$data = $this->isResourceCached($href, $options)) {
+            $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
+        }
+
+        if($this->resourceIsCacheable($data)) {
+            $this->addDataToCache($data, $queryString);
+        }
+        
+        return array(
+        		'data' => $data,
+        		'queryString' => $queryString
+        );
+ 	}
+
+    
     /**
      * Looks up (retrieves) the resource at the specified {@code href} URL and returns the resource as an instance
      * of the specified {@code class} name.
@@ -100,23 +132,49 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
      */
     public function getResource($href, $className, array $options = array())
     {
-        if ($this->needsToBeFullyQualified($href))
-        {
-            $href = $this->qualify($href);
-        }
-
-        $queryString = $this->getQueryString($options);
-
-
-        if (!$data = $this->isResourceCached($href, $options)) {
-            $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
-        }
-
-        if($this->resourceIsCacheable($data)) {
-            $this->addDataToCache($data, $queryString);
-        }
-
+        $result = $this->getResourceData($href, $options);
+        $data = $result['data'];
+        $queryString = $result['queryString'];
         return $this->resourceFactory->instantiate($className, array($data, $queryString));
+    }
+ 	
+    /**
+     * This method provides the ability to instruct the DataStore how to decide which class of a resource hierarchy
+     * will be instantiated. For example, nowadays three {@link ProviderData} resources exists (ProviderData, FacebookProviderData and
+     * GoogleProviderData). The <code>$propertyId</code> is the property that will be used in the response as the ID to seek
+     * for the proper concrete ProviderData class in the <code>$classResolver</code>.
+     *
+     * @param href the endpoint where the request will be targeted to.
+     * @param className the root class of the Resource hierarchy (helps to validate that the $classResolver contains subclasses of it).
+     * @param propertyId the property whose value will be used to identify the specific class in the hierarchy that we need to instantiate.
+     * @param classResolver a mapping to be able to know which class corresponds to each <code>propertyId</code> value.
+     * @param array options the options to create the resource. This optional argument is useful to specify query strings, among other options.
+     * @return an instance of the class specified by the <code>$classResolver</code> based on the data returned from the specified {@code href} URL.
+     */
+    public function getResourceUsingClassResolver($href, $className, $propertyId, array $classResolver, array $options = array())
+    {
+        $result = $this->getResourceData($href, $options);
+        $data = $result['data'];
+        $queryString = $result['queryString'];
+    	$dataArray = json_decode(json_encode($data), true);
+    	
+    	if (isset($dataArray[$propertyId]))
+    	{
+    		$propertyValue = $dataArray[$propertyId];
+    		if (isset($classResolver[$propertyValue]))
+    		{
+    			$childClassName = $classResolver[$propertyValue];
+    			return $this->resourceFactory->instantiateChildClass($className, $childClassName, array($data, $queryString));
+    		}
+    		else
+    		{
+    			throw new \InvalidArgumentException('Class resolver not found for identifier '.$propertyValue);
+    		}
+    	}
+    	else
+    	{
+    		throw new \InvalidArgumentException('Property '.$propertyId.' not found in resource referenced by '.$href);
+    	}
     }
 
     public function create($parentHref, Resource $resource, $returnType, array $options = array())
@@ -211,6 +269,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         $result = $response->getBody() ? json_decode($response->getBody()) : '';
 
+        if (isset($result) && $result instanceof \stdClass)
+        {
+        	$result->httpStatus = $response->getHttpStatus();
+        }
+        
         if ($response->isError())
         {
             $errorResult = $result;
@@ -243,6 +306,22 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
                                           $href,
                                           json_encode($this->toStdClass($resource)),
                                           $query);
+        
+        //provider's account creation status (whether it is new or not) is returned in the HTTP response
+        //status. The resource factory does not provide a way to pass such information when instantiating a resource. Thus,
+        //after the resource has been instantiated we are going to manipulate it before returning it in order to set the
+        //"is new" status
+        if (isset($response) && isset($response->httpStatus))
+        {
+        	$httpStatus = $response->httpStatus;
+        	if ($returnType == Stormpath::PROVIDER_ACCOUNT_RESULT && ($httpStatus == 200 || $httpStatus == 201))
+        	{
+        		$response->newAccount = $httpStatus == 201;
+        	}
+        	unset($response->httpStatus);
+        }
+        
+        
         $this->removeResourceFromCache($resource);
 
         if($this->resourceIsCacheable($response)) {

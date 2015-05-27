@@ -24,10 +24,23 @@ class ProviderAccountResult extends Resource
 {
     const ACCOUNT       = 'account';
     const NEW_ACCOUNT   = 'newAccount';
+    
+    public function __construct($dataStore = null, \stdClass $properties = null, array $options = array())
+    {
+    	parent::__construct($dataStore, $properties, $options);
+    	
+    	if ($properties != null)
+    	{
+			$this->setProperty(self::NEW_ACCOUNT, $properties->newAccount);
+			unset($properties->newAccount);
+			$account = $this->getDataStore()->instantiate(Stormpath::ACCOUNT, $properties);
+			$this->setProperty(self::ACCOUNT, $account);    		
+    	}
+    }
 
     public function getAccount(array $options = array())
     {
-        return $this->getResourceProperty(self::ACCOUNT, Stormpath::ACCOUNT, $options);
+        return $this->getProperty(self::ACCOUNT);
     }
 
     public function isNewAccount()

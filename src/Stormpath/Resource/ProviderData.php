@@ -2,6 +2,7 @@
 
 namespace Stormpath\Resource;
 
+use Stormpath\Stormpath;
 /*
  * Copyright 2013 Stormpath, Inc.
  *
@@ -23,7 +24,12 @@ class ProviderData extends Resource
     const PROVIDER_ID   = 'providerId';
     const CREATED_AT    = 'createdAt';
     const MODIFIED_AT   = 'modifiedAt';
-
+    
+    const PROVIDER_ID_RESOLVER = array(
+    		'google' => Stormpath::GOOGLE_PROVIDER_DATA,
+    		'facebook' => Stormpath::FACEBOOK_PROVIDER_DATA
+    );
+    
     public function getProviderId()
     {
         return $this->getProperty(self::PROVIDER_ID);
