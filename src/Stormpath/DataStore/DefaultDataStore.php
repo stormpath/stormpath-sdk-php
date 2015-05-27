@@ -267,7 +267,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     {
         $headers = $request->getHeaders();
         $headers['Accept'] = 'application/json';
-        $headers['User-Agent'] = $this->setUserAgent();
+        $headers['User-Agent'] = $this->resolveUserAgent();
 
 
         if ($request->getBody())
@@ -363,7 +363,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         return $this->apiKey;
     }
 
-    private function setUserAgent()
+    private function resolveUserAgent()
     {
         $headers['User-Agent'] = '';
 
