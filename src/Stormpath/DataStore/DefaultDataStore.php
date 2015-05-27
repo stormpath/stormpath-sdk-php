@@ -267,7 +267,9 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     {
         $headers = $request->getHeaders();
         $headers['Accept'] = 'application/json';
-        $headers['User-Agent'] = 'Stormpath-PhpSDK/' .Version::SDK_VERSION;
+//        $headers['User-Agent'] = 'Stormpath-PhpSDK/' .Version::SDK_VERSION;
+        $headers['User-Agent'] = $this->setUserAgent();
+
 
         if ($request->getBody())
         {
@@ -360,6 +362,24 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     public function getApiKey() {
         return $this->apiKey;
+    }
+
+    private function setUserAgent()
+    {
+        $headers['User-Agent'] = '';
+
+
+        $userAgent = array();
+        $userAgentMerged = array();
+        $userAgent['Stormpath-PhpSDK'] = Version::SDK_VERSION;
+        $userAgent['php'] = phpversion();
+        $userAgent[php_uname('s')] = php_uname('r');
+
+        foreach($userAgent as $k=>$v) {
+            $userAgentMerged[] .= $k.'/'.$v;
+        }
+
+        return implode(' ', $userAgentMerged);
     }
 
 }
