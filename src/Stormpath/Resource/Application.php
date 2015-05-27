@@ -18,12 +18,17 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
+use JWT;
 use Stormpath\Authc\AuthenticationRequest;
 use Stormpath\Authc\BasicAuthenticator;
 use Stormpath\Authc\UsernamePasswordRequest;
 use Stormpath\Client;
 use Stormpath\Provider\ProviderAccountRequest;
+use Stormpath\Exceptions\IdSite\InvalidCallbackUriException;
+use Stormpath\Exceptions\IdSite\JWTUsedAlreadyException;
 use Stormpath\Stormpath;
+use Stormpath\Util\NonceStore;
+use Stormpath\Util\UUID;
 
 class Application extends InstanceResource implements Deletable
 {
@@ -175,6 +180,14 @@ class Application extends InstanceResource implements Deletable
      * handle the link requests and then reset the account's password as described in the
      * {@link verifyPasswordResetToken} PHPDoc.
      *
+     * <p>It is possible to include an <code>AccountStore</code> in the <code>$options</code> array as a performance
+     * enhancement if the application might be mapped to many (dozens, hundreds or thousands) of account stores.
+     * This can be common in multi-tenant applications where each mapped
+     * AccountStore represents a specific tenant or customer organization.  Specifying the AccountStore
+     * in these scenarios bypasses the general email-only-based account search and performs a more-efficient direct
+     * lookup directly against the specified AccountStore.  The AccountStore is usually discovered before calling this
+     * method by inspecting a submitted tenant id or subdomain, e.g. http://ACCOUNT_STORE_NAME.foo.com </p>
+     *
      * @param $accountUsernameOrEmail a username or email address of an Account that may login to the application.
      * @param $options options to pass to this request.
      * @return the account corresponding to the specified username or email address.
@@ -282,6 +295,88 @@ class Application extends InstanceResource implements Deletable
     }
 
 
+    /**
+     * Generate the url for ID Site.
+     *
+     * @param array $options
+     * @return string
+     * @throws InvalidCallbackUriException
+     */
+    public function createIdSiteUrl(array $options = array())
+    {
+        if( ! isset( $options['callbackUri'] ) )
+            throw new InvalidCallbackUriException('Please provide a \'callbackUri\' in the $options array.');
+
+        $p = parse_url ( $this->href );
+        $base = $p['scheme'] . '://' . $p['host'];
+
+        $apiId = $this->getDataStore()->getApiKey()->getId();
+        $apiSecret = $this->getDataStore()->getApiKey()->getSecret();
+        
+        $token = array(
+            'jti'       => UUID::v4(),
+            'iat'       => microtime(true),
+            'iss'       => $apiId,  //API ID
+            'sub'       => $this->href,
+            'state'     => isset($options['state']) ? $options['state'] : '',
+            'path'      => isset($options['path']) ? $options['path'] : '/',
+            'cb_uri'    => $options['callbackUri']
+        );
+
+        $jwt = JWT::encode($token, $apiSecret);
+
+        $redirectUrl = $base . "/sso";
+
+        if(isset($options['logout']))
+            $redirectUrl .= "/logout";
+
+        return $redirectUrl . "?jwtRequest=$jwt";
+
+    }
+
+
+    /**
+     * Handle the response from Stormpath and return a parsed JWT.
+     *
+     * @param $responseUri
+     * @return \StdClass
+     * @throws JWTUsedAlreadyException
+     */
+    public function handleIdSiteCallback($responseUri)
+    {
+
+        $urlParse = parse_url ( $responseUri );
+
+        parse_str($urlParse['query'], $params);
+        $token = isset($params['jwtResponse']) ? $params['jwtResponse'] : '';
+        $apiId = $this->getDataStore()->getApiKey()->getId();
+        $apiSecret = $this->getDataStore()->getApiKey()->getSecret();
+
+        $jwt = JWT::decode($token, $apiSecret, array('HS256'));
+
+        // Check to see if Nonce is already used
+        $nonceStore = new NonceStore($this->getDataStore());
+        $nonceUsed = $nonceStore->getNonce($jwt->irt);
+
+        if($nonceUsed)
+            throw new JWTUsedAlreadyException('The ID Site JWT has already been used.');
+
+        $nonceStore->putNonce($jwt->irt);
+
+
+        $account = $this->getDataStore()->getResource($jwt->sub, Stormpath::ACCOUNT);
+
+        $return = new \StdClass();
+
+        $return->account = $account;
+        $return->state = $jwt->state;
+        $return->isNew = $jwt->isNewSub;
+        $return->status = $jwt->status;
+
+        return $return;
+    }
+
+
 
     public function delete() {
 
@@ -294,6 +389,15 @@ class Application extends InstanceResource implements Deletable
 
         $passwordResetToken = $this->getDataStore()->instantiate(Stormpath::PASSWORD_RESET_TOKEN);
         $passwordResetToken->email = $accountUsernameOrEmail;
+
+        if (isset($options['accountStore']))
+        {
+            $accountStore = $options['accountStore'];
+            if ($accountStore instanceof AccountStore)
+            {
+                $passwordResetToken->setAccountStore($accountStore);
+            }
+        }
 
         return $this->getDataStore()->create($href, $passwordResetToken, Stormpath::PASSWORD_RESET_TOKEN, $options);
     }

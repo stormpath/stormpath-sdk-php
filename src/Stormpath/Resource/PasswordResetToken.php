@@ -24,6 +24,7 @@ class PasswordResetToken extends Resource
 {
     const EMAIL = "email";
     const ACCOUNT = "account";
+    const ACCOUNT_STORE = "accountStore";
 
     // @codeCoverageIgnoreStart
     public function getEmail()
@@ -40,5 +41,10 @@ class PasswordResetToken extends Resource
     public function getAccount(array $options = array())
     {
         return $this->getResourceProperty(self::ACCOUNT, Stormpath::ACCOUNT, $options);
+    }
+
+    public function setAccountStore($accountStore)
+    {
+        $this->setProperty(self::ACCOUNT_STORE, $accountStore);
     }
 }

@@ -26,4 +26,6 @@ interface AuthenticationRequest {
     function getHost();
 
     function clear();
+
+    function getAccountStore();
 }
