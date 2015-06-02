@@ -51,20 +51,4 @@ interface DataStore
      * @return an instance of the specified class based on the data returned from the specified {@code href} URL.
      */
     public function getResource($href, $className, array $options = array());
-    
-    /**
-     * This method provides the ability to instruct the DataStore how to decide which class of a resource hierarchy
-     * will be instantiated. For example, nowadays three {@link ProviderData} resources exists (ProviderData, FacebookProviderData and
-     * GoogleProviderData). The <code>$propertyId</code> is the property that will be used in the response as the ID to seek
-     * for the proper concrete ProviderData class in the <code>$classResolver</code>.
-     *
-     * @param href the endpoint where the request will be targeted to.
-     * @param className the root class of the Resource hierarchy (helps to validate that the $classResolver contains subclasses of it).
-     * @param propertyId the property whose value will be used to identify the specific class in the hierarchy that we need to instantiate.
-     * @param classResolver a mapping to be able to know which class corresponds to each <code>propertyId</code> value.
-     * @param array options the options to create the resource. This optional argument is useful to specify query strings, among other options.
-     * @return an instance of the class specified by the <code>$classResolver</code> based on the data returned from the specified {@code href} URL.
-     */
-    public function getResourceUsingClassResolver($href, $className, $propertyId, array $classResolver, array $options = array());
-
 }

@@ -404,7 +404,7 @@ class Application extends InstanceResource implements Deletable
 
     public function getAccount(ProviderAccountRequest $request)
     {
-        $providerData = $request->getProviderData($this->getDataStore());
+        $providerData = $request->getProviderData();
 
         $providerAccountAccess = $this->getDataStore()->instantiate(Stormpath::PROVIDER_ACCOUNT_ACCESS);
         $providerAccountAccess->providerData = $providerData;

@@ -19,6 +19,7 @@ namespace Stormpath\Provider;
  */
 
 use Stormpath\DataStore\DataStore;
+use Stormpath\Resource\GoogleProviderData;
 use Stormpath\Resource\ProviderData;
 use Stormpath\Stormpath;
 
@@ -42,9 +43,9 @@ class GoogleProviderAccountRequest implements ProviderAccountRequest
      * @param ProviderData $providerData the instance to load with data
      * @return ProviderData the given instance with properties set
      */
-    function getProviderData(DataStore $dataStore)
+    function getProviderData()
     {
-        $providerData = $dataStore->instantiate(Stormpath::GOOGLE_PROVIDER_DATA);
+        $providerData = new GoogleProviderData();
 
         $providerData->providerId = self::PROVIDER_ID;
 
@@ -52,10 +53,13 @@ class GoogleProviderAccountRequest implements ProviderAccountRequest
         {
             $providerData->code = $this->options[self::CODE];
         }
-
-        if (isset($this->options[self::ACCESS_TOKEN]))
+        else if (isset($this->options[self::ACCESS_TOKEN]))
         {
             $providerData->accessToken = $this->options[self::ACCESS_TOKEN];
+        }
+        else
+        {
+            throw new \InvalidArgumentException('Either code or accessToken must be set for GoogleProviderAccountRequest');
         }
 
         return $providerData;

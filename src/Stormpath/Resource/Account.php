@@ -187,8 +187,10 @@ class Account extends InstanceResource implements Deletable
     			throw new \InvalidArgumentException("providerData resource does not contain its required href property.");    			
     		}
     		
-    		$providerData = $this->getDataStore()->getResourceUsingClassResolver($href, Stormpath::PROVIDER_DATA, 
-    				'providerId', ProviderData::PROVIDER_ID_RESOLVER);
+    		$providerData = $this->getDataStore()->getResource($href, Stormpath::PROVIDER_DATA, array(
+                'propertyId' => 'providerId',
+                'classResolver' => ProviderData::PROVIDER_ID_RESOLVER
+            ));
     		$this->setProperty(self::PROVIDER_DATA, $providerData);
     		
     		return $providerData;

@@ -25,6 +25,7 @@ class Provider extends Resource
     const PROVIDER_ID   = "providerId";
 
     const PATH          = "provider";
+
     /**
      * Returns the provider's created date.
      *

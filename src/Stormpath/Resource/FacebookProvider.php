@@ -18,7 +18,9 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
+use Stormpath\Client;
 use Stormpath\DataStore\InternalDataStore;
+use Stormpath\Stormpath;
 
 class FacebookProvider extends Provider
 {
@@ -27,7 +29,28 @@ class FacebookProvider extends Provider
     const REDIRECT_URI          = 'redirectUri';
     const FACEBOOK_PROVIDER_ID  = 'facebook';
 
-    public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null) {
+    public static function get($href, array $options = array())
+    {
+        if (substr($href, 0 - strlen(self::PATH)) != self::PATH)
+        {
+            $href = $href.'/'.self::PATH;
+        }
+
+        if (!(stripos($href, 'http') === 0) and !(stripos($href, Directory::PATH) === 0))
+        {
+            $href = Directory::PATH.'/'.$href;
+        }
+
+        return Client::get($href, Stormpath::FACEBOOK_PROVIDER, null, $options);
+    }
+
+    public static function instantiate($properties = null)
+    {
+        return Client::instantiate(Stormpath::FACEBOOK_PROVIDER, $properties);
+    }
+
+    public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null)
+    {
         parent::__construct($dataStore, $properties);
         $this->setProperty(self::PROVIDER_ID, self::FACEBOOK_PROVIDER_ID);
     }

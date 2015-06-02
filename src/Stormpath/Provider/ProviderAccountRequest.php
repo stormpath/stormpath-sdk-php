@@ -18,9 +18,7 @@ namespace Stormpath\Provider;
  * limitations under the License.
  */
 
-use Stormpath\DataStore\DataStore;
-
 interface ProviderAccountRequest
 {
-    function getProviderData(DataStore $dataStore);
+    function getProviderData();
 }

@@ -1008,10 +1008,20 @@ $provider = $client->dataStore->getResource("https://api.stormpath.com/v1/direct
     \Stormpath\Stormpath::GOOGLE_PROVIDER);
 ```
 
-or, by means of the directory Resource:
+or, by means of the directory `Resource`:
 
 ```PHP
 $provider = $directory->getProvider();
+```
+
+Alternatively, it is possible to use the static client configuration to the get the `Provider`:
+
+```PHP
+// It is also possible to specify the URL ending with "/provider", 
+// or the partial path (which could be "directories/DIR_ID/provider", 
+// or "DIR_ID/provider" or just "DIR_ID"). 
+$directoryHref = "https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv"; 
+$provider = GoogleProvider::get($directoryHref);
 ```
 
 ##### Resource Attributes
@@ -1043,14 +1053,14 @@ specify the correct Provider information.
 
 ```PHP
 $provider = $client->dataStore->instantiate(\Stormpath\Stormpath::GOOGLE_PROVIDER);
-$provider->setClientId("857385-m8vk0fn2r7jmjo.apps.googleusercontent.com");
-$provider->setClientSecret("ehs7_-bA7OWQSQ4");
-$provider->setRedirectUri("https://myapplication.com/authenticate");
+$provider->clientId = "857385-m8vk0fn2r7jmjo.apps.googleusercontent.com";
+$provider->clientSecret = "ehs7_-bA7OWQSQ4";
+$provider->redirectUri = "https://myapplication.com/authenticate";
 
 $directory = $client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
-$directory->setName("my-google-directory");
-$directory->setDescription("A Google directory");
-$directory->setProvider($provider);
+$directory->name = "my-google-directory";
+$directory->description = "A Google directory";
+$directory->provider = $provider;
 
 $tenant = $client->getCurrentTenant();
 $directory = $tenant->createDirectory($directory);
@@ -1071,7 +1081,7 @@ your application’s permissions.
 
 Once the Authorization Code is gathered, you can get or create the `Account` by 
 means of the `Application` and specifying a `ProviderRequest`. The following example 
-shows how you use `ProviderRequest` to get an `Account` for a given authorization code:
+shows how you use `GoogleProviderAccountRequest` to get an `Account` for a given authorization code:
 
 ```PHP
 $applicationHref = "https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu";
@@ -1099,12 +1109,12 @@ $providerData = $account->getProviderData();
 The returned GoogleProviderData includes:
 
 ```PHP
-$providerData->getAccessToken(); //-> y29.1.AADN_Xo2hxQflWwsgCSK-WjSw1mNfZiv4
-$providerData->getCreatedAt(); //-> 2014-04-01T17:00:09.154Z 
-$providerData->getHref(); //-> https://api.stormpath.com/v1/accounts/ciYmtETytH0tbHRBas1D5/providerData 
-$providerData->getModifiedAt(); //-> 2014-04-01T17:00:09.189Z 
-$providerData->getProviderId(); //-> google 
-$providerData->getRefreshToken(); //-> 1/qQTS638g3ArE4U02FoiXL1yIh-OiPmhc
+$providerData->accessToken; //-> y29.1.AADN_Xo2hxQflWwsgCSK-WjSw1mNfZiv4
+$providerData->createdAt; //-> 2014-04-01T17:00:09.154Z 
+$providerData->href; //-> https://api.stormpath.com/v1/accounts/ciYmtETytH0tbHRBas1D5/providerData 
+$providerData->modifiedAt; //-> 2014-04-01T17:00:09.189Z 
+$providerData->providerId; //-> google 
+$providerData->refreshToken; //-> 1/qQTS638g3ArE4U02FoiXL1yIh-OiPmhc
 ```
 
 The `accessToken` can also be passed as a field for the `ProviderData` to access the 
@@ -1147,15 +1157,25 @@ A provider resource can be obtained by accessing the directory’s provider as f
 
 Example Request
 
-```
+```PHP
 $provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/72N2MjJSIXuln56sNngcvr/provider",
     \Stormpath\Stormpath::FACEBOOK_PROVIDER);
 ```
 
 or, by means of the directory Resource:
 
-```
+```PHP
 $provider = $directory->getProvider();
+```
+
+Alternatively, it is possible to use the static client configuration to the get the `Provider`:
+
+```PHP
+// It is also possible to specify the URL ending with "/provider", 
+// or the partial path (which could be "directories/DIR_ID/provider", 
+// or "DIR_ID/provider" or just "DIR_ID"). 
+$directoryHref = "https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv"; 
+$provider = FacebookProvider::get($directoryHref);
 ```
 
 ##### Resource Attributes
@@ -1186,14 +1206,14 @@ Example Request
 
 ```
 $provider = $client->dataStore->instantiate(\Stormpath\Stormpath::FACEBOOK_PROVIDER);
-$provider->setClientId("1011854538839621");
-$provider->setClientSecret("82c16954b0d88216127d66ac44bbc3a8");
-$provider->setRedirectUri("https://apps.facebook.com/sampleapp");
+$provider->clientId = "1011854538839621";
+$provider->clientSecret = "82c16954b0d88216127d66ac44bbc3a8";
+$provider->redirectUri = "https://apps.facebook.com/sampleapp";
 
 $directory = $client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
-$directory->setName("my-fb-directory");
-$directory->setDescription("A Facebook directory");
-$directory->setProvider($provider);
+$directory->name = "my-fb-directory";
+$directory->description = "A Facebook directory";
+$directory->provider = $provider;
 
 $tenant = $client->getCurrentTenant();
 $directory = $tenant->createDirectory($directory);
@@ -1214,13 +1234,13 @@ It is required that your Facebook application request for the email permission f
 Facebook. If the access token does not grant email permissions, you will not be able 
 to get an Account with an access token.
 
-Once the Authorization Code is gathered, you can get or create the Account by means of 
-the Application and specifying its ProviderData. The following example shows how you 
-use ProviderData to get an Account for a given authorization code:
+Once the Authorization Code is gathered, you can get or create the `Account` by means of 
+the `Application` and specifying its `ProviderData`. The following example shows how you 
+use `FacebookProviderAccountRequest` to get an `Account` for a given authorization code:
 
 Example Request
 
-```
+```PHP
 $applicationHref = "https://api.stormpath.com/v1/applications/2k1aegw9UbLX4ZfMH4kCkR";
 $application = \Stormpath\Resource\Application::get($applicationHref);
 
@@ -1243,14 +1263,14 @@ resource and can be retrieved by:
 ```PHP
 $providerData = $account->getProviderData();
 ```
-The returned FacebookProviderData will include:
+The returned `FacebookProviderData` will include:
 
 ```PHP
-$providerData->getAccessToken(); //-> CABTmZxAZBxBADbr1l7ZCwHpjivBt9T0GZBqjQdTmgyO0OkUq37HYaBi4F23f49f5
-$providerData->getCreatedAt(); //-> 2014-04-01T17:00:09.154Z
-$providerData->getHref(); //-> https://api.stormpath.com/v1/accounts/ciYmtETytH0tbHRBas1D5/providerData
-$providerData->getModifiedAt(); //-> 2014-04-01T17:00:09.189Z
-$providerData->getProviderId(); //-> facebook
+$providerData->accessToken; //-> CABTmZxAZBxBADbr1l7ZCwHpjivBt9T0GZBqjQdTmgyO0OkUq37HYaBi4F23f49f5
+$providerData->createdAt; //-> 2014-04-01T17:00:09.154Z
+$providerData->href; //-> https://api.stormpath.com/v1/accounts/ciYmtETytH0tbHRBas1D5/providerData
+$providerData->modifiedAt; //-> 2014-04-01T17:00:09.189Z
+$providerData->providerId; //-> facebook
 ```
 
 ## Run the tests
