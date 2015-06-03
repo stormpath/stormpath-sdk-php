@@ -20,15 +20,13 @@ namespace Stormpath\DataStore;
 
 use Stormpath\ApiKey;
 use Stormpath\Cache\Cacheable;
-use Stormpath\Cache\CacheManager;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\Request;
 use Stormpath\Http\RequestExecutor;
 use Stormpath\Resource\Error;
 use Stormpath\Resource\Resource;
 use Stormpath\Resource\ResourceError;
-use Stormpath\Util\UserAgent;
-use Stormpath\Util\Version;
+use Stormpath\Util\UserAgentBuilder;
 
 class DefaultDataStore extends Cacheable implements InternalDataStore
 {
@@ -269,12 +267,13 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $headers = $request->getHeaders();
         $headers['Accept'] = 'application/json';
 
-        $userAgent = new UserAgent;
-        $userAgent->add('Stormpath-PhpSDK',Version::SDK_VERSION)
-                  ->add('php',phpversion())
-                  ->add(php_uname("s"), php_uname("r"));
-
-        $headers['User-Agent'] = $userAgent->getUserAgent();
+        $userAgent = new UserAgentBuilder;
+        $headers['User-Agent'] = $userAgent->setOsName(php_uname('s'))
+                                            ->setOsVersion(php_uname('r'))
+                                            ->setPhpVersion(phpversion())
+                                            ->setSdkVersion()
+                                            ->setSdkName()
+                                            ->build();
 
 
         if ($request->getBody())
