@@ -9,10 +9,6 @@ class UserAgentBuilder {
 
 
 
-    /**
-     * @var bool
-     */
-    protected $hasIntegration = false;
 
     /**
      * @var
@@ -29,18 +25,7 @@ class UserAgentBuilder {
      */
     protected $osName;
 
-    /**
-     * @codeCoverageIgnore
-     * @param IntegrationUserAgent $userAgent
-     * @return $this
-     */
-    // Todo: Allow setting integration information to the UserAgent
-    // @codeCoverageIgnoreStart
-    public function setIntegration(IntegrationUserAgent $userAgent)
-    {
 
-    }
-    // @codeCoverageIgnoreEnd
 
 
     /**
@@ -87,11 +72,7 @@ class UserAgentBuilder {
 
         $userAgent = array();
 
-        // Todo: add in the integration information for the UserAgent
-//        if($this->hasIntegration) {
-//            $userAgent[] = $this->runtimeIntegration;
-//            $userAgent[] = $this->runtime;
-//        }
+       
 
         $userAgent[] = 'stormpath-sdk-php/'. Version::SDK_VERSION;
         $userAgent[] = 'php/' . $this->phpVersion;
