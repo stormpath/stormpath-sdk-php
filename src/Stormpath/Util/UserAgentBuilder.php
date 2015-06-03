@@ -7,15 +7,7 @@ use Stormpath\Exceptions\UserAgentException;
 
 class UserAgentBuilder {
 
-    /**
-     * @var string
-     */
-    protected $sdkName = 'stormpath-sdk-php';
 
-    /**
-     * @var string
-     */
-    protected $sdkVersion = Version::SDK_VERSION;
 
     /**
      * @var bool
@@ -50,27 +42,6 @@ class UserAgentBuilder {
     }
     // @codeCoverageIgnoreEnd
 
-    /**
-     * Set the SDK Name
-     * @param string $sdkName
-     * @return $this
-     */
-    public function setSdkName($sdkName = 'stormpath-sdk-php')
-    {
-        $this->sdkName = $sdkName;
-        return $this;
-    }
-
-    /**
-     * Set the SDK Version
-     * @param string $sdkVersion
-     * @return $this
-     */
-    public function setSdkVersion($sdkVersion = Version::SDK_VERSION)
-    {
-        $this->sdkVersion = $sdkVersion;
-        return $this;
-    }
 
     /**
      * Set the PHP Version
@@ -122,7 +93,7 @@ class UserAgentBuilder {
 //            $userAgent[] = $this->runtime;
 //        }
 
-        $userAgent[] = $this->sdkName .'/'. $this->sdkVersion;
+        $userAgent[] = 'stormpath-sdk-php/'. Version::SDK_VERSION;
         $userAgent[] = 'php/' . $this->phpVersion;
         $userAgent[] = $this->osName .'/'. $this->osVersion;
 
