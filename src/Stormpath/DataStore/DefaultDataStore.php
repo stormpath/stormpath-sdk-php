@@ -271,8 +271,6 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $headers['User-Agent'] = $userAgentBuilder->setOsName(php_uname('s'))
                                                   ->setOsVersion(php_uname('r'))
                                                   ->setPhpVersion(phpversion())
-                                                  ->setSdkVersion()
-                                                  ->setSdkName()
                                                   ->build();
 
 

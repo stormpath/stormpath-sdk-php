@@ -3,7 +3,6 @@
 
 namespace Stormpath\Util;
 
-use Stormpath\Exceptions\UserAgentException;
 
 class UserAgentBuilder {
 
@@ -72,7 +71,7 @@ class UserAgentBuilder {
 
         $userAgent = array();
 
-       
+
 
         $userAgent[] = 'stormpath-sdk-php/'. Version::SDK_VERSION;
         $userAgent[] = 'php/' . $this->phpVersion;
@@ -84,11 +83,9 @@ class UserAgentBuilder {
 
     private function validateUserAgentProperties()
     {
-        if(!$this->sdkName) throw new UserAgentException('Please provide a SDK Name.');
-        if(!$this->sdkVersion) throw new UserAgentException('Please provide a SDK Version.');
-        if(!$this->phpVersion) throw new UserAgentException('Please provide a PHP Version.');
-        if(!$this->osName) throw new UserAgentException('Please provide an Operating System Name.');
-        if(!$this->osVersion) throw new UserAgentException('Please provide an Operating System Version.');
+        if(!$this->phpVersion) throw new \InvalidArgumentException('Please provide a PHP Version.');
+        if(!$this->osName) throw new \InvalidArgumentException('Please provide an Operating System Name.');
+        if(!$this->osVersion) throw new \InvalidArgumentException('Please provide an Operating System Version.');
     }
 
 

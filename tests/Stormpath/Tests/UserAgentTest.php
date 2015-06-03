@@ -3,12 +3,13 @@
 
 
 use Stormpath\Util\UserAgentBuilder;
+use Stormpath\Util\Version;
 
 class UserAgentTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @test
-     * @expectedException \Stormpath\Exceptions\UserAgentException
+     * @expectedException \InvalidArgumentException
      */
     public function it_throws_exception_if_properties_are_not_set()
     {
@@ -24,15 +25,13 @@ class UserAgentTest extends \PHPUnit_Framework_TestCase {
     {
         $userAgent = new UserAgentBuilder;
 
-        $userAgent = $userAgent->setSdkName('sdkName')
-                                ->setOsName('osName')
-                                ->setOsVersion('osVersion')
+        $userAgent = $userAgent->setOsVersion('osVersion')
                                 ->setPhpVersion('phpVersion')
-                                ->setSdkVersion('sdkVersion')
+                                ->setOsName('osName')
                                 ->build();
 
         $this->assertEquals(
-            'sdkName/sdkVersion php/phpVersion osName/osVersion',
+            'stormpath-sdk-php/'.Version::SDK_VERSION.' php/phpVersion osName/osVersion',
             $userAgent
         );
 
