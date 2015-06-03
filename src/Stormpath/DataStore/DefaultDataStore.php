@@ -267,13 +267,13 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $headers = $request->getHeaders();
         $headers['Accept'] = 'application/json';
 
-        $userAgent = new UserAgentBuilder;
-        $headers['User-Agent'] = $userAgent->setOsName(php_uname('s'))
-                                            ->setOsVersion(php_uname('r'))
-                                            ->setPhpVersion(phpversion())
-                                            ->setSdkVersion()
-                                            ->setSdkName()
-                                            ->build();
+        $userAgentBuilder = new UserAgentBuilder;
+        $headers['User-Agent'] = $userAgentBuilder->setOsName(php_uname('s'))
+                                                  ->setOsVersion(php_uname('r'))
+                                                  ->setPhpVersion(phpversion())
+                                                  ->setSdkVersion()
+                                                  ->setSdkName()
+                                                  ->build();
 
 
         if ($request->getBody())
