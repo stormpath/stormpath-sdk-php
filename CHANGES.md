@@ -1,6 +1,16 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.4.0.beta
+------------------
+
+Released on June 3, 2015
+
+- Added the capability to support the specification of an account store for password reset.
+- Added tests for resource creation with custom data.
+- Changed the way that the user agent is resolved to gather more information.
+
+
 Version 1.3.0.beta
 ------------------
 
