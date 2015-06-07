@@ -30,19 +30,6 @@ class DefaultResourceFactory implements ResourceFactory
         $this->dataStore = $dataStore;
     }
 
-    public function instantiateChildClass($className, $childClassName, array $constructorArgs)
-    {
-    	$childClass = new \ReflectionClass($this->qualifyClassName($childClassName));
-    	if ($childClass->isSubclassOf($this->qualifyClassName($className)))
-    	{
-    		return $this->instantiate($childClassName, $constructorArgs);
-    	}
-    	else
-    	{
-    		throw new \InvalidArgumentException('Cannot instantiate resource: '.$className.' is not a super class of '.$childClassName);
-    	}
-    }
-    
     public function instantiate($className, array $constructorArgs)
     {
 

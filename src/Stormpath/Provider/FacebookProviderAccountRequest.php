@@ -26,7 +26,6 @@ use Stormpath\Stormpath;
 
 class FacebookProviderAccountRequest implements ProviderAccountRequest
 {
-    const PROVIDER_ID   = 'facebook';
     const ACCESS_TOKEN  = 'accessToken';
 
     private $options;
@@ -47,7 +46,7 @@ class FacebookProviderAccountRequest implements ProviderAccountRequest
     {
         $providerData = new FacebookProviderData();
 
-        $providerData->providerId = self::PROVIDER_ID;
+        $providerData->providerId = FacebookProviderData::PROVIDER_ID;
 
         if (isset($this->options[self::ACCESS_TOKEN]))
         {

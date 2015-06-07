@@ -25,7 +25,6 @@ use Stormpath\Stormpath;
 
 class GoogleProviderAccountRequest implements ProviderAccountRequest
 {
-    const PROVIDER_ID   = 'google';
     const CODE          = 'code';
     const ACCESS_TOKEN  = 'accessToken';
 
@@ -47,7 +46,7 @@ class GoogleProviderAccountRequest implements ProviderAccountRequest
     {
         $providerData = new GoogleProviderData();
 
-        $providerData->providerId = self::PROVIDER_ID;
+        $providerData->providerId = GoogleProviderData::PROVIDER_ID;
 
         if (isset($this->options[self::CODE]))
         {

@@ -25,11 +25,6 @@ class ProviderData extends Resource
     const CREATED_AT    = 'createdAt';
     const MODIFIED_AT   = 'modifiedAt';
     
-    const PROVIDER_ID_RESOLVER = array(
-    		'google' => Stormpath::GOOGLE_PROVIDER_DATA,
-    		'facebook' => Stormpath::FACEBOOK_PROVIDER_DATA
-    );
-    
     public function getProviderId()
     {
         return $this->getProperty(self::PROVIDER_ID);

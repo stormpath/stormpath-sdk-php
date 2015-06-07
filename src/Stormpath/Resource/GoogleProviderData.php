@@ -20,6 +20,8 @@ namespace Stormpath\Resource;
 
 class GoogleProviderData extends ProviderData
 {
+    const PROVIDER_ID   = 'google';
+
     const CODE          = 'code';
     const ACCESS_TOKEN  = 'accessToken';
     const REFRESH_TOKEN = 'refreshToken';

@@ -68,11 +68,13 @@ class ProviderTest extends \Stormpath\Tests\BaseTest
 
         $tokens = explode('/', $returnedDirectory->href);
         $directoryId = end($tokens);
+        $this->assertEquals($returnedProvider, GoogleProvider::get(Directory::PATH.'/'.$directoryId.'/'.Provider::PATH));
+        $this->assertEquals($returnedProvider, GoogleProvider::get($returnedDirectory->href.'/'.Provider::PATH));
+
+        $this->assertEquals($returnedProvider, GoogleProvider::get($returnedDirectory->href));
+
         $this->assertEquals($returnedProvider, GoogleProvider::get($directoryId));
         $this->assertEquals($returnedProvider, GoogleProvider::get($directoryId.'/'.Provider::PATH));
-        $this->assertEquals($returnedProvider, GoogleProvider::get(Directory::PATH.'/'.$directoryId.'/'.Provider::PATH));
-        $this->assertEquals($returnedProvider, GoogleProvider::get($returnedDirectory->href));
-        $this->assertEquals($returnedProvider, GoogleProvider::get($returnedDirectory->href.'/'.Provider::PATH));
 
         $returnedDirectory->delete();
     }

@@ -121,26 +121,10 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $this->addDataToCache($data, $queryString);
         }
 
-        if (isset($options['propertyId']))
+        if (isset($options[PropertyBasedClassNameResolver::PROPERTY_ID]))
         {
-            $propertyValue = $options['propertyId'];
-            if (isset($options['classResolver']))
-            {
-                $classResolver = $options['classResolver'];
-                if (isset($classResolver[$propertyValue]))
-                {
-                    $childClassName = $classResolver[$propertyValue];
-                    return $this->resourceFactory->instantiate($childClassName, array($data, $queryString));
-                }
-                else
-                {
-                    throw new \InvalidArgumentException('Class resolver not found for identifier '.$propertyValue);
-                }
-            }
-            else
-            {
-                throw new \InvalidArgumentException('Expecting classResolver array in $options when propertyId is set');
-            }
+            $resolver = DefaultPropertyBasedClassNameResolver::getInstance();
+            $className = $resolver->resolve($className, $data, $options);
         }
 
         return $this->resourceFactory->instantiate($className, array($data, $queryString));

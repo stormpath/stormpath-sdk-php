@@ -20,6 +20,8 @@ namespace Stormpath\Resource;
 
 class FacebookProviderData extends ProviderData
 {
+    const PROVIDER_ID   = 'facebook';
+
     const ACCESS_TOKEN  = 'accessToken';
 
     public function getAccessToken()

@@ -188,8 +188,7 @@ class Account extends InstanceResource implements Deletable
     		}
     		
     		$providerData = $this->getDataStore()->getResource($href, Stormpath::PROVIDER_DATA, array(
-                'propertyId' => 'providerId',
-                'classResolver' => ProviderData::PROVIDER_ID_RESOLVER
+                'propertyId' => 'providerId'
             ));
     		$this->setProperty(self::PROVIDER_DATA, $providerData);
     		
