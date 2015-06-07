@@ -18,6 +18,8 @@
 namespace Stormpath\Tests\Resource;
 
 
+use Stormpath\Stormpath;
+
 class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
     private static $directory;
@@ -151,6 +153,24 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
         $customData = $directory->customData;
         $this->assertEquals('some change', $customData->unitTest);
 
+        // testing for issue #47
+        $directory = \Stormpath\Resource\Directory::instantiate(array(
+            'name' => 'Test Directory'.md5(time()),
+            'description' => 'Test Directory description'));
+        self::createResource(\Stormpath\Resource\Directory::PATH, $directory);
+
+        $directory->description = 'Test description';
+        $customData = $directory->customData;
+        $customData->companyName = 'Company Test';
+        $directory->save();
+
+        $newClient = self::newClientInstance();
+        $directory = $newClient->dataStore->getResource($directory->href, Stormpath::DIRECTORY);
+        $this->assertEquals('Test description', $directory->description);
+        $this->assertEquals('Company Test', $directory->customData->companyName);
+
+        $directory->delete();
+
     }
 
     public function testRemovingCustomData()
@@ -159,7 +179,8 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
         $cd->remove('unitTest');
 
-        $directory = \Stormpath\Resource\Directory::get(self::$directory->href);
+        $newClient = self::newClientInstance();
+        $directory = $newClient->dataStore->getResource(self::$directory->href, Stormpath::DIRECTORY);
         $customData = $directory->customData;
         $this->assertNull($customData->unitTest);
     }
@@ -175,7 +196,8 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
         $cd->delete();
 
-        $directory = \Stormpath\Resource\Directory::get(self::$directory->href);
+        $newClient = self::newClientInstance();
+        $directory = $newClient->dataStore->getResource(self::$directory->href, Stormpath::DIRECTORY);
         $customData = $directory->customData;
         $this->assertNull($customData->unitTest);
         $this->assertNull($customData->rank);
