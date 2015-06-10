@@ -58,17 +58,26 @@ class DefaultPropertyBasedClassNameResolver implements PropertyBasedClassNameRes
      * @param $data the received data set.
      * @param array $options contains the name of the property (<code>propertyId</code>)
      * that is going to be used to resolve the child class to instantiate.
+     * @return resolved className
      */
     public function resolve($className, $data, array $options = array())
     {
-        if (isset($this->delegates[$className]))
+        if (isset($options[PropertyBasedClassNameResolver::PROPERTY_ID]))
         {
-            $classNameResolver = $this->delegates[$className];
-            return $classNameResolver->resolve($className, $data, $options);
+            if (isset($this->delegates[$className]))
+            {
+                $classNameResolver = $this->delegates[$className];
+                return $classNameResolver->resolve($className, $data, $options);
+            }
+            else
+            {
+                throw new \InvalidArgumentException("No delegate resolver found for className ".$className);
+            }
+
         }
         else
         {
-            throw new \InvalidArgumentException("No delegate resolver found for className ".$className);
+            return $className;
         }
     }
 }

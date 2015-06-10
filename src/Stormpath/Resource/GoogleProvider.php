@@ -37,12 +37,7 @@ class GoogleProvider extends Provider
             $href = $href.'/'.self::PATH;
         }
 
-        if (!(stripos($href, 'http') === 0) and !(stripos($href, Directory::PATH) === 0))
-        {
-            $href = Directory::PATH.'/'.$href;
-        }
-
-        return Client::get($href, Stormpath::GOOGLE_PROVIDER, null, $options);
+        return Client::get($href, Stormpath::GOOGLE_PROVIDER, Directory::PATH, $options);
     }
 
     public static function instantiate($properties = null)

@@ -2,7 +2,6 @@
 
 namespace Stormpath\DataStore;
 
-use Guzzle\Common\Exception\InvalidArgumentException;
 /*
  * Copyright 2013 Stormpath, Inc.
  *
