@@ -20,15 +20,15 @@ namespace Stormpath\DataStore;
 
 use Stormpath\ApiKey;
 use Stormpath\Cache\Cacheable;
-use Stormpath\Cache\CacheManager;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\Request;
 use Stormpath\Http\RequestExecutor;
+use Stormpath\Resource\CustomData;
 use Stormpath\Resource\Error;
 use Stormpath\Resource\Resource;
 use Stormpath\Resource\ResourceError;
-use Stormpath\Util\Version;
 use Stormpath\Stormpath;
+use Stormpath\Util\UserAgentBuilder;
 
 class DefaultDataStore extends Cacheable implements InternalDataStore
 {
@@ -291,7 +291,13 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     {
         $headers = $request->getHeaders();
         $headers['Accept'] = 'application/json';
-        $headers['User-Agent'] = 'Stormpath-PhpSDK/' .Version::SDK_VERSION;
+
+        $userAgentBuilder = new UserAgentBuilder;
+        $headers['User-Agent'] = $userAgentBuilder->setOsName(php_uname('s'))
+                                                  ->setOsVersion(php_uname('r'))
+                                                  ->setPhpVersion(phpversion())
+                                                  ->build();
+
 
         if ($request->getBody())
         {
@@ -316,12 +322,14 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
             $property = $resource->getProperty($name);
 
+            $nameIsCustomData = $name == CustomData::CUSTOMDATA_PROP_NAME;
+
             if ($property instanceof \Stormpath\Resource\CustomData)
             {
                 $property = $this->toStdClass($property, true);
             }
 
-            else if ($property instanceof \stdClass && $customData === false)
+            else if ($property instanceof \stdClass && $customData === false && !$nameIsCustomData)
             {
                 $property = $this->toSimpleReference($name, $property);
             }

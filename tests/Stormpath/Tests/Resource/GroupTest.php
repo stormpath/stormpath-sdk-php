@@ -18,6 +18,8 @@
 namespace Stormpath\Tests\Resource;
 
 
+use Stormpath\Stormpath;
+
 class GroupTest extends \Stormpath\Tests\BaseTest {
 
     private static $directory;
@@ -149,7 +151,8 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
 
         $cd->remove('unitTest');
 
-        $group = \Stormpath\Resource\Group::get(self::$group->href);
+        $newClient = self::newClientInstance();
+        $group = $newClient->dataStore->getResource(self::$group->href, Stormpath::GROUP);
         $customData = $group->customData;
         $this->assertNull($customData->unitTest);
     }
@@ -165,7 +168,8 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
 
         $cd->delete();
 
-        $group = \Stormpath\Resource\Group::get(self::$group->href);
+        $newClient = self::newClientInstance();
+        $group = $newClient->dataStore->getResource(self::$group->href, Stormpath::GROUP);
         $customData = $group->customData;
         $this->assertNull($customData->unitTest);
         $this->assertNull($customData->rank);

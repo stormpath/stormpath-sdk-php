@@ -3,6 +3,8 @@
 
 class CustomData extends InstanceResource implements Saveable {
 
+    const CUSTOMDATA_PROP_NAME = "customData";
+
     public function __get($key)
     {
        return $this->getProperty($key);
