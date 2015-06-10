@@ -265,8 +265,8 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         $account = $application->createAccount($account);
 
-        $newClient = self::newClientInstance();        
-        $account = $newClient->get($account->href, Stormpath::ACCOUNT);
+        $newClient = self::newClientInstance();
+        $account = $newClient->dataStore->getResource($account->href, Stormpath::ACCOUNT);
         $this->assertEquals("12345", $account->customData->phone);
 
         $account->delete();
@@ -560,7 +560,8 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         $cd->remove('unitTest');
 
-        $application = \Stormpath\Resource\Application::get(self::$application->href);
+        $newClient = self::newClientInstance();
+        $application = $newClient->dataStore->getResource(self::$application->href, Stormpath::APPLICATION);
         $customData = $application->customData;
         $this->assertNull($customData->unitTest);
     }
@@ -576,7 +577,8 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         $cd->delete();
 
-        $application = \Stormpath\Resource\Application::get(self::$application->href);
+        $newClient = self::newClientInstance();
+        $application = $newClient->dataStore->getResource(self::$application->href, Stormpath::APPLICATION);
         $customData = $application->customData;
         $this->assertNull($customData->unitTest);
         $this->assertNull($customData->rank);

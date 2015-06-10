@@ -17,6 +17,8 @@
  */
 namespace Stormpath\Tests\Resource;
 
+use Stormpath\Stormpath;
+
 class AccountTest extends \Stormpath\Tests\BaseTest {
 
     const GROUPS_COUNT = 45;
@@ -374,6 +376,32 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $customData = $account->customData;
         $this->assertEquals('some change', $customData->unitTest);
 
+        // testing for issue #47
+        $account = \Stormpath\Resource\Account::instantiate(array(
+            'givenName' => 'Account Name',
+            'middleName' => 'Middle Name',
+            'surname' => 'Surname',
+            'username' => md5(time()).'username',
+            'email' => md5(time()).'@unknown123.kot',
+            'password' => '123quEso'));
+        self::$directory->createAccount($account);
+
+        $account->middleName = 'Test middle name';
+        $customData = $account->customData;
+        $customData->companyName = 'Company Test';
+        $account->save();
+
+        $customData = $account->customData;
+        $customData->phoneNumber = '123-456789';
+        $account->save();
+
+        $newClient = self::newClientInstance();
+        $account = $newClient->dataStore->getResource($account->href, Stormpath::ACCOUNT);
+        $this->assertEquals('Test middle name', $account->middleName);
+        $this->assertEquals('Company Test', $account->customData->companyName);
+        $this->assertEquals('123-456789', $account->customData->phoneNumber);
+
+        $account->delete();
     }
 
     public function testRemovingCustomData()
@@ -382,7 +410,8 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
 
         $cd->remove('unitTest');
 
-        $account = \Stormpath\Resource\Account::get(self::$account->href);
+        $newClient = self::newClientInstance();
+        $account = $newClient->dataStore->getResource(self::$account->href, Stormpath::ACCOUNT);
         $customData = $account->customData;
         $this->assertNull($customData->unitTest);
     }
@@ -398,7 +427,8 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
 
         $cd->delete();
 
-        $account = \Stormpath\Resource\Account::get(self::$account->href);
+        $newClient = self::newClientInstance();
+        $account = $newClient->dataStore->getResource(self::$account->href, Stormpath::ACCOUNT);
         $customData = $account->customData;
         $this->assertNull($customData->unitTest);
         $this->assertNull($customData->rank);

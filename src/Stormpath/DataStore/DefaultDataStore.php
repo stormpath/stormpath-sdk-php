@@ -23,6 +23,7 @@ use Stormpath\Cache\Cacheable;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\Request;
 use Stormpath\Http\RequestExecutor;
+use Stormpath\Resource\CustomData;
 use Stormpath\Resource\Error;
 use Stormpath\Resource\Resource;
 use Stormpath\Resource\ResourceError;
@@ -297,12 +298,14 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
             $property = $resource->getProperty($name);
 
+            $nameIsCustomData = $name == CustomData::CUSTOMDATA_PROP_NAME;
+
             if ($property instanceof \Stormpath\Resource\CustomData)
             {
                 $property = $this->toStdClass($property, true);
             }
 
-            else if ($property instanceof \stdClass && $customData === false)
+            else if ($property instanceof \stdClass && $customData === false && !$nameIsCustomData)
             {
                 $property = $this->toSimpleReference($name, $property);
             }
