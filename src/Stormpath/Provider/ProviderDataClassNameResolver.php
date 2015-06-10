@@ -17,12 +17,13 @@
 
 namespace Stormpath\Provider;
 
-use Stormpath\DataStore\PropertyBasedClassNameResolver;
+use Stormpath\DataStore\ClassNameResolver;
+use Stormpath\DataStore\DefaultClassNameResolver;
 use Stormpath\Resource\FacebookProviderData;
 use Stormpath\Resource\GoogleProviderData;
 use Stormpath\Stormpath;
 
-class ProviderDataClassNameResolver implements PropertyBasedClassNameResolver {
+class ProviderDataClassNameResolver implements ClassNameResolver {
 
     /**
      * Resolves the class name of a <code>ProviderData</code> child based on the
@@ -37,9 +38,9 @@ class ProviderDataClassNameResolver implements PropertyBasedClassNameResolver {
     {
         assert($className == Stormpath::PROVIDER_DATA, '$className arg should be '.Stormpath::PROVIDER_DATA);
 
-        if (isset($options[PropertyBasedClassNameResolver::PROPERTY_ID]))
+        if (isset($options[DefaultClassNameResolver::PROPERTY_ID]))
         {
-            $propertyId = $options[PropertyBasedClassNameResolver::PROPERTY_ID];
+            $propertyId = $options[DefaultClassNameResolver::PROPERTY_ID];
 
             $arrData = json_decode(json_encode($data), true);
             if (isset($arrData[$propertyId]))
@@ -63,7 +64,7 @@ class ProviderDataClassNameResolver implements PropertyBasedClassNameResolver {
         }
         else
         {
-            throw new \InvalidArgumentException('Required key '.PropertyBasedClassNameResolver::PROPERTY_ID.' not found in $options array');
+            throw new \InvalidArgumentException('Required key '.DefaultClassNameResolver::PROPERTY_ID.' not found in $options array');
         }
     }
 }

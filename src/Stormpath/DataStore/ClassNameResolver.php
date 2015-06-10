@@ -20,14 +20,12 @@ namespace Stormpath\DataStore;
 
 /**
  * Helper for the <code>DataStore</code> to resolve the class name of a resource
- * to instantiate based on the value of a property in the data set received.
+ * to instantiate.
  *
  * @package Stormpath\DataStore
  */
-interface PropertyBasedClassNameResolver
+interface ClassNameResolver
 {
-    const PROPERTY_ID = "propertyId";
-
     /**
      * @param $className
      * @param array $options

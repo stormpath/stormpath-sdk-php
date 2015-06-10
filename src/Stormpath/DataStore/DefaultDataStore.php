@@ -121,7 +121,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $this->addDataToCache($data, $queryString);
         }
 
-        $resolver = DefaultPropertyBasedClassNameResolver::getInstance();
+        $resolver = DefaultClassNameResolver::getInstance();
         $className = $resolver->resolve($className, $data, $options);
 
         return $this->resourceFactory->instantiate($className, array($data, $queryString));

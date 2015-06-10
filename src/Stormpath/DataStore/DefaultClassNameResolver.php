@@ -26,8 +26,10 @@ use Stormpath\Stormpath;
  *
  * @package Stormpath\DataStore
  */
-class DefaultPropertyBasedClassNameResolver implements PropertyBasedClassNameResolver
+class DefaultClassNameResolver implements ClassNameResolver
 {
+
+    const PROPERTY_ID = "propertyId";
 
     private static $instance;
     private $delegates;
@@ -62,7 +64,7 @@ class DefaultPropertyBasedClassNameResolver implements PropertyBasedClassNameRes
      */
     public function resolve($className, $data, array $options = array())
     {
-        if (isset($options[PropertyBasedClassNameResolver::PROPERTY_ID]))
+        if (isset($options[DefaultClassNameResolver::PROPERTY_ID]))
         {
             if (isset($this->delegates[$className]))
             {
