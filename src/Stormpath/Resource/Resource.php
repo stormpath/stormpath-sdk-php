@@ -32,7 +32,6 @@ class Resource extends Magic
     private $options;
 
     const HREF_PROP_NAME = "href";
-    const CUSTOMDATA_PROP_NAME = "customData";
 
     public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null, array $options = array())
     {

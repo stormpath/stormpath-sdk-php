@@ -20,10 +20,10 @@ namespace Stormpath\DataStore;
 
 use Stormpath\ApiKey;
 use Stormpath\Cache\Cacheable;
-use Stormpath\Cache\CacheManager;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\Request;
 use Stormpath\Http\RequestExecutor;
+use Stormpath\Resource\CustomData;
 use Stormpath\Resource\Error;
 use Stormpath\Resource\Resource;
 use Stormpath\Resource\ResourceError;
@@ -292,7 +292,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
             $property = $resource->getProperty($name);
 
-            $nameIsCustomData = $name == Resource::CUSTOMDATA_PROP_NAME;
+            $nameIsCustomData = $name == CustomData::CUSTOMDATA_PROP_NAME;
 
             if ($property instanceof \Stormpath\Resource\CustomData)
             {
