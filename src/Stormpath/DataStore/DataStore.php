@@ -51,5 +51,4 @@ interface DataStore
      * @return an instance of the specified class based on the data returned from the specified {@code href} URL.
      */
     public function getResource($href, $className, array $options = array());
-
 }

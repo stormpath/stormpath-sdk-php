@@ -976,6 +976,303 @@ Group membership can be created by:
   $group->addAccount($account);
   ```
 
+### Integrating with Google
+
+Stormpath supports accessing accounts from a number of different 
+locations including Google. Google uses OAuth 2.0 protocol for 
+authentication / authorization and Stormpath can leverage their 
+authorization code (or access tokens) to return an `Account` for 
+a given code.
+
+The steps to enable this functionality into your application include:
+
++ Create a Google Directory
++ Create an `AccountStoreMapping` between a Google Directory and your `Application`
++ Accessing Accounts with Google Authorization Codes or Access Tokens
+
+Google Directories follow behavior similar to mirror directories, but 
+have a `Provider` resource that contains information regarding the Google 
+application that the directory is configured for.
+
+#### Google Provider Resource
+
+A GoogleProvider resource holds specific information needed for working with 
+a Google Directory. It is important to understand the format of the provider 
+resource when creating and updating a Google Directory.
+
+A provider resource can be obtained by accessing the directory’s provider as 
+follows:
+
+```PHP
+$provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv/provider",
+    \Stormpath\Stormpath::GOOGLE_PROVIDER);
+```
+
+or, by means of the directory `Resource`:
+
+```PHP
+$provider = $directory->getProvider();
+```
+
+Alternatively, it is possible to use the static client configuration to the get the `Provider`:
+
+```PHP
+// It is also possible to specify the URL ending with "/provider", 
+// or the partial path (which could be "directories/DIR_ID/provider", 
+// or "DIR_ID/provider" or just "DIR_ID"). 
+$directoryHref = "https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv"; 
+$provider = GoogleProvider::get($directoryHref);
+```
+
+##### Resource Attributes
+
+* `clientId` : The App ID for your Google application
+* `clientSecret` : The App Secret for your Google application
+* `redirectUri` : The redirection Uri for your Google application
+* `providerId` : The provider ID is the Stormpath ID for the Directory’s account provider
+
+In addition to your application specific attributes, a Provider resource 
+will always contain 3 reserved read-only fields:
+
+* `href` : The fully qualified location of the custom data resource
+* `createdAt` : the UTC timestamp with millisecond precision of when the resource was created in Stormpath as an ISO 8601 formatted string
+* `modifiedAt` : the UTC timestamp with millisecond precision of when the resource was created in Stormpath as an ISO 8601 formatted string
+
+#### Creating a Google Directory
+
+Creating a Google Directory requires that you gather some information 
+beforehand from Google’s Developer Console regarding your application.
+
+* Client ID
+* Client Secret
+* Redirect URI
+
+Creating a Google Directory is very similar to creating a directory within 
+Stormpath. For a Google Directory to be configured correctly, you must 
+specify the correct Provider information.
+
+```PHP
+$provider = $client->dataStore->instantiate(\Stormpath\Stormpath::GOOGLE_PROVIDER);
+$provider->clientId = "857385-m8vk0fn2r7jmjo.apps.googleusercontent.com";
+$provider->clientSecret = "ehs7_-bA7OWQSQ4";
+$provider->redirectUri = "https://myapplication.com/authenticate";
+
+$directory = $client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+$directory->name = "my-google-directory";
+$directory->description = "A Google directory";
+$directory->provider = $provider;
+
+$tenant = $client->getCurrentTenant();
+$directory = $tenant->createDirectory($directory);
+```
+
+After the Google Directory has been created, it needs to be mapped with an 
+application as an account store. The Google Directory cannot be a default 
+account store or a default group store. Once the directory is mapped as an 
+account store for an application, you are ready to access Accounts with 
+Google Authorization Codes.
+
+#### Accessing Accounts with Google Authorization Codes or Access Tokens
+
+To access or create an account in an already created Google Directory, it is 
+required to gather a Google Authorization Code on behalf of the user. This 
+requires leveraging Google’s OAuth 2.0 protocol and the user’s consent for 
+your application’s permissions.
+
+Once the Authorization Code is gathered, you can get or create the `Account` by 
+means of the `Application` and specifying a `ProviderRequest`. The following example 
+shows how you use `GoogleProviderAccountRequest` to get an `Account` for a given authorization code:
+
+```PHP
+$applicationHref = "https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu";
+$application = $client->getResource(applicationHref, \Stormpath\Stormpath::APPLICATION);
+$providerRequest = new GoogleProviderAccountRequest(array(
+    "code" => "4/a3p_fn0sMDQlyFVTYwfl5GAj0Obd.oiruVLbQZSwU3oEBd8DOtNApQzTCiwI"
+));
+
+$result = $application->getAccount($providerRequest);
+$account = $result->getAccount();
+```
+
+In order to know if the account was created or if it already existed in the 
+Stormpath’s Google Directory you can do: `result.isNewAccount();`. It will return 
+`true` if it is a newly created account; `false` otherwise.
+
+Once an `Account` is retrieved, Stormpath maps common fields for the Google User to 
+the `Account`. The access token and the refresh token for any additional calls in the 
+`GoogleProviderData` resource and can be retrieved by:
+
+```PHP
+$providerData = $account->getProviderData();
+```
+
+The returned GoogleProviderData includes:
+
+```PHP
+$providerData->accessToken; //-> y29.1.AADN_Xo2hxQflWwsgCSK-WjSw1mNfZiv4
+$providerData->createdAt; //-> 2014-04-01T17:00:09.154Z 
+$providerData->href; //-> https://api.stormpath.com/v1/accounts/ciYmtETytH0tbHRBas1D5/providerData 
+$providerData->modifiedAt; //-> 2014-04-01T17:00:09.189Z 
+$providerData->providerId; //-> google 
+$providerData->refreshToken; //-> 1/qQTS638g3ArE4U02FoiXL1yIh-OiPmhc
+```
+
+The `accessToken` can also be passed as a field for the `ProviderData` to access the 
+account once it is retrieved:
+
+```PHP
+$providerRequest = new GoogleProviderRequest(array(
+    "accessToken" =>"y29.1.AADN_Xo2hxQflWwsgCSK-WjSw1mNfZiv4"
+));
+$result = $application->getAccount(request);
+$account = $result->getAccount();
+```
+
+The refreshToken will only be present if your application asked for offline access. 
+Review Google’s documentation for more information regarding OAuth offline access.
+
+### Integrating with Facebook
+
+Stormpath supports accessing accounts from a number of different locations including 
+Facebook. Facebook uses OAuth 2.0 protocol for authentication / authorization and 
+Stormpath can leverage their or access tokens to return an Account for a given code.
+
+The steps to enable this functionality into your application include:
+
+* Create a Facebook Directory
+* Create an Account Store Mapping between a Facebook Directory and your Application
+* Accessing Accounts with Facebook User Access Tokens
+
+Facebook Directories follow behavior similar to mirror directories, but have a
+Provider resource that contains information regarding the Facebook application that
+the directory is configured for.
+
+#### FACEBOOK PROVIDER RESOURCE
+
+A FacebookProvider resource holds specific information needed for working with a 
+Facebook Directory. It is important to understand the format of the provider resource 
+when creating and updating a Facebook Directory.
+
+A provider resource can be obtained by accessing the directory’s provider as follows:
+
+Example Request
+
+```PHP
+$provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/72N2MjJSIXuln56sNngcvr/provider",
+    \Stormpath\Stormpath::FACEBOOK_PROVIDER);
+```
+
+or, by means of the directory Resource:
+
+```PHP
+$provider = $directory->getProvider();
+```
+
+Alternatively, it is possible to use the static client configuration to the get the `Provider`:
+
+```PHP
+// It is also possible to specify the URL ending with "/provider", 
+// or the partial path (which could be "directories/DIR_ID/provider", 
+// or "DIR_ID/provider" or just "DIR_ID"). 
+$directoryHref = "https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv"; 
+$provider = FacebookProvider::get($directoryHref);
+```
+
+##### Resource Attributes
+
+* `clientId` : The App ID for your Facebook application
+* `clientSecret` : The App Secret for your Facebook application
+* `providerId` : The provider ID is the Stormpath ID for the Directory’s account provider
+
+In addition to your application specific attributes, a Provider resource will always contain 3 reserved read-only fields:
+
+* `href` : The fully qualified location of the custom data resource
+* `createdAt` : the UTC timestamp with millisecond precision of when the resource was created in Stormpath as an ISO 8601 formatted string
+* `modifiedAt` : the UTC timestamp with millisecond precision of when the resource was created in Stormpath as an ISO 8601 formatted string
+
+#### CREATING A FACEBOOK DIRECTORY
+
+Creating a Facebook Directory requires that you gather some information beforehand 
+from Facebook’s Developer Console regarding your application.
+
+* Client ID
+* Client Secret
+
+Creating a Facebook Directory is very similar to creating a directory within Stormpath.
+ For a Facebook Directory to be configured correctly, you must specify the correct 
+ Provider information.
+
+Example Request
+
+```
+$provider = $client->dataStore->instantiate(\Stormpath\Stormpath::FACEBOOK_PROVIDER);
+$provider->clientId = "1011854538839621";
+$provider->clientSecret = "82c16954b0d88216127d66ac44bbc3a8";
+$provider->redirectUri = "https://apps.facebook.com/sampleapp";
+
+$directory = $client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+$directory->name = "my-fb-directory";
+$directory->description = "A Facebook directory";
+$directory->provider = $provider;
+
+$tenant = $client->getCurrentTenant();
+$directory = $tenant->createDirectory($directory);
+```
+
+After the Facebook Directory has been created, it needs to be mapped with an 
+application as an account store. The Facebook Directory cannot be a default account 
+store or a default group store. Once the directory is mapped to an account store for 
+an application, you are ready to access Accounts with Facebook User Access Tokens.
+
+#### ACCESSING ACCOUNTS WITH FACEBOOK USER ACCESS TOKENS
+To access or create an account in an already created Facebook Directory, it is 
+required to gather the User Access Token on behalf of the user. This usually requires 
+leveraging Facebook’s javascript library and the user’s consent for your application’s 
+permissions.
+
+It is required that your Facebook application request for the email permission from 
+Facebook. If the access token does not grant email permissions, you will not be able 
+to get an Account with an access token.
+
+Once the Authorization Code is gathered, you can get or create the `Account` by means of 
+the `Application` and specifying its `ProviderData`. The following example shows how you 
+use `FacebookProviderAccountRequest` to get an `Account` for a given authorization code:
+
+Example Request
+
+```PHP
+$applicationHref = "https://api.stormpath.com/v1/applications/2k1aegw9UbLX4ZfMH4kCkR";
+$application = \Stormpath\Resource\Application::get($applicationHref);
+
+$providerAccountRequest = new \Stormpath\Provider\FacebookProviderAccountRequest(array(
+    "accessToken" => "CABTmZxAZBxBADbr1l7ZCwHpjivBt9T0GZBqjQdTmgyO0OkUq37HYaBi4F23f49f5"
+));
+
+$result = $application->getAccount($providerRequest);
+$account = $result->getAccount();
+```
+
+In order to know if the account was created or if it already existed in the 
+Stormpath’s Facebook Directory you can do: `$result->isNewAccount();`. It will return 
+`true` if it is a newly created account; `false` otherwise.
+
+Once an `Account` is retrieved, Stormpath maps common fields for the Facebook User to 
+the `Account`. The access token for any additional calls in the `FacebookProviderData` 
+resource and can be retrieved by:
+
+```PHP
+$providerData = $account->getProviderData();
+```
+The returned `FacebookProviderData` will include:
+
+```PHP
+$providerData->accessToken; //-> CABTmZxAZBxBADbr1l7ZCwHpjivBt9T0GZBqjQdTmgyO0OkUq37HYaBi4F23f49f5
+$providerData->createdAt; //-> 2014-04-01T17:00:09.154Z
+$providerData->href; //-> https://api.stormpath.com/v1/accounts/ciYmtETytH0tbHRBas1D5/providerData
+$providerData->modifiedAt; //-> 2014-04-01T17:00:09.189Z
+$providerData->providerId; //-> facebook
+```
+
 ## Run the tests
 
 In order to run the tests you need to clone the repository, install the dependencies via composer and configure the api key file location. These

@@ -1,7 +1,4 @@
 <?php
-
-namespace Stormpath\DataStore;
-
 /*
  * Copyright 2013 Stormpath, Inc.
  *
@@ -17,8 +14,21 @@ namespace Stormpath\DataStore;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-interface ResourceFactory
-{
 
-    public function instantiate($className, array $constructorArgs);
+namespace Stormpath\DataStore;
+
+
+/**
+ * Helper for the <code>DataStore</code> to resolve the class name of a resource
+ * to instantiate.
+ *
+ * @package Stormpath\DataStore
+ */
+interface ClassNameResolver
+{
+    /**
+     * @param $className
+     * @param array $options
+     */
+    public function resolve($className, $data, array $options = array());
 }

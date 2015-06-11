@@ -1,6 +1,6 @@
 <?php
 
-namespace Stormpath\DataStore;
+namespace Stormpath\Resource;
 
 /*
  * Copyright 2013 Stormpath, Inc.
@@ -17,8 +17,21 @@ namespace Stormpath\DataStore;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-interface ResourceFactory
-{
 
-    public function instantiate($className, array $constructorArgs);
+class FacebookProviderData extends ProviderData
+{
+    const PROVIDER_ID   = 'facebook';
+
+    const ACCESS_TOKEN  = 'accessToken';
+
+    public function getAccessToken()
+    {
+        return $this->getProperty(self::ACCESS_TOKEN);
+    }
+
+    public function setAccessToken($accessToken)
+    {
+        $this->setProperty(self::ACCESS_TOKEN, $accessToken);
+    }
+
 }

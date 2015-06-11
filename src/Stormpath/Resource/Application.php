@@ -23,6 +23,7 @@ use Stormpath\Authc\AuthenticationRequest;
 use Stormpath\Authc\BasicAuthenticator;
 use Stormpath\Authc\UsernamePasswordRequest;
 use Stormpath\Client;
+use Stormpath\Provider\ProviderAccountRequest;
 use Stormpath\Exceptions\IdSite\InvalidCallbackUriException;
 use Stormpath\Exceptions\IdSite\JWTUsedAlreadyException;
 use Stormpath\Stormpath;
@@ -399,6 +400,17 @@ class Application extends InstanceResource implements Deletable
         }
 
         return $this->getDataStore()->create($href, $passwordResetToken, Stormpath::PASSWORD_RESET_TOKEN, $options);
+    }
+
+    public function getAccount(ProviderAccountRequest $request)
+    {
+        $providerData = $request->getProviderData();
+
+        $providerAccountAccess = $this->getDataStore()->instantiate(Stormpath::PROVIDER_ACCOUNT_ACCESS);
+        $providerAccountAccess->providerData = $providerData;
+
+        return $this->getDataStore()->create($this->getHref().'/'.Account::PATH,
+            $providerAccountAccess, Stormpath::PROVIDER_ACCOUNT_RESULT);
     }
 
     // @codeCoverageIgnoreStart
