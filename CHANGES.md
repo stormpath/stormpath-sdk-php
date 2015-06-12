@@ -1,6 +1,16 @@
 stormpath-sdk-php Changelog
 ===========================
 
+
+Version 1.5.0.beta
+------------------
+
+Released on June 12, 2015
+
+- Implemented social integration with Google and Facebook.
+- Fixed a bug when saving custom data after retrieving it from a resource.
+
+
 Version 1.4.0.beta
 ------------------
 

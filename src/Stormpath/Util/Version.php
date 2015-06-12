@@ -20,6 +20,6 @@ namespace Stormpath\Util;
 
 class Version
 {
-    const SDK_VERSION = '1.4.0.beta';
+    const SDK_VERSION = '1.5.0.beta';
 
 }
