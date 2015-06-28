@@ -365,6 +365,8 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $customData->locations = ['BuildingA', 'BuildingB'];
         $customData->save();
 
+        $this->assertEquals(['BuildingA', 'BuildingB'], $customData->locations);
+
         $customData->locations = ['BuildingA', 'BuildingB', 'BuildingC'];
         $customData->save();
 

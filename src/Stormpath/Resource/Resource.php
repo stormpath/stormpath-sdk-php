@@ -82,12 +82,19 @@ class Resource extends Magic
         return $this->readProperty($name);
     }
 
-    public function getPropertyNames()
+    public function getPropertyNames($retrieveDirtyProperties = false)
     {
-        return array_keys((array) $this->properties);
+        if ($retrieveDirtyProperties and $this->isDirty() and !$this->isNew())
+        {
+            return $this->getDirtyPropertyNames();
+        }
+        else
+        {
+            return array_keys((array) $this->properties);
+        }
     }
 
-    public function getDirtyPropertyNames()
+    protected function getDirtyPropertyNames()
     {
         $names = array_keys((array) $this->dirtyProperties);
         if (property_exists($this->properties, self::HREF_PROP_NAME))
@@ -179,7 +186,7 @@ class Resource extends Magic
         return $this->materialized;
     }
 
-    public function isDirty()
+    protected function isDirty()
     {
         return $this->dirty;
     }
@@ -203,7 +210,7 @@ class Resource extends Magic
      *
      * @return {@code true} if the resource does not yet have an assigned 'href' property, {@code false} otherwise.
      */
-     public function isNew() {
+     protected function isNew() {
 
         //we can't call getHref() in here, otherwise we'll have an infinite loop:
         $prop = $this->readProperty(self::HREF_PROP_NAME);
