@@ -874,6 +874,47 @@ $authenticationRequest = new UsernamePasswordRequest('usernameOrEmail', 'passwor
 $result = $application->authenticateAccount($authenticationRequest);
 ```
 
+### Verify an Account's email address
+
+This workflow allows you to send a welcome email to a newly registered account and optionally verify that they own the 
+email addressed used during registration.
+
+The email verification workflow involves changes to an account at an application level, and as such, this workflow
+relies on the account resource as a starting point. This workflow is disabled by default for accounts, but you can 
+enable it easily in the Stormpath Admin Console UI. Refer to the Stormpath Admin Console product guide for complete
+instructions.
+
+#### Resending the verification email
+
+In some cases, it may be needed to resend the verification email. This could be because the user accidentally deleted
+the verification email or it was undeliverable at a certain time. An Application has the ability to resend verification
+emails based on the account’s username or email.
+
+##### Resend Email Verification Resource Attributes
+
+* `login` : Either the email or username for the account that needs an email verification resent
+* `accountStore` : An optional link to the application’s `accountStore` (directory or group) that you are certain contains the account attempting to resend the verification email to.
+
+##### Execute Email Verification Resend
+
+```
+$request = new \Stormpath\Resource\VerificationEmailRequest('some.user@email.com');
+$application->sendVerificationEmail($request);
+```
+
+If the verification email is queued to be sent, a `202 ACCEPTED` response is returned by the server. However, the
+`sendVerificationEmail` method does not return any value.
+
+Alternatively, it is possible to specify the `accountStore` where the user account that needs verification resides as a 
+performance enhancement.
+
+```
+$directory = \Stormpath\Resource\Directory::get('https://api.stormpath.com/v1/directories/2k1eykEKqVok365Ue2Y2T1');
+$request = new \Stormpath\Resource\VerificationEmailRequest('some.user@email.com', 
+    array('accountStore' => $directory));
+$application->sendVerificationEmail($request);
+```
+
 ### Password Reset
 
 A password reset workflow, if configured on the directory the account is
