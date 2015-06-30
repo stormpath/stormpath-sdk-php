@@ -223,7 +223,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         $response = $this->requestExecutor->executeRequest($request);
 
-        $result = $response->getBody() ? json_decode($response->getBody()) : '';
+        $result = $response->getBody() ? json_decode($response->getBody()) : null;
 
         if (isset($result) && $result instanceof \stdClass)
         {

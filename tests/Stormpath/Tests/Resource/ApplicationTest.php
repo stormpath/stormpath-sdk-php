@@ -21,6 +21,9 @@ namespace Stormpath\Tests\Resource;
 use JWT;
 use Stormpath\Client;
 use Stormpath\Resource\Application;
+use Stormpath\Resource\Directory;
+use Stormpath\Resource\VerificationEmailRequest;
+use Stormpath\Resource\VerificationEmails;
 use Stormpath\Stormpath;
 use Stormpath\Util\UUID;
 
@@ -385,6 +388,67 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $accountStoreMappingA->delete();
         $groupB->delete();
         $groupA->delete();
+    }
+
+    public function testSendVerificationEmail()
+    {
+        $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
+        $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
+        $cacheManager = $this->getMock('\Stormpath\Cache\CacheManager');
+        $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
+            array('create'), array($requestExecutor, $apiKey, $cacheManager));
+
+        $login = 'some.user@email.com';
+        $request = new VerificationEmailRequest($login);
+
+        $this->assertEquals('some.user@email.com', $request->getLogin());
+
+        $verificationEmails = VerificationEmails::instantiate();
+        $verificationEmails->login = 'some.user@email.com';
+
+        $application = new Application($dataStore);
+
+        $dataStore->expects($this->once())
+        ->method('create')
+        ->with(
+            $this->equalTo($application->getHref() . '/' . VerificationEmails::PATH),
+            $this->equalTo($verificationEmails),
+            $this->equalTo(Stormpath::VERIFICATION_EMAILS)
+        );
+
+        $application->sendVerificationEmail($request);
+    }
+
+    public function testSendVerificationEmailWithAccountStore()
+    {
+        $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
+        $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
+        $cacheManager = $this->getMock('\Stormpath\Cache\CacheManager');
+        $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
+            array('create'), array($requestExecutor, $apiKey, $cacheManager));
+
+        $directory = Directory::instantiate(array('name' => 'My Directory', 'href' => 'http://mock.url'));
+        $login = 'some.user@email.com';
+        $request = new VerificationEmailRequest($login, array('accountStore' => $directory));
+
+        $this->assertEquals('some.user@email.com', $request->getLogin());
+        $this->assertEquals($directory, $request->getAccountStore());
+
+        $verificationEmails = VerificationEmails::instantiate();
+        $verificationEmails->login = 'some.user@email.com';
+        $verificationEmails->accountStore = $directory;
+
+        $application = new Application($dataStore);
+
+        $dataStore->expects($this->once())
+        ->method('create')
+        ->with(
+            $this->equalTo($application->getHref() . '/' . VerificationEmails::PATH),
+            $this->equalTo($verificationEmails),
+            $this->equalTo(Stormpath::VERIFICATION_EMAILS)
+        );
+
+        $application->sendVerificationEmail($request);
     }
 
     public function testAuthenticate()

@@ -413,6 +413,36 @@ class Application extends InstanceResource implements Deletable
             $providerAccountAccess, Stormpath::PROVIDER_ACCOUNT_RESULT);
     }
 
+    public function sendVerificationEmail(VerificationEmailRequest $request)
+    {
+        if ($request == null)
+        {
+            throw new \InvalidArgumentException('VerificationEmailRequest cannot be null');
+        }
+
+        $login = $request->getLogin();
+        if ($login == null or ($login != null and $login == ''))
+        {
+            throw new \InvalidArgumentException('VerificationEmailRequest\'s login property is required');
+        }
+
+        $accountStore = $request->getAccountStore();
+        if ($accountStore != null && $accountStore->href == null)
+        {
+            throw new \InvalidArgumentException("verificationEmailRequest's accountStore has been specified but its href is null.");
+        }
+
+        $verificationEmail = VerificationEmails::instantiate();
+        $verificationEmail->login = $login;
+        if ($accountStore != null)
+        {
+            $verificationEmail->accountStore = $accountStore;
+        }
+
+        $this->getDataStore()->create($this->getHref() . '/' . VerificationEmails::PATH,
+            $verificationEmail, Stormpath::VERIFICATION_EMAILS);
+    }
+
     // @codeCoverageIgnoreStart
     private function getPasswordResetTokensHref()
     {
