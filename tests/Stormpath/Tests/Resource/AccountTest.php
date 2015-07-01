@@ -362,17 +362,17 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $this->assertEquals('unit Test', $customData->unitTest);
 
         $customData = self::$account->customData;
-        $customData->locations = ['BuildingA', 'BuildingB'];
+        $customData->locations = array('BuildingA', 'BuildingB');
         $customData->save();
 
-        $this->assertEquals(['BuildingA', 'BuildingB'], $customData->locations);
+        $this->assertEquals(array('BuildingA', 'BuildingB'), $customData->locations);
 
-        $customData->locations = ['BuildingA', 'BuildingB', 'BuildingC'];
+        $customData->locations = array('BuildingA', 'BuildingB', 'BuildingC');
         $customData->save();
 
         $newClient = self::newClientInstance();
         $customData = $newClient->getDataStore()->getResource($customData->href, Stormpath::CUSTOM_DATA);
-        $this->assertEquals(['BuildingA', 'BuildingB', 'BuildingC'], $customData->locations);
+        $this->assertEquals(array('BuildingA', 'BuildingB', 'BuildingC'), $customData->locations);
     }
 
     public function testUpdatingCustomData()
