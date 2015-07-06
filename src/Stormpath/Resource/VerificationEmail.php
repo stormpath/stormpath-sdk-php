@@ -21,17 +21,12 @@ namespace Stormpath\Resource;
 use Stormpath\Client;
 use Stormpath\Stormpath;
 
-class VerificationEmails extends Resource
+class VerificationEmail extends Resource
 {
     const LOGIN         = 'login';
     const ACCOUNT_STORE = 'accountStore';
 
     const PATH          = 'verificationEmails';
-
-    public static function instantiate($properties = null)
-    {
-        return Client::instantiate(Stormpath::VERIFICATION_EMAILS, $properties);
-    }
 
     public function getLogin()
     {

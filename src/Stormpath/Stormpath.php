@@ -61,7 +61,7 @@ class Stormpath
     const PROVIDER_ACCOUNT_RESULT       = 'ProviderAccountResult';
     const PROVIDER_DATA                 = 'ProviderData';
     const TENANT                        = 'Tenant';
-    const VERIFICATION_EMAILS           = 'VerificationEmails';
+    const VERIFICATION_EMAIL           = 'VerificationEmail';
 
     const ENABLED                       = 'ENABLED';
     const DISABLED                      = 'DISABLED';

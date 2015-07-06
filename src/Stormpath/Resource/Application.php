@@ -432,15 +432,15 @@ class Application extends InstanceResource implements Deletable
             throw new \InvalidArgumentException("verificationEmailRequest's accountStore has been specified but its href is null.");
         }
 
-        $verificationEmail = VerificationEmails::instantiate();
+        $verificationEmail = $this->getDataStore()->instantiate(Stormpath::VERIFICATION_EMAIL);
         $verificationEmail->login = $login;
         if ($accountStore != null)
         {
             $verificationEmail->accountStore = $accountStore;
         }
 
-        $this->getDataStore()->create($this->getHref() . '/' . VerificationEmails::PATH,
-            $verificationEmail, Stormpath::VERIFICATION_EMAILS);
+        $this->getDataStore()->create($this->getHref() . '/' . VerificationEmail::PATH,
+            $verificationEmail, Stormpath::VERIFICATION_EMAIL);
     }
 
     // @codeCoverageIgnoreStart
