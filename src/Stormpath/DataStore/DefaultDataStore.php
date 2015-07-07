@@ -117,7 +117,9 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
         }
 
-        if($this->resourceIsCacheable($data)) {
+        //Check to see if the resource can be cached
+        //Only if the query string does not exist
+        if($this->resourceIsCacheable($data) && empty($queryString)) {
             $this->addDataToCache($data, $queryString);
         }
 
