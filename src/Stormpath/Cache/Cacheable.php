@@ -37,6 +37,8 @@ abstract class Cacheable {
     protected function removeResourceFromCache($resource)
     {
         $this->cache->delete($resource->getHref());
+
+        $this->deleteExpanded($resource->getHref());
     }
 
     protected function removeCustomDataItemFromCache($resource, $key)
@@ -53,6 +55,21 @@ abstract class Cacheable {
         }
 
         return $key;
+    }
+
+    private function deleteExpanded($href)
+    {
+        $all = $this->cache->all();
+        if(empty($all)) return;
+
+        $keys = array_keys($all);
+
+        foreach($keys as $key) {
+            if(strstr($key,$href)) {
+                $this->cache->delete($key);
+            }
+
+        }
     }
 
 

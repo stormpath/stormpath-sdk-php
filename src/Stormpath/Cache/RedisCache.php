@@ -64,4 +64,13 @@ class RedisCache implements Cache {
     }
 
 
+    /**
+     * Get all items from cache
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return $this->redis->keys('*');
+    }
 }

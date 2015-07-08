@@ -35,5 +35,12 @@ interface Cache {
      */
     public function clear();
 
+    /**
+     * Get all items from cache
+     *
+     * @return array
+     */
+    public function all();
+
 
 }

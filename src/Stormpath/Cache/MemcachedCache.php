@@ -64,4 +64,13 @@ class MemcachedCache implements Cache {
         $this->memcached->flush();
     }
 
+    /**
+     * Get all items from cache
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return $this->memcached->getAllKeys();
+    }
 }
