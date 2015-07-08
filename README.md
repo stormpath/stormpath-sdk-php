@@ -103,6 +103,10 @@ If you have not already done so, register as a developer on
 
     $directory = \Stormpath\Resource\Directory::get($directoryHref);
     ```
+    > **Note:**
+    
+    > The `$applicationHref` and `$directoryHref` can be accessed from the Stormpath Administrator Console or retrieved from the code.
+    > When you iterate over the object during step 3, you can output the href for the individual objects (eg `print $app->href;`)
 
 5.  **Create an application** and auto create a directory as the account store.
 
