@@ -313,7 +313,8 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         {
             $customData = true;
         }
-        $propertyNames = $resource->getPropertyNames();
+
+        $propertyNames = $resource->getPropertyNames(true);
 
         $properties = new \stdClass();
 

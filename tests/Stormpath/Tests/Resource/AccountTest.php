@@ -361,8 +361,18 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $customData = $account->customData;
         $this->assertEquals('unit Test', $customData->unitTest);
 
+        $customData = self::$account->customData;
+        $customData->locations = array('BuildingA', 'BuildingB');
+        $customData->save();
 
+        $this->assertEquals(array('BuildingA', 'BuildingB'), $customData->locations);
 
+        $customData->locations = array('BuildingA', 'BuildingB', 'BuildingC');
+        $customData->save();
+
+        $newClient = self::newClientInstance();
+        $customData = $newClient->getDataStore()->getResource($customData->href, Stormpath::CUSTOM_DATA);
+        $this->assertEquals(array('BuildingA', 'BuildingB', 'BuildingC'), $customData->locations);
     }
 
     public function testUpdatingCustomData()
@@ -388,18 +398,19 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
 
         $account->middleName = 'Test middle name';
         $customData = $account->customData;
-        $customData->companyName = 'Company Test';
+        $customData->phoneNumber = '123-456789';
         $account->save();
 
         $customData = $account->customData;
-        $customData->phoneNumber = '123-456789';
+        $customData->companyName = 'Company Test';
         $account->save();
 
         $newClient = self::newClientInstance();
         $account = $newClient->dataStore->getResource($account->href, Stormpath::ACCOUNT);
+        $customData = $account->customData;
         $this->assertEquals('Test middle name', $account->middleName);
-        $this->assertEquals('Company Test', $account->customData->companyName);
-        $this->assertEquals('123-456789', $account->customData->phoneNumber);
+        $this->assertEquals('Company Test', $customData->companyName);
+        $this->assertEquals('123-456789', $customData->phoneNumber);
 
         $account->delete();
     }
