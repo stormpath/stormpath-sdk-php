@@ -2,6 +2,15 @@ stormpath-sdk-php Changelog
 ===========================
 
 
+Version 1.6.0.beta
+------------------
+
+Released on July 14, 2015
+
+- Fixed a bug when adding custom data to an existing property (like adding an entry to an existing array).
+- Added minor documentation changes.
+
+
 Version 1.5.0.beta
 ------------------
 
