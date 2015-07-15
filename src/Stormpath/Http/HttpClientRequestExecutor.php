@@ -29,9 +29,9 @@ class HttpClientRequestExecutor implements RequestExecutor
     private $httpClient;
     private $signer;
 
-    public function __construct()
+    public function __construct(Client $client = null)
     {
-        $this->httpClient = new Client();
+        $this->httpClient = ($client === null ? new Client() : $client);
         $this->signer = new Sauthc1Signer;
     }
 

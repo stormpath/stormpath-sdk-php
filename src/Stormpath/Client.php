@@ -19,6 +19,7 @@ namespace Stormpath;
  */
 
 use Stormpath\DataStore\DefaultDataStore;
+use Stormpath\Http\RequestExecutor;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Resource\Resource;
 use Stormpath\Stormpath;
@@ -100,13 +101,13 @@ class Client extends Magic
      * @param $baseUrl optional parameter for specifying the base URL when not using the default one
      *         (https://api.stormpath.com/v1).
      */
-    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null)
+    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, RequestExecutor $requestExecutor = null)
     {
         parent::__construct();
         self::$cacheManager = $cacheManager;
         self::$cacheManagerOptions = $cacheManagerOptions;
 
-        $requestExecutor = new HttpClientRequestExecutor();
+        $requestExecutor = ($requestExecutor === null ? new HttpClientRequestExecutor() : $requestExecutor);
         $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
         $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
     }
