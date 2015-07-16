@@ -455,7 +455,6 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
             $this->fail("Send verification email failed: ".$re->getErrorCode()." ".$re->getDeveloperMessage());
         }
 
-        $account->delete();
         $directory->delete();
     }
 
