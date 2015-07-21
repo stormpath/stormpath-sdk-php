@@ -28,7 +28,8 @@
     "require": {
         "php": ">=5.3.3",
         "guzzle/http": "3.9.*",
-        "firebase/php-jwt": "v2.0.0"
+        "firebase/php-jwt": "v2.0.0",
+        "phpseclib/phpseclib": "0.3.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"

@@ -39,6 +39,8 @@ class Stormpath
     const ACCOUNT_STORE                 = 'AccountStore';
     const ACCOUNT_STORE_MAPPING         = 'AccountStoreMapping';
     const ACCOUNT_STORE_MAPPING_LIST    = 'AccountStoreMappingList';
+    const API_KEY                       = 'ApiKey';
+    const API_KEY_LIST                  = 'ApiKeyList';
     const APPLICATION                   = 'Application';
     const APPLICATION_LIST              = 'ApplicationList';
     const AUTHENTICATION_RESULT         = 'AuthenticationResult';
