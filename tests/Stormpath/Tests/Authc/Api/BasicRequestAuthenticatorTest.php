@@ -90,7 +90,7 @@ class BasicRequestAuthenticatorTest extends BaseTest
         $auth = new BasicRequestAuthenticator(self::$application);
         $result = $auth->authenticate($request);
 
-        $this->assertInstanceOf('Stormpath\Authc\Api\BasicAuthenticationResult', $auth);
+        $this->assertInstanceOf('Stormpath\Authc\Api\BasicAuthenticationResult', $result);
 
         $this->assertInstanceOf('Stormpath\Resource\Application',  $result->getApplication());
         $this->assertInstanceOf('Stormpath\Resource\ApiKey', $result->getApiKey());
