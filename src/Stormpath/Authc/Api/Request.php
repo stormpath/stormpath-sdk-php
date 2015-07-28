@@ -17,7 +17,11 @@ class Request
 
     private function __construct()
     {
-        $this->headers = $_REQUEST;
+        if(function_exists('getallheaders')) {
+            $this->headers = getallheaders();
+        } else {
+            $this->headers = $_REQUEST;
+        }
     }
 
     public static function createFromGlobals()

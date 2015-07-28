@@ -38,7 +38,8 @@ class ApiRequestAuthenticatorTest extends BaseTest
 
         $account->delete();
 
-        $auth = (new ApiRequestAuthenticator(self::$application))->authenticate($request);
+        $auth = new ApiRequestAuthenticator(self::$application);
+        $auth->authenticate($request);
 
         Request::tearDown();
 
