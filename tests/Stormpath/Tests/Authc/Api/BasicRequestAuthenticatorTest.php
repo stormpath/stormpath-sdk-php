@@ -33,7 +33,8 @@ class BasicRequestAuthenticatorTest extends BaseTest
     public function it_throws_exception_for_invalid_api_key()
     {
         $request = $this->setUpAuthHeader('123:abc');
-        $auth = (new BasicRequestAuthenticator(self::$application))->authenticate($request);
+        $auth = new BasicRequestAuthenticator(self::$application);
+        $auth->authenticate($request);
 
     }
 
@@ -51,7 +52,8 @@ class BasicRequestAuthenticatorTest extends BaseTest
 
 
         $request = $this->setUpAuthHeader($apiKey->getId().':'.$apiKey->getSecret());
-        $auth = (new BasicRequestAuthenticator(self::$application))->authenticate($request);
+        $auth = new BasicRequestAuthenticator(self::$application);
+        $auth->authenticate($request);
 
         $this->deleteAccount();
     }
