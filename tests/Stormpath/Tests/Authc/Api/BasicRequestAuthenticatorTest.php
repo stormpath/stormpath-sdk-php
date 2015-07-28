@@ -144,8 +144,8 @@ class BasicRequestAuthenticatorTest extends BaseTest
         $this->account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
-            'username' => md5(time()) . 'username',
-            'email' => md5(time()) .'@unknown123.kot',
+            'username' => md5(time().microtime().uniqid()) . 'username',
+            'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
             'password' => 'superP4ss'));
 
         self::$application->createAccount($this->account);
