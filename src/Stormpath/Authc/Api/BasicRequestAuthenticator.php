@@ -10,7 +10,7 @@ use Stormpath\Resource\ApiKey;
 use Stormpath\Resource\Application;
 use Stormpath\Resource\ResourceError;
 
-class BasicRequestAuthenticator implements RequestAuthenticator
+class BasicRequestAuthenticator extends RequestAuthenticator
 {
 
     protected $application = null;
@@ -33,7 +33,7 @@ class BasicRequestAuthenticator implements RequestAuthenticator
             throw new AuthenticatorException('The API Key is not valid for this request.');
 
         if ($apiKey->getStatus() == 'DISABLED')
-            throw new AuthenticatorException('The API Key is not allowed to make this request');
+            throw new AuthenticatorException('The API Key is not allowed to make this request.');
 
         $account = $apiKey->account;
 
@@ -41,7 +41,7 @@ class BasicRequestAuthenticator implements RequestAuthenticator
             throw new AuthenticatorException('The Account you are authenticating with is not active.');
         }
 
-        return new AuthenticationResult($this->application, $apiKey);
+        return new BasicAuthenticationResult($this->application, $apiKey);
 
 
     }
