@@ -38,7 +38,8 @@ class Request
         $tokens = $this->getAuthenticationTokens();
         $this->apiId = $tokens[0];
         $this->apiSecret = $tokens[1];
-        $this->scheme = $this->getSchemeAndValue()[0];
+        $schemeAndValue = $this->getSchemeAndValue();
+        $this->scheme = $schemeAndValue[0];
 
         return $this;
     }
