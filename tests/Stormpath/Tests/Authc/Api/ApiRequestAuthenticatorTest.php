@@ -60,16 +60,16 @@ class ApiRequestAuthenticatorTest extends BaseTest
         $request = Request::createFromGlobals();
 
         $auth = new ApiRequestAuthenticator(self::$application);
-        $auth->authenticate($request);
+        $result = $auth->authenticate($request);
 
-        $this->assertInstanceOf('Stormpath\Authc\Api\BasicAuthenticationResult', $auth);
+        $this->assertInstanceOf('Stormpath\Authc\Api\ApiAuthenticationResult', $result);
 
-        $this->assertInstanceOf('Stormpath\Resource\Application', $auth->getApplication());
-        $this->assertInstanceOf('Stormpath\Resource\ApiKey', $auth->getApiKey());
+        $this->assertInstanceOf('Stormpath\Resource\Application', $result->getApplication());
+        $this->assertInstanceOf('Stormpath\Resource\ApiKey', $result->getApiKey());
 
-        $this->assertEquals($apiKey->getId(), $auth->getApiKey()->getId());
-        $this->assertEquals($apiKey->getSecret(), $auth->getApiKey()->getSecret());
-        $this->assertEquals(self::$application->href, $auth->getApplication()->getHref());
+        $this->assertEquals($apiKey->getId(), $result->getApiKey()->getId());
+        $this->assertEquals($apiKey->getSecret(), $result->getApiKey()->getSecret());
+        $this->assertEquals(self::$application->href, $result->getApplication()->getHref());
 
         $account->delete();
     }

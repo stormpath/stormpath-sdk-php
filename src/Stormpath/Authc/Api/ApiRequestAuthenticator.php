@@ -12,7 +12,9 @@ class ApiRequestAuthenticator extends RequestAuthenticator
         if(!!('basic' != strtolower($request->getScheme())))
             throw new \InvalidArgumentException('Only Basic Authorization headers are accepted at this time.');
 
-        return (new BasicRequestAuthenticator($this->application))->authenticate($request);
+        $auth = new BasicRequestAuthenticator($this->application);
+        $result = $auth->authenticate($request);
 
+        return new ApiAuthenticationResult($result->getApplication(), $result->getApiKey());
     }
 }
