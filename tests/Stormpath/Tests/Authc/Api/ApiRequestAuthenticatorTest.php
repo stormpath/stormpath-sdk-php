@@ -59,7 +59,8 @@ class ApiRequestAuthenticatorTest extends BaseTest
         $_REQUEST['Authorization'] = "Basic $key";
         $request = Request::createFromGlobals();
 
-        $auth = (new ApiRequestAuthenticator(self::$application))->authenticate($request);
+        $auth = new ApiRequestAuthenticator(self::$application);
+        $auth->authenticate($request);
 
         $this->assertInstanceOf('Stormpath\Authc\Api\BasicAuthenticationResult', $auth);
 

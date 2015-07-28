@@ -70,7 +70,8 @@ class BasicRequestAuthenticatorTest extends BaseTest
 
 
         $request = $this->setUpAuthHeader($apiKey->getId().':'.$apiKey->getSecret());
-        $auth = (new BasicRequestAuthenticator(self::$application))->authenticate($request);
+        $auth = new BasicRequestAuthenticator(self::$application);
+        $auth->authenticate($request);
 
         $this->deleteAccount();
     }
@@ -84,7 +85,8 @@ class BasicRequestAuthenticatorTest extends BaseTest
         $apiKey = $account->createApiKey();
 
         $request = $this->setUpAuthHeader($apiKey->getId().':'.$apiKey->getSecret());
-        $auth = (new BasicRequestAuthenticator(self::$application))->authenticate($request);
+        $auth = new BasicRequestAuthenticator(self::$application);
+        $auth->authenticate($request);
 
         $this->assertInstanceOf('Stormpath\Authc\Api\BasicAuthenticationResult', $auth);
 
