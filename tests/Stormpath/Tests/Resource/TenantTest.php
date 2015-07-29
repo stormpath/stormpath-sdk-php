@@ -40,7 +40,7 @@ class TenantTest extends \Stormpath\Tests\BaseTest {
     {
         $tenant = self::$client->tenant;
 
-        $application = \Stormpath\Resource\Application::instantiate(array('name' => 'App for this test' .md5(time())));
+        $application = \Stormpath\Resource\Application::instantiate(array('name' => 'App for this test' .md5(time().microtime().uniqid())));
 
         $tenant->createApplication($application);
 
@@ -118,7 +118,7 @@ class TenantTest extends \Stormpath\Tests\BaseTest {
     {
         $tenant = self::$client->tenant;
 
-        $directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Dir for this test' .md5(time())));
+        $directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Dir for this test' .md5(time().microtime().uniqid())));
 
         $tenant->createDirectory($directory);
 
