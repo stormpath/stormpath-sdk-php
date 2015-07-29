@@ -18,6 +18,7 @@ services:
 
 before_script:
 - travis_retry composer install --prefer-dist --no-interaction
+- ls -la ./vendor
 - mkdir -p ~/.phpenv/versions/$(phpenv version-name)/etc
 - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini

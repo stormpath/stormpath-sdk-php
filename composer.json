@@ -15,6 +15,11 @@
     "license": "Apache 2.0",
     "authors": [
         {
+            "name": "Brian Retterer",
+            "email": "brian@stormpath.com",
+            "role": "Developer"
+        },
+        {
             "name": "Elder Crisostomo",
             "email": "elder@stormpath.com",
             "role": "Developer"
@@ -27,8 +32,8 @@
     },
     "require": {
         "php": ">=5.3.3",
-        "guzzle/http": "3.9.*",
-        "firebase/php-jwt": "v2.0.0"
+        "guzzle/guzzle": "3.9.*",
+        "firebase/php-jwt": "2.2.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
