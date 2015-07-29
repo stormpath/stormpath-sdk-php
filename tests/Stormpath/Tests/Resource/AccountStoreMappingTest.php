@@ -28,13 +28,13 @@ class AccountStoreMappingTest extends \Stormpath\Tests\BaseTest {
 
     protected static function init()
     {
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time())));
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time().microtime().uniqid())));
         self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
 
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => md5(time())));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => md5(time().microtime().uniqid())));
         self::$directory->createGroup($group);
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => md5(time())));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => md5(time().microtime().uniqid())));
         self::createResource(\Stormpath\Resource\Application::PATH, self::$application);
 
         self::$accountStoreMappingWithDir = \Stormpath\Resource\AccountStoreMapping::instantiate(array('accountStore' => self::$directory));
@@ -128,7 +128,7 @@ class AccountStoreMappingTest extends \Stormpath\Tests\BaseTest {
 
     public function testCreate()
     {
-        $application = \Stormpath\Resource\Application::instantiate(array('name' =>  "App" .md5(time())));
+        $application = \Stormpath\Resource\Application::instantiate(array('name' =>  "App" .md5(time().microtime().uniqid())));
         self::createResource(\Stormpath\Resource\Application::PATH, $application);
 
         $accountStoreMappingWithDir = \Stormpath\Resource\AccountStoreMapping::instantiate();
@@ -157,7 +157,7 @@ class AccountStoreMappingTest extends \Stormpath\Tests\BaseTest {
 
     public function testDelete()
     {
-        $application = \Stormpath\Resource\Application::instantiate(array('name' =>  "App" .md5(time())));
+        $application = \Stormpath\Resource\Application::instantiate(array('name' =>  "App" .md5(time().microtime().uniqid())));
         self::createResource(\Stormpath\Resource\Application::PATH, $application);
 
         $accountStoreMappingWithDir = \Stormpath\Resource\AccountStoreMapping::create(array('accountStore' => self::$directory, 'application' => $application));

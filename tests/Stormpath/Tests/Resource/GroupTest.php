@@ -28,10 +28,10 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
 
     protected static function init()
     {
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time())));
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time().microtime().uniqid())));
         self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
 
-        self::$group = \Stormpath\Resource\Group::instantiate(array('name' => 'Main Group' . md5(time()), 'description' => 'Main Group Description'));
+        self::$group = \Stormpath\Resource\Group::instantiate(array('name' => 'Main Group' . md5(time().microtime().uniqid()), 'description' => 'Main Group Description'));
         self::$directory->createGroup(self::$group);
 
         self::$inited = true;
@@ -72,7 +72,7 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
     {
         $group = self::$group;
 
-        $group->name = 'Main Group Changed' . md5(time());
+        $group->name = 'Main Group Changed' . md5(time().microtime().uniqid());
         $group->description = 'Main Group Description changed';
         $group->status = 'disabled';
 
@@ -90,7 +90,7 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
     {
         $group = self::$group;
 
-        $email = md5(time()) .'@unknown123.kot';
+        $email = md5(time().microtime().uniqid()) .'@unknown123.kot';
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
                                                                   'email' => $email,
@@ -182,7 +182,7 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
      */
     public function testDelete()
     {
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'Deletable Group' . md5(time())));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'Deletable Group' . md5(time().microtime().uniqid())));
         self::$directory->createGroup($group);
 
         $group = \Stormpath\Resource\Group::get($group->href);

@@ -12,7 +12,7 @@ class CacheTest extends BaseTest
     protected static function init()
     {
 
-        self::$application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache '. md5(time())));
+        self::$application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache '. md5(time().microtime().uniqid())));
         self::$inited = true;
 
     }
@@ -71,7 +71,7 @@ class CacheTest extends BaseTest
 
     public function testDeletesFromCacheWhenResourceIsDeleted()
     {
-        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Delete '. md5(time())));
+        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Delete '. md5(time().microtime().uniqid())));
         $cache = parent::$client->dataStore->cache;
 
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
@@ -86,13 +86,13 @@ class CacheTest extends BaseTest
 
     public function testWillUpdateCacheWhenResourceUpdates()
     {
-        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Update '. md5(time())));
+        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Update '. md5(time().microtime().uniqid())));
         $cache = parent::$client->dataStore->cache;
 
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
         $this->assertContains('Another App for Cache Update', $application->name);
 
-        $application->name = 'Test Update '. md5(time());
+        $application->name = 'Test Update '. md5(time().microtime().uniqid());
         $application->save();
 
         $appInCache = $cache->get($application->href);
@@ -111,7 +111,7 @@ class CacheTest extends BaseTest
         $client = \Stormpath\Client::getInstance();
         $cache = $client->cacheManager->getCache();
 
-        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Null Cache '. md5(time())));
+        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Null Cache '. md5(time().microtime().uniqid())));
 
         $appInCache = $cache->get($application->href);
 

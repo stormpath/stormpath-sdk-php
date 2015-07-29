@@ -27,7 +27,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
     protected static function init()
     {
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time()), 'description' => 'Main Directory description'));
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time().microtime().uniqid()), 'description' => 'Main Directory description'));
         self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
         self::$inited = true;
     }
@@ -63,7 +63,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
     public function testCreate()
     {
-        $directory = \Stormpath\Resource\Directory::create(array('name' => 'A random directory' .md5(time()), 'description' => 'A Random Directory description', 'status' => 'disabled'));
+        $directory = \Stormpath\Resource\Directory::create(array('name' => 'A random directory' .md5(time().microtime().uniqid()), 'description' => 'A Random Directory description', 'status' => 'disabled'));
 
         $this->assertInstanceOf('\Stormpath\Resource\Directory', $directory);
         $this->assertContains('A random directory', $directory->name);
@@ -77,7 +77,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
     {
         $directory = self::$directory;
 
-        $directory->name = 'Main Directory Changed' .md5(time());
+        $directory->name = 'Main Directory Changed' .md5(time().microtime().uniqid());
         $directory->status = 'disabled';
         $directory->description = 'Main Directory description changed';
         $directory->save();
@@ -96,7 +96,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                    'surname' => 'Surname',
-                                                                   'email' => md5(time()) .'@unknown123.kot',
+                                                                   'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
                                                                    'password' => 'superP4ss'));
 
         $directory->createAccount($account, array('registrationWorkflowEnabled' => false));
@@ -115,7 +115,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
         $directory->status = 'enabled';
         $directory->save();
 
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'New Group' . md5(time())));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'New Group' . md5(time().microtime().uniqid())));
 
         $directory->createGroup($group);
 
@@ -155,7 +155,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
         // testing for issue #47
         $directory = \Stormpath\Resource\Directory::instantiate(array(
-            'name' => 'Test Directory'.md5(time()),
+            'name' => 'Test Directory'.md5(time().microtime().uniqid()),
             'description' => 'Test Directory description'));
         self::createResource(\Stormpath\Resource\Directory::PATH, $directory);
 
@@ -210,7 +210,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
      */
     public function testDelete()
     {
-        $directory = \Stormpath\Resource\Directory::create(array('name' => 'Another random directory' .md5(time())));
+        $directory = \Stormpath\Resource\Directory::create(array('name' => 'Another random directory' .md5(time().microtime().uniqid())));
 
         $this->assertInstanceOf('\Stormpath\Resource\Directory', $directory);
         $this->assertContains('Another random directory', $directory->name);
