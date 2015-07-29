@@ -2,6 +2,15 @@ stormpath-sdk-php Changelog
 ===========================
 
 
+Version 1.7.0.beta
+------------------
+
+Released on July 29, 2015
+
+- Upgraded to PHP-JWT to 2.2.*
+- Changed to guzzle/guzzle from guzzle/html
+
+
 Version 1.6.0.beta
 ------------------
 
