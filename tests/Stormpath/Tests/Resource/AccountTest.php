@@ -228,6 +228,18 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $this->assertEquals('changed_email@unknown123.kot', $account->email);
     }
 
+    public function testApiKey()
+    {
+        $account = self::$account;
+        $apiKey = $account->createApiKey();
+
+        $this->assertNotEmpty($apiKey->id);
+        $this->assertNotEmpty($apiKey->secret);
+        $this->assertNotEmpty($apiKey->status);
+
+        $this->assertEquals($account, $apiKey->account);
+    }
+
     public function testGroupsOptions()
     {
         $account = self::$account;

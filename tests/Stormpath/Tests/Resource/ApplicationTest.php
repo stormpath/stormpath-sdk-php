@@ -526,6 +526,42 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $application->save();
     }
 
+    public function testApiKeyManagement()
+    {
+        $application = self::$application;
+
+        $account = \Stormpath\Resource\Account::instantiate(array(
+            'givenName' => 'Account Name',
+            'surname' => 'Surname',
+            'username' => md5(time()) . 'username',
+            'email' => md5(time()) .'@unknown123.kot',
+            'password' => 'superP4ss'));
+
+        $application->createAccount($account);
+        $account = \Stormpath\Resource\Account::get($account->href);
+
+        $newApiKey = $account->createApiKey();
+        $this->assertNotEmpty($newApiKey->id);
+
+        $apiKey = $application->getApiKey($newApiKey->id);
+        $this->assertEquals($newApiKey, $apiKey);
+
+        $encryptedApiKey = $application->getApiKey($newApiKey->id,
+            array('encryptSecret' => true));
+
+        $this->assertEquals($apiKey->secret, $encryptedApiKey->secret);
+
+        $apiKey->status = 'DISABLED';
+        $apiKey->save();
+        $this->assertEquals('DISABLED', $apiKey->status);
+
+        $apiKey->delete();
+        $apiKey = $application->getApiKey($newApiKey->id);
+        $this->assertNull($apiKey);
+
+        $account->delete();
+    }
+
     public function testAddingCustomData()
     {
         $cd = self::$application->customData;
