@@ -4,7 +4,7 @@ namespace Stormpath\Authc\Api;
 
 use Stormpath\Exceptions\RequestAuthenticatorException;
 
-class ApiRequestAuthenticator extends InternalRequestAuthenticator implements RequestAuthenticator
+class OAuthRequestAuthenticator extends InternalRequestAuthenticator implements RequestAuthenticator
 {
 
     public function authenticate(Request $request)
@@ -15,8 +15,6 @@ class ApiRequestAuthenticator extends InternalRequestAuthenticator implements Re
             if ($request->isBasicAuthorization()) {
                 if ($request->hasGrantType()) {
                     $authenticator = new OAuthClientCredentialsRequestAuthenticator($this->application);
-                } else {
-                    $authenticator = new BasicRequestAuthenticator($this->application);
                 }
             } else if ($request->isBearerAuthorization()) {
                 $authenticator = new OAuthBearerRequestAuthenticator($this->application);
@@ -33,10 +31,11 @@ class ApiRequestAuthenticator extends InternalRequestAuthenticator implements Re
                 $accessToken = $result->getAccessToken();
             }
 
-            return new ApiAuthenticationResult($application, $apiKey, $accessToken);
+            return new OAuthAuthenticationResult($application, $apiKey, $accessToken);
         }
+
         throw new RequestAuthenticatorException('The method of authentication you are trying is not an allowed method.
                                                  Please make sure you are using one of the following methods for
-                                                 Authentication: Basic, OAuth Bearer, or OAuth Client Credentials.');
+                                                 Authentication: OAuth Bearer, or OAuth Client Credentials.');
     }
 }
