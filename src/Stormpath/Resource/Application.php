@@ -19,6 +19,7 @@ namespace Stormpath\Resource;
  */
 
 use JWT;
+use Stormpath\Authc\Api\ApiKeyEncryptionOptions;
 use Stormpath\Authc\AuthenticationRequest;
 use Stormpath\Authc\BasicAuthenticator;
 use Stormpath\Authc\UsernamePasswordRequest;
@@ -411,6 +412,26 @@ class Application extends InstanceResource implements Deletable
 
         return $this->getDataStore()->create($this->getHref().'/'.Account::PATH,
             $providerAccountAccess, Stormpath::PROVIDER_ACCOUNT_RESULT);
+    }
+
+    public function getApiKey($apiKeyId, $options = array())
+    {
+        $options['id'] = $apiKeyId;
+        $apiKeyOptions = new ApiKeyEncryptionOptions($options);
+        $options = array_merge($options, $apiKeyOptions->toArray());
+
+        $apiKeyList = $this->getDataStore()->getResource($this->getHref() . '/' . ApiKey::PATH,
+            Stormpath::API_KEY_LIST, $options);
+
+        $iterator = $apiKeyList->iterator;
+
+        $apiKey = $iterator->valid() ? $iterator->current() : null;
+        if ($apiKey)
+        {
+            $apiKey->setApiKeyMetadata($apiKeyOptions);
+        }
+
+        return $apiKey;
     }
 
     // @codeCoverageIgnoreStart

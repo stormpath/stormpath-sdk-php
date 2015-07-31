@@ -30,15 +30,15 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
 
     protected static function init() {
 
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time())));
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time().microtime().uniqid())));
 
         self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
 
         self::$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                         'middleName' => 'Middle Name',
                                                                         'surname' => 'Surname',
-                                                                        'username' => md5(time()) . 'username',
-                                                                        'email' => md5(time()) .'@unknown123.kot',
+                                                                        'username' => md5(time().microtime().uniqid()) . 'username',
+                                                                        'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
                                                                         'password' => 'superP4ss'));
 
         self::$directory->createAccount(self::$account);
@@ -228,6 +228,18 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $this->assertEquals('changed_email@unknown123.kot', $account->email);
     }
 
+    public function testApiKey()
+    {
+        $account = self::$account;
+        $apiKey = $account->createApiKey();
+
+        $this->assertNotEmpty($apiKey->id);
+        $this->assertNotEmpty($apiKey->secret);
+        $this->assertNotEmpty($apiKey->status);
+
+        $this->assertEquals($account, $apiKey->account);
+    }
+
     public function testGroupsOptions()
     {
         $account = self::$account;
@@ -322,13 +334,13 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'middleName' => 'Middle Name',
                                                                   'surname' => 'Surname',
-                                                                  'username' => md5(time()) . 'username',
-                                                                  'email' => md5(time()) .'@unknown123.kot',
+                                                                  'username' => md5(time().microtime().uniqid()) . 'username',
+                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
 
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => md5(time()) . "Group Name"));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => md5(time().microtime().uniqid()) . "Group Name"));
         self::$directory->createGroup($group);
 
         $account->addGroup($group);
@@ -391,8 +403,8 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
             'givenName' => 'Account Name',
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
-            'username' => md5(time()).'username',
-            'email' => md5(time()).'@unknown123.kot',
+            'username' => md5(time().microtime().uniqid()).'username',
+            'email' => md5(time().microtime().uniqid()).'@unknown123.kot',
             'password' => '123quEso'));
         self::$directory->createAccount($account);
 
@@ -461,8 +473,8 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'middleName' => 'Middle Name',
                                                                   'surname' => 'Surname',
-                                                                  'username' => md5(time()) . 'username',
-                                                                  'email' => md5(time()) .'@unknown123.kot',
+                                                                  'username' => md5(time().microtime().uniqid()) . 'username',
+                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
