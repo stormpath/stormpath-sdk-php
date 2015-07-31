@@ -2,6 +2,16 @@ stormpath-sdk-php Changelog
 ===========================
 
 
+Version 1.8.0.beta
+------------------
+
+Released on July 30, 2015
+
+- Added integration for Coveralls.io
+- Implemented API Key generation for accounts
+- Implemented API Key authorization
+
+
 Version 1.7.0.beta
 ------------------
 
