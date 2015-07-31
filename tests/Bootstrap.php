@@ -19,4 +19,6 @@ require_once 'Stormpath/Stormpath.php';
 // Include the composer autoloader
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-unset($root, $library, $path);
+include 'Stormpath/Tests/BaseTest.php';
+
+unset($root, $library, $path, $loader);
