@@ -24,6 +24,7 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
 {
     const OFFSET = Stormpath::OFFSET;
     const LIMIT  = Stormpath::LIMIT;
+    const SIZE   = Stormpath::SIZE;
     const ITEMS  = "items";
 
     public function getOffset()
@@ -34,6 +35,11 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
     public function getLimit()
     {
         return $this->getProperty(self::LIMIT);
+    }
+
+    public function getSize()
+    {
+        return $this->getProperty(self::SIZE);
     }
 
     public function getCurrentPage()
