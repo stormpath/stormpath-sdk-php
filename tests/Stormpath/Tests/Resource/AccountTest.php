@@ -17,6 +17,7 @@
  */
 namespace Stormpath\Tests\Resource;
 
+use Stormpath\Client;
 use Stormpath\Stormpath;
 
 class AccountTest extends \Stormpath\Tests\BaseTest {
@@ -491,6 +492,86 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
 
         // should throw the expected exception after deleting
         \Stormpath\Resource\Account::get($href);
+    }
+
+    public function testImportingAPasswordViaStaticCreates()
+    {
+        // SomePassw0rd!
+        $username = md5(time().microtime().uniqid()) . 'username';
+
+        $application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, $application, array('createDirectory' => true));
+
+        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+                                                                  'middleName' => 'Middle Name',
+                                                                  'surname' => 'Surname',
+                                                                  'username' => $username,
+                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                                                                  'password' => '$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.'));
+
+        $application->createAccount($account, array('passwordFormat'=>'mcf'));
+
+
+        $result = $application->authenticate($username, 'SomePassw0rd!');
+        $this->assertEquals($username, $result->account->username);
+
+        $account->delete();
+        $application->delete();
+
+    }
+
+    public function testImportingAPasswordViaStandardCreate()
+    {
+        // SomePassw0rd!
+        $username = md5(time().microtime().uniqid()) . 'username';
+        $client = Client::getInstance();
+
+        $application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, $application, array('createDirectory' => true));
+
+        $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
+        $account->email = 'john.smith@example.com';
+        $account->givenName = 'John';
+        $account->password ='$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.';
+        $account->surname = 'Smith';
+        $account->username = $username;
+        $account->setPasswordFormat('mcf');
+
+
+        $application->createAccount($account);
+
+
+        $result = $application->authenticate($username, 'SomePassw0rd!');
+        $this->assertEquals($username, $result->account->username);
+
+        $account->delete();
+        $application->delete();
+
+    }
+
+    /**
+     * @group currentTest
+     * @expectedException \InvalidArgumentException
+     */
+    public function testImportingAPasswordWithWrongPasswordFormatSetThrowsException()
+    {
+        $username = md5(time().microtime().uniqid()) . 'username';
+        $client = Client::getInstance();
+
+        $application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, $application, array('createDirectory' => true));
+
+        $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
+        $account->email = 'john.smith@example.com';
+        $account->givenName = 'John';
+        $account->password ='$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.';
+        $account->surname = 'Smith';
+        $account->username = $username;
+        $account->passwordFormat = 'NotMCF';
+
+        $account->delete();
+        $application->delete();
+
     }
 
 }

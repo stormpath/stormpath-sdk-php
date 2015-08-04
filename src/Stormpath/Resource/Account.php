@@ -34,6 +34,7 @@ class Account extends InstanceResource implements Deletable
     const GROUPS                   = "groups";
     const CUSTOM_DATA              = "customData";
     const DIRECTORY                = "directory";
+    const PASSWORD_FORMAT          = "passwordFormat";
     const EMAIL_VERIFICATION_TOKEN = "emailVerificationToken";
     const GROUP_MEMBERSHIPS        = "groupMemberships";
     const FULL_NAME                = "fullName";
@@ -126,6 +127,26 @@ class Account extends InstanceResource implements Deletable
         {
             $this->setProperty(self::STATUS, Stormpath::$AccountStatuses[$uprStatus]);
         }
+    }
+
+    /**
+     * Set this parameter to `mcf` for Password Import based on the Modular Crypt Format (MCF)
+     * Details can be found at http://docs.stormpath.com/rest/product-guide/#create-an-account-with-an-existing-password-hash
+     * @param string $format Valid format type MCF
+     * @return null
+     * @since 1.9.0
+     */
+    public function setPasswordFormat($format)
+    {
+        $allowedFormats = array('mcf');
+
+        if(!in_array(strtolower($format), $allowedFormats))
+            throw new \InvalidArgumentException('Allowed password formats for import are mcf ');
+
+        $currentOptions = $this->getOptions();
+
+        $options = array_merge($currentOptions, array(self::PASSWORD_FORMAT.'='.strtolower($format)));
+        $this->setOptions($options);
     }
 
     public function getFullName() {
