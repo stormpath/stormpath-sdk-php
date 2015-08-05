@@ -96,7 +96,9 @@ class Tenant extends InstanceResource
 
         $evToken = $this->dataStore->instantiate(Stormpath::EMAIL_VERIFICATION_TOKEN, $tokenProperties);
 
-        return $this->dataStore->save($evToken, Stormpath::ACCOUNT);
+        $result = $this->dataStore->save($evToken, Stormpath::EMAIL_VERIFICATION_TOKEN);
+
+        return $this->dataStore->getResource($result->href, Stormpath::ACCOUNT);
     }
     // @codeCoverageIgnoreEnd
 }
