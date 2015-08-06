@@ -82,9 +82,31 @@ class Resource extends Magic
         return $this->readProperty($name);
     }
 
-    public function getPropertyNames()
+    public function getPropertyNames($retrieveDirtyProperties = false)
     {
-        return array_keys((array) $this->properties);
+        if ($retrieveDirtyProperties and $this->isDirty() and !$this->isNew())
+        {
+            return $this->getDirtyPropertyNames();
+        }
+        else
+        {
+            return array_keys((array) $this->properties);
+        }
+    }
+
+    protected function getDirtyPropertyNames()
+    {
+        $names = array_keys((array) $this->dirtyProperties);
+        if (property_exists($this->properties, self::HREF_PROP_NAME))
+        {
+            array_push($names, self::HREF_PROP_NAME);
+        }
+        if (property_exists($this->properties, CustomData::CUSTOMDATA_PROP_NAME))
+        {
+            array_push($names, CustomData::CUSTOMDATA_PROP_NAME);
+        }
+
+        return $names;
     }
 
     public function getHref()
@@ -162,6 +184,11 @@ class Resource extends Magic
     protected function isMaterialized()
     {
         return $this->materialized;
+    }
+
+    protected function isDirty()
+    {
+        return $this->dirty;
     }
 
     protected function materialize()

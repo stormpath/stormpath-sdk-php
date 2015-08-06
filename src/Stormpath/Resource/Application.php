@@ -19,6 +19,7 @@ namespace Stormpath\Resource;
  */
 
 use JWT;
+use Stormpath\Authc\Api\ApiKeyEncryptionOptions;
 use Stormpath\Authc\AuthenticationRequest;
 use Stormpath\Authc\BasicAuthenticator;
 use Stormpath\Authc\UsernamePasswordRequest;
@@ -413,34 +414,52 @@ class Application extends InstanceResource implements Deletable
             $providerAccountAccess, Stormpath::PROVIDER_ACCOUNT_RESULT);
     }
 
+
     public function sendVerificationEmail(VerificationEmailRequest $request)
     {
-        if ($request == null)
-        {
+        if ($request == null) {
             throw new \InvalidArgumentException('VerificationEmailRequest cannot be null');
         }
 
         $login = $request->getLogin();
-        if ($login == null or ($login != null and $login == ''))
-        {
+        if ($login == null or ($login != null and $login == '')) {
             throw new \InvalidArgumentException('VerificationEmailRequest\'s login property is required');
         }
 
         $accountStore = $request->getAccountStore();
-        if ($accountStore != null && $accountStore->href == null)
-        {
+        if ($accountStore != null && $accountStore->href == null) {
             throw new \InvalidArgumentException("verificationEmailRequest's accountStore has been specified but its href is null.");
         }
 
         $verificationEmail = $this->getDataStore()->instantiate(Stormpath::VERIFICATION_EMAIL);
         $verificationEmail->login = $login;
-        if ($accountStore != null)
-        {
+        if ($accountStore != null) {
             $verificationEmail->accountStore = $accountStore;
         }
 
         $this->getDataStore()->create($this->getHref() . '/' . VerificationEmail::PATH,
             $verificationEmail, Stormpath::VERIFICATION_EMAIL);
+    }
+
+    public function getApiKey($apiKeyId, $options = array())
+    {
+        $options['id'] = $apiKeyId;
+        $apiKeyOptions = new ApiKeyEncryptionOptions($options);
+        $options = array_merge($options, $apiKeyOptions->toArray());
+
+        $apiKeyList = $this->getDataStore()->getResource($this->getHref() . '/' . ApiKey::PATH,
+            Stormpath::API_KEY_LIST, $options);
+
+        $iterator = $apiKeyList->iterator;
+
+        $apiKey = $iterator->valid() ? $iterator->current() : null;
+        if ($apiKey)
+        {
+            $apiKey->setApiKeyMetadata($apiKeyOptions);
+        }
+
+        return $apiKey;
+
     }
 
     // @codeCoverageIgnoreStart

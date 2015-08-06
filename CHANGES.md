@@ -2,6 +2,42 @@ stormpath-sdk-php Changelog
 ===========================
 
 
+Version 1.8.1.beta
+------------------
+
+Released on August 6, 2015
+
+- Fixed bug with verifyEmailToken method.  This will now allow the return of an Account after verification
+
+
+Version 1.8.0.beta
+------------------
+
+Released on July 30, 2015
+
+- Added integration for Coveralls.io
+- Implemented API Key generation for accounts
+- Implemented API Key authorization
+
+
+Version 1.7.0.beta
+------------------
+
+Released on July 29, 2015
+
+- Upgraded to PHP-JWT to 2.2.*
+- Changed to guzzle/guzzle from guzzle/html
+
+
+Version 1.6.0.beta
+------------------
+
+Released on July 14, 2015
+
+- Fixed a bug when adding custom data to an existing property (like adding an entry to an existing array).
+- Added minor documentation changes.
+
+
 Version 1.5.0.beta
 ------------------
 

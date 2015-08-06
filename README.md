@@ -18,7 +18,7 @@ On your project root, install Composer
 Configure the **stormpath/sdk** dependency in your 'composer.json' file:
 
     "require": {
-        "stormpath/sdk": "1.5.*@beta"
+        "stormpath/sdk": "1.8.*@beta"
     }
 
 On your project root, install the the SDK with its dependencies:
@@ -103,6 +103,10 @@ If you have not already done so, register as a developer on
 
     $directory = \Stormpath\Resource\Directory::get($directoryHref);
     ```
+    > **Note:**
+    
+    > The `$applicationHref` and `$directoryHref` can be accessed from the Stormpath Administrator Console or retrieved from the code.
+    > When you iterate over the object during step 3, you can output the href for the individual objects (eg `print $app->href;`)
 
 5.  **Create an application** and auto create a directory as the account store.
 
@@ -1313,6 +1317,171 @@ $providerData->href; //-> https://api.stormpath.com/v1/accounts/ciYmtETytH0tbHRB
 $providerData->modifiedAt; //-> 2014-04-01T17:00:09.189Z
 $providerData->providerId; //-> facebook
 ```
+
+## Using Stormpath for API Authentication
+
+### Create an Account for your developers
+
+First, you will need user accounts in Stormpath to represent the people that are developing against 
+your API. Accounts can not only represent Developers, but also can be used to represent services, 
+daemons, processes, or any “entity” that needs to login to a Stormpath-secured API.
+
+```php
+$account = \Stormpath\Resource\Account::instantiate(
+  array('givenName' => 'Joe',
+        'surname' => 'Stormtrooper',
+        'email' => 'tk421@stormpath.com',
+        'password' => 'Changeme1'));
+
+$application->createAccount($account);
+```
+
+### Create and Manage API Keys for an Account
+
+After you create an account for a developer, you will need to generate an API Key (or multiple) 
+to be used when accessing your API. Each account will have an `apiKeys` property that contains a 
+collection of their API Keys. There will also be a list of API keys on a account’s profile in the 
+Stormpath Admin Console. You will be able to both create and manage keys in both.
+
+#### CREATING API KEYS FOR AN ACCOUNT 
+
+```php
+$apiKey = $account->createApiKey();
+
+$apiKeyId = $apikey->id;
+$apiKeySecret = $apikey->secret;
+```
+
+The `ApiKey` returned will have the following properties:
+* id	    The unique identifier for the API Key
+* secret	The secret for the API key.
+* status	A property that represent the status of the key. Keys with a disabled status will not be able to authenticate.
+* account	A link to the ApiKey’s account.
+* tenant	A link to the ApiKey’s tenant.
+
+#### MANAGE API KEYS FOR AN ACCOUNT
+
+##### Deleting an API Key
+
+```php
+$apiKeyId = 'FURThLWDE4MElDTFVUMDNDTzpQSHozZ';
+$apiKey = $application->getApiKey($apiKeyId);
+$apiKey->delete();
+```
+
+##### Disable an API key
+
+```php
+$apiKeyId = 'FURThLWDE4MElDTFVUMDNDTzpQSHozZ' 
+$apiKey = $application->getApiKey('FURThLWDE4MElDTFVUMDNDTzpQSHozZ');
+$apiKey->status = 'DISABLED';
+$apiKey->save()
+```
+
+### Using the Stormpath SDK to Authenticate and Generate Tokens for your API Keys
+
+The class `ApiRequestAuthenticator` can be used to perform both Basic Authentication 
+and OAuth Authentication.
+ 
+### Basic Authentication
+
+```
+GET /troopers/tk421/equipment 
+Accept: application/json
+Authorization: Basic MzRVU1BWVUFURThLWDE4MElDTFVUMDNDTzpQSHozZitnMzNiNFpHc1R3dEtOQ2h0NzhBejNpSjdwWTIwREo5N0R2L1g4
+Host: api.trooperapp.com
+```
+
+The `Authorization` header contains a base64 encoding of the API Key and Secret.
+
+#### Using `ApiRequestAuthenticator`
+
+```php
+$application = \Stormpath\Resource\Application::get("https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu");
+
+$request = \Stormpath\Authc\Api\Request::createFromGlobals();
+$result = new ApiRequestAuthenticator($application)->authenticate($request);
+
+$account = $result->account;
+$apiKey = $result->apiKey;
+```
+
+##### Using `BasicRequestAuthenticator`
+
+```php
+$application = \Stormpath\Resource\Application::get("https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu");
+
+$request = \Stormpath\Authc\Api\Request::createFromGlobals();
+$result = new BasicRequestAuthenticator($application)->authenticate($request);
+
+$account = $result->account;
+$apiKey = $result->apiKey;
+```
+
+### OAuth Authentication
+
+#### GENERATING A TOKEN
+
+```
+POST /oauth/token
+Accept: application/json
+Authorization: Basic MzRVU1BWVUFURThLWDE4MElDTFVUMDNDTzpQSHozZitnMzNiNFpHc1
+Content-Type: application/x-www-form-urlencoded
+Host: api.trooperapp.com
+
+  grant_type=client_credentials
+```
+
+The `Authorization` header contains a base64 encoding of the API Key and Secret.
+
+```php
+$application = \Stormpath\Resource\Application::get("https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu");
+
+$request = \Stormpath\Authc\Api\Request::createFromGlobals();
+$result = new ApiRequestAuthenticator($application)->authenticate($request);
+
+$tokenResponse = $result->tokenResponse;
+$token = $tokenResponse->accessToken;
+$json = $tokenResponse->toJson();
+```
+
+Alternatively, it's possible to use `OAuthRequestAuthenticator` or the more specific 
+authenticator `OAuthClientCredentialsRequestAuthenticator` to generate access tokens.
+
+The response including the access token looks like this: 
+
+```
+HTTP 200 OK
+Content-Type: application/json
+
+{
+   "access_token":"7FRhtCNRapj9zs.YI8MqPiS8hzx3wJH4.qT29JUOpU64T",
+   "token_type":"bearer",
+   "expires_in":3600
+}
+```
+
+#### AUTHENTICATION USING TOKEN
+
+```
+GET /troopers/tk421/equipment 
+Accept: application/json
+Authorization: Bearer 7FRhtCNRapj9zs.YI8MqPiS8hzx3wJH4.qT29JUOpU64T
+Host: api.trooperapp.com
+```
+
+```php
+$application = \Stormpath\Resource\Application::get("https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu");
+
+$request = \Stormpath\Authc\Api\Request::createFromGlobals();
+$result = new OAuthRequestAuthenticator($application)->authenticate($request);
+
+$account = $result->account;
+$apiKey = $result->apiKey;
+```
+
+You can also use the more specific `OAuthBearerRequestAuthenticator` to authenticate 
+token access requests.
 
 ## Run the tests
 

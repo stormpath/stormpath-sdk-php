@@ -28,16 +28,16 @@ class GroupMembershipTest extends \Stormpath\Tests\BaseTest {
 
     protected static function init()
     {
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time())));
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time().microtime().uniqid())));
         self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
 
-        self::$group = \Stormpath\Resource\Group::instantiate(array('name' => 'Main Group' . md5(time())));
+        self::$group = \Stormpath\Resource\Group::instantiate(array('name' => 'Main Group' . md5(time().microtime().uniqid())));
 
         self::$directory->createGroup(self::$group);
 
         self::$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                         'surname' => 'Surname',
-                                                                        'email' => md5(time()) .'@unknown123.kot',
+                                                                        'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
                                                                         'password' => 'superP4ss'));
 
         self::$directory->createAccount(self::$account);
@@ -85,13 +85,13 @@ class GroupMembershipTest extends \Stormpath\Tests\BaseTest {
 
     public function testCreate()
     {
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'A New Group' . md5(time())));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'A New Group' . md5(time().microtime().uniqid())));
 
         self::$directory->createGroup($group);
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
-                                                                  'email' => md5(time()) .'@unknown12345.kot',
+                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown12345.kot',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
@@ -114,13 +114,13 @@ class GroupMembershipTest extends \Stormpath\Tests\BaseTest {
      */
     public function testDelete()
     {
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'Another New Group' . md5(time())));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'Another New Group' . md5(time().microtime().uniqid())));
 
         self::$directory->createGroup($group);
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
-                                                                  'email' => md5(time()) .'@unknown12345678.kot',
+                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown12345678.kot',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);

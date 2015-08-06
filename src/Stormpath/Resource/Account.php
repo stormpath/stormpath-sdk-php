@@ -18,6 +18,7 @@
 
 namespace Stormpath\Resource;
 
+use Stormpath\Authc\Api\ApiKeyEncryptionOptions;
 use Stormpath\Client;
 use Stormpath\Stormpath;
 
@@ -206,5 +207,23 @@ class Account extends InstanceResource implements Deletable
     public function delete() {
 
         $this->getDataStore()->delete($this);
+    }
+
+    public function createApiKey($options = array())
+    {
+        $apiKeyOptions = new ApiKeyEncryptionOptions($options);
+        $options = array_merge($options, $apiKeyOptions->toArray());
+
+        $apiKey = $this->getDataStore()->instantiate(Stormpath::API_KEY);
+
+        $apiKey = $this->getDataStore()->create($this->getHref() . '/' . ApiKey::PATH,
+            $apiKey, Stormpath::API_KEY, $options);
+
+        if ($apiKey)
+        {
+            $apiKey->setApiKeyMetadata($apiKeyOptions);
+        }
+
+        return $apiKey;
     }
 }
