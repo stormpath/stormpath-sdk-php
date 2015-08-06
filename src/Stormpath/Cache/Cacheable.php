@@ -14,6 +14,9 @@ abstract class Cacheable {
         // We dont want to cache if it does not have a href.
         if(!isset($resource->href)) $cache = false;
 
+        // Do Not Cache something with ONLY 1 item (href only typically)
+        if(count((array)$resource) == 1) $cache = false;
+
         return $cache;
 
     }
