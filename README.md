@@ -41,8 +41,8 @@ You're ready to connect with Stormpath!
 
 ## Provision Your Stormpath Account
 
-If you have not already done so, register as a developer on
-[Stormpath][stormpath] and set up your API credentials and resources:
+If you have not already done so, [register as a developer on
+Stormpath][stormpath-register] and set up your API credentials and resources:
 
 1. Create a [Stormpath][stormpath] developer account and
    [create your API Keys][create-api-keys] downloading the
@@ -1519,6 +1519,7 @@ This project is licensed under the [Apache 2.0 Open Source License](http://www.a
 For additional information, please see the full [Project Documentation](http://docs.stormpath.com/php/product-guide).
 
   [stormpath]: http://stormpath.com/
+  [stormpath-register]: https://api.stormpath.com/register
   [stormpath-packagist]: http://packagist.org/packages/stormpath/sdk
   [create-api-keys]: http://docs.stormpath.com/php/quickstart/#-get-an-api-key
   [stormpath-admin-login]: http://api.stormpath.com/login
