@@ -493,4 +493,34 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         \Stormpath\Resource\Account::get($href);
     }
 
+    public function testShouldBeAbleToGetAccountViaHTMLFragment()
+    {
+        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+            'middleName' => 'Middle Name',
+            'surname' => 'Surname',
+            'username' => md5(time().microtime().uniqid()) . 'username',
+            'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+            'password' => 'superP4ss'));
+
+        self::$directory->createAccount($account);
+
+        $href = $account->href;
+
+        $hrefParts = array_reverse(explode('/',$account->href));
+
+        $acct = \Stormpath\Resource\Account::get($hrefParts[0]);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Account', $account);
+        $this->assertEquals($href, $acct->href);
+
+        $acct2 = \Stormpath\Client::get($hrefParts[1].'/'.$hrefParts[0], Stormpath::ACCOUNT);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Account', $acct2);
+        $this->assertEquals($href, $acct2->href);
+
+        $account->delete();
+
+
+    }
+
 }

@@ -638,6 +638,29 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         \Stormpath\Resource\Application::get($href);
     }
 
+    public function testShouldBeAbleToGetApplicationViaHTMLFragment()
+    {
+        $application = \Stormpath\Resource\Application::create(array('name' => 'Yet Another App'. md5(time().microtime().uniqid())));
+
+        $href = $application->href;
+
+        $hrefParts = array_reverse(explode('/',$href));
+
+        $app = \Stormpath\Resource\Application::get($hrefParts[0]);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Application', $app);
+        $this->assertEquals($href, $app->href);
+
+        $app2 = \Stormpath\Client::get($hrefParts[1].'/'.$hrefParts[0], Stormpath::APPLICATION);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Application', $app2);
+        $this->assertEquals($href, $app2->href);
+
+        $application->delete();
+
+
+    }
+
 
 
 }
