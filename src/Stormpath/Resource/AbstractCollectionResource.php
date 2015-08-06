@@ -24,6 +24,7 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
 {
     const OFFSET = Stormpath::OFFSET;
     const LIMIT  = Stormpath::LIMIT;
+    const SIZE   = Stormpath::SIZE;
     const ITEMS  = "items";
 
     public function getOffset()
@@ -34,6 +35,17 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
     public function getLimit()
     {
         return $this->getProperty(self::LIMIT);
+    }
+
+    /**
+     * Allows you to get the size (count) of number of returned items in
+     * the paginated list of returned resource list.
+     * @return int Number of returned items in the full paginated list
+     * @since 1.8.1.beta
+     */
+    public function getSize()
+    {
+        return $this->getProperty(self::SIZE);
     }
 
     public function getCurrentPage()

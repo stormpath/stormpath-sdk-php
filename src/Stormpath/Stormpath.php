@@ -71,6 +71,7 @@ class Stormpath
 
     const OFFSET                        = 'offset';
     const LIMIT                         = 'limit';
+    const SIZE                          = 'size';
     const EXPAND                        = 'expand';
     const FILTER                        = 'q';
     const ORDER_BY                      = 'orderBy';
