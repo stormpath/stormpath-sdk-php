@@ -28,6 +28,7 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
     private static $groups;
     private static $account;
     private static $inited;
+    private static $application;
 
     protected static function init() {
 
@@ -499,8 +500,8 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         // SomePassw0rd!
         $username = md5(time().microtime().uniqid()) . 'username';
 
-        $application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
-        self::createResource(\Stormpath\Resource\Application::PATH, $application, array('createDirectory' => true));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'middleName' => 'Middle Name',
@@ -509,14 +510,13 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
                                                                   'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
                                                                   'password' => '$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.'));
 
-        $application->createAccount($account, array('passwordFormat'=>'mcf'));
+        self::$application->createAccount($account, array('passwordFormat'=>'mcf'));
 
 
-        $result = $application->authenticate($username, 'SomePassw0rd!');
+        $result = self::$application->authenticate($username, 'SomePassw0rd!');
         $this->assertEquals($username, $result->account->username);
 
         $account->delete();
-        $application->delete();
 
     }
 
@@ -526,8 +526,8 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $username = md5(time().microtime().uniqid()) . 'username';
         $client = Client::getInstance();
 
-        $application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
-        self::createResource(\Stormpath\Resource\Application::PATH, $application, array('createDirectory' => true));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
         $account->email = 'john.smith@example.com';
@@ -535,31 +535,112 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $account->password ='$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.';
         $account->surname = 'Smith';
         $account->username = $username;
-        $account->setPasswordFormat('mcf');
 
 
-        $application->createAccount($account);
+        self::$application->createAccount($account,array('passwordFormat'=>'mcf'));
 
 
-        $result = $application->authenticate($username, 'SomePassw0rd!');
+        $result = self::$application->authenticate($username, 'SomePassw0rd!');
         $this->assertEquals($username, $result->account->username);
 
         $account->delete();
-        $application->delete();
 
     }
 
-    /**
-     * @group currentTest
-     * @expectedException \InvalidArgumentException
-     */
-    public function testImportingAPasswordWithWrongPasswordFormatSetThrowsException()
+    public function testImportingSelfCreatedPasswordWithMD5()
     {
+
         $username = md5(time().microtime().uniqid()) . 'username';
         $client = Client::getInstance();
 
-        $application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
-        self::createResource(\Stormpath\Resource\Application::PATH, $application, array('createDirectory' => true));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
+
+        $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
+        $account->email = 'john.smith@example.com';
+        $account->givenName = 'John';
+        $account->password = '$stormpath2$MD5$1$NzEyN2ZhYzdkZTAyMjJlMGQyMWYxMWRmZmY2YjA1MWI=$K18Ak0YikAFrqgglhIaY5g==';
+        $account->surname = 'Smith';
+        $account->username = $username;
+
+
+        self::$application->createAccount($account,array('passwordFormat'=>'mcf'));
+
+
+        $result = self::$application->authenticate($username, 'password');
+        $this->assertEquals($username, $result->account->username);
+
+        $account->delete();
+    }
+
+    public function testImportingSelfCreatedPasswordWithSHA512()
+    {
+
+        $username = md5(time().microtime().uniqid()) . 'username';
+        $client = Client::getInstance();
+
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
+
+        $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
+        $account->email = 'john.smith@example.com';
+        $account->givenName = 'John';
+        $account->password = '$stormpath2$SHA-512$1$ZFhBRmpFSnEwVEx2ekhKS0JTMDJBNTNmcg==$Q+sGFg9e+pe9QsUdfnbJUMDtrQNf27ezTnnGllBVkQpMRc9bqH6WkyE3y0svD/7cBk8uJW9Wb3dolWwDtDLFjg==';
+        $account->surname = 'Smith';
+        $account->username = $username;
+
+
+        self::$application->createAccount($account,array('passwordFormat'=>'mcf'));
+
+
+        $result = self::$application->authenticate($username, 'testing12');
+        $this->assertEquals($username, $result->account->username);
+
+        $account->delete();
+    }
+
+    /**
+     * @expectedException \Stormpath\Resource\ResourceError
+     * @expectedExceptionMessage The imported password is in an invalid format
+     */
+    public function testImportingInvalidPasswordTypeShouldThrowException()
+    {
+
+        $username = md5(time().microtime().uniqid()) . 'username';
+        $client = Client::getInstance();
+
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
+
+        $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
+        $account->email = 'john.smith@example.com';
+        $account->givenName = 'John';
+        $account->password ='$INVALID$04$RZPSLGUz3dRdm7aRfxOeYuKeueSPW2YaTpRkszAA31wcPpyg6zkGy';
+        $account->surname = 'Smith';
+        $account->username = $username;
+
+
+        self::$application->createAccount($account,array('passwordFormat'=>'mcf'));
+
+
+        $result = self::$application->authenticate($username, 'SomePassw0rd!');
+        $this->assertEquals($username, $result->account->username);
+
+        $account->delete();
+    }
+
+    /**
+     * @expectedException \Stormpath\Resource\ResourceError
+     * @expectedExceptionMessage The imported password designates an algorithm that is an unsupported value.
+     */
+    public function testImportingInvalidPasswordFormatTypeShouldThrowException()
+    {
+
+        $username = md5(time().microtime().uniqid()) . 'username';
+        $client = Client::getInstance();
+
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
         $account->email = 'john.smith@example.com';
@@ -567,11 +648,35 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $account->password ='$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.';
         $account->surname = 'Smith';
         $account->username = $username;
-        $account->passwordFormat = 'NotMCF';
+
+
+        self::$application->createAccount($account,array('passwordFormat'=>'someOtherMCF'));
+
+
+        $result = self::$application->authenticate($username, 'SomePassw0rd!');
+        $this->assertEquals($username, $result->account->username);
 
         $account->delete();
-        $application->delete();
-
     }
 
+    public function tearDown()
+    {
+        if (self::$application)
+        {
+            $accountStoreMappings = self::$application->accountStoreMappings;
+
+            if ($accountStoreMappings)
+            {
+                foreach($accountStoreMappings as $asm)
+                {
+                    $accountStore = $asm->accountStore;
+                    $asm->delete();
+                    $accountStore->delete();
+                }
+            }
+
+            self::$application->delete();
+        }
+        self::$application = null;
+    }
 }
