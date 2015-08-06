@@ -2,6 +2,14 @@ stormpath-sdk-php Changelog
 ===========================
 
 
+Version 1.8.1.beta
+------------------
+
+Released on August 6, 2015
+
+- Fixed bug with verifyEmailToken method.  This will now allow the return of an Account after verification
+
+
 Version 1.8.0.beta
 ------------------
 
