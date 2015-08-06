@@ -885,8 +885,25 @@ email addressed used during registration.
 
 The email verification workflow involves changes to an account at an application level, and as such, this workflow
 relies on the account resource as a starting point. This workflow is disabled by default for accounts, but you can 
-enable it easily in the Stormpath Admin Console UI. Refer to the Stormpath Admin Console product guide for complete
-instructions.
+enable it one of two ways.  The first way is to log into the Admin Console UI. Refer to the Stormpath Admin Console 
+product guide for complete instructions on how to do this.  The second way is via the SDK.  
+
+After creating or getting a directory, you will have access to the `accountCreationPolicy` object.
+
+```php
+    $directory = \Stormpath\Resource\Group::get($directoryHref);
+    $accountCreationPolicy = $directory->accountCreationPolicy;
+```
+
+You can then interact with the policy resource like any other resource
+
+```php
+     $accountCreationPolicy->verificationEmailStatus = 'ENABLED';
+     $accountCreationPolicy->verificationSuccessEmailStatus = 'ENABLED';
+     $accountCreationPolicy->welcomeEmailStatus = 'ENABLED';
+     
+     $accountCreationPolicy->save();
+```
 
 #### Resending the verification email
 
