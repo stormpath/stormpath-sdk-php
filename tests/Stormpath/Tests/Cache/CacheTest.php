@@ -1,6 +1,7 @@
 <?php namespace Stormpath\Tests\Cache;
 
 
+use Stormpath\Cache\Cacheable;
 use Stormpath\Tests\BaseTest;
 
 class CacheTest extends BaseTest
@@ -121,5 +122,28 @@ class CacheTest extends BaseTest
 
 
         parent::$client = $origClient;
+    }
+
+    public function testWillNotCacheHrefOnlyObject()
+    {
+        $object = new \stdClass();
+
+        $object->href = "http://api.stormpath.com/v1/account/123abc";
+
+        $cachable = new CacheTestingMock();
+
+        $isCacheable = $cachable->isCachable($object);
+
+        $this->assertFalse($isCacheable);
+    }
+
+
+}
+
+class CacheTestingMock extends Cacheable
+{
+    public function isCachable($resource)
+    {
+        return $this->resourceIsCacheable($resource);
     }
 }
