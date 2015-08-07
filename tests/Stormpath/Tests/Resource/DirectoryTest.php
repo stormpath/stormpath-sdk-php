@@ -222,7 +222,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
         \Stormpath\Resource\Directory::get($href);
     }
 
-    public function testShouldBeAbleToGetApplicationViaHTMLFragment()
+    public function testShouldBeAbleToGetDirectoryViaHTMLFragment()
     {
         $directory = \Stormpath\Resource\Directory::create(array('name' => 'Another random directory' .md5(time().microtime().uniqid())));
 
