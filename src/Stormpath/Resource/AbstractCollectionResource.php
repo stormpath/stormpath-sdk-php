@@ -41,7 +41,7 @@ abstract class AbstractCollectionResource extends Resource implements \IteratorA
      * Allows you to get the size (count) of number of returned items in
      * the paginated list of returned resource list.
      * @return int Number of returned items in the full paginated list
-     * @since 1.8.1.beta
+     * @since 1.9.0.beta
      */
     public function getSize()
     {
