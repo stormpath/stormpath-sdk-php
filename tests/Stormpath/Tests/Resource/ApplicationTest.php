@@ -405,11 +405,10 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         );
 
         // set directory policy to enable verification email workflow
-        $policy = $directory->getProperty('accountCreationPolicy');
+        $policy = $directory->accountCreationPolicy;
         $policy->verificationEmailStatus = 'ENABLED';
-        $policyResource = new Resource(self::$client->dataStore, $policy);
-        $result = self::$client->create($policyResource->href, $policyResource);
-        $this->assertEquals('ENABLED', $result->getProperty('verificationEmailStatus'));
+        $policy->save();
+        $this->assertEquals('ENABLED', $policy->verificationEmailStatus);
 
         $username = 'acc' . md5(time());
         $emailAddress = $username . '@unknown123.kot';
