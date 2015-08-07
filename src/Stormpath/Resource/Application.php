@@ -415,7 +415,7 @@ class Application extends InstanceResource implements Deletable
     }
 
 
-    public function sendVerificationEmail(VerificationEmailRequest $request)
+    public function sendVerificationEmail(VerificationEmailRequest $request, $options = array())
     {
         if ($request == null) {
             throw new \InvalidArgumentException('VerificationEmailRequest cannot be null');
@@ -426,16 +426,27 @@ class Application extends InstanceResource implements Deletable
             throw new \InvalidArgumentException('VerificationEmailRequest\'s login property is required');
         }
 
-        $accountStore = $request->getAccountStore();
-        if ($accountStore != null && $accountStore->href == null) {
-            throw new \InvalidArgumentException("verificationEmailRequest's accountStore has been specified but its href is null.");
+        $accountStore = null;
+        if (isset($options['accountStore']))
+        {
+            $accountStore = $options['accountStore'];
+            if ($accountStore instanceof AccountStore)
+            {
+                if ($accountStore != null && $accountStore->href == null) {
+                    throw new \InvalidArgumentException("verificationEmailRequest's accountStore has been specified but its href is null.");
+                }
+            }
+            else
+            {
+                throw new \InvalidArgumentException("The value for accountStore in the \$options array should be an instance of \\Stormpath\\Resource\\AccountStore");
+            }
         }
+
+
 
         $verificationEmail = $this->getDataStore()->instantiate(Stormpath::VERIFICATION_EMAIL);
         $verificationEmail->login = $login;
-        if ($accountStore != null) {
-            $verificationEmail->accountStore = $accountStore;
-        }
+
 
         $this->getDataStore()->create($this->getHref() . '/' . VerificationEmail::PATH,
             $verificationEmail, Stormpath::VERIFICATION_EMAIL);

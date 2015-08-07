@@ -21,25 +21,10 @@ namespace Stormpath\Resource;
 class VerificationEmailRequest
 {
     private $login;
-    private $accountStore;
 
-    public function __construct($login, array $options = array())
+    public function __construct($login)
     {
         $this->login = $login;
-
-        if (isset($options['accountStore']))
-        {
-            $accountStore = $options['accountStore'];
-            if ($accountStore instanceof AccountStore)
-            {
-                $this->accountStore = $accountStore;
-            }
-            else
-            {
-                throw new \InvalidArgumentException("The value for accountStore in the \$options array should be an instance of \\Stormpath\\Resource\\AccountStore");
-            }
-        }
-
     }
 
     public function getLogin()
@@ -47,8 +32,4 @@ class VerificationEmailRequest
         return $this->login;
     }
 
-    public function getAccountStore()
-    {
-        return $this->accountStore;
-    }
 }

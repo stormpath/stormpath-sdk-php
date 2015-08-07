@@ -950,9 +950,8 @@ performance enhancement.
 
 ```
 $directory = \Stormpath\Resource\Directory::get('https://api.stormpath.com/v1/directories/2k1eykEKqVok365Ue2Y2T1');
-$request = new \Stormpath\Resource\VerificationEmailRequest('some.user@email.com', 
-    array('accountStore' => $directory));
-$application->sendVerificationEmail($request);
+$request = new \Stormpath\Resource\VerificationEmailRequest('some.user@email.com');
+$application->sendVerificationEmail($request, array('accountStore' => $directory));
 ```
 
 ### Password Reset

@@ -446,8 +446,8 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         try
         {
-            $request = new VerificationEmailRequest($emailAddress, array('accountStore' => $directory));
-            $application->sendVerificationEmail($request);
+            $request = new VerificationEmailRequest($emailAddress);
+            $application->sendVerificationEmail($request, array('accountStore' => $directory));
         }
         catch(ResourceError $re)
         {
