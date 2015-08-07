@@ -426,8 +426,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         try
         {
-            $request = new VerificationEmailRequest($username);
-            $application->sendVerificationEmail($request);
+            $application->sendVerificationEmail($username);
         }
         catch(ResourceError $re)
         {
@@ -436,8 +435,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         try
         {
-            $request = new VerificationEmailRequest($emailAddress);
-            $application->sendVerificationEmail($request);
+            $application->sendVerificationEmail($username);
         }
         catch(ResourceError $re)
         {
@@ -446,8 +444,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         try
         {
-            $request = new VerificationEmailRequest($emailAddress);
-            $application->sendVerificationEmail($request, array('accountStore' => $directory));
+            $application->sendVerificationEmail($username, array('accountStore' => $directory));
         }
         catch(ResourceError $re)
         {

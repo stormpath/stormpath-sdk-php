@@ -415,15 +415,10 @@ class Application extends InstanceResource implements Deletable
     }
 
 
-    public function sendVerificationEmail(VerificationEmailRequest $request, $options = array())
+    public function sendVerificationEmail($login, $options = array())
     {
-        if ($request == null) {
-            throw new \InvalidArgumentException('VerificationEmailRequest cannot be null');
-        }
-
-        $login = $request->getLogin();
-        if ($login == null or ($login != null and $login == '')) {
-            throw new \InvalidArgumentException('VerificationEmailRequest\'s login property is required');
+        if ($login == null) {
+            throw new \InvalidArgumentException('Login cannot be null');
         }
 
         $accountStore = null;

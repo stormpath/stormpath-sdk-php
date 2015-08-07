@@ -938,8 +938,7 @@ emails based on the account’s username or email.
 ##### Execute Email Verification Resend
 
 ```
-$request = new \Stormpath\Resource\VerificationEmailRequest('some.user@email.com');
-$application->sendVerificationEmail($request);
+$application->sendVerificationEmail('some.user@email.com');
 ```
 
 If the verification email is queued to be sent, a `202 ACCEPTED` response is returned by the server. However, the
@@ -950,8 +949,7 @@ performance enhancement.
 
 ```
 $directory = \Stormpath\Resource\Directory::get('https://api.stormpath.com/v1/directories/2k1eykEKqVok365Ue2Y2T1');
-$request = new \Stormpath\Resource\VerificationEmailRequest('some.user@email.com');
-$application->sendVerificationEmail($request, array('accountStore' => $directory));
+$application->sendVerificationEmail('some.user@email.com', array('accountStore' => $directory));
 ```
 
 ### Password Reset
