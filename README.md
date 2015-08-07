@@ -836,6 +836,25 @@ method with the same name on the <code>Tenant</code> resource.
   // this call returns an account object
   $account = $tenant->verifyEmailToken('the_token_from_query_string');
   ```
+  
+### Password Import
+Stormpath now allows the importing of existing passwords.  Using the [modular crypt format (MCF)][mcf]
+you can now import all your existing users over to stormpath accounts.  Users must have a new account
+created with a password set in one of the two support mcf formats.  To learn more about these formats, 
+visit [the password import product guide][password-import-product-guide]
+
+To use this feature, during the account creation, just pass a second parameter to the `create` method.
+
+```php
+    $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+                                                                  'middleName' => 'Middle Name',
+                                                                  'surname' => 'Surname',
+                                                                  'username' => $username,
+                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                                                                  'password' => '$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.'));
+
+        self::$application->createAccount($account, array('passwordFormat'=>'mcf'));
+```
 
 ### Authentication
 
@@ -1583,3 +1602,5 @@ For additional information, please see the full [Project Documentation](http://d
   [concepts]: http://docs.stormpath.com/php/product-guide/#glossary-of-terms
   [sdk-zip]: https://github.com/stormpath/stormpath-sdk-php/archive/master.zip
   [guzzle-installation-pear]: http://guzzle.readthedocs.org/en/latest/overview.html#installation
+  [mcf]: https://pythonhosted.org/passlib/modular_crypt_format.html
+  [password-import-product-guide]: https://pythonhosted.org/passlib/modular_crypt_format.html

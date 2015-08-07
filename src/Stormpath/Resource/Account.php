@@ -128,6 +128,7 @@ class Account extends InstanceResource implements Deletable
         }
     }
 
+
     public function getFullName() {
 
         return $this->getProperty(self::FULL_NAME);
