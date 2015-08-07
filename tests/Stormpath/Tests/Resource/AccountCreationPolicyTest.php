@@ -18,6 +18,24 @@ class AccountCreationPolicyTest extends \Stormpath\Tests\BaseTest {
         self::$acp = self::$directory->accountCreationPolicy;
     }
 
+    private function enableAndTest($property)
+    {
+        self::$acp->$property = STORMPATH::ENABLED;
+        self::$acp->save();
+
+        $acp = self::$directory->accountCreationPolicy;
+        $this->assertEquals(STORMPATH::ENABLED, $acp->$property);
+    }
+
+    private function disableAndTest($property)
+    {
+        self::$acp->$property = STORMPATH::DISABLED;
+        self::$acp->save();
+
+        $acp = self::$directory->accountCreationPolicy;
+        $this->assertEquals(STORMPATH::DISABLED, $acp->$property);
+    }
+
     /**
      * @test
      */
@@ -25,13 +43,9 @@ class AccountCreationPolicyTest extends \Stormpath\Tests\BaseTest {
     {
         $this->assertEquals(STORMPATH::DISABLED, self::$acp->verificationEmailStatus);
 
-        self::$acp->verificationEmailStatus = STORMPATH::ENABLED;
 
-        $this->assertEquals(STORMPATH::ENABLED, self::$acp->verificationEmailStatus);
-
-        self::$acp->verificationEmailStatus = STORMPATH::DISABLED;
-
-        $this->assertEquals(STORMPATH::DISABLED, self::$acp->verificationEmailStatus);
+        $this->enableAndTest('verificationEmailStatus');
+        $this->disableAndTest('verificationEmailStatus');
     }
 
     /**
@@ -41,13 +55,8 @@ class AccountCreationPolicyTest extends \Stormpath\Tests\BaseTest {
     {
         $this->assertEquals(STORMPATH::DISABLED, self::$acp->verificationSuccessEmailStatus);
 
-        self::$acp->verificationSuccessEmailStatus = STORMPATH::ENABLED;
-
-        $this->assertEquals(STORMPATH::ENABLED, self::$acp->verificationSuccessEmailStatus);
-
-        self::$acp->verificationSuccessEmailStatus = STORMPATH::DISABLED;
-
-        $this->assertEquals(STORMPATH::DISABLED, self::$acp->verificationSuccessEmailStatus);
+        $this->enableAndTest('verificationSuccessEmailStatus');
+        $this->disableAndTest('verificationSuccessEmailStatus');
     }
 
     /**
@@ -57,13 +66,8 @@ class AccountCreationPolicyTest extends \Stormpath\Tests\BaseTest {
     {
         $this->assertEquals(STORMPATH::DISABLED, self::$acp->welcomeEmailStatus);
 
-        self::$acp->welcomeEmailStatus = STORMPATH::ENABLED;
-
-        $this->assertEquals(STORMPATH::ENABLED, self::$acp->welcomeEmailStatus);
-
-        self::$acp->welcomeEmailStatus = STORMPATH::DISABLED;
-
-        $this->assertEquals(STORMPATH::DISABLED, self::$acp->welcomeEmailStatus);
+        $this->enableAndTest('welcomeEmailStatus');
+        $this->disableAndTest('welcomeEmailStatus');
     }
 
     public static function tearDownAfterClass()
