@@ -20,7 +20,13 @@ namespace Stormpath\Tests\Resource;
 
 use JWT;
 use Stormpath\Client;
+use Stormpath\Resource\Account;
 use Stormpath\Resource\Application;
+use Stormpath\Resource\Directory;
+use Stormpath\Resource\Resource;
+use Stormpath\Resource\ResourceError;
+use Stormpath\Resource\VerificationEmailRequest;
+use Stormpath\Resource\VerificationEmail;
 use Stormpath\Stormpath;
 use Stormpath\Util\UUID;
 
@@ -387,6 +393,67 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $groupA->delete();
     }
 
+    public function testSendVerificationEmail()
+    {
+        $application = self::$application;
+
+        $directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'dir' . md5(time())));
+        self::createResource(\Stormpath\Resource\Directory::PATH, $directory);
+
+        \Stormpath\Resource\AccountStoreMapping::create(
+            array('accountStore' => $directory, 'application' => $application)
+        );
+
+        // set directory policy to enable verification email workflow
+        $policy = $directory->accountCreationPolicy;
+        $policy->verificationEmailStatus = 'ENABLED';
+        $policy->save();
+        $this->assertEquals('ENABLED', $policy->verificationEmailStatus);
+
+        $username = 'acc' . md5(time());
+        $emailAddress = $username . '@unknown123.kot';
+        $account = Account::instantiate(array(
+            'givenName' => 'Account Name',
+            'middleName' => 'Middle Name',
+            'surname' => 'Surname',
+            'username' => $username,
+            'email' => $emailAddress,
+            'password' => 'superP4ss'));
+
+        $result = $directory->createAccount($account);
+        $this->assertEquals($username, $result->username);
+        $this->assertEquals($emailAddress, $result->email);
+
+        try
+        {
+            $application->sendVerificationEmail($username);
+        }
+        catch(ResourceError $re)
+        {
+            $this->fail("Send verification email failed: ".$re->getErrorCode()." ".$re->getDeveloperMessage());
+        }
+
+        try
+        {
+            $application->sendVerificationEmail($username);
+        }
+        catch(ResourceError $re)
+        {
+            $this->fail("Send verification email failed: ".$re->getErrorCode()." ".$re->getDeveloperMessage());
+        }
+
+        try
+        {
+            $application->sendVerificationEmail($username, array('accountStore' => $directory));
+        }
+        catch(ResourceError $re)
+        {
+            $this->fail("Send verification email failed: ".$re->getErrorCode()." ".$re->getDeveloperMessage());
+        }
+
+        $directory->delete();
+    }
+
     public function testAuthenticate()
     {
         $application = self::$application;
@@ -636,6 +703,29 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $application->delete();
 
         \Stormpath\Resource\Application::get($href);
+    }
+
+    public function testShouldBeAbleToGetApplicationViaHTMLFragment()
+    {
+        $application = \Stormpath\Resource\Application::create(array('name' => 'Yet Another App'. md5(time().microtime().uniqid())));
+
+        $href = $application->href;
+
+        $hrefParts = array_reverse(explode('/',$href));
+
+        $app = \Stormpath\Resource\Application::get($hrefParts[0]);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Application', $app);
+        $this->assertEquals($href, $app->href);
+
+        $app2 = \Stormpath\Client::get($hrefParts[1].'/'.$hrefParts[0], Stormpath::APPLICATION);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Application', $app2);
+        $this->assertEquals($href, $app2->href);
+
+        $application->delete();
+
+
     }
 
 

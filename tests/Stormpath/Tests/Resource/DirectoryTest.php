@@ -222,4 +222,27 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
         \Stormpath\Resource\Directory::get($href);
     }
 
+    public function testShouldBeAbleToGetDirectoryViaHTMLFragment()
+    {
+        $directory = \Stormpath\Resource\Directory::create(array('name' => 'Another random directory' .md5(time().microtime().uniqid())));
+
+        $href = $directory->href;
+
+        $hrefParts = array_reverse(explode('/',$href));
+
+        $dir = \Stormpath\Resource\Directory::get($hrefParts[0]);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Directory', $dir);
+        $this->assertEquals($href, $dir->href);
+
+        $dir2 = \Stormpath\Client::get($hrefParts[1].'/'.$hrefParts[0], Stormpath::DIRECTORY);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Directory', $dir2);
+        $this->assertEquals($href, $dir2->href);
+
+        $directory->delete();
+
+
+    }
+
 }
