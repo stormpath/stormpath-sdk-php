@@ -836,6 +836,25 @@ method with the same name on the <code>Tenant</code> resource.
   // this call returns an account object
   $account = $tenant->verifyEmailToken('the_token_from_query_string');
   ```
+  
+### Password Import
+Stormpath now allows the importing of existing passwords.  Using the [modular crypt format (MCF)][mcf]
+you can now import all your existing users over to stormpath accounts.  Users must have a new account
+created with a password set in one of the two support mcf formats.  To learn more about these formats, 
+visit [the password import product guide][password-import-product-guide]
+
+To use this feature, during the account creation, just pass a second parameter to the `create` method.
+
+```php
+    $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+                                                                  'middleName' => 'Middle Name',
+                                                                  'surname' => 'Surname',
+                                                                  'username' => $username,
+                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                                                                  'password' => '$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.'));
+
+        self::$application->createAccount($account, array('passwordFormat'=>'mcf'));
+```
 
 ### Authentication
 
@@ -876,6 +895,62 @@ $accountStore = $anAccountStoreMapping->getAccountStore();
 $authenticationRequest = new UsernamePasswordRequest('usernameOrEmail', 'password', 
     array('accountStore' => $accountStore));
 $result = $application->authenticateAccount($authenticationRequest);
+```
+
+### Verify an Account's email address
+
+This workflow allows you to send a welcome email to a newly registered account and optionally verify that they own the 
+email addressed used during registration.
+
+The email verification workflow involves changes to an account at an application level, and as such, this workflow
+relies on the account resource as a starting point. This workflow is disabled by default for accounts, but you can 
+enable it one of two ways.  The first way is to log into the Admin Console UI. Refer to the Stormpath Admin Console 
+product guide for complete instructions on how to do this.  The second way is via the SDK.  
+
+After creating or getting a directory, you will have access to the `accountCreationPolicy` object.
+
+```php
+    $directory = \Stormpath\Resource\Group::get($directoryHref);
+    $accountCreationPolicy = $directory->accountCreationPolicy;
+```
+
+You can then interact with the policy resource like any other resource and set the status with either `Stormpath::ENABLED`
+or `Stormpath::DISABLED`
+
+```php
+     $accountCreationPolicy->verificationEmailStatus = Stormpath::ENABLED;
+     $accountCreationPolicy->verificationSuccessEmailStatus = Stormpath::ENABLED;
+     $accountCreationPolicy->welcomeEmailStatus = Stormpath::ENABLED;
+     
+     $accountCreationPolicy->save();
+```
+
+#### Resending the verification email
+
+In some cases, it may be needed to resend the verification email. This could be because the user accidentally deleted
+the verification email or it was undeliverable at a certain time. An Application has the ability to resend verification
+emails based on the account’s username or email.
+
+##### Resend Email Verification Resource Attributes
+
+* `login` : Either the email or username for the account that needs an email verification resent
+* `accountStore` : An optional link to the application’s `accountStore` (directory or group) that you are certain contains the account attempting to resend the verification email to.
+
+##### Execute Email Verification Resend
+
+```
+$application->sendVerificationEmail('some.user@email.com');
+```
+
+If the verification email is queued to be sent, a `202 ACCEPTED` response is returned by the server. However, the
+`sendVerificationEmail` method does not return any value.
+
+Alternatively, it is possible to specify the `accountStore` where the user account that needs verification resides as a 
+performance enhancement.
+
+```
+$directory = \Stormpath\Resource\Directory::get('https://api.stormpath.com/v1/directories/2k1eykEKqVok365Ue2Y2T1');
+$application->sendVerificationEmail('some.user@email.com', array('accountStore' => $directory));
 ```
 
 ### Password Reset
@@ -1525,3 +1600,5 @@ For additional information, please see the full [Project Documentation](http://d
   [concepts]: http://docs.stormpath.com/php/product-guide/#glossary-of-terms
   [sdk-zip]: https://github.com/stormpath/stormpath-sdk-php/archive/master.zip
   [guzzle-installation-pear]: http://guzzle.readthedocs.org/en/latest/overview.html#installation
+  [mcf]: https://pythonhosted.org/passlib/modular_crypt_format.html
+  [password-import-product-guide]: https://pythonhosted.org/passlib/modular_crypt_format.html

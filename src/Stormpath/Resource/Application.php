@@ -414,6 +414,39 @@ class Application extends InstanceResource implements Deletable
             $providerAccountAccess, Stormpath::PROVIDER_ACCOUNT_RESULT);
     }
 
+
+    public function sendVerificationEmail($login, $options = array())
+    {
+        if ($login == null) {
+            throw new \InvalidArgumentException('Login cannot be null');
+        }
+
+        $accountStore = null;
+        if (isset($options['accountStore']))
+        {
+            $accountStore = $options['accountStore'];
+            if ($accountStore instanceof AccountStore)
+            {
+                if ($accountStore != null && $accountStore->href == null) {
+                    throw new \InvalidArgumentException("verificationEmailRequest's accountStore has been specified but its href is null.");
+                }
+            }
+            else
+            {
+                throw new \InvalidArgumentException("The value for accountStore in the \$options array should be an instance of \\Stormpath\\Resource\\AccountStore");
+            }
+        }
+
+
+
+        $verificationEmail = $this->getDataStore()->instantiate(Stormpath::VERIFICATION_EMAIL);
+        $verificationEmail->login = $login;
+
+
+        $this->getDataStore()->create($this->getHref() . '/' . VerificationEmail::PATH,
+            $verificationEmail, Stormpath::VERIFICATION_EMAIL);
+    }
+
     public function getApiKey($apiKeyId, $options = array())
     {
         $options['id'] = $apiKeyId;
@@ -432,6 +465,7 @@ class Application extends InstanceResource implements Deletable
         }
 
         return $apiKey;
+
     }
 
     // @codeCoverageIgnoreStart
