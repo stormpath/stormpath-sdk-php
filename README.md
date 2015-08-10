@@ -914,12 +914,13 @@ After creating or getting a directory, you will have access to the `accountCreat
     $accountCreationPolicy = $directory->accountCreationPolicy;
 ```
 
-You can then interact with the policy resource like any other resource
+You can then interact with the policy resource like any other resource and set the status with either `Stormpath::ENABLED`
+or `Stormpath::DISABLED`
 
 ```php
-     $accountCreationPolicy->verificationEmailStatus = 'ENABLED';
-     $accountCreationPolicy->verificationSuccessEmailStatus = 'ENABLED';
-     $accountCreationPolicy->welcomeEmailStatus = 'ENABLED';
+     $accountCreationPolicy->verificationEmailStatus = Stormpath::ENABLED;
+     $accountCreationPolicy->verificationSuccessEmailStatus = Stormpath::ENABLED;
+     $accountCreationPolicy->welcomeEmailStatus = Stormpath::ENABLED;
      
      $accountCreationPolicy->save();
 ```
