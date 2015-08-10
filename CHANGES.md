@@ -2,6 +2,21 @@ stormpath-sdk-php Changelog
 ===========================
 
 
+Version 1.9.0.beta
+------------------
+
+Released on August 10, 2015
+
+- Password Import is now tested for and officially supported 
+- New method added for getting size of collection.
+- Tests implemented for getting a resource based on an HTML fragment
+- Resending an email verification to a user
+- Added support for modifying registration workflows
+- Removed PHP 5.3 Support
+- Updated code coverage and updated PHPUnit package
+
+
+
 Version 1.8.1.beta
 ------------------
 

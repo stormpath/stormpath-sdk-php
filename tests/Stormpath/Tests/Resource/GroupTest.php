@@ -197,4 +197,28 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
         \Stormpath\Resource\Group::get($href);
     }
 
+    public function testShouldBeAbleToGetGroupViaHTMLFragment()
+    {
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'Deletable Group' . md5(time().microtime().uniqid())));
+        self::$directory->createGroup($group);
+
+        $href = $group->href;
+
+        $hrefParts = array_reverse(explode('/',$href));
+
+        $group = \Stormpath\Resource\Group::get($hrefParts[0]);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Group', $group);
+        $this->assertEquals($href, $group->href);
+
+        $group2 = \Stormpath\Client::get($hrefParts[1].'/'.$hrefParts[0], Stormpath::GROUP);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Group', $group2);
+        $this->assertEquals($href, $group2->href);
+
+        $group->delete();
+
+
+    }
+
 }
