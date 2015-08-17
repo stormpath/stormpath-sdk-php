@@ -106,7 +106,7 @@ class Client extends Magic
         self::$cacheManager = $cacheManager;
         self::$cacheManagerOptions = $cacheManagerOptions;
 
-        $signer = "Stormpath\\Http\\Authc\\SAuthc1Signer";
+        $signer = "\\Stormpath\\Http\\Authc\\SAuthc1Signer";
         $requestExecutor = new HttpClientRequestExecutor(new $signer);
         $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
         $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
