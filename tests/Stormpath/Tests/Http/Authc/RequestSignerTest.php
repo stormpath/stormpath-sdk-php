@@ -3,6 +3,8 @@ namespace Stormpath\Tests\Http\Authc;
 
 use Stormpath\Stormpath;
 use Stormpath\Tests\BaseTest;
+use Stormpath\Http\Authc\BasicSigner;
+use Stormpath\Http\Authc\SAuthc1Signer;
 
 class RequestSignerTest extends BaseTest
 {
