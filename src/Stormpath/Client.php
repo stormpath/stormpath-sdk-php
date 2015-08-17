@@ -109,7 +109,8 @@ class Client extends Magic
         self::$cacheManager = $cacheManager;
         self::$cacheManagerOptions = $cacheManagerOptions;
 
-        $signer = "\\Stormpath\\Http\\Authc\\" . self::$authenticationScheme . "Signer";
+        $signer = $this->resolveSigner();
+
         $requestExecutor = new HttpClientRequestExecutor(new $signer);
 
         $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
@@ -196,6 +197,16 @@ class Client extends Magic
     public static function tearDown()
     {
         static::$instance = NULL;
+    }
+
+    private function resolveSigner()
+    {
+        $signer = "\\Stormpath\\Http\\Authc\\" . self::$authenticationScheme . "Signer";
+
+        if(!class_exists($signer))
+            $signer = "\\Stormpath\\Http\\Authc\\" . Stormpath::AUTHENTICATION_SCHEME_SAUTHC1 . "Signer";
+
+        return $signer;
     }
 
 
