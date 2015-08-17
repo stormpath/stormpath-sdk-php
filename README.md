@@ -398,16 +398,16 @@ algorithm, so only use this if you are forced to do so by your application runti
 When no authentication scheme is explicitly configured, Sauthc1 is used by default.
 
 If you must change to basic authentication for these special environments, set the authenticationScheme property using
-`STORMPATH::AUTHENTICATION_SCHEME_BASIC` or `STORMPATH::AUTHENTICATION_SCHEME_SAUTHC1`:
+`Stormpath::AUTHENTICATION_SCHEME_BASIC` or `Stormpath::AUTHENTICATION_SCHEME_SAUTHC1`:
 
   ```php
-    \Stormpath\Client::$authenticationScheme = 'STORMPATH::AUTHENTICATION_SCHEME_BASIC';
+    \Stormpath\Client::$authenticationScheme = 'Stormpath::AUTHENTICATION_SCHEME_BASIC';
   ```
   OR
   
   ```php
      $builder = new \Stormpath\ClientBuilder();
-     $client = $builder->setAuthenticationScheme(STORMPATH::AUTHENTICATION_SCHEME_BASIC)
+     $client = $builder->setAuthenticationScheme(Stormpath::AUTHENTICATION_SCHEME_BASIC)
                     ->build();
   ```
 
