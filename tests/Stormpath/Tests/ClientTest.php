@@ -71,5 +71,12 @@ class ClientTest extends BaseTest {
 
     }
 
+    public function testClientWillBeConstructedWithSAuthc1ByDefault()
+    {
+        \Stormpath\Client::tearDown();
+        $client = \Stormpath\Client::getInstance();
+        $this->assertInstanceOf('Stormpath\Http\Authc\SAuthc1Signer', $client->getDataStore()->getRequestExecutor()->getSigner());
+    }
+
 
 }
