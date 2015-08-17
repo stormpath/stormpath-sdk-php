@@ -20,10 +20,11 @@ namespace Stormpath\Http\Authc;
 
 use Stormpath\ApiKey;
 use Stormpath\Http\Request;
+use Stormpath\Stormpath;
 use Stormpath\Util\RequestUtils;
 use Stormpath\Util\UUID;
 
-class Sauthc1Signer
+class SAuthc1Signer implements RequestSigner
 {
     const DEFAULT_ENCODING       = 'UTF-8';
     const DEFAULT_ALGORITHM      = 'SHA256';
@@ -32,7 +33,7 @@ class Sauthc1Signer
     const STORMPATH_DATE_HEADER  = 'X-Stormpath-Date';
     const ID_TERMINATOR          = 'sauthc1_request';
     const ALGORITHM              = 'HMAC-SHA-256';
-    const AUTHENTICATION_SCHEME  = 'SAuthc1';
+    const AUTHENTICATION_SCHEME  = Stormpath::AUTHENTICATION_SCHEME_SAUTHC1;
     const SAUTHC1_ID             = 'sauthc1Id';
     const SAUTHC1_SIGNED_HEADERS = 'sauthc1SignedHeaders';
     const SAUTHC1_SIGNATURE      = 'sauthc1Signature';
