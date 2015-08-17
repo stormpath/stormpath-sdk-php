@@ -19,6 +19,7 @@ namespace Stormpath;
  */
 
 use Stormpath\DataStore\DefaultDataStore;
+use Stormpath\Http\Authc\SAuthc1Signer;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Resource\Resource;
 use Stormpath\Stormpath;
@@ -111,7 +112,7 @@ class Client extends Magic
 //        $signer = $this->resolveSigner();
         $signer = "\\Stormpath\\Http\\Authc\\SAuthc1Signer";
 
-        $requestExecutor = new HttpClientRequestExecutor(new \Stormpath\Http\Authc\SAuthc1Signer());
+        $requestExecutor = new HttpClientRequestExecutor(new SAuthc1Signer());
 
         $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
         $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
