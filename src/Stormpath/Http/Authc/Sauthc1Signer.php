@@ -23,7 +23,7 @@ use Stormpath\Http\Request;
 use Stormpath\Util\RequestUtils;
 use Stormpath\Util\UUID;
 
-class Sauthc1Signer
+class SAuthc1Signer
 {
     const DEFAULT_ENCODING       = 'UTF-8';
     const DEFAULT_ALGORITHM      = 'SHA256';

@@ -80,6 +80,8 @@ class Stormpath
     const ASCENDING                             = 'asc';
     const DESCENDING                            = 'desc';
 
+    const AUTHENTICATION_SAUTHC1                = 'SAuthc1';
+
     public static $Statuses             = array(self::DISABLED => self::DISABLED,
                                             self::ENABLED => self::ENABLED);
 
