@@ -82,6 +82,8 @@ class Client extends Magic
 
     public static $cacheManager = 'Array';
 
+    public static $authenticationScheme = Stormpath::AUTHENTICATION_SCHEME_SAUTHC1;
+
     public static $cacheManagerOptions = array();
 
     private static $instance;
@@ -161,6 +163,7 @@ class Client extends Magic
                               setCacheManager(self::$cacheManager)->
                               setCacheManagerOptions(self::$cacheManagerOptions)->
                               setBaseURL(self::$baseUrl)->
+                              setAuthenticationScheme(self::$authenticationScheme)->
                               build();
         }
 
