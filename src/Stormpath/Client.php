@@ -21,6 +21,7 @@ namespace Stormpath;
 use Stormpath\DataStore\DefaultDataStore;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Resource\Resource;
+use Stormpath\Stormpath;
 use Stormpath\Util\Magic;
 
 function toObject($properties)
@@ -81,7 +82,7 @@ class Client extends Magic
 
     public static $cacheManager = 'Array';
 
-    public static $authenticationScheme = \Stormpath\Stormpath::AUTHENTICATION_SCHEME_SAUTHC1;
+    public static $authenticationScheme = Stormpath::AUTHENTICATION_SCHEME_SAUTHC1;
 
     public static $cacheManagerOptions = array();
 
@@ -202,7 +203,7 @@ class Client extends Magic
         $signer = "\\Stormpath\\Http\\Authc\\" . self::$authenticationScheme . "Signer";
 
         if(!class_exists($signer))
-            $signer = "\\Stormpath\\Http\\Authc\\" . \Stormpath\Stormpath::AUTHENTICATION_SCHEME_SAUTHC1 . "Signer";
+            $signer = "\\Stormpath\\Http\\Authc\\" . Stormpath::AUTHENTICATION_SCHEME_SAUTHC1 . "Signer";
 
         return $signer;
     }
