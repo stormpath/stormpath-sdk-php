@@ -22,6 +22,7 @@ use Stormpath\DataStore\DefaultDataStore;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Resource\Resource;
 use Stormpath\Stormpath;
+use Stormpath\Stormpath;
 use Stormpath\Util\Magic;
 
 function toObject($properties)
@@ -110,7 +111,8 @@ class Client extends Magic
 
 //        $signer = $this->resolveSigner();
         $signer = "\\Stormpath\\Http\\Authc\\SAuthc1Signer";
-        $requestExecutor = new HttpClientRequestExecutor(new $signer);
+
+        $requestExecutor = new HttpClientRequestExecutor(new $signer());
 
         $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
         $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
