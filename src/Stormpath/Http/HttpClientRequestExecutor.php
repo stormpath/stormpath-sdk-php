@@ -22,17 +22,16 @@ namespace Stormpath\Http;
 use Guzzle\Http\Client;
 use Guzzle\Http\Message\RequestInterface;
 use Stormpath\ApiKey;
-use Stormpath\Http\Authc\Sauthc1Signer;
 
 class HttpClientRequestExecutor implements RequestExecutor
 {
     private $httpClient;
     private $signer;
 
-    public function __construct()
+    public function __construct($signer)
     {
         $this->httpClient = new Client();
-        $this->signer = new Sauthc1Signer;
+        $this->signer = $signer;
     }
 
     public function executeRequest(Request $request, $redirectsLimit = 10)

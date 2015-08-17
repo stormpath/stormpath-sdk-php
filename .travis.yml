@@ -18,12 +18,12 @@ before_script:
 - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
-install:
- - composer require satooshi/php-coveralls:~0.6@stable
+# install:
+ # - composer require satooshi/php-coveralls:~0.6@stable
 
 script:
   - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_success:
-  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php vendor/bin/coveralls -v; fi;'
+  # - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php vendor/bin/coveralls -v; fi;'
 
