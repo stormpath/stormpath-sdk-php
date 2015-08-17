@@ -54,7 +54,7 @@ class ClientBuilder extends Magic
     private $cacheManager = NULL;
     private $cacheManagerOptions = array();
     private $baseURL;
-    private $authenticationScheme = Stormpath::AUTHENTICATION_SCHEME_SAUTHC1;
+    private $authenticationScheme = \Stormpath\Stormpath::AUTHENTICATION_SCHEME_SAUTHC1;
 
     /**
      * Sets the location of the 'ini' file to load containing the API Key (Id and secret) used by the
