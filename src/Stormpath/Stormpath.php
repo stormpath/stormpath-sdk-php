@@ -22,6 +22,7 @@ namespace Stormpath;
 use Stormpath\Client;
 
 function Stormpath_autoload($className) {
+    var_dump($className);
     if (substr($className, 0, 9) != 'Stormpath') {
         return false;
     }
@@ -30,7 +31,7 @@ function Stormpath_autoload($className) {
 }
 // @codeCoverageIgnoreEnd
 
-spl_autoload_register('Stormpath\Stormpath_autoload');
+//spl_autoload_register('Stormpath\Stormpath_autoload');
 
 class Stormpath
 {
