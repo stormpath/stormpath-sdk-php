@@ -18,6 +18,20 @@ namespace Stormpath;
  * limitations under the License.
  */
 
+// @codeCoverageIgnoreStart
+use Stormpath\Client;
+
+function Stormpath_autoload($className) {
+    if (substr($className, 0, 9) != 'Stormpath') {
+        return false;
+    }
+    $file = str_replace('\\', '/', $className);
+    return include dirname(__FILE__) . "$file";
+}
+// @codeCoverageIgnoreEnd
+
+spl_autoload_register('Stormpath\Stormpath_autoload');
+
 class Stormpath
 {
     const ACCOUNT                               = 'Account';
