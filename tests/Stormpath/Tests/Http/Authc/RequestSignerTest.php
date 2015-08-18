@@ -65,5 +65,4 @@ class RequestSignerTest extends BaseTest
         $directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time().microtime().uniqid()), 'description' => 'Main Directory description'));
         return self::createResource(\Stormpath\Resource\Directory::PATH, $directory);
     }
-
 }

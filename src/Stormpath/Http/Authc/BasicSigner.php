@@ -1,6 +1,7 @@
 <?php
 
 namespace Stormpath\Http\Authc;
+
 /*
  * Copyright 2013 Stormpath, Inc.
  *

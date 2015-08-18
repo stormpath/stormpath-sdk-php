@@ -1,6 +1,7 @@
 <?php
 
 namespace Stormpath\Http\Authc;
+
 /*
  * Copyright 2013 Stormpath, Inc.
  *
@@ -16,6 +17,7 @@ namespace Stormpath\Http\Authc;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 use Stormpath\ApiKey;
 use Stormpath\Http\Request;
 
@@ -23,3 +25,4 @@ interface RequestSigner
 {
     public function signRequest(Request $request, ApiKey $apiKey);
 }
+
