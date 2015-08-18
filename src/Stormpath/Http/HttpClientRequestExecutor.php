@@ -89,5 +89,10 @@ class HttpClientRequestExecutor implements RequestExecutor
         }
     }
 
+    public function getSigner()
+    {
+        return $this->signer;
+    }
+
 
 }
