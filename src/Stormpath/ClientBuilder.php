@@ -54,6 +54,7 @@ class ClientBuilder extends Magic
     private $cacheManager = NULL;
     private $cacheManagerOptions = array();
     private $baseURL;
+    private $authenticationScheme = Stormpath::AUTHENTICATION_SCHEME_SAUTHC1;
 
     /**
      * Sets the location of the 'ini' file to load containing the API Key (Id and secret) used by the
@@ -220,6 +221,12 @@ class ClientBuilder extends Magic
         if(!$this->cacheManager) {
             $this->cacheManager = $this->qualifyCacheManager($this->cacheManagerOptions['cachemanager']);
         }
+        return $this;
+    }
+
+    public function setAuthenticationScheme($authenticationScheme)
+    {
+        $this->authenticationScheme = $authenticationScheme;
         return $this;
     }
 
