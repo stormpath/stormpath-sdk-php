@@ -1,4 +1,5 @@
 <?php
+
 namespace Stormpath\Http\Authc;
 /*
  * Copyright 2013 Stormpath, Inc.
@@ -15,9 +16,11 @@ namespace Stormpath\Http\Authc;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 use Stormpath\ApiKey;
 use Stormpath\Http\Request;
 use Stormpath\Stormpath;
+
 class BasicSigner implements RequestSigner
 {
     const AUTHORIZATION_HEADER   = 'Authorization';
@@ -26,7 +29,7 @@ class BasicSigner implements RequestSigner
 
     const TIMESTAMP_FORMAT       = 'Ymd\THms\Z';
     const TIME_ZONE              = 'UTC';
-    
+
     const NL                     = "\n";
 
     public function signRequest(Request $request, ApiKey $apiKey)
@@ -34,12 +37,17 @@ class BasicSigner implements RequestSigner
         date_default_timezone_set(self::TIME_ZONE);
         $date = new \DateTime();
         $timeStamp = $date->format(self::TIMESTAMP_FORMAT);
+
         $requestHeaders = $request->getHeaders();
+
         unset($requestHeaders[self::STORMPATH_DATE_HEADER]);
         unset($requestHeaders[self::AUTHORIZATION_HEADER]);
-        $requestHeaders[self::STORMPATH_DATE_HEADER] = $timeStamp;
+
         $authorizationHeader = base64_encode($apiKey->getId() . ":" . $apiKey->getSecret());
+
+        $requestHeaders[self::STORMPATH_DATE_HEADER] = $timeStamp;
         $requestHeaders[self::AUTHORIZATION_HEADER] = self::AUTHENTICATION_SCHEME . " " . $authorizationHeader;
+
         $request->setHeaders($requestHeaders);
     }
 }

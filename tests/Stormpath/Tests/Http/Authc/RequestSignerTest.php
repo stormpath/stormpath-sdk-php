@@ -51,9 +51,19 @@ class RequestSignerTest extends BaseTest
         $client = \Stormpath\Client::getInstance();
         $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\SAuthc1Signer', $client->getDataStore()->getRequestExecutor()->getSigner());
     }
+
+    /**
+     * @test
+     */
+    public function it_correctly_signs_a_basic_request()
+    {
+
+    }
+
     private function createDirectory()
     {
         $directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time().microtime().uniqid()), 'description' => 'Main Directory description'));
         return self::createResource(\Stormpath\Resource\Directory::PATH, $directory);
     }
+
 }
