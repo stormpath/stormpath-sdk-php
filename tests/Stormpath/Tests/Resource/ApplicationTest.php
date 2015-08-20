@@ -154,7 +154,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
      * @test
      * @expectedException \Stormpath\Resource\ResourceError
      */
-    public function itDoesNotThrowIDSiteExceptionIfErrIsNull()
+    public function itDoesNotThrowIDSiteExceptionIfErrIsNotPresent()
     {
         $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
 
@@ -166,12 +166,11 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
                 'iss'=>'https://api.stormpath.com/v1/applications/someAppUidHere',
                 'exp'=>time()+3600,
                 'irt'=>'123123',
-                'sub'=>self::$account,
-                'err'=>NULL
+                'sub'=>self::$account
             ),
             $apiSecret
         );
-        
+
         // Handle ID Site Response
         // This will throw resource error but we are good if we get there because it got past err check
         self::$application->handleIdSiteCallback('http://example.com?jwtResponse='.$jwt);
