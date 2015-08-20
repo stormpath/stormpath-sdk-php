@@ -1,6 +1,10 @@
-<?php namespace Stormpath\Exceptions\IdSite;
+<?php
+
+namespace Stormpath\Exceptions\IdSite;
 
 
-class IDSiteException extends \Exception {
+class IDSiteException extends \Exception
+{
 
 }
+
