@@ -16,10 +16,10 @@ class RequestSignerTest extends BaseTest
      */
     public function it_can_sign_a_request_with_basic_authorization_header()
     {
-        \Stormpath\Client::$authenticationScheme = Stormpath::AUTHENTICATION_SCHEME_BASIC;
+        \Stormpath\Client::$authenticationScheme = Stormpath::BASIC_AUTHENTICATION_SCHEME;
         $client = \Stormpath\Client::getInstance();
 
-        $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\BasicSigner', $client->getDataStore()->getRequestExecutor()->getSigner());
+        $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\BasicRequestSigner', $client->getDataStore()->getRequestExecutor()->getSigner());
 
         $directory = $this->createDirectory();
 
@@ -32,10 +32,10 @@ class RequestSignerTest extends BaseTest
      */
     public function it_can_sign_a_request_with_sauthc1_authorization_header()
     {
-        \Stormpath\Client::$authenticationScheme = Stormpath::AUTHENTICATION_SCHEME_SAUTHC1;
+        \Stormpath\Client::$authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
         $client = \Stormpath\Client::getInstance();
 
-        $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\SAuthc1Signer', $client->getDataStore()->getRequestExecutor()->getSigner());
+        $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\SAuthc1RequestSigner', $client->getDataStore()->getRequestExecutor()->getSigner());
 
         $directory = $this->createDirectory();
 
@@ -49,15 +49,7 @@ class RequestSignerTest extends BaseTest
     public function it_defaults_to_sauthc1()
     {
         $client = \Stormpath\Client::getInstance();
-        $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\SAuthc1Signer', $client->getDataStore()->getRequestExecutor()->getSigner());
-    }
-
-    /**
-     * @test
-     */
-    public function it_correctly_signs_a_basic_request()
-    {
-
+        $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\SAuthc1RequestSigner', $client->getDataStore()->getRequestExecutor()->getSigner());
     }
 
     private function createDirectory()

@@ -401,16 +401,16 @@ You can choose one of two authentication schemes to authenticate with Stormpath:
 When no authentication scheme is explicitly configured, Sauthc1 is used by default.
  
 If you must change to basic authentication for these special environments, set the authenticationScheme 
-property using Stormpath::AUTHENTICATION_SCHEME_BASIC or Stormpath::AUTHENTICATION_SCHEME_SAUTHC1:
+property using Stormpath::BASIC_AUTHENTICATION_SCHEME or Stormpath::SAUTHC1_AUTHENTICATION_SCHEME:
 
 ```php
-     \Stormpath\Client::$authenticationScheme = 'Stormpath::AUTHENTICATION_SCHEME_BASIC';
+     \Stormpath\Client::$authenticationScheme = Stormpath::BASIC_AUTHENTICATION_SCHEME;
 ```
 OR
  
 ```php
       $builder = new \Stormpath\ClientBuilder();
-      $client = $builder->setAuthenticationScheme(Stormpath::AUTHENTICATION_SCHEME_BASIC)
+      $client = $builder->setAuthenticationScheme(Stormpath::BASIC_AUTHENTICATION_SCHEME)
                      ->build();
 ```
 

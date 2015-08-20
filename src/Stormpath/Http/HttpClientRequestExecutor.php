@@ -43,7 +43,7 @@ class HttpClientRequestExecutor implements RequestExecutor
 
         if ($apiKey)
         {
-            $this->signer->signRequest($request, $apiKey);
+            $this->signer->sign($request, $apiKey);
 
             $this->httpClient->setConfig(array(Client::REQUEST_OPTIONS => array(
                 'allow_redirects' => false,

@@ -54,7 +54,7 @@ class ClientBuilder extends Magic
     private $cacheManager = NULL;
     private $cacheManagerOptions = array();
     private $baseURL;
-    private $authenticationScheme = Stormpath::AUTHENTICATION_SCHEME_SAUTHC1;
+    private $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
 
     /**
      * Sets the location of the 'ini' file to load containing the API Key (Id and secret) used by the
@@ -224,6 +224,18 @@ class ClientBuilder extends Magic
         return $this;
     }
 
+    /**
+     * <p>
+     * Allows you to define which authentication scheme to use for the Client.  By default, the SAuthc1
+     * scheme will be used.  For environments that manipulate your applications request headers,
+     * you would want to change this to basic.  Otherwise, the default option will be fine.
+     * <p/>
+     *
+     * @param $authenticationScheme the authenticaiton scheme you would like to use.
+     *
+     * @return the ClientBuilder instance for method chaining.
+     *
+     */
     public function setAuthenticationScheme($authenticationScheme)
     {
         $this->authenticationScheme = $authenticationScheme;

@@ -22,18 +22,18 @@ use Stormpath\ApiKey;
 use Stormpath\Http\Request;
 use Stormpath\Stormpath;
 
-class BasicSigner implements RequestSigner
+class BasicRequestSigner implements RequestSigner
 {
     const AUTHORIZATION_HEADER   = 'Authorization';
     const STORMPATH_DATE_HEADER  = 'X-Stormpath-Date';
-    const AUTHENTICATION_SCHEME  = Stormpath::AUTHENTICATION_SCHEME_BASIC;
+    const AUTHENTICATION_SCHEME  = Stormpath::BASIC_AUTHENTICATION_SCHEME;
 
     const TIMESTAMP_FORMAT       = 'Ymd\THms\Z';
     const TIME_ZONE              = 'UTC';
 
     const NL                     = "\n";
 
-    public function signRequest(Request $request, ApiKey $apiKey)
+    public function sign(Request $request, ApiKey $apiKey)
     {
         date_default_timezone_set(self::TIME_ZONE);
         $date = new \DateTime();

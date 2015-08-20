@@ -84,7 +84,7 @@ class Client extends Magic
 
     public static $cacheManagerOptions = array();
 
-    public static $authenticationScheme = Stormpath::AUTHENTICATION_SCHEME_SAUTHC1;
+    public static $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
 
     private static $instance;
 
@@ -199,9 +199,11 @@ class Client extends Magic
 
     private function resolveSigner()
     {
-        $signer = "\\Stormpath\\Http\\Authc\\" . self::$authenticationScheme . "Signer";
+        $signer = "\\Stormpath\\Http\\Authc\\" . self::$authenticationScheme . "RequestSigner";
+
         if(!class_exists($signer))
-            $signer = "\\Stormpath\\Http\\Authc\\" . Stormpath::AUTHENTICATION_SCHEME_SAUTHC1 . "Signer";
+            throw new \InvalidArgumentException('Authentication Scheme is not supported.');
+
         return $signer;
     }
 

@@ -23,6 +23,6 @@ use Stormpath\Http\Request;
 
 interface RequestSigner
 {
-    public function signRequest(Request $request, ApiKey $apiKey);
+    public function sign(Request $request, ApiKey $apiKey);
 }
 
