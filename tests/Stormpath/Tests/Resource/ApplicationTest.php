@@ -124,7 +124,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
      * @test
      * @expectedException \Stormpath\Exceptions\IdSite\IDSiteException
      */
-    public function it_throws_exception_if_error_is_provided_in_handle_url()
+    public function itThrowsExceptionIfErrorIsProvidedInHandleUrl()
     {
         $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
 
@@ -147,6 +147,33 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
             $apiSecret
         );
         // Handle ID Site Response
+        self::$application->handleIdSiteCallback('http://example.com?jwtResponse='.$jwt);
+    }
+
+    /**
+     * @test
+     * @expectedException \Stormpath\Resource\ResourceError
+     */
+    public function itDoesNotThrowIDSiteExceptionIfErrIsNull()
+    {
+        $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+
+        // Create JWT Response with error
+        $jwt = JWT::encode(
+            array(
+                'jti'=>'123123123',
+                'iat'=>time(),
+                'iss'=>'https://api.stormpath.com/v1/applications/someAppUidHere',
+                'exp'=>time()+3600,
+                'irt'=>'123123',
+                'sub'=>self::$account,
+                'err'=>NULL
+            ),
+            $apiSecret
+        );
+        
+        // Handle ID Site Response
+        // This will throw resource error but we are good if we get there because it got past err check
         self::$application->handleIdSiteCallback('http://example.com?jwtResponse='.$jwt);
     }
 
