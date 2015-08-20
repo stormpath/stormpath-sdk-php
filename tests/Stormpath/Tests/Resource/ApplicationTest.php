@@ -120,6 +120,36 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         ));
     }
 
+    /**
+     * @test
+     * @expectedException \Stormpath\Exceptions\IdSite\IDSiteException
+     */
+    public function it_throws_exception_if_error_is_provided_in_handle_url()
+    {
+        $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+
+        // Create JWT Response with error
+        $jwt = JWT::encode(
+            array(
+                'jti'=>'123123123',
+                'iat'=>time(),
+                'iss'=>'https://api.stormpath.com/v1/applications/someAppUidHere',
+                'exp'=>time()+3600,
+                'err'=>json_encode(
+                    array(
+                        'code'=>'11001',
+                        'developerMessage'=>'testing',
+                        'message'=>'testing message',
+                        'moreInfo'=>'mailto:support@stormpath.com',
+                        'status'=>401)
+                )
+            ),
+            $apiSecret
+        );
+        // Handle ID Site Response
+        self::$application->handleIdSiteCallback('http://example.com?jwtResponse='.$jwt);
+    }
+
     protected function createAccount()
     {
         self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time().microtime().uniqid())));

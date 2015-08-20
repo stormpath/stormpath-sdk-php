@@ -24,6 +24,7 @@ use Stormpath\Authc\AuthenticationRequest;
 use Stormpath\Authc\BasicAuthenticator;
 use Stormpath\Authc\UsernamePasswordRequest;
 use Stormpath\Client;
+use Stormpath\Exceptions\IdSite\IDSiteException;
 use Stormpath\Provider\ProviderAccountRequest;
 use Stormpath\Exceptions\IdSite\InvalidCallbackUriException;
 use Stormpath\Exceptions\IdSite\JWTUsedAlreadyException;
@@ -354,6 +355,11 @@ class Application extends InstanceResource implements Deletable
         $apiSecret = $this->getDataStore()->getApiKey()->getSecret();
 
         $jwt = JWT::decode($token, $apiSecret, array('HS256'));
+
+        if(isset($jwt->err)) {
+            $error = json_decode($jwt->err);
+            throw new IDSiteException($error->developerMessage, $error->code);
+        }
 
         // Check to see if Nonce is already used
         $nonceStore = new NonceStore($this->getDataStore());
