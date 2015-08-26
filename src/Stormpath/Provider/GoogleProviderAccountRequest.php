@@ -18,10 +18,8 @@ namespace Stormpath\Provider;
  * limitations under the License.
  */
 
-use Stormpath\DataStore\DataStore;
 use Stormpath\Resource\GoogleProviderData;
 use Stormpath\Resource\ProviderData;
-use Stormpath\Stormpath;
 
 class GoogleProviderAccountRequest implements ProviderAccountRequest
 {

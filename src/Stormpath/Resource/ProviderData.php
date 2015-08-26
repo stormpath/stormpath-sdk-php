@@ -2,7 +2,6 @@
 
 namespace Stormpath\Resource;
 
-use Stormpath\Stormpath;
 /*
  * Copyright 2013 Stormpath, Inc.
  *
