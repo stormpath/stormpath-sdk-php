@@ -2,8 +2,6 @@
 
 namespace Stormpath\Authc\Api;
 
-use Stormpath\Exceptions\RequestAuthenticatorException;
-
 class BasicRequestAuthenticator extends InternalRequestAuthenticator implements RequestAuthenticator
 {
 

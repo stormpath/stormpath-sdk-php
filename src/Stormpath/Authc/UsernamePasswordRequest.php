@@ -17,7 +17,6 @@ namespace Stormpath\Authc;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use Stormpath\Resource\Account;
 use Stormpath\Resource\AccountStore;
 
 class UsernamePasswordRequest implements AuthenticationRequest

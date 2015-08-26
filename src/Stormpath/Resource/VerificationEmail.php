@@ -18,7 +18,6 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
-use Stormpath\Client;
 use Stormpath\Stormpath;
 
 class VerificationEmail extends Resource

@@ -21,7 +21,6 @@ namespace Stormpath;
 use Stormpath\DataStore\DefaultDataStore;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Resource\Resource;
-use Stormpath\Stormpath;
 use Stormpath\Util\Magic;
 
 function toObject($properties)

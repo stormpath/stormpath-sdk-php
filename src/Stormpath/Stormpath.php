@@ -19,8 +19,6 @@ namespace Stormpath;
  */
 
 // @codeCoverageIgnoreStart
-use Stormpath\Client;
-
 function Stormpath_autoload($className) {
     if (substr($className, 0, 9) != 'Stormpath') {
         return false;
