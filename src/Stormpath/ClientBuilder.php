@@ -18,6 +18,7 @@ namespace Stormpath;
  * limitations under the License.
  */
 use Stormpath\Cache\Exceptions\InvalidCacheManagerException;
+use Stormpath\Http\Authc\SAuthc1RequestSigner;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Http\Request;
@@ -231,7 +232,7 @@ class ClientBuilder extends Magic
      * you would want to change this to basic.  Otherwise, the default option will be fine.
      * <p/>
      *
-     * @param $authenticationScheme the authenticaiton scheme you would like to use.
+     * @param $authenticationScheme set the scheme you want to use for signing your request.
      *
      * @return the ClientBuilder instance for method chaining.
      *
@@ -284,7 +285,14 @@ class ClientBuilder extends Magic
 
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
 
-        return new Client($apiKey, $this->cacheManager, $this->cacheManagerOptions, $this->baseURL);
+        return new Client(
+            $apiKey,
+            $this->cacheManager,
+            $this->cacheManagerOptions,
+            $this->baseURL,
+            $this->authenticationScheme
+        );
+
     }
 
     public function setBaseURL($baseURL)

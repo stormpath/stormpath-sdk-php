@@ -11,6 +11,12 @@ class RequestSignerTest extends BaseTest
         parent::setUp();
         \Stormpath\Client::tearDown();
     }
+
+    public function tearDown()
+    {
+        \Stormpath\Client::tearDown();
+        parent::tearDown();
+    }
     /**
      * @test
      */
@@ -50,6 +56,34 @@ class RequestSignerTest extends BaseTest
     {
         $client = \Stormpath\Client::getInstance();
         $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\SAuthc1RequestSigner', $client->getDataStore()->getRequestExecutor()->getSigner());
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_set_the_authentication_scheme_from_client_builder()
+    {
+        $builder = new \Stormpath\ClientBuilder();
+
+        $newClient = $builder->setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
+            setAuthenticationScheme(Stormpath::BASIC_AUTHENTICATION_SCHEME)->
+            build();
+
+
+        $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\BasicRequestSigner', $newClient->getDataStore()->getRequestExecutor()->getSigner());
+
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_set_authentication_scheme_if_client_called_directly()
+    {
+        $apiKey = new \Stormpath\ApiKey('id','secret');
+        $cacheManager = '\\Stormpath\\Cache\\NullCacheManager';
+        $client = new \Stormpath\Client($apiKey, $cacheManager, array(), null, Stormpath::BASIC_AUTHENTICATION_SCHEME);
+        $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\BasicRequestSigner', $client->getDataStore()->getRequestExecutor()->getSigner());
+        $client->tearDown();
     }
 
     private function createDirectory()

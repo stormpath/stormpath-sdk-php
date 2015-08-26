@@ -19,6 +19,7 @@ namespace Stormpath;
  */
 
 use Stormpath\DataStore\DefaultDataStore;
+use Stormpath\Http\Authc\RequestSigner;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Resource\Resource;
 use Stormpath\Stormpath;
@@ -90,6 +91,8 @@ class Client extends Magic
 
     private $cacheManagerInstance;
 
+    private $requestExecutor;
+
     private $dataStore;
 
     /**
@@ -102,17 +105,21 @@ class Client extends Magic
      * @param $baseUrl optional parameter for specifying the base URL when not using the default one
      *         (https://api.stormpath.com/v1).
      */
-    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null)
+    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, $authenticationScheme = null)
     {
         parent::__construct();
         self::$cacheManager = $cacheManager;
         self::$cacheManagerOptions = $cacheManagerOptions;
 
+        if ($authenticationScheme)
+            self::$authenticationScheme = $authenticationScheme;
+
         $signer = $this->resolveSigner();
-        $requestExecutor = new HttpClientRequestExecutor(new $signer);
+
+        $this->requestExecutor = new HttpClientRequestExecutor($signer);
 
         $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
-        $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
+        $this->dataStore = new DefaultDataStore($this->requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
     }
 
     public static function get($href, $className, $path = null, array $options = array())
@@ -204,7 +211,8 @@ class Client extends Magic
         if(!class_exists($signer))
             throw new \InvalidArgumentException('Authentication Scheme is not supported.');
 
-        return $signer;
+        return new $signer;
+
     }
 
 
