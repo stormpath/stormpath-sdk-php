@@ -66,6 +66,7 @@ class RequestSignerTest extends BaseTest
         $builder = new \Stormpath\ClientBuilder();
 
         $newClient = $builder->setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
+            setApiKeyProperties(\Stormpath\Client::$apiKeyProperties)->
             setAuthenticationScheme(Stormpath::BASIC_AUTHENTICATION_SCHEME)->
             build();
 
