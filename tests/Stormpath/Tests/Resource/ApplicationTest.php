@@ -122,7 +122,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
     /**
      * @test
-     * @expectedException \Stormpath\Exceptions\IdSite\IDSiteException
+     * @expectedException \Stormpath\Resource\ResourceError
      */
     public function itThrowsExceptionIfErrorIsProvidedInHandleUrl()
     {
