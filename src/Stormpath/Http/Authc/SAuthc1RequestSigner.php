@@ -20,10 +20,11 @@ namespace Stormpath\Http\Authc;
 
 use Stormpath\ApiKey;
 use Stormpath\Http\Request;
+use Stormpath\Stormpath;
 use Stormpath\Util\RequestUtils;
 use Stormpath\Util\UUID;
 
-class Sauthc1Signer
+class SAuthc1RequestSigner implements RequestSigner
 {
     const DEFAULT_ENCODING       = 'UTF-8';
     const DEFAULT_ALGORITHM      = 'SHA256';
@@ -32,7 +33,7 @@ class Sauthc1Signer
     const STORMPATH_DATE_HEADER  = 'X-Stormpath-Date';
     const ID_TERMINATOR          = 'sauthc1_request';
     const ALGORITHM              = 'HMAC-SHA-256';
-    const AUTHENTICATION_SCHEME  = 'SAuthc1';
+    const AUTHENTICATION_SCHEME  = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
     const SAUTHC1_ID             = 'sauthc1Id';
     const SAUTHC1_SIGNED_HEADERS = 'sauthc1SignedHeaders';
     const SAUTHC1_SIGNATURE      = 'sauthc1Signature';
@@ -41,7 +42,7 @@ class Sauthc1Signer
     const TIME_ZONE              = 'UTC';
     const NL                     = "\n";
 
-    public function signRequest(Request $request, ApiKey $apiKey)
+    public function sign(Request $request, ApiKey $apiKey)
     {
 
         date_default_timezone_set(self::TIME_ZONE);
@@ -97,11 +98,11 @@ class Sauthc1Signer
 
         // SAuthc1 uses a series of derived keys, formed by hashing different pieces of data
         $kSecret = $this->toUTF8(self::AUTHENTICATION_SCHEME . $apiKey->getSecret());
-        $kDate = $this->sign($dateStamp, $kSecret, self::DEFAULT_ALGORITHM);
-        $kNonce = $this->sign($nonce, $kDate, self::DEFAULT_ALGORITHM);
-        $kSigning = $this->sign(self::ID_TERMINATOR, $kNonce, self::DEFAULT_ALGORITHM);
+        $kDate = $this->internalSign($dateStamp, $kSecret, self::DEFAULT_ALGORITHM);
+        $kNonce = $this->internalSign($nonce, $kDate, self::DEFAULT_ALGORITHM);
+        $kSigning = $this->internalSign(self::ID_TERMINATOR, $kNonce, self::DEFAULT_ALGORITHM);
 
-        $signature = $this->sign($this->toUTF8($stringToSign), $kSigning, self::DEFAULT_ALGORITHM);
+        $signature = $this->internalSign($this->toUTF8($stringToSign), $kSigning, self::DEFAULT_ALGORITHM);
         $signatureHex = $this->toHex($signature);
 
         $authorizationHeader = self::AUTHENTICATION_SCHEME . ' ' .
@@ -131,7 +132,7 @@ class Sauthc1Signer
         return hash(self::DEFAULT_ALGORITHM, $this->toUTF8($text), true);
     }
 
-    protected function sign($data, $key, $algorithm)
+    protected function internalSign($data, $key, $algorithm)
     {
         $utf8Data = $this->toUTF8($data);
 

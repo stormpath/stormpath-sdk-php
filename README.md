@@ -382,6 +382,39 @@ Array caching system.
     
 Then you would call it the same way you do for a cache manager normally.  
 
+### Authentication Scheme Configuration
+ 
+You can choose one of two authentication schemes to authenticate with Stormpath:
+ 
+ - Stormpath SAuthc1 Authentication: This is the recommended approach, and the default setting. This 
+ approach computes a cryptographic digest of the request and sends the digest value along with the 
+ request. If the transmitted digest matches what the Stormpath API server computes for the same 
+ request, the request is authenticated. The Stormpath SAuthc1 digest-based authentication 
+ scheme is more secure than standard HTTP digest authentication.
+ 
+ - Basic Authentication: This is only recommended when your application runs in an environment outside 
+ of your control, and that environment manipulates your application’s request headers when requests 
+ are made. Google App Engine is one known such environment. However, Basic Authentication is not 
+ as secure as Stormpath’s SAuthc algorithm, so only use this if you are forced to do so by your 
+ application runtime environement.
+ 
+When no authentication scheme is explicitly configured, Sauthc1 is used by default.
+ 
+If you must change to basic authentication for these special environments, set the authenticationScheme 
+property using Stormpath::BASIC_AUTHENTICATION_SCHEME or Stormpath::SAUTHC1_AUTHENTICATION_SCHEME:
+
+```php
+     \Stormpath\Client::$authenticationScheme = Stormpath::BASIC_AUTHENTICATION_SCHEME;
+```
+OR
+ 
+```php
+      $builder = new \Stormpath\ClientBuilder();
+      $client = $builder->setAuthenticationScheme(Stormpath::BASIC_AUTHENTICATION_SCHEME)
+                     ->build();
+```
+
+
 ### Accessing Resources
 
 Most of the work you do with Stormpath is done through the applications
