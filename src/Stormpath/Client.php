@@ -105,21 +105,22 @@ class Client extends Magic
      * @param $baseUrl optional parameter for specifying the base URL when not using the default one
      *         (https://api.stormpath.com/v1).
      */
-    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, $authenticationScheme = null)
+    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, RequestSigner $requestSigner = null)
     {
         parent::__construct();
         self::$cacheManager = $cacheManager;
         self::$cacheManagerOptions = $cacheManagerOptions;
 
-        if ($authenticationScheme)
-            self::$authenticationScheme = $authenticationScheme;
+        if (!$requestSigner) {
+            $signer = "\\Stormpath\\Http\\Authc\\" . self::$authenticationScheme . "RequestSigner";
+            $requestSigner = new $signer;
+        }
 
-        $signer = $this->resolveSigner();
 
-        $this->requestExecutor = new HttpClientRequestExecutor($signer);
+        $requestExecutor = new HttpClientRequestExecutor($requestSigner);
 
         $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
-        $this->dataStore = new DefaultDataStore($this->requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
+        $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
     }
 
     public static function get($href, $className, $path = null, array $options = array())
@@ -204,16 +205,7 @@ class Client extends Magic
         static::$instance = NULL;
     }
 
-    private function resolveSigner()
-    {
-        $signer = "\\Stormpath\\Http\\Authc\\" . self::$authenticationScheme . "RequestSigner";
 
-        if(!class_exists($signer))
-            throw new \InvalidArgumentException('Authentication Scheme is not supported.');
-
-        return new $signer;
-
-    }
 
 
 }

@@ -285,12 +285,15 @@ class ClientBuilder extends Magic
 
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
 
+        $signer = $this->resolveSigner();
+        $requestSigner = new $signer;
+
         return new Client(
             $apiKey,
             $this->cacheManager,
             $this->cacheManagerOptions,
             $this->baseURL,
-            $this->authenticationScheme
+            $requestSigner
         );
 
     }
@@ -397,6 +400,17 @@ class ClientBuilder extends Magic
 
 
         if(class_exists($cacheManagerPath)) return $cacheManagerPath;
+
+    }
+
+    private function resolveSigner()
+    {
+        $signer = "\\Stormpath\\Http\\Authc\\" . $this->authenticationScheme . "RequestSigner";
+
+        if(!class_exists($signer))
+            throw new \InvalidArgumentException('Authentication Scheme is not supported.');
+
+        return new $signer;
 
     }
 }

@@ -82,8 +82,24 @@ class RequestSignerTest extends BaseTest
     {
         $apiKey = new \Stormpath\ApiKey('id','secret');
         $cacheManager = '\\Stormpath\\Cache\\NullCacheManager';
-        $client = new \Stormpath\Client($apiKey, $cacheManager, array(), null, Stormpath::BASIC_AUTHENTICATION_SCHEME);
+        $signer = '\\Stormpath\\Http\\Authc\\'.Stormpath::BASIC_AUTHENTICATION_SCHEME.'RequestSigner';
+        $client = new \Stormpath\Client($apiKey, $cacheManager, array(), null, new $signer);
+
         $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\BasicRequestSigner', $client->getDataStore()->getRequestExecutor()->getSigner());
+        $client->tearDown();
+    }
+
+    /**
+     * @test
+     */
+    public function it_will_default_to_suthc1_if_client_called_directly()
+    {
+        $apiKey = new \Stormpath\ApiKey('id','secret');
+        $cacheManager = '\\Stormpath\\Cache\\NullCacheManager';
+
+        $client = new \Stormpath\Client($apiKey, $cacheManager, array());
+
+        $this->assertInstanceOf('\\Stormpath\\Http\\Authc\\SAuthc1RequestSigner', $client->getDataStore()->getRequestExecutor()->getSigner());
         $client->tearDown();
     }
 
