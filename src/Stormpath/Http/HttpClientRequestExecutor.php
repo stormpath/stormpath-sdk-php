@@ -24,15 +24,23 @@ use Guzzle\Http\Message\RequestInterface;
 use Stormpath\ApiKey;
 use Stormpath\Http\Authc\RequestSigner;
 use Stormpath\Http\Authc\Sauthc1Signer;
+use Stormpath\Stormpath;
 
 class HttpClientRequestExecutor implements RequestExecutor
 {
+    private $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
     private $httpClient;
     private $signer;
 
-    public function __construct(RequestSigner $signer)
+    public function __construct(RequestSigner $signer = null)
     {
         $this->httpClient = new Client();
+
+        if (!$signer) {
+            $signer = "\\Stormpath\\Http\\Authc\\" . $this->authenticationScheme . "RequestSigner";
+            $signer = new $signer;
+        }
+
         $this->signer = $signer;
     }
 
