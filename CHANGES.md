@@ -2,6 +2,15 @@ stormpath-sdk-php Changelog
 ===========================
 
 
+Version 1.10.0.beta
+------------------
+
+Released on September 1, 2015
+
+- Ability to change Authentication Scheme.  Fixes Issue #12
+- Better error handling in ID Site callback.  Handles Issue #82
+
+
 Version 1.9.0.beta
 ------------------
 
