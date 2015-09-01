@@ -91,8 +91,6 @@ class Client extends Magic
 
     private $cacheManagerInstance;
 
-    private $requestExecutor;
-
     private $dataStore;
 
     /**
