@@ -20,10 +20,9 @@ namespace Stormpath\Http;
  */
 
 use Guzzle\Http\Client;
-use Guzzle\Http\Message\RequestInterface;
-use Stormpath\ApiKey;
 use Stormpath\Http\Authc\RequestSigner;
-use Stormpath\Stormpath;
+use Guzzle\Http\Message\RequestInterface;
+use Stormpath\Http\Authc\SAuthc1RequestSigner;
 
 class HttpClientRequestExecutor implements RequestExecutor
 {
@@ -34,10 +33,8 @@ class HttpClientRequestExecutor implements RequestExecutor
     {
         $this->httpClient = new Client();
 
-        if (!$signer) {
-            $signer = "\\Stormpath\\Http\\Authc\\" . Stormpath::SAUTHC1_AUTHENTICATION_SCHEME . "RequestSigner";
-            $signer = new $signer;
-        }
+        if (!$signer)
+            $signer = new SAuthc1RequestSigner;
 
         $this->signer = $signer;
     }
