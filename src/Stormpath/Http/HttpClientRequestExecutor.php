@@ -23,7 +23,6 @@ use Guzzle\Http\Client;
 use Guzzle\Http\Message\RequestInterface;
 use Stormpath\ApiKey;
 use Stormpath\Http\Authc\RequestSigner;
-use Stormpath\Http\Authc\Sauthc1Signer;
 use Stormpath\Stormpath;
 
 class HttpClientRequestExecutor implements RequestExecutor
