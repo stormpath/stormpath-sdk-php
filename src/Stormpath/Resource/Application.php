@@ -355,7 +355,7 @@ class Application extends InstanceResource implements Deletable
 
         $jwt = JWT::decode($token, $apiSecret, array('HS256'));
 
-        if(isset($jwt->err)) {
+        if (isset($jwt->err)) {
             $error = new Error(json_decode($jwt->err));
             throw new ResourceError($error);
         }
