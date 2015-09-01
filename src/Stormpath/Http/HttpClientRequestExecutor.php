@@ -28,7 +28,6 @@ use Stormpath\Stormpath;
 
 class HttpClientRequestExecutor implements RequestExecutor
 {
-    private $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
     private $httpClient;
     private $signer;
 
@@ -37,7 +36,7 @@ class HttpClientRequestExecutor implements RequestExecutor
         $this->httpClient = new Client();
 
         if (!$signer) {
-            $signer = "\\Stormpath\\Http\\Authc\\" . $this->authenticationScheme . "RequestSigner";
+            $signer = "\\Stormpath\\Http\\Authc\\" . Stormpath::SAUTHC1_AUTHENTICATION_SCHEME . "RequestSigner";
             $signer = new $signer;
         }
 
