@@ -19,6 +19,7 @@ namespace Stormpath;
  */
 
 use Stormpath\DataStore\DefaultDataStore;
+use Stormpath\Http\Authc\RequestSigner;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Resource\Resource;
 use Stormpath\Stormpath;
@@ -84,6 +85,8 @@ class Client extends Magic
 
     public static $cacheManagerOptions = array();
 
+    public static $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
+
     private static $instance;
 
     private $cacheManagerInstance;
@@ -100,13 +103,14 @@ class Client extends Magic
      * @param $baseUrl optional parameter for specifying the base URL when not using the default one
      *         (https://api.stormpath.com/v1).
      */
-    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null)
+    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, RequestSigner $requestSigner = null)
     {
         parent::__construct();
         self::$cacheManager = $cacheManager;
         self::$cacheManagerOptions = $cacheManagerOptions;
 
-        $requestExecutor = new HttpClientRequestExecutor();
+        $requestExecutor = new HttpClientRequestExecutor($requestSigner);
+
         $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
         $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
     }
@@ -161,6 +165,7 @@ class Client extends Magic
                               setCacheManager(self::$cacheManager)->
                               setCacheManagerOptions(self::$cacheManagerOptions)->
                               setBaseURL(self::$baseUrl)->
+                              setAuthenticationScheme(self::$authenticationScheme)->
                               build();
         }
 
@@ -191,6 +196,8 @@ class Client extends Magic
     {
         static::$instance = NULL;
     }
+
+
 
 
 }

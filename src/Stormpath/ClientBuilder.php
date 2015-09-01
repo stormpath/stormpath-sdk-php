@@ -18,6 +18,7 @@ namespace Stormpath;
  * limitations under the License.
  */
 use Stormpath\Cache\Exceptions\InvalidCacheManagerException;
+use Stormpath\Http\Authc\SAuthc1RequestSigner;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Http\Request;
@@ -54,6 +55,7 @@ class ClientBuilder extends Magic
     private $cacheManager = NULL;
     private $cacheManagerOptions = array();
     private $baseURL;
+    private $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
 
     /**
      * Sets the location of the 'ini' file to load containing the API Key (Id and secret) used by the
@@ -224,6 +226,24 @@ class ClientBuilder extends Magic
     }
 
     /**
+     * <p>
+     * Allows you to define which authentication scheme to use for the Client.  By default, the SAuthc1
+     * scheme will be used.  For environments that manipulate your applications request headers,
+     * you would want to change this to basic.  Otherwise, the default option will be fine.
+     * <p/>
+     *
+     * @param $authenticationScheme set the scheme you want to use for signing your request.
+     *
+     * @return the ClientBuilder instance for method chaining.
+     *
+     */
+    public function setAuthenticationScheme($authenticationScheme)
+    {
+        $this->authenticationScheme = $authenticationScheme;
+        return $this;
+    }
+
+    /**
      * Constructs a new {@link Stormpath\Client\Client} instance based on the ClientBuilder's
      * current configuration state.
      *
@@ -265,7 +285,17 @@ class ClientBuilder extends Magic
 
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
 
-        return new Client($apiKey, $this->cacheManager, $this->cacheManagerOptions, $this->baseURL);
+        $signer = $this->resolveSigner();
+        $requestSigner = new $signer;
+
+        return new Client(
+            $apiKey,
+            $this->cacheManager,
+            $this->cacheManagerOptions,
+            $this->baseURL,
+            $requestSigner
+        );
+
     }
 
     public function setBaseURL($baseURL)
@@ -370,6 +400,17 @@ class ClientBuilder extends Magic
 
 
         if(class_exists($cacheManagerPath)) return $cacheManagerPath;
+
+    }
+
+    private function resolveSigner()
+    {
+        $signer = "\\Stormpath\\Http\\Authc\\" . $this->authenticationScheme . "RequestSigner";
+
+        if(!class_exists($signer))
+            throw new \InvalidArgumentException('Authentication Scheme is not supported.');
+
+        return new $signer;
 
     }
 }

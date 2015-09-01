@@ -120,6 +120,62 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         ));
     }
 
+    /**
+     * @test
+     * @expectedException \Stormpath\Resource\ResourceError
+     */
+    public function itThrowsExceptionIfErrorIsProvidedInHandleUrl()
+    {
+        $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+
+        // Create JWT Response with error
+        $jwt = JWT::encode(
+            array(
+                'jti'=>'123123123',
+                'iat'=>time(),
+                'iss'=>'https://api.stormpath.com/v1/applications/someAppUidHere',
+                'exp'=>time()+3600,
+                'err'=>json_encode(
+                    array(
+                        'code'=>'11001',
+                        'developerMessage'=>'testing',
+                        'message'=>'testing message',
+                        'moreInfo'=>'mailto:support@stormpath.com',
+                        'status'=>401)
+                )
+            ),
+            $apiSecret
+        );
+        // Handle ID Site Response
+        self::$application->handleIdSiteCallback('http://example.com?jwtResponse='.$jwt);
+    }
+
+    /**
+     * @test
+     * @expectedException \Stormpath\Resource\ResourceError
+     */
+    public function itDoesNotThrowIDSiteExceptionIfErrIsNotPresent()
+    {
+        $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+
+        // Create JWT Response with error
+        $jwt = JWT::encode(
+            array(
+                'jti'=>'123123123',
+                'iat'=>time(),
+                'iss'=>'https://api.stormpath.com/v1/applications/someAppUidHere',
+                'exp'=>time()+3600,
+                'irt'=>'123123',
+                'sub'=>self::$account
+            ),
+            $apiSecret
+        );
+
+        // Handle ID Site Response
+        // This will throw resource error but we are good if we get there because it got past err check
+        self::$application->handleIdSiteCallback('http://example.com?jwtResponse='.$jwt);
+    }
+
     protected function createAccount()
     {
         self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time().microtime().uniqid())));

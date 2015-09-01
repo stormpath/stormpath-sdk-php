@@ -1,6 +1,6 @@
 <?php
 
-namespace Stormpath\Util;
+namespace Stormpath\Http\Authc;
 
 /*
  * Copyright 2013 Stormpath, Inc.
@@ -18,8 +18,11 @@ namespace Stormpath\Util;
  * limitations under the License.
  */
 
-class Version
-{
-    const SDK_VERSION = '1.10.0.beta';
+use Stormpath\ApiKey;
+use Stormpath\Http\Request;
 
+interface RequestSigner
+{
+    public function sign(Request $request, ApiKey $apiKey);
 }
+

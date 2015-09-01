@@ -238,8 +238,8 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $this->assertNotEmpty($apiKey->id);
         $this->assertNotEmpty($apiKey->secret);
         $this->assertNotEmpty($apiKey->status);
-
-        $this->assertEquals($account, $apiKey->account);
+        
+        $this->assertEquals($account->href, $apiKey->account->href);
     }
 
     public function testGroupsOptions()

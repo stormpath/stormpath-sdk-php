@@ -20,19 +20,23 @@ namespace Stormpath\Http;
  */
 
 use Guzzle\Http\Client;
+use Stormpath\Http\Authc\RequestSigner;
 use Guzzle\Http\Message\RequestInterface;
-use Stormpath\ApiKey;
-use Stormpath\Http\Authc\Sauthc1Signer;
+use Stormpath\Http\Authc\SAuthc1RequestSigner;
 
 class HttpClientRequestExecutor implements RequestExecutor
 {
     private $httpClient;
     private $signer;
 
-    public function __construct()
+    public function __construct(RequestSigner $signer = null)
     {
         $this->httpClient = new Client();
-        $this->signer = new Sauthc1Signer;
+
+        if (!$signer)
+            $signer = new SAuthc1RequestSigner;
+
+        $this->signer = $signer;
     }
 
     public function executeRequest(Request $request, $redirectsLimit = 10)
@@ -42,7 +46,7 @@ class HttpClientRequestExecutor implements RequestExecutor
 
         if ($apiKey)
         {
-            $this->signer->signRequest($request, $apiKey);
+            $this->signer->sign($request, $apiKey);
 
             $this->httpClient->setConfig(array(Client::REQUEST_OPTIONS => array(
                 'allow_redirects' => false,
@@ -86,6 +90,11 @@ class HttpClientRequestExecutor implements RequestExecutor
         {
             $request->getQuery()->set($key, $value);
         }
+    }
+
+    public function getSigner()
+    {
+        return $this->signer;
     }
 
 
