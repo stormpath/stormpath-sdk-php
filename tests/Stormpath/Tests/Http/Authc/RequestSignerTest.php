@@ -105,7 +105,7 @@ class RequestSignerTest extends BaseTest
 
     private function createDirectory()
     {
-        $directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time().microtime().uniqid()), 'description' => 'Main Directory description'));
+        $directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('Directory For Request Signer Test'), 'description' => 'Main Directory description'));
         return self::createResource(\Stormpath\Resource\Directory::PATH, $directory);
     }
 }

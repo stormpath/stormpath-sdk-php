@@ -32,15 +32,15 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
 
     protected static function init() {
 
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time().microtime().uniqid())));
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('AccountTest Directory')));
 
         self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
 
         self::$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                         'middleName' => 'Middle Name',
                                                                         'surname' => 'Surname',
-                                                                        'username' => md5(time().microtime().uniqid()) . 'username',
-                                                                        'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                                                                        'username' => makeUniqueName('AccountTest') . 'username',
+                                                                        'email' => makeUniqueName('AccountTest') .'@unknown123.kot',
                                                                         'password' => 'superP4ss'));
 
         self::$directory->createAccount(self::$account);
@@ -50,7 +50,7 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $groupsCount = 0;
         while($groupsCount < self::GROUPS_COUNT)
         {
-            $group = \Stormpath\Resource\Group::instantiate(array('name' => "$groupsCount Group Name", 'description' => "The Group Description $groupsCount"));
+            $group = \Stormpath\Resource\Group::instantiate(array('name' => " $groupsCount Group Name " . phpversion(), 'description' => "The Group Description $groupsCount"));
             self::$directory->createGroup($group);
             self::$account->addGroup($group);
             $groups[$groupsCount] = $group;
@@ -311,17 +311,17 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
             // testing the order (desc) and pagination of the collection
             if ($groupsCount == 1)
             {
-                $this->assertEquals('39 Group Name', $group->name);
+                $this->assertContains('39 Group Name', $group->name);
             }
 
             if ($groupsCount == 2)
             {
-                $this->assertEquals('29 Group Name', $group->name);
+                $this->assertContains('29 Group Name', $group->name);
             }
 
             if ($groupsCount == 3)
             {
-                $this->assertEquals('19 Group Name', $group->name);
+                $this->assertContains('19 Group Name', $group->name);
             }
 
             // we should receive 4 groups that match the filter q=9,
@@ -336,13 +336,13 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'middleName' => 'Middle Name',
                                                                   'surname' => 'Surname',
-                                                                  'username' => md5(time().microtime().uniqid()) . 'username',
-                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                                                                  'username' => makeUniqueName('AccountTest testAddGroup') . 'username',
+                                                                  'email' => makeUniqueName('AccountTest testAddGroup') .'@unknown123.kot',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
 
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => md5(time().microtime().uniqid()) . "Group Name"));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => makeUniqueName('AccountTest testAddGroup') . "Group Name"));
         self::$directory->createGroup($group);
 
         $account->addGroup($group);
@@ -405,8 +405,8 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
             'givenName' => 'Account Name',
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
-            'username' => md5(time().microtime().uniqid()).'username',
-            'email' => md5(time().microtime().uniqid()).'@unknown123.kot',
+            'username' => makeUniqueName('AccountTest testUpdatingCustomData').'username',
+            'email' => makeUniqueName('AccountTest testUpdatingCustomData').'@unknown123.kot',
             'password' => '123quEso'));
         self::$directory->createAccount($account);
 
@@ -475,8 +475,8 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'middleName' => 'Middle Name',
                                                                   'surname' => 'Surname',
-                                                                  'username' => md5(time().microtime().uniqid()) . 'username',
-                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                                                                  'username' => makeUniqueName('AccountTest testDelete') . 'username',
+                                                                  'email' => makeUniqueName('AccountTest testDelete') .'@unknown123.kot',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
@@ -501,8 +501,8 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
-            'username' => md5(time().microtime().uniqid()) . 'username',
-            'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+            'username' => makeUniqueName('AccountTest testShouldBeAbleToGetAccountViaHtmlFragment') . 'username',
+            'email' => makeUniqueName('AccountTest testShouldBeAbleToGetAccountViaHtmlFragment') .'@unknown123.kot',
             'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
@@ -529,16 +529,16 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
     public function testImportingAPasswordViaStaticCreates()
     {
         // SomePassw0rd!
-        $username = md5(time().microtime().uniqid()) . 'username';
+        $username = makeUniqueName('AccountTest testImportingAPasswordViaStaticCreates') . 'username';
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingAPasswordViaStaticCreates'), 'description' => 'Description of Main App', 'status' => 'enabled'));
         self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'middleName' => 'Middle Name',
                                                                   'surname' => 'Surname',
                                                                   'username' => $username,
-                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                                                                  'email' => makeUniqueName('AccountTest testImportingAPasswordViaStaticCreates') .'@unknown123.kot',
                                                                   'password' => '$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.'));
 
         self::$application->createAccount($account, array('passwordFormat'=>'mcf'));
@@ -554,10 +554,10 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
     public function testImportingAPasswordViaStandardCreate()
     {
         // SomePassw0rd!
-        $username = md5(time().microtime().uniqid()) . 'username';
+        $username = makeUniqueName('AccountTest testImportingAPasswordViaStandardCreates') . 'username';
         $client = Client::getInstance();
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingAPasswordViaStandardCreates'), 'description' => 'Description of Main App', 'status' => 'enabled'));
         self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
@@ -581,10 +581,10 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
     public function testImportingSelfCreatedPasswordWithMD5()
     {
 
-        $username = md5(time().microtime().uniqid()) . 'username';
+        $username = makeUniqueName('AccountTest testImportingSelfCreatedPasswordWithMD5') . 'username';
         $client = Client::getInstance();
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingSelfCreatedPasswordWithMD5'), 'description' => 'Description of Main App', 'status' => 'enabled'));
         self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
@@ -607,10 +607,10 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
     public function testImportingSelfCreatedPasswordWithSHA512()
     {
 
-        $username = md5(time().microtime().uniqid()) . 'username';
+        $username = makeUniqueName('AccountTest testImportingSelfCreatedPasswordWithSHA512') . 'username';
         $client = Client::getInstance();
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingSelfCreatedPasswordWithSHA512'), 'description' => 'Description of Main App', 'status' => 'enabled'));
         self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
@@ -637,10 +637,10 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
     public function testImportingInvalidPasswordTypeShouldThrowException()
     {
 
-        $username = md5(time().microtime().uniqid()) . 'username';
+        $username = makeUniqueName('AccountTest testImportingInvalidPasswordTypeShouldThrowException') . 'username';
         $client = Client::getInstance();
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingInvalidPasswordTypeShouldThrowException'), 'description' => 'Description of Main App', 'status' => 'enabled'));
         self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
@@ -667,10 +667,10 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
     public function testImportingInvalidPasswordFormatTypeShouldThrowException()
     {
 
-        $username = md5(time().microtime().uniqid()) . 'username';
+        $username = makeUniqueName('AccountTest testImportingInvalidPasswordFormat') . 'username';
         $client = Client::getInstance();
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingInvalidPasswordFormat'), 'description' => 'Description of Main App', 'status' => 'enabled'));
         self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);

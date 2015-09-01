@@ -28,10 +28,10 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
 
     protected static function init()
     {
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time().microtime().uniqid())));
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('GroupTest Main Directory')));
         self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
 
-        self::$group = \Stormpath\Resource\Group::instantiate(array('name' => 'Main Group' . md5(time().microtime().uniqid()), 'description' => 'Main Group Description'));
+        self::$group = \Stormpath\Resource\Group::instantiate(array('name' => makeUniqueName('GroupTest Main Group'), 'description' => 'Main Group Description'));
         self::$directory->createGroup(self::$group);
 
         self::$inited = true;
@@ -58,7 +58,7 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
         $group = \Stormpath\Resource\Group::get(self::$group->href);
 
         $this->assertInstanceOf('\Stormpath\Resource\Group', $group);
-        $this->assertContains('Main Group', $group->name);
+        $this->assertContains('Main_Group', $group->name);
         $this->assertContains('Main Group Description', $group->description);
         $this->assertInstanceOf('\Stormpath\Resource\Tenant', $group->tenant);
         $this->assertEquals(self::$client->tenant->name, $group->tenant->name);
@@ -72,7 +72,7 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
     {
         $group = self::$group;
 
-        $group->name = 'Main Group Changed' . md5(time().microtime().uniqid());
+        $group->name = makeUniqueName('GroupTest testSave');
         $group->description = 'Main Group Description changed';
         $group->status = 'disabled';
 
@@ -80,7 +80,7 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
 
         $group = \Stormpath\Resource\Group::get(self::$group->href);
 
-        $this->assertContains('Main Group Changed', $group->name);
+        $this->assertContains('testSave', $group->name);
         $this->assertContains('Main Group Description changed', $group->description);
         $this->assertEquals('DISABLED', $group->status);
 
@@ -90,7 +90,7 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
     {
         $group = self::$group;
 
-        $email = md5(time().microtime().uniqid()) .'@unknown123.kot';
+        $email = makeUniqueName('GroupTest addAccount') .'@unknown123.kot';
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
                                                                   'email' => $email,
@@ -182,13 +182,13 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
      */
     public function testDelete()
     {
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'Deletable Group' . md5(time().microtime().uniqid())));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => makeUniqueName('GroupTest testDelete')));
         self::$directory->createGroup($group);
 
         $group = \Stormpath\Resource\Group::get($group->href);
 
         $this->assertInstanceOf('\Stormpath\Resource\Group', $group);
-        $this->assertContains('Deletable Group', $group->name);
+        $this->assertContains('testDelete', $group->name);
 
         $href = $group->href;
 
@@ -199,7 +199,7 @@ class GroupTest extends \Stormpath\Tests\BaseTest {
 
     public function testShouldBeAbleToGetGroupViaHTMLFragment()
     {
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'Deletable Group' . md5(time().microtime().uniqid())));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => makeUniqueName('GroupTest htmlFragment')));
         self::$directory->createGroup($group);
 
         $href = $group->href;

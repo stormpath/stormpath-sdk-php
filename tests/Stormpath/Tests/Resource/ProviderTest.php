@@ -31,8 +31,8 @@ class ProviderTest extends \Stormpath\Tests\BaseTest
 {
     public function testGetGoogleProvider()
     {
-        $clientId = "mockClientId".md5(time().microtime().uniqid());
-        $clientSecret = "mockClientSecret".md5(time().microtime().uniqid());
+        $clientId = makeUniqueName("mockClientId");
+        $clientSecret = makeUniqueName("mockClientSecret");
         $redirectUri = "https://www.example.com/oauth2callback";
 
         $provider = self::$client->dataStore->instantiate(\Stormpath\Stormpath::GOOGLE_PROVIDER);
@@ -40,8 +40,8 @@ class ProviderTest extends \Stormpath\Tests\BaseTest
         $provider->clientSecret = $clientSecret;
         $provider->redirectUri = $redirectUri;
 
-        $directoryName = "my-google-directory-2".md5(time().microtime().uniqid());
-        $directoryDescription = "A Google directory".md5(time().microtime().uniqid());
+        $directoryName = makeUniqueName("my-google-directory-2");
+        $directoryDescription = makeUniqueName("A Google directory");
 
         $directory = self::$client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
         $directory->name = $directoryName;
@@ -81,15 +81,15 @@ class ProviderTest extends \Stormpath\Tests\BaseTest
 
     public function testGetFacebookProvider()
     {
-        $clientId = "mockClientId".md5(time().microtime().uniqid());
-        $clientSecret = "mockClientSecret".md5(time().microtime().uniqid());
+        $clientId = makeUniqueName("mockClientId");
+        $clientSecret = makeUniqueName("mockClientSecret");
 
         $provider = self::$client->dataStore->instantiate(\Stormpath\Stormpath::FACEBOOK_PROVIDER);
         $provider->clientId = $clientId;
         $provider->clientSecret = $clientSecret;
 
-        $directoryName = "my-facebook-directory-2".md5(time().microtime().uniqid());
-        $directoryDescription = "A Facebook directory".md5(time().microtime().uniqid());
+        $directoryName = makeUniqueName("my-facebook-directory-2");
+        $directoryDescription = makeUniqueName("A Facebook directory");
 
         $directory = self::$client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
         $directory->name = $directoryName;

@@ -27,7 +27,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
     protected static function init()
     {
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time().microtime().uniqid()), 'description' => 'Main Directory description'));
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('DirectoryTest'), 'description' => 'Main Directory description'));
         self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
         self::$inited = true;
     }
@@ -53,7 +53,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
         $directory = \Stormpath\Resource\Directory::get(self::$directory->href);
 
         $this->assertInstanceOf('\Stormpath\Resource\Directory', $directory);
-        $this->assertContains('Main Directory', $directory->name);
+        $this->assertContains('DirectoryTest', $directory->name);
         $this->assertContains('Main Directory description', $directory->description);
         $this->assertInstanceOf('\Stormpath\Resource\GroupList', $directory->groups);
         $this->assertInstanceOf('\Stormpath\Resource\AccountList', $directory->accounts);
@@ -63,10 +63,10 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
     public function testCreate()
     {
-        $directory = \Stormpath\Resource\Directory::create(array('name' => 'A random directory' .md5(time().microtime().uniqid()), 'description' => 'A Random Directory description', 'status' => 'disabled'));
+        $directory = \Stormpath\Resource\Directory::create(array('name' => makeUniqueName('DirectoryTest testCreate'), 'description' => 'A Random Directory description', 'status' => 'disabled'));
 
         $this->assertInstanceOf('\Stormpath\Resource\Directory', $directory);
-        $this->assertContains('A random directory', $directory->name);
+        $this->assertContains('testCreate', $directory->name);
         $this->assertEquals('A Random Directory description', $directory->description);
         $this->assertEquals('DISABLED', $directory->status);
 
@@ -77,13 +77,13 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
     {
         $directory = self::$directory;
 
-        $directory->name = 'Main Directory Changed' .md5(time().microtime().uniqid());
+        $directory->name = makeUniqueName('testSave Main Directory');
         $directory->status = 'disabled';
         $directory->description = 'Main Directory description changed';
         $directory->save();
 
         $directory = \Stormpath\Resource\Directory::get(self::$directory->href);
-        $this->assertContains('Main Directory Changed', $directory->name);
+        $this->assertContains('testSave', $directory->name);
         $this->assertContains('Main Directory description changed', $directory->description);
         $this->assertEquals('DISABLED', $directory->status);
     }
@@ -96,14 +96,14 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                    'surname' => 'Surname',
-                                                                   'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                                                                   'email' => makeUniqueName('DirectoryTest createAccount') . '@unknown123.kot',
                                                                    'password' => 'superP4ss'));
 
         $directory->createAccount($account, array('registrationWorkflowEnabled' => false));
 
         $account = \Stormpath\Resource\Account::get($account->href);
 
-        $this->assertContains('Main Directory', $account->directory->name);
+        $this->assertContains('Main_Directory', $account->directory->name);
         $this->assertEquals('Account Name', $account->givenName);
 
         $account->delete();
@@ -115,14 +115,14 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
         $directory->status = 'enabled';
         $directory->save();
 
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'New Group' . md5(time().microtime().uniqid())));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => makeUniqueName('DirectoryTest createGroup')));
 
         $directory->createGroup($group);
 
         $group = \Stormpath\Resource\Group::get($group->href);
 
-        $this->assertContains('Main Directory', $group->directory->name);
-        $this->assertContains('New Group', $group->name);
+        $this->assertContains('Main_Directory', $group->directory->name);
+        $this->assertContains('createGroup', $group->name);
 
         $group->delete();
     }
@@ -155,7 +155,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
         // testing for issue #47
         $directory = \Stormpath\Resource\Directory::instantiate(array(
-            'name' => 'Test Directory'.md5(time().microtime().uniqid()),
+            'name' => makeUniqueName('DirectoryTest updatingCustomData'),
             'description' => 'Test Directory description'));
         self::createResource(\Stormpath\Resource\Directory::PATH, $directory);
 
@@ -210,10 +210,10 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
      */
     public function testDelete()
     {
-        $directory = \Stormpath\Resource\Directory::create(array('name' => 'Another random directory' .md5(time().microtime().uniqid())));
+        $directory = \Stormpath\Resource\Directory::create(array('name' => makeUniqueName('DirectoryTest testDelete')));
 
         $this->assertInstanceOf('\Stormpath\Resource\Directory', $directory);
-        $this->assertContains('Another random directory', $directory->name);
+        $this->assertContains('testDelete', $directory->name);
 
         $href = $directory->href;
 
@@ -224,7 +224,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
 
     public function testShouldBeAbleToGetDirectoryViaHTMLFragment()
     {
-        $directory = \Stormpath\Resource\Directory::create(array('name' => 'Another random directory' .md5(time().microtime().uniqid())));
+        $directory = \Stormpath\Resource\Directory::create(array('name' => makeUniqueName('DirectoryTest htmlFragment')));
 
         $href = $directory->href;
 

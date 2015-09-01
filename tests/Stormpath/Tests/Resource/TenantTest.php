@@ -40,13 +40,13 @@ class TenantTest extends \Stormpath\Tests\BaseTest {
     {
         $tenant = self::$client->tenant;
 
-        $application = \Stormpath\Resource\Application::instantiate(array('name' => 'App for this test' .md5(time().microtime().uniqid())));
+        $application = \Stormpath\Resource\Application::instantiate(array('name' => makeUniqueName('TenantTest CreateApp')));
 
         $tenant->createApplication($application);
 
         $this->assertInstanceOf('\Stormpath\Resource\Application', $application);
         $this->assertEquals($tenant->name, $application->tenant->name);
-        $this->assertContains('App for this test', $application->name);
+        $this->assertContains('CreateApp', $application->name);
 
         foreach($tenant->applications as $app)
         {
@@ -118,13 +118,13 @@ class TenantTest extends \Stormpath\Tests\BaseTest {
     {
         $tenant = self::$client->tenant;
 
-        $directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Dir for this test' .md5(time().microtime().uniqid())));
+        $directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('TenantTest createDirectory')));
 
         $tenant->createDirectory($directory);
 
         $this->assertInstanceOf('\Stormpath\Resource\Directory', $directory);
         $this->assertEquals($tenant->name, $directory->tenant->name);
-        $this->assertContains('Dir for this test', $directory->name);
+        $this->assertContains('createDirectory', $directory->name);
 
         foreach($tenant->directories as $dir)
         {
