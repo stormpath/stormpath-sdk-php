@@ -117,9 +117,11 @@ class TenantTest extends \Stormpath\Tests\BaseTest {
     public function testCreateDirectory()
     {
         $tenant = self::$client->tenant;
+        var_dump($tenant);
 
         $directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('TenantTest createDirectory')));
-
+        var_dump($directory);
+        
         $tenant->createDirectory($directory);
 
         $this->assertInstanceOf('\Stormpath\Resource\Directory', $directory);
