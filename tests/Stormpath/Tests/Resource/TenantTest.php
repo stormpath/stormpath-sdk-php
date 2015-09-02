@@ -56,72 +56,14 @@ class TenantTest extends \Stormpath\Tests\BaseTest {
         $application->delete();
     }
 
-    public function testAddingCustomData()
-    {
-        $cd = self::$client->tenant->customData;
-
-        $cd->unitTest = "unit Test";
-        $cd->save();
-
-        $tenant = \Stormpath\Resource\Tenant::get();
-        $customData = $tenant->customData;
-        $this->assertEquals('unit Test', $customData->unitTest);
-
-
-
-    }
-
-    public function testUpdatingCustomData()
-    {
-        $cd = self::$client->tenant->customData;
-
-        $cd->unitTest = "some change";
-        $cd->save();
-
-        $tenant = \Stormpath\Resource\Tenant::get();
-        $customData = $tenant->customData;
-        $this->assertEquals('some change', $customData->unitTest);
-
-    }
-
-    public function testRemovingCustomData()
-    {
-        $cd = self::$client->tenant->customData;
-
-        $cd->remove('unitTest');
-
-        $tenant = \Stormpath\Resource\Tenant::get();
-        $customData = $tenant->customData;
-        $this->assertNull($customData->unitTest);
-    }
-
-    public function testDeletingAllCustomData()
-    {
-        $cd = self::$client->tenant->customData;
-        $cd->unitTest = "some change";
-        $cd->rank = "Captain";
-        $cd->birthDate = "2305-07-13";
-        $cd->favoriteDrink = "favoriteDrink";
-        $cd->save();
-
-        $cd->delete();
-
-        $tenant = \Stormpath\Resource\Tenant::get();
-        $customData = $tenant->customData;
-        $this->assertNull($customData->unitTest);
-        $this->assertNull($customData->rank);
-        $this->assertNull($customData->birthDate);
-        $this->assertNull($customData->favoriteDrink);
-    }
-
     public function testCreateDirectory()
     {
         $tenant = self::$client->tenant;
-        var_dump($tenant);
+
 
         $directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('TenantTest createDirectory')));
-        var_dump($directory);
-        
+
+
         $tenant->createDirectory($directory);
 
         $this->assertInstanceOf('\Stormpath\Resource\Directory', $directory);
