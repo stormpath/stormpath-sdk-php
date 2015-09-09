@@ -60,7 +60,7 @@ class LinkedInProviderAccountRequest implements ProviderAccountRequest
         }
         else
         {
-            throw new \InvalidArgumentException('Either code or accessToken must be set for GithubProviderAccountRequest');
+            throw new \InvalidArgumentException('Either code or accessToken must be set for LinkedInProviderAccountRequest');
         }
 
         return $providerData;
