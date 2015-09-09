@@ -24,6 +24,8 @@ use Stormpath\Resource\Application;
 use Stormpath\Resource\Directory;
 use Stormpath\Resource\FacebookProvider;
 use Stormpath\Resource\GoogleProvider;
+use Stormpath\Resource\GithubProvider;
+use Stormpath\Resource\LinkedInProvider;
 use Stormpath\Resource\Provider;
 use Stormpath\Stormpath;
 
@@ -125,6 +127,100 @@ class ProviderTest extends \Stormpath\Tests\BaseTest
         $returnedDirectory->delete();
     }
 
+    public function testGetGithubProvider()
+    {
+        $clientId = "mockClientId".md5(time().microtime().uniqid());
+        $clientSecret = "mockClientSecret".md5(time().microtime().uniqid());
+
+        $provider = self::$client->dataStore->instantiate(\Stormpath\Stormpath::GITHUB_PROVIDER);
+        $provider->clientId = $clientId;
+        $provider->clientSecret = $clientSecret;
+
+        $directoryName = "my-github-directory-2".md5(time().microtime().uniqid());
+        $directoryDescription = "A Github directory".md5(time().microtime().uniqid());
+
+        $directory = self::$client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+        $directory->name = $directoryName;
+        $directory->description = $directoryDescription;
+        $directory->provider = $provider;
+
+        $tenant = self::$client->getCurrentTenant();
+        $returnedDirectory = $tenant->createDirectory($directory);
+
+        $this->assertNotNull($returnedDirectory);
+
+        $returnedProvider = self::$client->dataStore->getResource(
+            $returnedDirectory->href."/".Provider::PATH,
+            \Stormpath\Stormpath::GITHUB_PROVIDER
+        );
+
+        $this->assertEquals(GithubProvider::GITHUB_PROVIDER_ID,
+            $returnedProvider->providerId);
+        $this->assertNotEmpty($returnedProvider->createdAt);
+        $this->assertNotEmpty($returnedProvider->modifiedAt);
+        $this->assertEquals($clientId, $returnedProvider->clientId);
+        $this->assertEquals($clientSecret, $returnedProvider->clientSecret);
+
+
+        $tokens = explode('/', $returnedDirectory->href);
+        $directoryId = end($tokens);
+        $this->assertEquals($returnedProvider, GithubProvider::get($directoryId));
+        $this->assertEquals($returnedProvider, GithubProvider::get($directoryId.'/'.Provider::PATH));
+        $this->assertEquals($returnedProvider, GithubProvider::get(Directory::PATH.'/'.$directoryId.'/'.Provider::PATH));
+        $this->assertEquals($returnedProvider, GithubProvider::get($returnedDirectory->href));
+        $this->assertEquals($returnedProvider, GithubProvider::get($returnedDirectory->href.'/'.Provider::PATH));
+
+        $returnedDirectory->delete();
+    }
+
+
+    public function testGetLinkedInProvider()
+    {
+        $clientId = "mockClientId".md5(time().microtime().uniqid());
+        $clientSecret = "mockClientSecret".md5(time().microtime().uniqid());
+
+        $provider = self::$client->dataStore->instantiate(\Stormpath\Stormpath::GITHUB_PROVIDER);
+        $provider->clientId = $clientId;
+        $provider->clientSecret = $clientSecret;
+
+        $directoryName = "my-linkedin-directory-2".md5(time().microtime().uniqid());
+        $directoryDescription = "A LinkedIn directory".md5(time().microtime().uniqid());
+
+        $directory = self::$client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+        $directory->name = $directoryName;
+        $directory->description = $directoryDescription;
+        $directory->provider = $provider;
+
+        $tenant = self::$client->getCurrentTenant();
+        $returnedDirectory = $tenant->createDirectory($directory);
+
+        $this->assertNotNull($returnedDirectory);
+
+        $returnedProvider = self::$client->dataStore->getResource(
+            $returnedDirectory->href."/".Provider::PATH,
+            \Stormpath\Stormpath::LINKEDIN_PROVIDER
+        );
+
+        $this->assertEquals(LinkedInProvider::LINKEDIN_PROVIDER_ID,
+            $returnedProvider->providerId);
+        $this->assertNotEmpty($returnedProvider->createdAt);
+        $this->assertNotEmpty($returnedProvider->modifiedAt);
+        $this->assertEquals($clientId, $returnedProvider->clientId);
+        $this->assertEquals($clientSecret, $returnedProvider->clientSecret);
+
+
+        $tokens = explode('/', $returnedDirectory->href);
+        $directoryId = end($tokens);
+        $this->assertEquals($returnedProvider, LinkedInProvider::get($directoryId));
+        $this->assertEquals($returnedProvider, LinkedInProvider::get($directoryId.'/'.Provider::PATH));
+        $this->assertEquals($returnedProvider, LinkedInProvider::get(Directory::PATH.'/'.$directoryId.'/'.Provider::PATH));
+        $this->assertEquals($returnedProvider, LinkedInProvider::get($returnedDirectory->href));
+        $this->assertEquals($returnedProvider, LinkedInProvider::get($returnedDirectory->href.'/'.Provider::PATH));
+
+        $returnedDirectory->delete();
+    }
+
+
     public function testGoogleProviderAccount()
     {
         $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
@@ -181,6 +277,84 @@ class ProviderTest extends \Stormpath\Tests\BaseTest
         $providerData = $providerAccountRequest->getProviderData($dataStore);
 
         $this->assertEquals(FacebookProvider::FACEBOOK_PROVIDER_ID, $providerData->providerId);
+        $this->assertEquals($accessToken, $providerData->accessToken);
+
+        $providerAccountAccess = $dataStore->instantiate(Stormpath::PROVIDER_ACCOUNT_ACCESS);
+        $providerAccountAccess->providerData = $providerData;
+
+        $application = new Application($dataStore);
+
+        $providerAccountResult = $this->getMock('\Stormpath\Resource\ProviderAccountResult');
+        $dataStore->expects($this->once())
+            ->method('create')
+            ->with(
+                $this->equalTo($application->getHref().'/'.Account::PATH),
+                $this->equalTo($providerAccountAccess),
+                $this->equalTo(Stormpath::PROVIDER_ACCOUNT_RESULT)
+            )
+            ->will($this->returnValue($providerAccountResult));
+
+
+        $returnedResult = $application->getAccount($providerAccountRequest);
+
+        $this->assertEquals($providerAccountResult, $returnedResult);
+    }
+
+    public function testGithubProviderAccount()
+    {
+        $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
+        $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
+        $cacheManager = $this->getMock('\Stormpath\Cache\CacheManager');
+        $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
+            array('create'), array($requestExecutor, $apiKey, $cacheManager));
+
+        $accessToken = "4/XrsKzIJuy3ye57eqbanlQDN1wZHYfaUV-MFyC6dRjRw.wnCoOEKwnlwXXmXvfARQvthKMCbPmgI";
+        $providerAccountRequest = new \Stormpath\Provider\GithubProviderAccountRequest(array(
+            "accessToken" => $accessToken
+        ));
+
+        $providerData = $providerAccountRequest->getProviderData($dataStore);
+
+        $this->assertEquals(GithubProvider::GITHUB_PROVIDER_ID, $providerData->providerId);
+        $this->assertEquals($accessToken, $providerData->accessToken);
+
+        $providerAccountAccess = $dataStore->instantiate(Stormpath::PROVIDER_ACCOUNT_ACCESS);
+        $providerAccountAccess->providerData = $providerData;
+
+        $application = new Application($dataStore);
+
+        $providerAccountResult = $this->getMock('\Stormpath\Resource\ProviderAccountResult');
+        $dataStore->expects($this->once())
+            ->method('create')
+            ->with(
+                $this->equalTo($application->getHref().'/'.Account::PATH),
+                $this->equalTo($providerAccountAccess),
+                $this->equalTo(Stormpath::PROVIDER_ACCOUNT_RESULT)
+            )
+            ->will($this->returnValue($providerAccountResult));
+
+
+        $returnedResult = $application->getAccount($providerAccountRequest);
+
+        $this->assertEquals($providerAccountResult, $returnedResult);
+    }
+
+    public function testLinkedInProviderAccount()
+    {
+        $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
+        $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
+        $cacheManager = $this->getMock('\Stormpath\Cache\CacheManager');
+        $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
+            array('create'), array($requestExecutor, $apiKey, $cacheManager));
+
+        $accessToken = "4/XrsKzIJuy3ye57eqbanlQDN1wZHYfaUV-MFyC6dRjRw.wnCoOEKwnlwXXmXvfARQvthKMCbPmgI";
+        $providerAccountRequest = new \Stormpath\Provider\LinkedInProviderAccountRequest(array(
+            "accessToken" => $accessToken
+        ));
+
+        $providerData = $providerAccountRequest->getProviderData($dataStore);
+
+        $this->assertEquals(LinkedInProvider::LINKEDIN_PROVIDER_ID, $providerData->providerId);
         $this->assertEquals($accessToken, $providerData->accessToken);
 
         $providerAccountAccess = $dataStore->instantiate(Stormpath::PROVIDER_ACCOUNT_ACCESS);
