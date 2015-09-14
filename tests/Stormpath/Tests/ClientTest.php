@@ -71,5 +71,16 @@ class ClientTest extends BaseTest {
 
     }
 
+    public function testClientInstanceDefaultsCacheIfNoCacheItemsAreSetWhenCalledDirectly()
+    {
+        \Stormpath\Client::tearDown();
+        $apiKey = new \Stormpath\ApiKey('id','secret');
+
+        $client = new \Stormpath\Client($apiKey);
+
+        $this->assertInstanceOf('Stormpath\Cache\ArrayCacheManager', $client->getCacheManager());
+
+    }
+
 
 }

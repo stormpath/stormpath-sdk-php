@@ -19,6 +19,7 @@ namespace Stormpath\DataStore;
  */
 
 use Stormpath\ApiKey;
+use Stormpath\Cache\ArrayCacheManager;
 use Stormpath\Cache\Cacheable;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\Request;
@@ -47,7 +48,12 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     {
         $this->requestExecutor = $requestExecutor;
         $this->resourceFactory = new DefaultResourceFactory($this);
+
         $this->cacheManager = $cacheManager;
+
+        if ($this->cacheManager == null) {
+            $this->cacheManager = new ArrayCacheManager(array());
+        }
         $this->cache = $this->cacheManager->getCache();
 
         $this->apiKey = $apiKey;

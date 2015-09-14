@@ -285,13 +285,14 @@ class ClientBuilder extends Magic
 
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
 
+        $cacheManager = new $this->cacheManager($this->cacheManagerOptions);
+
         $signer = $this->resolveSigner();
         $requestSigner = new $signer;
 
         return new Client(
             $apiKey,
-            $this->cacheManager,
-            $this->cacheManagerOptions,
+            $cacheManager,
             $this->baseURL,
             $requestSigner
         );
@@ -385,6 +386,9 @@ class ClientBuilder extends Magic
 
     private function qualifyCacheManager($cacheManager)
     {
+        if (is_object($cacheManager))
+            return $cacheManager;
+
         $notCoreClass = true;
 
         if(class_exists($cacheManager))
