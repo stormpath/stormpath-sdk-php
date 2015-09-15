@@ -1385,6 +1385,311 @@ $providerData->modifiedAt; //-> 2014-04-01T17:00:09.189Z
 $providerData->providerId; //-> facebook
 ```
 
+
+### Integrating with Github
+
+Stormpath supports accessing accounts from a number of different 
+locations including Github. Github uses OAuth 2.0 protocol for 
+authentication / authorization and Stormpath can leverage their 
+authorization code (or access tokens) to return an `Account` for 
+a given code.
+
+The steps to enable this functionality into your application include:
+
++ Create a Github Directory
++ Create an `AccountStoreMapping` between a Github Directory and your `Application`
++ Accessing Accounts with Google Authorization Codes or Access Tokens
+
+Github Directories follow behavior similar to mirror directories, but 
+have a `Provider` resource that contains information regarding the Github 
+application that the directory is configured for.
+
+#### Github Provider Resource
+
+A GithubProvider resource holds specific information needed for working with 
+a Github Directory. It is important to understand the format of the provider 
+resource when creating and updating a Github Directory.
+
+A provider resource can be obtained by accessing the directory’s provider as 
+follows:
+
+```PHP
+$provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv/provider",
+    \Stormpath\Stormpath::GITHUB_PROVIDER);
+```
+
+or, by means of the directory `Resource`:
+
+```PHP
+$provider = $directory->getProvider();
+```
+
+Alternatively, it is possible to use the static client configuration to the get the `Provider`:
+
+```PHP
+// It is also possible to specify the URL ending with "/provider", 
+// or the partial path (which could be "directories/DIR_ID/provider", 
+// or "DIR_ID/provider" or just "DIR_ID"). 
+$directoryHref = "https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv"; 
+$provider = GithubProvider::get($directoryHref);
+```
+
+##### Resource Attributes
+
+* `clientId` : The App ID for your Github application
+* `clientSecret` : The App Secret for your Github application
+* `providerId` : The provider ID is the Stormpath ID for the Directory’s account provider
+
+In addition to your application specific attributes, a Provider resource 
+will always contain 3 reserved read-only fields:
+
+* `href` : The fully qualified location of the custom data resource
+* `createdAt` : the UTC timestamp with millisecond precision of when the resource was created in Stormpath as an ISO 8601 formatted string
+* `modifiedAt` : the UTC timestamp with millisecond precision of when the resource was created in Stormpath as an ISO 8601 formatted string
+
+#### Creating a Github Directory
+
+Creating a Github Directory requires that you gather some information 
+beforehand from your Github developers settings regarding your application.
+
+* Client ID
+* Client Secret
+
+Creating a Github Directory is very similar to creating a directory within 
+Stormpath. For a Github Directory to be configured correctly, you must 
+specify the correct Provider information.
+
+```PHP
+$provider = $client->dataStore->instantiate(\Stormpath\Stormpath::GITHUB_PROVIDER);
+$provider->clientId = "48f983a65887df76";
+$provider->clientSecret = "2b5476584adf7846f890094cba3672f7";
+
+$directory = $client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+$directory->name = "my-github-directory";
+$directory->description = "A Github directory";
+$directory->provider = $provider;
+
+$tenant = $client->getCurrentTenant();
+$directory = $tenant->createDirectory($directory);
+```
+
+After the Github Directory has been created, it needs to be mapped with an 
+application as an account store. The Github Directory cannot be a default 
+account store or a default group store. Once the directory is mapped as an 
+account store for an application, you are ready to access Accounts with 
+Github Authorization Codes.
+
+#### Accessing Accounts with Github Authorization Codes or Access Tokens
+
+To access or create an account in an already created Google Directory, it is 
+required to gather a Google Authorization Code on behalf of the user. This 
+requires leveraging Google’s OAuth 2.0 protocol and the user’s consent for 
+your application’s permissions.
+
+Once the Authorization Code is gathered, you can get or create the `Account` by 
+means of the `Application` and specifying a `ProviderRequest`. The following example 
+shows how you use `GoogleProviderAccountRequest` to get an `Account` for a given authorization code:
+
+```PHP
+$applicationHref = "https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu";
+$application = $client->getResource(applicationHref, \Stormpath\Stormpath::APPLICATION);
+$providerRequest = new GithubProviderAccountRequest(array(
+    "code" => "fn0sMDQlyFVTYwfl5GAj0Obd"
+));
+
+$result = $application->getAccount($providerRequest);
+$account = $result->getAccount();
+```
+
+In order to know if the account was created or if it already existed in the 
+Stormpath’s Google Directory you can do: `$result->isNewAccount();`. It will return 
+`true` if it is a newly created account; `false` otherwise.
+
+Once an `Account` is retrieved, Stormpath maps common fields for the Github User to 
+the `Account`. The access token and the refresh token for any additional calls in the 
+`GithubProviderData` resource and can be retrieved by:
+
+```PHP
+$providerData = $account->getProviderData();
+```
+
+The returned GithubProviderData includes:
+
+```PHP
+$providerData->accessToken; //-> y29.1.AADN_Xo2hxQflWwsgCSK-WjSw1mNfZiv4
+$providerData->createdAt; //-> 2014-04-01T17:00:09.154Z 
+$providerData->href; //-> https://api.stormpath.com/v1/accounts/ciYmtETytH0tbHRBas1D5/providerData 
+$providerData->modifiedAt; //-> 2014-04-01T17:00:09.189Z 
+$providerData->providerId; //-> github 
+$providerData->refreshToken; //-> 1/qQTS638g3ArE4U02FoiXL1yIh-OiPmhc
+```
+
+The `accessToken` can also be passed as a field for the `ProviderData` to access the 
+account once it is retrieved:
+
+```PHP
+$providerRequest = new GithubProviderRequest(array(
+    "accessToken" =>"fn0sMDQlyFVTYwfl5GAj0Obd"
+));
+$result = $application->getAccount(request);
+$account = $result->getAccount();
+```
+
+The refreshToken will only be present if your application asked for offline access. 
+Review Github’s documentation for more information regarding OAuth offline access.
+
+### Integrating with LinkedIn
+
+Stormpath supports accessing accounts from a number of different 
+locations including LinkedIn. LinkedIn uses OAuth 2.0 protocol for 
+authentication / authorization and Stormpath can leverage their 
+authorization code (or access tokens) to return an `Account` for 
+a given code.
+
+The steps to enable this functionality into your application include:
+
++ Create a LinkedIn Directory
++ Create an `AccountStoreMapping` between a LinkedIn Directory and your `Application`
++ Accessing Accounts with LinkedIn Authorization Codes or Access Tokens
+
+LinkedIn Directories follow behavior similar to mirror directories, but 
+have a `Provider` resource that contains information regarding the LinkedIn 
+application that the directory is configured for.
+
+#### LinkedIn Provider Resource
+
+A LinkedInProvider resource holds specific information needed for working with 
+a LinkedIn Directory. It is important to understand the format of the provider 
+resource when creating and updating a LinkedIn Directory.
+
+A provider resource can be obtained by accessing the directory’s provider as 
+follows:
+
+```PHP
+$provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv/provider",
+    \Stormpath\Stormpath::LINKEDIN_PROVIDER);
+```
+
+or, by means of the directory `Resource`:
+
+```PHP
+$provider = $directory->getProvider();
+```
+
+Alternatively, it is possible to use the static client configuration to the get the `Provider`:
+
+```PHP
+// It is also possible to specify the URL ending with "/provider", 
+// or the partial path (which could be "directories/DIR_ID/provider", 
+// or "DIR_ID/provider" or just "DIR_ID"). 
+$directoryHref = "https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv"; 
+$provider = LinkedInProvider::get($directoryHref);
+```
+
+##### Resource Attributes
+
+* `clientId` : The App ID for your LinkedIn application
+* `clientSecret` : The App Secret for your LinkedIn application
+* `providerId` : The provider ID is the Stormpath ID for the Directory’s account provider
+
+In addition to your application specific attributes, a Provider resource 
+will always contain 3 reserved read-only fields:
+
+* `href` : The fully qualified location of the custom data resource
+* `createdAt` : the UTC timestamp with millisecond precision of when the resource was created in Stormpath as an ISO 8601 formatted string
+* `modifiedAt` : the UTC timestamp with millisecond precision of when the resource was created in Stormpath as an ISO 8601 formatted string
+
+#### Creating a LinkedIn Directory
+
+Creating a LinkedIn Directory requires that you gather some information 
+beforehand from LinkedIn’s Developer Console regarding your application.
+
+* Client ID
+* Client Secret
+
+Creating a LinkedIn Directory is very similar to creating a directory within 
+Stormpath. For a LinkedIn Directory to be configured correctly, you must 
+specify the correct Provider information.
+
+```PHP
+$provider = $client->dataStore->instantiate(\Stormpath\Stormpath::LINKEDIN_PROVIDER);
+$provider->clientId = "857385m8vk0fn2r7j";
+$provider->clientSecret = "ehs7bA7OWQSQ4";
+
+$directory = $client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+$directory->name = "my-linkedin-directory";
+$directory->description = "A LinkedIn directory";
+$directory->provider = $provider;
+
+$tenant = $client->getCurrentTenant();
+$directory = $tenant->createDirectory($directory);
+```
+
+After the LinkedIn Directory has been created, it needs to be mapped with an 
+application as an account store. The LinkedIn Directory cannot be a default 
+account store or a default group store. Once the directory is mapped as an 
+account store for an application, you are ready to access Accounts with 
+LinkedIn Authorization Codes.
+
+#### Accessing Accounts with LinkedIn Authorization Codes or Access Tokens
+
+To access or create an account in an already created LinkedIn Directory, it is 
+required to gather a LinkedIn Authorization Code on behalf of the user. This 
+requires leveraging LinkedIn’s OAuth 2.0 protocol and the user’s consent for 
+your application’s permissions.
+
+Once the Authorization Code is gathered, you can get or create the `Account` by 
+means of the `Application` and specifying a `ProviderRequest`. The following example 
+shows how you use `LinkedInProviderAccountRequest` to get an `Account` for a given authorization code:
+
+```PHP
+$applicationHref = "https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu";
+$application = $client->getResource(applicationHref, \Stormpath\Stormpath::APPLICATION);
+$providerRequest = new LinkedInProviderAccountRequest(array(
+    "code" => "4/a3p_fn0sMDQlyFVTYwfl5GAj0Obd.oiruVLbQZSwU3oEBd8DOtNApQzTCiwI"
+));
+
+$result = $application->getAccount($providerRequest);
+$account = $result->getAccount();
+```
+
+In order to know if the account was created or if it already existed in the 
+Stormpath’s Google Directory you can do: `$result->isNewAccount();`. It will return 
+`true` if it is a newly created account; `false` otherwise.
+
+Once an `Account` is retrieved, Stormpath maps common fields for the Google User to 
+the `Account`. The access token and the refresh token for any additional calls in the 
+`LinkedInProviderData` resource and can be retrieved by:
+
+```PHP
+$providerData = $account->getProviderData();
+```
+
+The returned LinkedInProviderData includes:
+
+```PHP
+$providerData->accessToken; //-> y29.1.AADN_Xo2hxQflWwsgCSK-WjSw1mNfZiv4
+$providerData->createdAt; //-> 2014-04-01T17:00:09.154Z 
+$providerData->href; //-> https://api.stormpath.com/v1/accounts/ciYmtETytH0tbHRBas1D5/providerData 
+$providerData->modifiedAt; //-> 2014-04-01T17:00:09.189Z 
+$providerData->providerId; //-> linkedin 
+$providerData->refreshToken; //-> 1/qQTS638g3ArE4U02FoiXL1yIh-OiPmhc
+```
+
+The `accessToken` can also be passed as a field for the `ProviderData` to access the 
+account once it is retrieved:
+
+```PHP
+$providerRequest = new LinkedInProviderRequest(array(
+    "accessToken" =>"y29.1.AADN_Xo2hxQflWwsgCSK-WjSw1mNfZiv4"
+));
+$result = $application->getAccount(request);
+$account = $result->getAccount();
+```
+
+The refreshToken will only be present if your application asked for offline access. 
+Review LinkedIn’s documentation for more information regarding OAuth offline access.
+
 ## Using Stormpath for API Authentication
 
 ### Create an Account for your developers
