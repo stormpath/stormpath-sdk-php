@@ -17,6 +17,7 @@ namespace Stormpath;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+use Stormpath\Cache\CacheManager;
 use Stormpath\Cache\Exceptions\InvalidCacheManagerException;
 use Stormpath\Http\Authc\SAuthc1RequestSigner;
 use Stormpath\Http\DefaultRequest;
@@ -52,7 +53,7 @@ class ClientBuilder extends Magic
     private $apiKeySecretPropertyName = "apiKey.secret";
     private $apiKeyProperties;
     private $apiKeyFileLocation;
-    private $cacheManager = NULL;
+    private $cacheManager = null;
     private $cacheManagerOptions = array();
     private $baseURL;
     private $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
@@ -211,8 +212,8 @@ class ClientBuilder extends Magic
 
     public function setCacheManager($cacheManager)
     {
+        if (!$cacheManager) $cacheManager = 'Array';
         $this->cacheManager = $this->qualifyCacheManager($cacheManager);
-
         return $this;
     }
 
@@ -386,24 +387,16 @@ class ClientBuilder extends Magic
 
     private function qualifyCacheManager($cacheManager)
     {
-        if (is_object($cacheManager))
+        if ($this->isFullyQualifiedCacheManager($cacheManager))
             return $cacheManager;
 
-        $notCoreClass = true;
+        $cacheManagerPath = "Stormpath\\Cache\\{$cacheManager}CacheManager";
 
-        if(class_exists($cacheManager))
-            $notCoreClass = class_implements($cacheManager) == 'Stormpath\Cache\CacheManager';
-
-        if(class_exists($cacheManager) && $notCoreClass) return $cacheManager;
-
-        if(strpos($cacheManager, 'CacheManager')) {
-            $cacheManagerPath = "{$cacheManager}";
-        } else {
-            $cacheManagerPath = "Stormpath\\Cache\\{$cacheManager}CacheManager";
-        }
+        if(class_exists($cacheManagerPath))
+            return $cacheManagerPath;
 
 
-        if(class_exists($cacheManagerPath)) return $cacheManagerPath;
+        throw new \InvalidArgumentException("Could not qualify cache manager $cacheManagerPath");
 
     }
 
@@ -416,5 +409,10 @@ class ClientBuilder extends Magic
 
         return new $signer;
 
+    }
+
+    private function isFullyQualifiedCacheManager($cacheManager)
+    {
+        return is_object($cacheManager) && $cacheManager instanceof CacheManager;
     }
 }
