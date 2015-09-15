@@ -21,8 +21,8 @@ class OAuthRequestAuthenticatorTest extends BaseTest
 
         self::$application = \Stormpath\Resource\Application::instantiate(
             array(
-                'name' => 'Main App for the tests' .md5(time()),
-                'description' => 'Description of Main App',
+                'name' => makeUniqueName('Application OauthRequestAuthenticatorTest'),
+                'description' => 'Application for OAuthRequestAuthenticatorTest',
                 'status' => 'enabled'
             )
         );
@@ -35,10 +35,10 @@ class OAuthRequestAuthenticatorTest extends BaseTest
         self::$account = \Stormpath\Resource\Account::instantiate(
             array(
                 'givenName' => 'PHP',
-                'middleName' => 'BasicRequestAuthenticator',
+                'middleName' => 'OAuthRequestAuthenticator',
                 'surname' => 'Test',
-                'username' => md5(time().microtime().uniqid()) . 'username',
-                'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                'username' => makeUniqueName('OAuthRequestAuthenticatorTest'),
+                'email' => makeUniqueName('OAuthRequestAuthenticatorTest') .'@unknown123.kot',
                 'password' => 'superP4ss'
 
             )

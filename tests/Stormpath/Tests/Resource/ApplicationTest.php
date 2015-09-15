@@ -40,7 +40,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
     protected static function init()
     {
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for the tests' .md5(time().microtime().uniqid()), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => makeUniqueName('ApplicationTest'), 'description' => 'Description of Main App', 'status' => 'enabled'));
         self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
         self::$inited = true;
     }
@@ -78,7 +78,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $application = \Stormpath\Resource\Application::get(self::$application->href);
 
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('Main App', $application->name);
+        $this->assertContains('ApplicationTest', $application->name);
     }
 
     public function testCreateIdSiteURLReturnsURLWithJWT()
@@ -178,15 +178,15 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
     protected function createAccount()
     {
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time().microtime().uniqid())));
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('ApplicationTest createAccount')));
 
         self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
 
         self::$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
-            'username' => md5(time().microtime().uniqid()) . 'username',
-            'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+            'username' => makeUniqueName('ApplicationTest createAccount') . 'username',
+            'email' => makeUniqueName('ApplicationTest createAccount') .'@unknown123.kot',
             'password' => 'superP4ss'));
 
         self::$directory->createAccount(self::$account);
@@ -256,17 +256,17 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
     public function testCreate()
     {
-        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App'. md5(time().microtime().uniqid())));
+        $application = \Stormpath\Resource\Application::create(array('name' => makeUniqueName('ApplicationTest testCreate')));
 
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('Another App', $application->name);
+        $this->assertContains('testCreate', $application->name);
 
         // testing the creation from an application instance
-        $application2 = \Stormpath\Resource\Application::instantiate(array('name' => 'Yet another App'. md5(time().microtime().uniqid())));
+        $application2 = \Stormpath\Resource\Application::instantiate(array('name' => makeUniqueName('ApplicationTest testCreate2')));
         \Stormpath\Resource\Application::create($application2);
 
         $this->assertInstanceOf('Stormpath\Resource\Application', $application2);
-        $this->assertContains('Yet another App', $application2->name);
+        $this->assertContains('testCreate2', $application2->name);
 
         $application->delete();
         $application2->delete();
@@ -276,7 +276,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
     {
         $application = self::$application;
 
-        $this->assertContains('Main App', $application->name);
+        $this->assertContains('ApplicationTest', $application->name);
         $this->assertContains('Description of Main App', $application->description);
         $this->assertEquals(self::$client->tenant->name, $application->tenant->name);
         $this->assertInstanceOf('Stormpath\Resource\AccountList', $application->accounts);
@@ -289,7 +289,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         foreach($application->accountStoreMappings as $acm)
         {
             $this->assertInstanceOf('Stormpath\Resource\AccountStoreMapping', $acm);
-            $this->assertContains('Main App', $acm->accountStore->name);
+            $this->assertContains('ApplicationTest', $acm->accountStore->name);
         }
     }
 
@@ -299,8 +299,8 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
-                                                                  'username' => md5(time().microtime().uniqid()) . 'username',
-                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                                                                  'username' => makeUniqueName('ApplicationTest testCreateAccount') . 'username',
+                                                                  'email' => makeUniqueName('ApplicationTest testCreateAccount') .'@unknown123.kot',
                                                                   'password' => 'superP4ss'));
 
         $application->createAccount($account);
@@ -318,8 +318,8 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
             'surname' => 'Surname',
-            'username' => md5(time().microtime().uniqid()) . 'username',
-            'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+            'username' => makeUniqueName('ApplicationTest testCreateAccountWithCustomData') . 'username',
+            'email' => makeUniqueName('ApplicationTest testCreateAccountWithCustomData') .'@unknown123.kot',
             'password' => 'superP4ss'));
 
         $customData = $account->customData;
@@ -339,14 +339,14 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $application = self::$application;
 
         $group = new \stdClass();
-        $group->name = 'New Group in town'.md5(time().microtime().uniqid());
+        $group->name = makeUniqueName('ApplicationTest testCreateGroup');
 
         $group = \Stormpath\Resource\Group::instantiate($group);
         $application->createGroup($group);
 
         $group = \Stormpath\Resource\Group::get($group->href);
 
-        $this->assertContains('New Group in town', $group->name);
+        $this->assertContains('testCreateGroup', $group->name);
 
         $group->delete();
     }
@@ -355,13 +355,13 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
     {
         $application = self::$application;
 
-        $directory = \Stormpath\Resource\Directory::create(array('name' => 'New Account Store in town'.md5(time().microtime().uniqid())));
+        $directory = \Stormpath\Resource\Directory::create(array('name' => makeUniqueName('ApplicationTest testCreateAccountStoreMapping')));
 
         $accountStoreMapping = \Stormpath\Resource\AccountStoreMapping::instantiate(array('accountStore' => $directory));
 
         $application->createAccountStoreMapping($accountStoreMapping);
 
-        $this->assertContains('New Account Store in town', $accountStoreMapping->accountStore->name);
+        $this->assertContains('testCreateAccountStoreMapping', $accountStoreMapping->accountStore->name);
 
         $accountStoreMapping->delete();
         $directory->delete();
@@ -370,18 +370,19 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
     public function testSendPasswordResetEmail()
     {
         $application = self::$application;
+        $email = makeUniqueName('ApplicationTest SendPasswordReset') .'@unknown123.kot';
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
                                                                   'username' => 'super_unique_username',
-                                                                  'email' => 'super_unique_email@unknown123.kot',
+                                                                  'email' => $email,
                                                                   'password' => 'superP4ss'));
 
         $application->createAccount($account);
 
-        $account = $application->sendPasswordResetEmail('super_unique_email@unknown123.kot');
+        $account = $application->sendPasswordResetEmail($email);
 
-        $this->assertEquals('super_unique_email@unknown123.kot', $account->email);
+        $this->assertEquals($email, $account->email);
 
         $account->delete();
     }
@@ -391,12 +392,12 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $application = self::$application;
 
         $groupA = new \stdClass();
-        $groupA->name = 'New Group in town A: '.md5(time().microtime().uniqid());
+        $groupA->name = makeUniqueName('ApplicationTest testSendPasswordResetEmailWithAccountStore A');
         $groupA = \Stormpath\Resource\Group::instantiate($groupA);
         $application->createGroup($groupA);
 
         $groupB = new \stdClass();
-        $groupB->name = 'New Group in town B: '.md5(time().microtime().uniqid());
+        $groupB->name = makeUniqueName('ApplicationTest testSendPasswordResetEmailWithAccountStore B');
         $groupB = \Stormpath\Resource\Group::instantiate($groupB);
         $application->createGroup($groupB);
 
@@ -406,23 +407,24 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $accountStoreMappingB = \Stormpath\Resource\AccountStoreMapping::instantiate(array('accountStore' => $groupB));
         $application->createAccountStoreMapping($accountStoreMappingB);
 
+        $email = makeUniqueName('ApplicationTest SendPassword') .'@unknown123.kot';
         $account = \Stormpath\Resource\Account::instantiate(array(
             'givenName' => 'Account Name',
             'surname' => 'Surname',
             'username' => 'super_unique_username',
-            'email' => 'super_dupper_unique_email@unknown123.kot',
+            'email' => $email,
             'password' => 'superP4ss'));
 
         $application->createAccount($account);
         $groupA->addAccount($account);
 
-        $account = $application->sendPasswordResetEmail('super_dupper_unique_email@unknown123.kot',
+        $account = $application->sendPasswordResetEmail($email,
             array("accountStore" => $accountStoreMappingA->getAccountStore()));
-        $this->assertEquals('super_dupper_unique_email@unknown123.kot', $account->email);
+        $this->assertEquals($email, $account->email);
 
         try {
             // lookup email address in an AccountStore that doesn't contain the corresponding account
-            $account = $application->sendPasswordResetEmail('super_dupper_unique_email@unknown123.kot',
+            $account = $application->sendPasswordResetEmail($email,
                 array("accountStore" => $accountStoreMappingB->getAccountStore()));
 
             $account->delete();
@@ -453,7 +455,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
     {
         $application = self::$application;
 
-        $directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'dir' . md5(time())));
+        $directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('ApplicationTest testSendVerificationEmail')));
         self::createResource(\Stormpath\Resource\Directory::PATH, $directory);
 
         \Stormpath\Resource\AccountStoreMapping::create(
@@ -466,7 +468,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $policy->save();
         $this->assertEquals('ENABLED', $policy->verificationEmailStatus);
 
-        $username = 'acc' . md5(time());
+        $username = makeUniqueName('ApplicationTest sendVerificaiton');
         $emailAddress = $username . '@unknown123.kot';
         $account = Account::instantiate(array(
             'givenName' => 'Account Name',
@@ -513,22 +515,23 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
     public function testAuthenticate()
     {
         $application = self::$application;
+        $email = makeUniqueName('ApplicationTest testAuth') . '@unknown123.kot';
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
                                                                   'username' => 'super_unique_username',
-                                                                  'email' => 'super_dupper_unique_email@unknown123.kot',
+                                                                  'email' => $email,
                                                                   'password' => 'superP4ss'));
 
         $application->createAccount($account);
 
-        $result = $application->authenticate('super_dupper_unique_email@unknown123.kot', 'superP4ss');
+        $result = $application->authenticate($email, 'superP4ss');
 
-        $this->assertEquals('super_dupper_unique_email@unknown123.kot', $result->account->email);
+        $this->assertEquals($email, $result->account->email);
 
         try {
 
-            $application->authenticate('super_dupper_unique_email@unknown123.kot', 'wrong_pass');
+            $application->authenticate($email, 'wrong_pass');
             $account->delete();
             $this->fail('Authentication should have failed.');
 
@@ -547,14 +550,15 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
     public function testAuthenticateWithAccountStore()
     {
         $application = self::$application;
+        $email = makeUniqueName('ApplicationTest authWithAcctStore') . '@unknown123.kot';
 
         $groupA = new \stdClass();
-        $groupA->name = 'New Group in town A: '.md5(time().microtime().uniqid());
+        $groupA->name = makeUniqueName('ApplicationTest AuthWithAcctStore A');
         $groupA = \Stormpath\Resource\Group::instantiate($groupA);
         $application->createGroup($groupA);
 
         $groupB = new \stdClass();
-        $groupB->name = 'New Group in town B: '.md5(time().microtime().uniqid());
+        $groupB->name = makeUniqueName('ApplicationTest AuthWithAcctStore B');
         $groupB = \Stormpath\Resource\Group::instantiate($groupB);
         $application->createGroup($groupB);
 
@@ -568,22 +572,22 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
             'givenName' => 'Account Name',
             'surname' => 'Surname',
             'username' => 'super_unique_username',
-            'email' => 'super_dupper_unique_email@unknown123.kot',
+            'email' => $email,
             'password' => 'superP4ss'));
 
         $application->createAccount($account);
         $groupA->addAccount($account);
 
         $authenticationRequest = new \Stormpath\Authc\UsernamePasswordRequest(
-            'super_dupper_unique_email@unknown123.kot',
+            $email,
             'superP4ss',
             array('accountStore' => $accountStoreMappingA->getAccountStore()));
         $result = $application->authenticateAccount($authenticationRequest);
-        $this->assertEquals('super_dupper_unique_email@unknown123.kot', $result->account->email);
+        $this->assertEquals($email, $result->account->email);
 
         try {
             $authenticationRequest = new \Stormpath\Authc\UsernamePasswordRequest(
-                'super_dupper_unique_email@unknown123.kot',
+                $email,
                 'superP4ss',
                 array('accountStore' => $accountStoreMappingB->getAccountStore()));
             $application->authenticateAccount($authenticationRequest);
@@ -608,7 +612,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         try
         {
             new \Stormpath\Authc\UsernamePasswordRequest(
-                'super_dupper_unique_email@unknown123.kot',
+                $email,
                 'superP4ss',
                 array('accountStore' => 'not an instance of AccountStore'));
 
@@ -634,13 +638,13 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
     {
         $application = self::$application;
 
-        $application->name = 'Main App for the tests changed' .md5(time().microtime().uniqid());
+        $application->name = makeUniqueName('ApplicationTest testSave');
         $application->description = 'Description of Main App changed';
         $application->status = 'disabled';
 
         $application->save();
 
-        $this->assertContains('Main App for the tests changed', $application->name);
+        $this->assertContains('ApplicationTest_testSave', $application->name);
         $this->assertContains('Description of Main App changed', $application->description);
         $this->assertEquals('DISABLED', $application->status);
 
@@ -656,8 +660,8 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $account = \Stormpath\Resource\Account::instantiate(array(
             'givenName' => 'Account Name',
             'surname' => 'Surname',
-            'username' => md5(time()) . 'username',
-            'email' => md5(time()) .'@unknown123.kot',
+            'username' => makeUniqueName('ApplicationTest ApiKeyMgt'),
+            'email' => makeUniqueName('ApplicationTest ApiKeyMgt') .'@unknown123.kot',
             'password' => 'superP4ss'));
 
         $application->createAccount($account);
@@ -750,10 +754,10 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
      */
     public function testDelete()
     {
-        $application = \Stormpath\Resource\Application::create(array('name' => 'Yet Another App'. md5(time().microtime().uniqid())));
+        $application = \Stormpath\Resource\Application::create(array('name' => makeUniqueName('ApplicationTest testDelete')));
 
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('Yet Another App', $application->name);
+        $this->assertContains('testDelete', $application->name);
 
         $href = $application->href;
         $application->delete();
@@ -763,7 +767,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
     public function testShouldBeAbleToGetApplicationViaHTMLFragment()
     {
-        $application = \Stormpath\Resource\Application::create(array('name' => 'Yet Another App'. md5(time().microtime().uniqid())));
+        $application = \Stormpath\Resource\Application::create(array('name' => makeUniqueName('ApplicationTest testFragment')));
 
         $href = $application->href;
 

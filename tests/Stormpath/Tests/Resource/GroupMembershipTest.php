@@ -28,16 +28,16 @@ class GroupMembershipTest extends \Stormpath\Tests\BaseTest {
 
     protected static function init()
     {
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time().microtime().uniqid())));
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('GroupMembershipTest Main Directory')));
         self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
 
-        self::$group = \Stormpath\Resource\Group::instantiate(array('name' => 'Main Group' . md5(time().microtime().uniqid())));
+        self::$group = \Stormpath\Resource\Group::instantiate(array('name' => makeUniqueName('GroupMembershipTest Main Group')));
 
         self::$directory->createGroup(self::$group);
 
         self::$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                         'surname' => 'Surname',
-                                                                        'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                                                                        'email' => makeUniqueName('GroupMembershipTest') .'@unknown123.kot',
                                                                         'password' => 'superP4ss'));
 
         self::$directory->createAccount(self::$account);
@@ -79,19 +79,19 @@ class GroupMembershipTest extends \Stormpath\Tests\BaseTest {
         $groupMembership = \Stormpath\Resource\GroupMembership::get(self::$groupMembership->href);
 
         $this->assertInstanceOf('\Stormpath\Resource\GroupMembership', $groupMembership);
-        $this->assertContains('Main Group', $groupMembership->group->name);
+        $this->assertContains('Main_Group', $groupMembership->group->name);
         $this->assertContains('@unknown123.kot', $groupMembership->account->email);
     }
 
     public function testCreate()
     {
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'A New Group' . md5(time().microtime().uniqid())));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => makeUniqueName('GroupMembershipTest testCreate')));
 
         self::$directory->createGroup($group);
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
-                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown12345.kot',
+                                                                  'email' => makeUniqueName('GroupMembershipTest testCreate') .'@unknown12345.kot',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
@@ -104,7 +104,7 @@ class GroupMembershipTest extends \Stormpath\Tests\BaseTest {
         $groupMembership = \Stormpath\Resource\GroupMembership::get($groupMembership->href);
 
         $this->assertInstanceOf('\Stormpath\Resource\GroupMembership', $groupMembership);
-        $this->assertContains('A New Group', $groupMembership->group->name);
+        $this->assertContains('testCreate', $groupMembership->group->name);
         $this->assertContains('@unknown12345.kot', $groupMembership->account->email);
 
     }
@@ -114,13 +114,13 @@ class GroupMembershipTest extends \Stormpath\Tests\BaseTest {
      */
     public function testDelete()
     {
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'Another New Group' . md5(time().microtime().uniqid())));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => makeUniqueName('GroupMembershipTest testDelete')));
 
         self::$directory->createGroup($group);
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
-                                                                  'email' => md5(time().microtime().uniqid()) .'@unknown12345678.kot',
+                                                                  'email' => makeUniqueName('GroupMembershipTest testDelete') .'@unknown12345678.kot',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
@@ -130,7 +130,7 @@ class GroupMembershipTest extends \Stormpath\Tests\BaseTest {
         $groupMembership = \Stormpath\Resource\GroupMembership::get($groupMembership->href);
 
         $this->assertInstanceOf('\Stormpath\Resource\GroupMembership', $groupMembership);
-        $this->assertContains('Another New Group', $groupMembership->group->name);
+        $this->assertContains('testDelete', $groupMembership->group->name);
         $this->assertContains('@unknown12345678.kot', $groupMembership->account->email);
 
         $href = $groupMembership->href;

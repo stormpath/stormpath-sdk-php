@@ -6,7 +6,7 @@ use Stormpath\Authc\Api\Request;
 use Stormpath\Exceptions\RequestAuthenticatorException;
 use Stormpath\Tests\BaseTest;
 
-class OAuthClientCredentialsAuthenticationResult extends BaseTest
+class OAuthClientCredentialsAuthenticationTest extends BaseTest
 {
 
     public static $account;
@@ -22,8 +22,8 @@ class OAuthClientCredentialsAuthenticationResult extends BaseTest
 
         self::$application = \Stormpath\Resource\Application::instantiate(
             array(
-                'name' => 'Main App for the tests' .md5(time()),
-                'description' => 'Description of Main App',
+                'name' => makeUniqueName('Application OAuthClientCredentials'),
+                'description' => 'Application for OAuthClientCredentialsAuthenticationTest',
                 'status' => 'enabled'
             )
         );
@@ -38,8 +38,8 @@ class OAuthClientCredentialsAuthenticationResult extends BaseTest
                 'givenName' => 'PHP',
                 'middleName' => 'BasicRequestAuthenticator',
                 'surname' => 'Test',
-                'username' => md5(time().microtime().uniqid()) . 'username',
-                'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                'username' => makeUniqueName('OAuthClientCredentialsAuthenticationTest'),
+                'email' => makeUniqueName('OAuthClientCredentialsAuthenticationTest') .'@unknown123.kot',
                 'password' => 'superP4ss'
 
             )
