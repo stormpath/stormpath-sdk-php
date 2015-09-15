@@ -26,7 +26,6 @@ class FacebookProvider extends Provider
 {
     const CLIENT_ID             = 'clientId';
     const CLIENT_SECRET         = 'clientSecret';
-    const REDIRECT_URI          = 'redirectUri';
     const FACEBOOK_PROVIDER_ID  = 'facebook';
 
     public static function get($href, array $options = array())
@@ -68,16 +67,6 @@ class FacebookProvider extends Provider
     public function setClientSecret($clientSecret)
     {
         $this->setProperty(self::CLIENT_SECRET, $clientSecret);
-    }
-
-    public function getRedirectUri()
-    {
-        return $this->getProperty(self::REDIRECT_URI);
-    }
-
-    public function setRedirectUri($redirectUri)
-    {
-        $this->setProperty(self::REDIRECT_URI, $redirectUri);
     }
 
 }
