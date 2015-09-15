@@ -18,6 +18,7 @@ namespace Stormpath;
  * limitations under the License.
  */
 
+use Stormpath\Cache\CacheManager;
 use Stormpath\DataStore\DefaultDataStore;
 use Stormpath\Http\Authc\RequestSigner;
 use Stormpath\Http\HttpClientRequestExecutor;
@@ -89,30 +90,31 @@ class Client extends Magic
 
     private static $instance;
 
-    private $cacheManagerInstance;
-
     private $dataStore;
 
     /**
      * Instantiates a new Client instance that will communicate with the Stormpath REST API.
      * See the class-level PHPDoc for a usage example.
      *
-     * @param $apiKey the Stormpath account API Key that will be used to authenticate the client with
+     * @param ApiKey| $apiKey the Stormpath account API Key that will be used to authenticate the client with
      *               Stormpath's REST API.
      *
-     * @param $baseUrl optional parameter for specifying the base URL when not using the default one
+     * @param CacheManager $cacheManager
+     * @param $baseUrl parameter for specifying the base URL when not using the default one
      *         (https://api.stormpath.com/v1).
+     * @param RequestSigner $requestSigner
      */
-    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, RequestSigner $requestSigner = null)
+    public function __construct(ApiKey $apiKey, CacheManager $cacheManager = null, $baseUrl = null, RequestSigner $requestSigner = null)
     {
         parent::__construct();
+
         self::$cacheManager = $cacheManager;
-        self::$cacheManagerOptions = $cacheManagerOptions;
+
+        if ($cacheManager)
+            self::$cacheManagerOptions = $cacheManager->options;
 
         $requestExecutor = new HttpClientRequestExecutor($requestSigner);
-
-        $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
-        $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
+        $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $cacheManager, $baseUrl);
     }
 
     public static function get($href, $className, $path = null, array $options = array())
@@ -189,7 +191,7 @@ class Client extends Magic
 
     public function getCacheManager()
     {
-        return $this->cacheManagerInstance;
+        return $this->dataStore->getCacheManager();
     }
 
     public static function tearDown()
