@@ -69,4 +69,22 @@ class FacebookProvider extends Provider
         $this->setProperty(self::CLIENT_SECRET, $clientSecret);
     }
 
+    /**
+     * @deprecated 1.11.0.beta
+     * @return string
+     */
+    public function getRedirectUri()
+    {
+        return $this->getProperty(self::REDIRECT_URI);
+    }
+
+    /**
+     * @deprecated 1.11.0.beta
+     * @param $redirectUri
+     */
+    public function setRedirectUri($redirectUri)
+    {
+        $this->setProperty(self::REDIRECT_URI, $redirectUri);
+    }
+
 }
