@@ -1116,7 +1116,7 @@ A provider resource can be obtained by accessing the directory’s provider as
 follows:
 
 ```PHP
-$provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv/provider",
+$provider = $client->dataStore->getResource("directories/{{$directoryID}}/provider",
     \Stormpath\Stormpath::GOOGLE_PROVIDER);
 ```
 
@@ -1162,6 +1162,25 @@ beforehand from Google’s Developer Console regarding your application.
 Creating a Google Directory is very similar to creating a directory within 
 Stormpath. For a Google Directory to be configured correctly, you must 
 specify the correct Provider information.
+
+```PHP
+$provider = Stormpath\Resource\GoogleProvider::instantiate([
+  'clientId' => '857385-m8vk0fn2r7jmjo.apps.googleusercontent.com',
+  'clientSecret' => 'ehs7_-bA7OWQSQ4',
+  'redirectUri' => 'https://myapplication.com/authenticate'
+  ]);
+
+$directory = Stormpath\Resource\Directory::instantiate([
+  'name' => 'A Google Directory',
+  'description' => 'My Google Directory',
+  'provider' => $provider
+  ]);
+
+$tenant = $client->tenant;
+$directory = $tenant->createDirectory($directory);
+```
+
+OR
 
 ```PHP
 $provider = $client->dataStore->instantiate(\Stormpath\Stormpath::GOOGLE_PROVIDER);
@@ -1270,7 +1289,7 @@ A provider resource can be obtained by accessing the directory’s provider as f
 Example Request
 
 ```PHP
-$provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/72N2MjJSIXuln56sNngcvr/provider",
+$provider = $client->dataStore->getResource("directories/72N2MjJSIXuln56sNngcvr/provider",
     \Stormpath\Stormpath::FACEBOOK_PROVIDER);
 ```
 
@@ -1316,7 +1335,25 @@ Creating a Facebook Directory is very similar to creating a directory within Sto
 
 Example Request
 
+```PHP
+$provider = Stormpath\Resource\FacebookProvider::instantiate([
+  'clientId' => '1011854538839621',
+  'clientSecret' => '82c16954b0d88216127d66ac44bbc3a8'
+  ]);
+
+$directory = Stormpath\Resource\Directory::instantiate([
+  'name' => 'A Facebook Directory',
+  'description' => 'My Facebook Directory',
+  'provider' => $provider
+  ]);
+
+$tenant = $client->tenant;
+$directory = $tenant->createDirectory($directory);
 ```
+
+OR
+
+```PHP
 $provider = $client->dataStore->instantiate(\Stormpath\Stormpath::FACEBOOK_PROVIDER);
 $provider->clientId = "1011854538839621";
 $provider->clientSecret = "82c16954b0d88216127d66ac44bbc3a8";
@@ -1413,7 +1450,7 @@ A provider resource can be obtained by accessing the directory’s provider as
 follows:
 
 ```PHP
-$provider = $client->dataStore->getResource("https://api.stormpath.com/v1/directories/1mBDmVgW8JEon4AkoSYjPv/provider",
+$provider = $client->dataStore->getResource("directories/1mBDmVgW8JEon4AkoSYjPv/provider",
     \Stormpath\Stormpath::GITHUB_PROVIDER);
 ```
 
@@ -1457,6 +1494,24 @@ beforehand from your Github developers settings regarding your application.
 Creating a Github Directory is very similar to creating a directory within 
 Stormpath. For a Github Directory to be configured correctly, you must 
 specify the correct Provider information.
+
+```PHP
+$provider = Stormpath\Resource\GithubProvider::instantiate([
+  'clientId' => '48f983a65887df76',
+  'clientSecret' => '2b5476584adf7846f890094cba3672f7'
+  ]);
+
+$directory = Stormpath\Resource\Directory::instantiate([
+  'name' => 'A Github Directory',
+  'description' => 'My Github Directory',
+  'provider' => $provider
+  ]);
+
+$tenant = $client->tenant;
+$directory = $tenant->createDirectory($directory);
+```
+
+OR
 
 ```PHP
 $provider = $client->dataStore->instantiate(\Stormpath\Stormpath::GITHUB_PROVIDER);
@@ -1609,6 +1664,24 @@ beforehand from LinkedIn’s Developer Console regarding your application.
 Creating a LinkedIn Directory is very similar to creating a directory within 
 Stormpath. For a LinkedIn Directory to be configured correctly, you must 
 specify the correct Provider information.
+
+```PHP
+$provider = Stormpath\Resource\LinkedInProvider::instantiate([
+  'clientId' => '857385m8vk0fn2r7j',
+  'clientSecret' => 'ehs7bA7OWQSQ4'
+  ]);
+
+$directory = Stormpath\Resource\Directory::instantiate([
+  'name' => 'A LinkedIn Directory',
+  'description' => 'My LinkedIn Directory',
+  'provider' => $provider
+  ]);
+
+$tenant = $client->tenant;
+$directory = $tenant->createDirectory($directory);
+```
+
+OR
 
 ```PHP
 $provider = $client->dataStore->instantiate(\Stormpath\Stormpath::LINKEDIN_PROVIDER);
