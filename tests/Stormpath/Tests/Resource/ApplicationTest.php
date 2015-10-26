@@ -285,6 +285,7 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertInstanceOf('Stormpath\Resource\GroupList', $application->groups);
         $this->assertInstanceOf('Stormpath\Resource\AccountStoreMappingList', $application->accountStoreMappings);
         $this->assertInstanceOf('Stormpath\Resource\BasicLoginAttempt', $application->loginAttempts);
+        $this->assertInstanceOf('Stormpath\Resource\OauthPolicy', $application->oauthPolicy);
 
         foreach($application->accountStoreMappings as $acm)
         {
@@ -683,6 +684,26 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertNull($apiKey);
 
         $account->delete();
+    }
+
+    public function testOauthPolicy()
+    {
+        $policy = self::$application->oauthPolicy;
+        $accessTokenTtl = $policy->accessTokenTtl;
+        $refreshTokenTtl = $policy->refreshTokenTtl;
+
+        $this->assertNotNull($accessTokenTtl);
+        $this->assertNotNull($refreshTokenTtl);
+
+        $policy->accessTokenTtl = 'PT1M';
+        $policy->refreshTokenTtl = 'PT1M';
+        $policy->save();
+
+        $policy = self::$application->oauthPolicy;
+        $accessTokenTtl = $policy->accessTokenTtl;
+        $refreshTokenTtl = $policy->refreshTokenTtl;
+        $this->assertEquals('PT1M', $accessTokenTtl);
+        $this->assertEquals('PT1M', $refreshTokenTtl);
     }
 
     public function testAddingCustomData()

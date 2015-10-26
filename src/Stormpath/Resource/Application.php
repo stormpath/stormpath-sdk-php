@@ -44,6 +44,7 @@ class Application extends InstanceResource implements Deletable
     const GROUPS                        = "groups";
     const ACCOUNT_STORE_MAPPINGS        = "accountStoreMappings";
     const LOGIN_ATTEMPTS                = "loginAttempts";
+    const OAUTH_POLICY                  = "oAuthPolicy";
     const CUSTOM_DATA                   = "customData";
 
     const PATH                          = "applications";
@@ -134,6 +135,11 @@ class Application extends InstanceResource implements Deletable
     public function getGroups(array $options = array()) {
 
         return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST, $options);
+    }
+
+    public function getOauthPolicy(array $options = array())
+    {
+        return $this->getResourceProperty(self::OAUTH_POLICY, Stormpath::OAUTH_POLICY, $options);
     }
 
     public function getCustomData(array $options = array())

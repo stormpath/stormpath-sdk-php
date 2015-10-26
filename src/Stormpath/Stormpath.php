@@ -58,6 +58,7 @@ class Stormpath
     const GROUP_LIST                            = 'GroupList';
     const GROUP_MEMBERSHIP                      = 'GroupMembership';
     const GROUP_MEMBERSHIP_LIST                 = 'GroupMembershipList';
+    const OAUTH_POLICY                          = 'OauthPolicy';
     const PASSWORD_RESET_TOKEN                  = 'PasswordResetToken';
     const PROVIDER                              = 'Provider';
     const PROVIDER_ACCOUNT_ACCESS               = 'ProviderAccountAccess';
