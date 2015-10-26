@@ -1,6 +1,7 @@
 <?php
 namespace Stormpath\Tests\Authc\Api;
 
+use Stormpath\Authc\Api\OAuthPasswordRequestAuthenticator;
 use Stormpath\Authc\Api\OAuthRequestAuthenticator;
 use Stormpath\Authc\Api\Request;
 use Stormpath\Tests\BaseTest;
@@ -130,6 +131,28 @@ class OAuthRequestAuthenticatorTest extends BaseTest
 
         $this->assertInstanceOf('Stormpath\Resource\Application', $result->getApplication());
         $this->assertInstanceOf('Stormpath\Resource\ApiKey', $result->getApiKey());
+    }
+
+    /**
+     * @test
+     */
+    public function it_responds_with_tokens_for_password_grant_type()
+    {
+        unset($_SERVER['HTTP_AUTHORIZATION']);
+        $_SERVER['REQUEST_URI'] = 'http://test.com/?grant_type=password';
+        $_SERVER['QUERY_STRING'] = 'grant_type=password';
+
+        self::$apiKey->setStatus('ENABLED');
+        self::$apiKey->save();
+
+        self::$account->setStatus('ENABLED');
+        self::$account->save();
+
+        $user = 'test';
+        $password = 'test';
+
+        $auth = new OAuthPasswordRequestAuthenticator(self::$application);
+        $result = $auth->authenticate($user, $password);
     }
 
 

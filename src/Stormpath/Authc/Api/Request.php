@@ -50,7 +50,12 @@ class Request
 
     public function hasGrantType()
     {
-        return !!(strpos($this->headers['REQUEST_URI'], '?grant_type=') && $this->getGrantType() == 'client_credentials');
+        $validGrantTypes = [
+            'client_credentials',
+            'password',
+            'refresh_token'
+        ];
+        return !!(strpos($this->headers['REQUEST_URI'], '?grant_type=') && in_array($this->getGrantType(), $validGrantTypes));
     }
 
     public function isBearerAuthorization()
@@ -63,6 +68,15 @@ class Request
     {
         $sandv = $this->getSchemeAndValue();
         return !!($sandv[0]=='Basic');
+    }
+
+    public function isPasswordGrantType()
+    {
+        if (!$this->hasGrantType()) return false;
+
+        if ($this->getGrantType() != 'password') return false;
+
+        return true;
     }
 
     private function getGrantType()
