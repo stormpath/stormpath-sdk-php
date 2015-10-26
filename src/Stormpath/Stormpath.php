@@ -34,6 +34,7 @@ spl_autoload_register('Stormpath\Stormpath_autoload');
 
 class Stormpath
 {
+    const ACCESS_TOKEN                          = 'AccessToken';
     const ACCOUNT                               = 'Account';
     const ACCOUNT_CREATION_POLICY               = "AccountCreationPolicy";
     const ACCOUNT_LIST                          = 'AccountList';
