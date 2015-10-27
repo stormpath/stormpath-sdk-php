@@ -55,6 +55,7 @@ class Stormpath
     const FACEBOOK_PROVIDER_DATA                = "FacebookProviderData";
     const GOOGLE_PROVIDER                       = 'GoogleProvider';
     const GOOGLE_PROVIDER_DATA                  = "GoogleProviderData";
+    const GRANT_AUTHENTICATION_TOKEN            = "GrantAuthenticationToken";
     const GROUP                                 = 'Group';
     const GROUP_LIST                            = 'GroupList';
     const GROUP_MEMBERSHIP                      = 'GroupMembership';
