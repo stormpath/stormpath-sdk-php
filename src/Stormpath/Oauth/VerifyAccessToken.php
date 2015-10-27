@@ -39,8 +39,10 @@ class VerifyAccessToken
         $this->localValidation = $localValidation;
     }
 
-    public function validate($jwt)
+    public function verify()
     {
+        $jwt = $this->retrieveJwtFromHeader();
+
         if($this->localValidation)
             return JWT::decode($jwt, $this->application->dataStore->getApiKey()->getSecret(), ['HS256']);
 
@@ -48,5 +50,28 @@ class VerifyAccessToken
 
         return $this->application->dataStore->getResource($href, Stormpath::ACCESS_TOKEN);
 
+    }
+
+    public function withLocalValidation()
+    {
+        $this->localValidation = true;
+        return $this;
+    }
+
+    private function retrieveJwtFromHeader()
+    {
+        if(!isset($_SERVER['HTTP_AUTHORIZATION']))
+            throw new \InvalidArgumentException('HTTP_AUTHORIZATION header must be present.');
+
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+        $headerParts = explode(' ', $authHeader);
+
+        if(count($headerParts) != 2)
+            throw new \InvalidArgumentException('Authorization Header invalid.');
+
+        if($headerParts[0] != 'Bearer')
+            throw new \InvalidArgumentException('Authorization Header invalid Type');
+
+        return $headerParts[1];
     }
 }
