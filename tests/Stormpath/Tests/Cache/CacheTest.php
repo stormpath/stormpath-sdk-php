@@ -103,6 +103,43 @@ class CacheTest extends BaseTest
         $application->delete();
     }
 
+    public function testDoesNotCacheExpandedResource()
+    {
+        $cache = parent::$client->dataStore->cache;
+        // Create Account and add to Group
+        $directory = \Stormpath\Resource\Directory::instantiate(array('name' => 'Main Directory' .md5(time())));
+        self::createResource(\Stormpath\Resource\Directory::PATH, $directory);
+
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => 'A New Group' . md5(time())));
+
+        $directory->createGroup($group);
+
+        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+            'surname' => 'Surname',
+            'email' => md5(time()) .'@unknown12345.kot',
+            'password' => 'superP4ss'));
+
+        $directory->createAccount($account);
+
+        $groupMembership = \Stormpath\Resource\GroupMembership::instantiate();
+        $groupMembership->account = $account;
+        $groupMembership->group = $group;
+        $groupMembership = \Stormpath\Resource\GroupMembership::create($groupMembership);
+        // Check the cache
+        $acct = \Stormpath\Resource\Account::get($account->href,array('expand'=>'groups,groupMemberships'));
+        $this->assertEquals($acct->surname, 'Surname', 'one');
+
+        // Make change to the account
+        $account->surname = "Test";
+        $account->save();
+        $acct2 = \Stormpath\Resource\Account::get($account->href,array('expand'=>'groups,groupMemberships'));
+
+        $this->assertNull($cache->get($acct->href.":groups,groupMemberships"));
+        $this->assertNull($cache->get($acct2->href.":groups,groupMemberships"));
+
+        $directory->delete();
+    }
+
     public function testNullCacheDoesNotCache()
     {
         $origClient = parent::$client->dataStore->cache;
