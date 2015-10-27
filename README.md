@@ -5,7 +5,7 @@ Stormpath is the first easy, secure user management and authentication service f
 
 ## Installation
 
-You can install **stormpath-sdk-php** via Composer or by downloading the source.
+You can install **stormpath-sdk-php** via Composer.
 
 ### Via Composer:
 
@@ -24,18 +24,6 @@ Configure the **stormpath/sdk** dependency in your 'composer.json' file:
 On your project root, install the the SDK with its dependencies:
 
     php composer.phar install
-    
-### Download the source code
-
-Download the [master branch zip file][sdk-zip] which includes the latest version
-of the SDK and its dependencies, with the exception of Guzzle (the Http client).
-
-The Guzzle Http dependency can be installed via PEAR (version 3.7.4 is the minimum required).
-[Click here to visit the Guzzle PEAR installation instructions.][guzzle-installation-pear]
-
-Once you download the library, move the stormpath-sdk-php folder to your project directory and then include the library file:
-
-    require '/path/to/stormpath-sdk-php/src/Stormpath/Stormpath.php';
 
 You're ready to connect with Stormpath!
 
