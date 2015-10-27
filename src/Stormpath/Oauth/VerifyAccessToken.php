@@ -22,7 +22,7 @@ use JWT;
 use Stormpath\Resource\Application;
 use Stormpath\Stormpath;
 
-class VerifyAuthToken
+class VerifyAccessToken
 {
     /**
      * @var Application
