@@ -66,6 +66,7 @@ class Stormpath
     const PROVIDER_ACCOUNT_ACCESS               = 'ProviderAccountAccess';
     const PROVIDER_ACCOUNT_RESULT               = 'ProviderAccountResult';
     const PROVIDER_DATA                         = 'ProviderData';
+    const REFRESH_TOKEN                         = 'RefreshToken';
     const TENANT                                = 'Tenant';
     const VERIFICATION_EMAIL                    = 'VerificationEmail';
 

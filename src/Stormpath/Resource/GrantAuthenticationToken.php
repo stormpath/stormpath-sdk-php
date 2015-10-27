@@ -46,5 +46,12 @@ class GrantAuthenticationToken extends InstanceResource
         return $this->getDataStore()->instantiate('AccessToken', $props);
     }
 
+    public function getAsRefreshToken()
+    {
+        $props = new \stdClass();
+        $props->href = $this->getAccessTokenHref();
+        return $this->getDataStore()->instantiate('RefreshToken', $props);
+    }
+
 
 }
