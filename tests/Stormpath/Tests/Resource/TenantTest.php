@@ -20,7 +20,9 @@ namespace Stormpath\Tests\Resource;
 
 use Stormpath\Resource\Directory;
 use Stormpath\Resource\FacebookProvider;
+use Stormpath\Resource\GithubProvider;
 use Stormpath\Resource\GoogleProvider;
+use Stormpath\Resource\LinkedInProvider;
 use Stormpath\Resource\Tenant;
 use Stormpath\Stormpath;
 
@@ -134,7 +136,6 @@ class TenantTest extends \Stormpath\Tests\BaseTest {
         $provider = self::$client->dataStore->instantiate(\Stormpath\Stormpath::FACEBOOK_PROVIDER);
         $provider->setClientId("1011854538839621");
         $provider->setClientSecret("82c16954b0d88216127d66ac44bbc3a8");
-        $provider->setRedirectUri("https://www.example.com/oauth2callback");
 
         $directory = self::$client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
         $directory->setName("my-fb-directory");
@@ -142,6 +143,84 @@ class TenantTest extends \Stormpath\Tests\BaseTest {
         $directory->setProvider($provider);
 
         $this->assertEquals(FacebookProvider::FACEBOOK_PROVIDER_ID, $directory->getProvider()->getProviderId());
+
+        $expectedDirectory = $this->getMock('\Stormpath\Resource\Directory');
+        $dataStore->expects($this->once())
+            ->method('create')
+            ->with(
+                $this->equalTo('/'.Directory::PATH),
+                $this->equalTo($directory),
+                $this->equalTo(Stormpath::DIRECTORY),
+                $this->equalTo(array())
+            )
+            ->will($this->returnValue($expectedDirectory));
+
+        $returnedDirectory = $tenant->createDirectory($directory);
+        $this->assertEquals($expectedDirectory, $returnedDirectory);
+    }
+
+    public function testCreateDirectoryWithGithubProvider()
+    {
+        $dataStore = $this->getMock('\Stormpath\DataStore\InternalDataStore');
+
+        $properties = new \stdClass();
+        $properties->href = "https://api.stormpath.com/v1/tenants/jaef0wq38ruojoiadE";
+        $properties->applications = new \stdClass();
+        $properties->applications->href = "https://api.stormpath.com/v1/tenants/jaef0wq38ruojoiadE/applications";
+        $properties->directories = new \stdClass();
+        $properties->directories->href = "https://api.stormpath.com/v1/tenants/jaef0wq38ruojoiadE/directories";
+
+        $tenant = new Tenant($dataStore, $properties);
+
+        $provider = self::$client->dataStore->instantiate(\Stormpath\Stormpath::GITHUB_PROVIDER);
+        $provider->setClientId("1011854538839621");
+        $provider->setClientSecret("82c16954b0d88216127d66ac44bbc3a8");
+
+        $directory = self::$client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+        $directory->setName("my-github-directory");
+        $directory->setDescription("A Github directory");
+        $directory->setProvider($provider);
+
+        $this->assertEquals(GithubProvider::GITHUB_PROVIDER_ID, $directory->getProvider()->getProviderId());
+
+        $expectedDirectory = $this->getMock('\Stormpath\Resource\Directory');
+        $dataStore->expects($this->once())
+            ->method('create')
+            ->with(
+                $this->equalTo('/'.Directory::PATH),
+                $this->equalTo($directory),
+                $this->equalTo(Stormpath::DIRECTORY),
+                $this->equalTo(array())
+            )
+            ->will($this->returnValue($expectedDirectory));
+
+        $returnedDirectory = $tenant->createDirectory($directory);
+        $this->assertEquals($expectedDirectory, $returnedDirectory);
+    }
+
+    public function testCreateDirectoryWithLinkedInProvider()
+    {
+        $dataStore = $this->getMock('\Stormpath\DataStore\InternalDataStore');
+
+        $properties = new \stdClass();
+        $properties->href = "https://api.stormpath.com/v1/tenants/jaef0wq38ruojoiadE";
+        $properties->applications = new \stdClass();
+        $properties->applications->href = "https://api.stormpath.com/v1/tenants/jaef0wq38ruojoiadE/applications";
+        $properties->directories = new \stdClass();
+        $properties->directories->href = "https://api.stormpath.com/v1/tenants/jaef0wq38ruojoiadE/directories";
+
+        $tenant = new Tenant($dataStore, $properties);
+
+        $provider = self::$client->dataStore->instantiate(\Stormpath\Stormpath::LINKEDIN_PROVIDER);
+        $provider->setClientId("1011854538839621");
+        $provider->setClientSecret("82c16954b0d88216127d66ac44bbc3a8");
+
+        $directory = self::$client->dataStore->instantiate(\Stormpath\Stormpath::DIRECTORY);
+        $directory->setName("my-linkedin-directory");
+        $directory->setDescription("A LinkedIn directory");
+        $directory->setProvider($provider);
+
+        $this->assertEquals(LinkedInProvider::LINKEDIN_PROVIDER_ID, $directory->getProvider()->getProviderId());
 
         $expectedDirectory = $this->getMock('\Stormpath\Resource\Directory');
         $dataStore->expects($this->once())

@@ -22,11 +22,11 @@ use Stormpath\Client;
 use Stormpath\DataStore\InternalDataStore;
 use Stormpath\Stormpath;
 
-class FacebookProvider extends Provider
+class LinkedInProvider extends Provider
 {
     const CLIENT_ID             = 'clientId';
     const CLIENT_SECRET         = 'clientSecret';
-    const FACEBOOK_PROVIDER_ID  = 'facebook';
+    const LINKEDIN_PROVIDER_ID  = 'linkedin';
 
     public static function get($href, array $options = array())
     {
@@ -35,18 +35,18 @@ class FacebookProvider extends Provider
             $href = $href.'/'.self::PATH;
         }
 
-        return Client::get($href, Stormpath::FACEBOOK_PROVIDER, Directory::PATH, $options);
+        return Client::get($href, Stormpath::LINKEDIN_PROVIDER, Directory::PATH, $options);
     }
 
     public static function instantiate($properties = null)
     {
-        return Client::instantiate(Stormpath::FACEBOOK_PROVIDER, $properties);
+        return Client::instantiate(Stormpath::LINKEDIN_PROVIDER, $properties);
     }
 
     public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null)
     {
         parent::__construct($dataStore, $properties);
-        $this->setProperty(self::PROVIDER_ID, self::FACEBOOK_PROVIDER_ID);
+        $this->setProperty(self::PROVIDER_ID, self::LINKEDIN_PROVIDER_ID);
     }
 
     public function getClientId()
@@ -67,24 +67,6 @@ class FacebookProvider extends Provider
     public function setClientSecret($clientSecret)
     {
         $this->setProperty(self::CLIENT_SECRET, $clientSecret);
-    }
-
-    /**
-     * @deprecated 1.11.0.beta
-     * @return string
-     */
-    public function getRedirectUri()
-    {
-        return $this->getProperty(self::REDIRECT_URI);
-    }
-
-    /**
-     * @deprecated 1.11.0.beta
-     * @param $redirectUri
-     */
-    public function setRedirectUri($redirectUri)
-    {
-        $this->setProperty(self::REDIRECT_URI, $redirectUri);
     }
 
 }

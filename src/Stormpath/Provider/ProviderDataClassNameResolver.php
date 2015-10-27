@@ -20,7 +20,9 @@ namespace Stormpath\Provider;
 use Stormpath\DataStore\ClassNameResolver;
 use Stormpath\DataStore\DefaultClassNameResolver;
 use Stormpath\Resource\FacebookProviderData;
+use Stormpath\Resource\GithubProviderData;
 use Stormpath\Resource\GoogleProviderData;
+use Stormpath\Resource\LinkedInProviderData;
 use Stormpath\Stormpath;
 
 class ProviderDataClassNameResolver implements ClassNameResolver {
@@ -52,6 +54,10 @@ class ProviderDataClassNameResolver implements ClassNameResolver {
                         return Stormpath::GOOGLE_PROVIDER_DATA;
                     case FacebookProviderData::PROVIDER_ID:
                         return Stormpath::FACEBOOK_PROVIDER_DATA;
+                    case GithubProviderData::PROVIDER_ID:
+                        return Stormpath::GITHUB_PROVIDER_DATA;
+                    case LinkedInProviderData::PROVIDER_ID:
+                        return Stormpath::LINKEDIN_PROVIDER_DATA;
                     default:
                         throw new \InvalidArgumentException('Could not find className for providerId '.$propertyValue);
                 }

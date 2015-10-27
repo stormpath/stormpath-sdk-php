@@ -52,12 +52,16 @@ class Stormpath
     const EMAIL_VERIFICATION_TOKEN              = 'EmailVerificationToken';
     const FACEBOOK_PROVIDER                     = 'FacebookProvider';
     const FACEBOOK_PROVIDER_DATA                = "FacebookProviderData";
+    const GITHUB_PROVIDER                       = 'GithubProvider';
+    const GITHUB_PROVIDER_DATA                  = "GithubProviderData";
     const GOOGLE_PROVIDER                       = 'GoogleProvider';
     const GOOGLE_PROVIDER_DATA                  = "GoogleProviderData";
     const GROUP                                 = 'Group';
     const GROUP_LIST                            = 'GroupList';
     const GROUP_MEMBERSHIP                      = 'GroupMembership';
     const GROUP_MEMBERSHIP_LIST                 = 'GroupMembershipList';
+    const LINKEDIN_PROVIDER                     = 'LinkedInProvider';
+    const LINKEDIN_PROVIDER_DATA                = "LinkedInProviderData";
     const PASSWORD_RESET_TOKEN                  = 'PasswordResetToken';
     const PROVIDER                              = 'Provider';
     const PROVIDER_ACCOUNT_ACCESS               = 'ProviderAccountAccess';
