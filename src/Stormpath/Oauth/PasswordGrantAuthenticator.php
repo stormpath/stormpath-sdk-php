@@ -18,16 +18,16 @@ class PasswordGrantAuthenticator
 
     public function authenticate(PasswordGrantRequest $passwordGrantRequest)
     {
-        $createGrantAuthenticationAttempt = new CreateGrantAuthenticationAttempt();
-        $createGrantAuthenticationAttempt->setLogin($passwordGrantRequest->getLogin())
+        $grantAuthenticationAttempt = new GrantAuthenticationAttempt();
+        $grantAuthenticationAttempt->setLogin($passwordGrantRequest->getLogin())
                                          ->setPassword($passwordGrantRequest->getPassword())
                                          ->setGrantType($passwordGrantRequest->getGrantType());
         if($passwordGrantRequest->getAccountStore() != null)
-            $createGrantAuthenticationAttempt->setAccountStore($passwordGrantRequest->getAccountStore());
+            $grantAuthenticationAttempt->setAccountStore($passwordGrantRequest->getAccountStore());
 
         $grantResult = $this->application->dataStore->create(
             $this->application->getHref() . self::OAUTH_TOKEN_PATH,
-            $createGrantAuthenticationAttempt,
+            $grantAuthenticationAttempt,
             \Stormpath\Stormpath::GRANT_AUTHENTICATION_TOKEN
         );
 

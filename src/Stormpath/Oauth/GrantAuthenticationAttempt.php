@@ -7,7 +7,7 @@ namespace Stormpath\Oauth;
 use Stormpath\Resource\AccountStore;
 use Stormpath\Resource\Resource;
 
-class CreateGrantAuthenticationAttempt extends Resource
+class GrantAuthenticationAttempt extends Resource
 {
 
     const LOGIN                 = 'username';
