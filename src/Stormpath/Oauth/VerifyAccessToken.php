@@ -39,9 +39,22 @@ class VerifyAccessToken
         $this->localValidation = $localValidation;
     }
 
-    public function verify()
+    public function verify($jwt = null)
     {
-        $jwt = $this->retrieveJwtFromHeader();
+        // JWT was not passed in
+        if(!$jwt) {
+            $jwt = $this->retrieveJwtFromHeader();
+        }
+
+        // JWT was not in header
+        if(!$jwt) {
+            $jwt = $this->retrieveJwtFromCookie();
+        }
+
+        // JWT not in Header or Cookie
+        if(!$jwt) {
+            throw new \InvalidArgumentException('Could not find access token, please pass in JWT');
+        }
 
         if($this->localValidation)
             return JWT::decode($jwt, $this->application->dataStore->getApiKey()->getSecret(), ['HS256']);
@@ -61,7 +74,7 @@ class VerifyAccessToken
     private function retrieveJwtFromHeader()
     {
         if(!isset($_SERVER['HTTP_AUTHORIZATION']))
-            throw new \InvalidArgumentException('HTTP_AUTHORIZATION header must be present.');
+            return null;
 
         $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
         $headerParts = explode(' ', $authHeader);
@@ -73,5 +86,13 @@ class VerifyAccessToken
             throw new \InvalidArgumentException('Authorization Header invalid Type');
 
         return $headerParts[1];
+    }
+
+    private function retrieveJwtFromCookie()
+    {
+        if(!isset($_COOKIE['access_token']))
+            return null;
+
+        return $_COOKIE['access_token'];
     }
 }
