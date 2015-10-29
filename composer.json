@@ -28,7 +28,10 @@
     "autoload": {
         "psr-0": {
             "Stormpath\\": "src/"
-        }
+        },
+        "classmap": [
+            "tests/Stormpath"
+        ]
     },
     "require": {
         "php": ">=5.4",

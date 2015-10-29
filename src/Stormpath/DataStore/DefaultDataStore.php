@@ -299,9 +299,20 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
                                                   ->build();
 
 
-        if ($request->getBody())
+        if ($body = $request->getBody())
         {
             $headers['Content-Type'] = 'application/json';
+
+            if(strpos($request->getResourceUrl(), '/oauth/token')) {
+                $arr = json_decode($body);
+                $arr = (array) $arr;
+                ksort($arr);
+                $body = http_build_query($arr);
+                $request->setBody($body, strlen($body));
+
+                $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                $headers['Content-Length'] = $request->getContentLength();
+            }
         }
 
         $request->setHeaders($headers);

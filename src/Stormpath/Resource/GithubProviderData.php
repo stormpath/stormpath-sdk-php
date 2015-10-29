@@ -1,6 +1,6 @@
 <?php
 
-namespace Stormpath\Util;
+namespace Stormpath\Resource;
 
 /*
  * Copyright 2013 Stormpath, Inc.
@@ -18,8 +18,20 @@ namespace Stormpath\Util;
  * limitations under the License.
  */
 
-class Version
+class GithubProviderData extends ProviderData
 {
-    const SDK_VERSION = '1.11.0.beta';
+    const PROVIDER_ID   = 'github';
+
+    const ACCESS_TOKEN  = 'accessToken';
+
+    public function getAccessToken()
+    {
+        return $this->getProperty(self::ACCESS_TOKEN);
+    }
+
+    public function setAccessToken($accessToken)
+    {
+        $this->setProperty(self::ACCESS_TOKEN, $accessToken);
+    }
 
 }

@@ -14,7 +14,7 @@ class AccountCreationPolicyTest extends \Stormpath\Tests\BaseTest {
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-        self::$directory = \Stormpath\Resource\Directory::create(array('name' => 'Another random directory' .md5(time().microtime().uniqid())));
+        self::$directory = \Stormpath\Resource\Directory::create(array('name' => makeUniqueName('AccountCreationPolicyTest')));
         self::$acp = self::$directory->accountCreationPolicy;
     }
 

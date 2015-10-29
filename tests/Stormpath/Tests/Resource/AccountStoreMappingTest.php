@@ -28,13 +28,13 @@ class AccountStoreMappingTest extends \Stormpath\Tests\BaseTest {
 
     protected static function init()
     {
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => md5(time().microtime().uniqid())));
+        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('AccountStoreMappingTest Directory')));
         self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
 
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => md5(time().microtime().uniqid())));
+        $group = \Stormpath\Resource\Group::instantiate(array('name' => makeUniqueName('AccountStoreMappingTest Group')));
         self::$directory->createGroup($group);
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => md5(time().microtime().uniqid())));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => makeUniqueName('AccountStoreMappingTest Application')));
         self::createResource(\Stormpath\Resource\Application::PATH, self::$application);
 
         self::$accountStoreMappingWithDir = \Stormpath\Resource\AccountStoreMapping::instantiate(array('accountStore' => self::$directory));
@@ -128,7 +128,8 @@ class AccountStoreMappingTest extends \Stormpath\Tests\BaseTest {
 
     public function testCreate()
     {
-        $application = \Stormpath\Resource\Application::instantiate(array('name' =>  "App" .md5(time().microtime().uniqid())));
+        $uniqueApplicationName = makeUniqueName('AccountStoreMappingTest Test Create');
+        $application = \Stormpath\Resource\Application::instantiate(array('name' =>  $uniqueApplicationName));
         self::createResource(\Stormpath\Resource\Application::PATH, $application);
 
         $accountStoreMappingWithDir = \Stormpath\Resource\AccountStoreMapping::instantiate();
@@ -141,7 +142,7 @@ class AccountStoreMappingTest extends \Stormpath\Tests\BaseTest {
 
         $this->assertInstanceOf('Stormpath\Resource\AccountStoreMapping', $accountStoreMapping);
         $this->assertInstanceOf('Stormpath\Resource\Directory', $accountStoreMapping->accountStore);
-        $this->assertContains('App', $accountStoreMapping->application->name);
+        $this->assertEquals($uniqueApplicationName, $accountStoreMapping->application->name);
 
         $accountStoreMapping->delete();
         $application->delete();
@@ -157,7 +158,7 @@ class AccountStoreMappingTest extends \Stormpath\Tests\BaseTest {
 
     public function testDelete()
     {
-        $application = \Stormpath\Resource\Application::instantiate(array('name' =>  "App" .md5(time().microtime().uniqid())));
+        $application = \Stormpath\Resource\Application::instantiate(array('name' =>  makeUniqueName('AccountStoreMappingTest Test Delete')));
         self::createResource(\Stormpath\Resource\Application::PATH, $application);
 
         $accountStoreMappingWithDir = \Stormpath\Resource\AccountStoreMapping::create(array('accountStore' => self::$directory, 'application' => $application));

@@ -21,8 +21,8 @@ class ApiRequestAuthenticatorTest extends BaseTest
 
         self::$application = \Stormpath\Resource\Application::instantiate(
             array(
-                'name' => 'Main App for the tests' .md5(time()),
-                'description' => 'Description of Main App',
+                'name' => makeUniqueName('Application ApiRequestAuthenticatorTest'),
+                'description' => 'Application for ApiRequestAuthenticatorTest',
                 'status' => 'enabled'
             )
         );
@@ -35,10 +35,10 @@ class ApiRequestAuthenticatorTest extends BaseTest
         self::$account = \Stormpath\Resource\Account::instantiate(
             array(
                 'givenName' => 'PHP',
-                'middleName' => 'BasicRequestAuthenticator',
+                'middleName' => 'ApiRequestAuthenticatorTest',
                 'surname' => 'Test',
-                'username' => md5(time().microtime().uniqid()) . 'username',
-                'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+                'username' => makeUniqueName('ApiRequestAuthenticatorTest'),
+                'email' => makeUniqueName('ApiRequestAuthenticatorTest') .'@unknown123.kot',
                 'password' => 'superP4ss'
 
             )

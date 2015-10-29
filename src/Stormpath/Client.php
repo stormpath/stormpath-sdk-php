@@ -87,6 +87,8 @@ class Client extends Magic
 
     public static $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
 
+    public static $integration = null;
+
     private static $instance;
 
     private $cacheManagerInstance;

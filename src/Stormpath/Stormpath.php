@@ -18,22 +18,9 @@ namespace Stormpath;
  * limitations under the License.
  */
 
-// @codeCoverageIgnoreStart
-use Stormpath\Client;
-
-function Stormpath_autoload($className) {
-    if (substr($className, 0, 9) != 'Stormpath') {
-        return false;
-    }
-    $file = str_replace('\\', '/', $className);
-    return include dirname(__FILE__) . "$file";
-}
-// @codeCoverageIgnoreEnd
-
-spl_autoload_register('Stormpath\Stormpath_autoload');
-
 class Stormpath
 {
+    const ACCESS_TOKEN                          = 'AccessToken';
     const ACCOUNT                               = 'Account';
     const ACCOUNT_CREATION_POLICY               = "AccountCreationPolicy";
     const ACCOUNT_LIST                          = 'AccountList';
@@ -52,17 +39,24 @@ class Stormpath
     const EMAIL_VERIFICATION_TOKEN              = 'EmailVerificationToken';
     const FACEBOOK_PROVIDER                     = 'FacebookProvider';
     const FACEBOOK_PROVIDER_DATA                = "FacebookProviderData";
+    const GITHUB_PROVIDER                       = 'GithubProvider';
+    const GITHUB_PROVIDER_DATA                  = "GithubProviderData";
     const GOOGLE_PROVIDER                       = 'GoogleProvider';
     const GOOGLE_PROVIDER_DATA                  = "GoogleProviderData";
+    const GRANT_AUTHENTICATION_TOKEN            = "GrantAuthenticationToken";
     const GROUP                                 = 'Group';
     const GROUP_LIST                            = 'GroupList';
     const GROUP_MEMBERSHIP                      = 'GroupMembership';
     const GROUP_MEMBERSHIP_LIST                 = 'GroupMembershipList';
+    const LINKEDIN_PROVIDER                     = 'LinkedInProvider';
+    const LINKEDIN_PROVIDER_DATA                = "LinkedInProviderData";
+    const OAUTH_POLICY                          = 'OauthPolicy';
     const PASSWORD_RESET_TOKEN                  = 'PasswordResetToken';
     const PROVIDER                              = 'Provider';
     const PROVIDER_ACCOUNT_ACCESS               = 'ProviderAccountAccess';
     const PROVIDER_ACCOUNT_RESULT               = 'ProviderAccountResult';
     const PROVIDER_DATA                         = 'ProviderData';
+    const REFRESH_TOKEN                         = 'RefreshToken';
     const TENANT                                = 'Tenant';
     const VERIFICATION_EMAIL                    = 'VerificationEmail';
 
