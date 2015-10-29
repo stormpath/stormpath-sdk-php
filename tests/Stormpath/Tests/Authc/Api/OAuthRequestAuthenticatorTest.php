@@ -1,6 +1,7 @@
 <?php
 namespace Stormpath\Tests\Authc\Api;
 
+use Stormpath\Authc\Api\OAuthPasswordRequestAuthenticator;
 use Stormpath\Authc\Api\OAuthRequestAuthenticator;
 use Stormpath\Authc\Api\Request;
 use Stormpath\Tests\BaseTest;
@@ -131,8 +132,7 @@ class OAuthRequestAuthenticatorTest extends BaseTest
         $this->assertInstanceOf('Stormpath\Resource\Application', $result->getApplication());
         $this->assertInstanceOf('Stormpath\Resource\ApiKey', $result->getApiKey());
     }
-
-
+    
     protected function tearDown()
     {
         Request::tearDown();

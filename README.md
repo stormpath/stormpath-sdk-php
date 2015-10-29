@@ -1915,6 +1915,10 @@ $apiKey = $result->apiKey;
 You can also use the more specific `OAuthBearerRequestAuthenticator` to authenticate 
 token access requests.
 
+### Password and Refresh Token Grant types
+For details on Token Management and authenticating with Password Access Tokens and Refreshing the access tokens,
+View our [Stormpath Token Management Product Guide][token-management]
+
 ## Run the tests
 
 In order to run the tests you need to clone the repository, install the dependencies via composer and configure the api key file location. These
@@ -2000,3 +2004,4 @@ For additional information, please see the full [Project Documentation](http://d
   [guzzle-installation-pear]: http://guzzle.readthedocs.org/en/latest/overview.html#installation
   [mcf]: https://pythonhosted.org/passlib/modular_crypt_format.html
   [password-import-product-guide]: https://pythonhosted.org/passlib/modular_crypt_format.html
+  [token-management]: http://docs.stormpath.com/guides/token-management/

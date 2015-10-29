@@ -20,6 +20,7 @@ namespace Stormpath;
 
 class Stormpath
 {
+    const ACCESS_TOKEN                          = 'AccessToken';
     const ACCOUNT                               = 'Account';
     const ACCOUNT_CREATION_POLICY               = "AccountCreationPolicy";
     const ACCOUNT_LIST                          = 'AccountList';
@@ -42,17 +43,20 @@ class Stormpath
     const GITHUB_PROVIDER_DATA                  = "GithubProviderData";
     const GOOGLE_PROVIDER                       = 'GoogleProvider';
     const GOOGLE_PROVIDER_DATA                  = "GoogleProviderData";
+    const GRANT_AUTHENTICATION_TOKEN            = "GrantAuthenticationToken";
     const GROUP                                 = 'Group';
     const GROUP_LIST                            = 'GroupList';
     const GROUP_MEMBERSHIP                      = 'GroupMembership';
     const GROUP_MEMBERSHIP_LIST                 = 'GroupMembershipList';
     const LINKEDIN_PROVIDER                     = 'LinkedInProvider';
     const LINKEDIN_PROVIDER_DATA                = "LinkedInProviderData";
+    const OAUTH_POLICY                          = 'OauthPolicy';
     const PASSWORD_RESET_TOKEN                  = 'PasswordResetToken';
     const PROVIDER                              = 'Provider';
     const PROVIDER_ACCOUNT_ACCESS               = 'ProviderAccountAccess';
     const PROVIDER_ACCOUNT_RESULT               = 'ProviderAccountResult';
     const PROVIDER_DATA                         = 'ProviderData';
+    const REFRESH_TOKEN                         = 'RefreshToken';
     const TENANT                                = 'Tenant';
     const VERIFICATION_EMAIL                    = 'VerificationEmail';
 
