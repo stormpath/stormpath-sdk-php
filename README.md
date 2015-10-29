@@ -238,16 +238,6 @@ when configuring the Client:
   $client = $builder->setApiKeyProperties($apiKeyProperties)->build();
   ```
 
-  Working with different properties names (explained in the previous config instructions)
-  also work with this scenario.
-
-* Passing in an ApiKey instance:
-
-  ```php
-  $apiKey = new \Stormpath\ApiKey('APIKEYID', 'APIKEYSECRET');
-  $client = new \Stormpath\Client($apiKey);
-  ```
-
 **Note**: Only if the client is configured using the static properties,
 the static calls to resources will run successfully. If the Client is directly
 instantiated (using the ClientBuilder or the Client constructor), the Client
