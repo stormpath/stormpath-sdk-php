@@ -8,4 +8,5 @@ composer.phar
 *.tgz
 *.zip
 tests/code-coverage
+code-coverage
 .envrc

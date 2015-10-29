@@ -5,17 +5,17 @@
 
     <testsuites>
         <testsuite name="Stormpath SDK Test Suite">
-            <directory suffix="Test.php">./tests/Stormpath/Tests</directory>
+            <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
 
     <logging>
-        <log type="coverage-html" target="./tests/code-coverage"  charset="UTF-8" yui="true" lowUpperBound="50" highLowerBound="90"/>
-        <log type="coverage-clover" target="./tests/code-coverage/clover.xml"/>
-        <log type="coverage-crap4j" target="./tests/code-coverage/crap4j.xml"/>
-        <log type="coverage-php" target="./tests/code-coverage/coverage.php"/>
-        <log type="coverage-text" target="./tests/code-coverage/coverage.txt"/>
-        <log type="junit" target="./tests/code-coverage/junit.xml" logIncompleteSkipped="false"/>
+        <log type="coverage-html" target="./code-coverage"  charset="UTF-8" yui="true" lowUpperBound="50" highLowerBound="90"/>
+        <log type="coverage-clover" target="./code-coverage/clover.xml"/>
+        <log type="coverage-crap4j" target="./code-coverage/crap4j.xml"/>
+        <log type="coverage-php" target="./code-coverage/coverage.php"/>
+        <log type="coverage-text" target="./code-coverage/coverage.txt"/>
+        <log type="junit" target="./code-coverage/junit.xml" logIncompleteSkipped="false"/>
     </logging>
 
     <filter>

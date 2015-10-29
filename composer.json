@@ -26,12 +26,14 @@
         }
     ],
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "Stormpath\\": "src/"
-        },
-        "classmap": [
-            "tests/Stormpath"
-        ]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Stormpath\\Tests\\": "tests/"
+        }
     },
     "require": {
         "php": ">=5.4",
