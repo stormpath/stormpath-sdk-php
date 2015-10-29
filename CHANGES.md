@@ -2,6 +2,18 @@ stormpath-sdk-php Changelog
 ===========================
 
 
+Version 1.11.0.beta
+------------------
+
+Released on October 29, 2015
+
+- Add Integration flag to the Client. Set it from Integration with static call.
+- Token Management with the application. Handles Issue #59
+- Token Authentication. Lets Stormpath generate access_token and refresh_token for you from the oauth/token endpint. Handles Issue #59
+- Exchange ID Site JWT with an Access Token. Handles Issue #94
+- Add 2 new providers, Linkedin and Github. Handles Issue #90
+- Documentation change for building a Client. Handles Issue #78
+
 Version 1.10.0.beta
 ------------------
 
