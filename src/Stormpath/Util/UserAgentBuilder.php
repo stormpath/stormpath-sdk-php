@@ -72,7 +72,9 @@ class UserAgentBuilder {
         $userAgent = array();
 
 
-
+        if(\Stormpath\Client::$integration) {
+            $userAgent[] = \Stormpath\Client::$integration;
+        }
         $userAgent[] = 'stormpath-sdk-php/'. Version::SDK_VERSION;
         $userAgent[] = 'php/' . $this->phpVersion;
         $userAgent[] = $this->osName .'/'. $this->osVersion;
