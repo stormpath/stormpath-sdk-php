@@ -18,12 +18,9 @@ before_script:
 - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
-before_install:
-  - pip install --user codecov
-
 script:
   - travis_retry vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_success:
-  - sh -c 'if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then codecov; fi;'
+  - sh -c 'if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then bash <(curl -s https://codecov.io/bash); fi;'
 
