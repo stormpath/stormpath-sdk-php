@@ -330,6 +330,21 @@ class Application extends InstanceResource implements Deletable
             'cb_uri'    => $options['callbackUri']
         );
 
+        if(isset($options['organizationNameKey'])) {
+            $token['onk'] = $options['organizationNameKey'];
+        }
+
+        if(isset($options['showOrganizationField'])) {
+            $token['sof'] = true;
+        }
+
+        if(isset($options['useSubDomain'])) {
+            $token['usd'] = true;
+        }
+
+
+
+
         $jwt = JWT::encode($token, $apiSecret);
 
         $redirectUrl = $base . "/sso";
