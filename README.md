@@ -589,6 +589,12 @@ That is all you will need for generating the login link
 For the example above, you would replace `{APPLICATION_ID}` with the id for the applicaiton you want to allow a user
 to sign in to.  You then replace `{CALLBACK_URI}` with the url you want to handle the ID Site information.  
 
+You have the ability to specify an organization nameKey as an accountStore for a login attempt and forgot password 
+during the creation of the ID Site Url. For information on this, Visit the 
+[ID Site Guide for Multitenancy](https://docs.stormpath.com/guides/using-id-site/#using-id-site-for-multitenancy).
+
+Ability to specify an organization nameKey as an accountStore for login attempt forgot password and id site url builder
+
 #### Handle ID Site Callback
 For any request you make for ID Site, you need to specify a callback uri.  This is where the logic is stored for any
 information you want to receive from the JWT about the logged in user.  To do this and get the response back from the 
