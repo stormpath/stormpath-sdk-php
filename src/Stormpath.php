@@ -51,6 +51,8 @@ class Stormpath
     const LINKEDIN_PROVIDER                     = 'LinkedInProvider';
     const LINKEDIN_PROVIDER_DATA                = "LinkedInProviderData";
     const OAUTH_POLICY                          = 'OauthPolicy';
+    const ORGANIZATION                          = 'Organization';
+    const ORGANIZATION_LIST                     = 'OrganizationList';
     const PASSWORD_RESET_TOKEN                  = 'PasswordResetToken';
     const PROVIDER                              = 'Provider';
     const PROVIDER_ACCOUNT_ACCESS               = 'ProviderAccountAccess';
