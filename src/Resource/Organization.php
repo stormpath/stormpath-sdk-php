@@ -21,7 +21,7 @@ namespace Stormpath\Resource;
 use Stormpath\Client;
 use Stormpath\Stormpath;
 
-class Organization extends InstanceResource implements Deletable
+class Organization extends AccountStore implements Deletable
 {
     const ACCOUNTS                          = 'accounts';
     const ACCOUNT_STORE_MAPPINGS            = 'accountStoreMappings';
@@ -50,6 +50,18 @@ class Organization extends InstanceResource implements Deletable
         return Client::instantiate(Stormpath::ORGANIZATION, $properties);
     }
 
+    public static function create($properties, array $options = array())
+    {
+        $organization = $properties;
+
+        if (!($organization instanceof Organization))
+        {
+            $organization = self::instantiate($properties);
+        }
+
+        return Client::create('/'.self::PATH, $organization, $options);
+    }
+
     public function getAccounts(array $options = [])
     {
         return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT, $options);
@@ -70,14 +82,14 @@ class Organization extends InstanceResource implements Deletable
         return $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
     }
 
-    public function getDefaultAccountStoreMappping(array $options = [])
+    public function getDefaultAccountStoreMapping(array $options = [])
     {
-    	return $this->getResourceProperty(self::DEFAULT_ACCOUNT_STORE_MAPPPING, Stormpath::DEFAULT_ACCOUNT_STORE_MAPPPING, $options);
+    	return $this->getResourceProperty(self::DEFAULT_ACCOUNT_STORE_MAPPING, Stormpath::ACCOUNT_STORE, $options);
     }
 
-    public function getdefaultGroupStoreMapping(array $options = [])
+    public function getDefaultGroupStoreMapping(array $options = [])
     {
-    	return $this->getResourceProperty(self::DEFAULT_GROUP_STORE_MAPPING, Stormpath::DEFAULT_GROUP_STORE_MAPPING, $options);
+    	return $this->getResourceProperty(self::DEFAULT_GROUP_STORE_MAPPING, Stormpath::GROUP, $options);
     }
 
     public function getDescription()
@@ -151,9 +163,9 @@ class Organization extends InstanceResource implements Deletable
     	return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
     }
 
-    public function createAccountStoreMapping(AccountStoreMapping $accountStoreMapping, array $options = array()) {
-
-        return AccountStoreMapping::_create($accountStoreMapping, $this, $this->dataStore, $options);
+    public function createOrganizationAccountStoreMapping(AccountStoreMapping $accountStoreMapping, array $options = array())
+    {
+        return $this->getDataStore()->create("/organizationAccountStoreMappings", $accountStoreMapping, Stormpath::ACCOUNT_STORE_MAPPING);
     }
 
     public function delete()

@@ -28,7 +28,7 @@ class Tenant extends InstanceResource
     const APPLICATIONS  = "applications";
     const CUSTOM_DATA   = "customData";
     const DIRECTORIES   = "directories";
-    const ORGANIZATION  = "organizations";
+    const ORGANIZATIONS = "organizations";
 
     public static function get(array $options = array())
     {
@@ -96,7 +96,7 @@ class Tenant extends InstanceResource
 
     public function getOrganizations(array $options = [])
     {
-    	return $this->getResourceProperty(self::ORGANIZATION, Stormpath::ORGANIZATION_LIST, $options);
+    	return $this->getResourceProperty(self::ORGANIZATIONS, Stormpath::ORGANIZATION_LIST, $options);
     }
 
     // @codeCoverageIgnoreStart
