@@ -973,6 +973,9 @@ registered on, can be kicked off with the
 ```php
 // this method returns the account
 $account = $application->sendPasswordResetEmail('super_unique_email@unknown123.kot');
+
+// if you want the SP Token to be returned
+$account = $application->sendPasswordResetEmail('super_unique_email@unknown123.kot', [], true);
 ```
 
 Alternatively, if you know the account store where the account matching the 
@@ -996,14 +999,12 @@ method on the application.
 ```php
 // this method returns the account
 $account = $application->verifyPasswordResetToken('the_token_from_query_string');
-end
 ```
 
 With the account acquired you can then update the password:
 
 ```php
-  $account->password = 'new_password';
-  $account->save();
+  $account = $application->resetPassword($sptoken, $newPassword);
 ```
 
 _NOTE :_ Confirming a new password is left up to the web application
