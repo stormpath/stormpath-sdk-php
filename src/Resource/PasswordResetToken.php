@@ -25,6 +25,7 @@ class PasswordResetToken extends Resource
     const EMAIL = "email";
     const ACCOUNT = "account";
     const ACCOUNT_STORE = "accountStore";
+    const PASSWORD = "password";
 
     // @codeCoverageIgnoreStart
     public function getEmail()
@@ -46,5 +47,15 @@ class PasswordResetToken extends Resource
     public function setAccountStore($accountStore)
     {
         $this->setProperty(self::ACCOUNT_STORE, $accountStore);
+    }
+
+    public function setPassword($password)
+    {
+        $this->setProperty(self::PASSWORD, $password);
+    }
+
+    public function getPassword()
+    {
+        $this->getProperty(self::PASSWORD);
     }
 }

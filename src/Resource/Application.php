@@ -200,9 +200,12 @@ class Application extends InstanceResource implements Deletable
      * @return the account corresponding to the specified username or email address.
      * @see #verifyPasswordResetToken()
      */
-    public function sendPasswordResetEmail($accountUsernameOrEmail, array $options = array())
+    public function sendPasswordResetEmail($accountUsernameOrEmail, array $options = array(), $returnTokenResource = false)
     {
         $passwordResetToken = $this->createPasswordResetToken($accountUsernameOrEmail, $options);
+
+        if ($returnTokenResource)
+            return $passwordResetToken;
 
         return $passwordResetToken->getAccount();
     }
@@ -259,6 +262,19 @@ class Application extends InstanceResource implements Deletable
         return $passwordResetToken->getAccount($options);
     }
     // @codeCoverageIgnoreStart
+
+    public function resetPassword($token, $password)
+    {
+        $href = $this->getPasswordResetTokensHref();
+        $href .= '/' .$token;
+
+        $passwordResetProps = new PasswordResetToken();
+        $passwordResetProps->password = $password;
+
+        $token = $this->getDataStore()->create($href, $passwordResetProps, Stormpath::PASSWORD_RESET_TOKEN);
+
+        return $token->getAccount();
+    }
 
     /**
      * Authenticates an account's submitted principals and credentials (e.g. username and password).  The account must
@@ -329,6 +345,21 @@ class Application extends InstanceResource implements Deletable
             'path'      => isset($options['path']) ? $options['path'] : '/',
             'cb_uri'    => $options['callbackUri']
         );
+
+        if(isset($options['organizationNameKey'])) {
+            $token['onk'] = $options['organizationNameKey'];
+        }
+
+        if(isset($options['showOrganizationField'])) {
+            $token['sof'] = true;
+        }
+
+        if(isset($options['useSubDomain'])) {
+            $token['usd'] = true;
+        }
+
+
+
 
         $jwt = JWT::encode($token, $apiSecret);
 

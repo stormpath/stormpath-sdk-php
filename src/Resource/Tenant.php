@@ -23,11 +23,12 @@ use Stormpath\Stormpath;
 
 class Tenant extends InstanceResource
 {
-    const NAME         = "name";
-    const KEY          = "key";
-    const APPLICATIONS = "applications";
-    const DIRECTORIES  = "directories";
-    const CUSTOM_DATA  = "customData";
+    const NAME          = "name";
+    const KEY           = "key";
+    const APPLICATIONS  = "applications";
+    const CUSTOM_DATA   = "customData";
+    const DIRECTORIES   = "directories";
+    const ORGANIZATIONS = "organizations";
 
     public static function get(array $options = array())
     {
@@ -62,6 +63,15 @@ class Tenant extends InstanceResource
                                             $options);
     }
 
+    public function createOrganization(Organization $organization, array $options = array())
+    {
+        //TODO: enable auto discovery
+        return $this->getDataStore()->create('/'.Organization::PATH,
+                                            $organization,
+                                            Stormpath::ORGANIZATION,
+                                            $options);
+    }
+
     public function getApplications(array $options = array())
     {
         return $this->getResourceProperty(self::APPLICATIONS, Stormpath::APPLICATION_LIST, $options);
@@ -82,6 +92,11 @@ class Tenant extends InstanceResource
         }
 
         return $customData;
+    }
+
+    public function getOrganizations(array $options = [])
+    {
+    	return $this->getResourceProperty(self::ORGANIZATIONS, Stormpath::ORGANIZATION_LIST, $options);
     }
 
     // @codeCoverageIgnoreStart

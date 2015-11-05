@@ -36,6 +36,7 @@ class TenantTest extends \Stormpath\Tests\BaseTest {
         $this->assertEquals(self::$client->tenant->key, $tenant->key);
         $this->assertInstanceOf('\Stormpath\Resource\DirectoryList', $tenant->directories);
         $this->assertInstanceOf('\Stormpath\Resource\ApplicationList', $tenant->applications);
+        $this->assertInstanceOf('\Stormpath\Resource\OrganizationList', $tenant->organizations);
     }
 
     public function testCreateApplication()

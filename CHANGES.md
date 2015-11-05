@@ -1,6 +1,18 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.12.0
+------------------
+
+Released on November 5, 2015
+
+- GA Release of the SDK ... YAY!
+- Addition of Organization Resource. Fixes Issue #95
+- Ability to specify nameKey during ID Site. Fixes Issue #93
+- Give you ability to return sptoken object from Password Reset Email. Fixes Issue #102
+- Reset Password during Password Reset Workflow. Fixes Issue #103
+- Makes the SDK PSR-4 compliant. Fixes Issue #17
+
 
 Version 1.11.0.beta
 ------------------

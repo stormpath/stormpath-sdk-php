@@ -107,6 +107,29 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertContains('https://api.stormpath.com/sso/logout?jwtRequest=', $redirectUrl);
     }
 
+    public function testCreateIdSiteURLWithNameKeySettings()
+    {
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+
+        $redirectUrl = $application->createIdSiteUrl(array(
+            'callbackUri' => 'https://stormpath.com',
+            'state' => UUID::v4(),
+            'organizationNameKey' => 'testOrg',
+            'useSubDomain' => true,
+            'showOrganizationField' => true
+        ));
+
+        $this->assertContains('https://api.stormpath.com/sso?jwtRequest=', $redirectUrl);
+        $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+        $parts = explode('=',$redirectUrl);
+        JWT::$leeway = 10000;
+        $decoded = JWT::decode($parts[1], $apiSecret, ['HS256']);
+
+        $this->assertEquals('testOrg', $decoded->onk);
+        $this->assertTrue($decoded->usd);
+        $this->assertTrue($decoded->sof);
+    }
+
     /**
      * @expectedException \Stormpath\Exceptions\IdSite\InvalidCallbackUriException
      */
@@ -423,6 +446,10 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
             array("accountStore" => $accountStoreMappingA->getAccountStore()));
         $this->assertEquals($email, $account->email);
 
+
+        $resetToken = $application->sendPasswordResetEmail($email,[],true);
+        $this->assertInstanceOf('\Stormpath\Resource\PasswordResetToken', $resetToken);
+
         try {
             // lookup email address in an AccountStore that doesn't contain the corresponding account
             $account = $application->sendPasswordResetEmail($email,
@@ -450,6 +477,36 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $accountStoreMappingA->delete();
         $groupB->delete();
         $groupA->delete();
+    }
+
+    public function testCanResetPasswordFromSPToken()
+    {
+        $email = makeUniqueName('ApplicationTest SendPassword') .'@unknown123.kot';
+        $account = \Stormpath\Resource\Account::instantiate(array(
+            'givenName' => 'Account Name',
+            'surname' => 'Surname',
+            'username' => 'super_unique_username',
+            'email' => $email,
+            'password' => 'superP4ss'));
+        self::$application->createAccount($account);
+        $resetToken = self::$application->sendPasswordResetEmail($email, [], true);
+
+        $this->assertInstanceOf('\Stormpath\Resource\PasswordResetToken', $resetToken);
+
+        list($junk, $token) = explode('passwordResetTokens/',$resetToken->href);
+
+        $password = 'A!a'.md5(uniqid());
+        $doReset = self::$application->resetPassword($token, $password);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Account', $doReset);
+
+        $authenticationRequest = new \Stormpath\Authc\UsernamePasswordRequest($email, $password);
+        $result = self::$application->authenticateAccount($authenticationRequest);
+
+        $this->assertInstanceOf('\Stormpath\Resource\Account', $result->account);
+        $this->assertEquals($email, $result->account->email);
+
+        $account->delete();
     }
 
     public function testSendVerificationEmail()
@@ -483,6 +540,9 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertEquals($username, $result->username);
         $this->assertEquals($emailAddress, $result->email);
 
+
+
+
         try
         {
             $application->sendVerificationEmail($username);
@@ -509,6 +569,8 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         {
             $this->fail("Send verification email failed: ".$re->getErrorCode()." ".$re->getDeveloperMessage());
         }
+
+
 
         $directory->delete();
     }

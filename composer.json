@@ -26,12 +26,20 @@
         }
     ],
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "Stormpath\\": "src/"
-        },
-        "classmap": [
-            "tests/Stormpath"
-        ]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Stormpath\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.12.0",
+            "dev-dev": "1.12-dev"
+        }
     },
     "require": {
         "php": ">=5.4",

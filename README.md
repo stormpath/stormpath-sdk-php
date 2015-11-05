@@ -1,4 +1,9 @@
-[![Build Status](https://api.travis-ci.org/stormpath/stormpath-sdk-php.png?branch=master,dev)](https://travis-ci.org/stormpath/stormpath-sdk-php)
+[![Build Status](https://api.travis-ci.org/stormpath/stormpath-sdk-php.svg?branch=master,dev)](https://travis-ci.org/stormpath/stormpath-sdk-php)
+[![Codecov](https://img.shields.io/codecov/c/github/stormpath/stormpath-sdk-php.svg)](https://codecov.io/github/stormpath/stormpath-sdk-php)
+[![Total Downloads](https://poser.pugx.org/stormpath/sdk/d/total.svg)](https://packagist.org/packages/stormpath/sdk)
+[![Latest Stable Version](https://poser.pugx.org/stormpath/sdk/v/stable.svg)](https://packagist.org/packages/stormpath/sdk)
+[![Latest Unstable Version](https://poser.pugx.org/stormpath/sdk/v/unstable.svg)](https://packagist.org/packages/stormpath/sdk)
+[![License](https://poser.pugx.org/stormpath/sdk/license.svg)](https://packagist.org/packages/stormpath/sdk)
 
 # Stormpath PHP SDK
 Stormpath is the first easy, secure user management and authentication service for developers. This is the PHP SDK to ease integration of its features with any PHP language based application.
@@ -18,7 +23,7 @@ On your project root, install Composer
 Configure the **stormpath/sdk** dependency in your 'composer.json' file:
 
     "require": {
-        "stormpath/sdk": "1.11.*@beta"
+        "stormpath/sdk": "1.12.*"
     }
 
 On your project root, install the the SDK with its dependencies:
@@ -589,6 +594,12 @@ That is all you will need for generating the login link
 For the example above, you would replace `{APPLICATION_ID}` with the id for the applicaiton you want to allow a user
 to sign in to.  You then replace `{CALLBACK_URI}` with the url you want to handle the ID Site information.  
 
+You have the ability to specify an organization nameKey as an accountStore for a login attempt and forgot password 
+during the creation of the ID Site Url. For information on this, Visit the 
+[ID Site Guide for Multitenancy](https://docs.stormpath.com/guides/using-id-site/#using-id-site-for-multitenancy).
+
+Ability to specify an organization nameKey as an accountStore for login attempt forgot password and id site url builder
+
 #### Handle ID Site Callback
 For any request you make for ID Site, you need to specify a callback uri.  This is where the logic is stored for any
 information you want to receive from the JWT about the logged in user.  To do this and get the response back from the 
@@ -973,6 +984,9 @@ registered on, can be kicked off with the
 ```php
 // this method returns the account
 $account = $application->sendPasswordResetEmail('super_unique_email@unknown123.kot');
+
+// if you want the SP Token to be returned
+$account = $application->sendPasswordResetEmail('super_unique_email@unknown123.kot', [], true);
 ```
 
 Alternatively, if you know the account store where the account matching the 
@@ -996,14 +1010,12 @@ method on the application.
 ```php
 // this method returns the account
 $account = $application->verifyPasswordResetToken('the_token_from_query_string');
-end
 ```
 
 With the account acquired you can then update the password:
 
 ```php
-  $account->password = 'new_password';
-  $account->save();
+  $account = $application->resetPassword($sptoken, $newPassword);
 ```
 
 _NOTE :_ Confirming a new password is left up to the web application
