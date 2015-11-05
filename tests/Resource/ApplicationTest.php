@@ -107,6 +107,29 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertContains('https://api.stormpath.com/sso/logout?jwtRequest=', $redirectUrl);
     }
 
+    public function testCreateIdSiteURLWithNameKeySettings()
+    {
+        $application = \Stormpath\Resource\Application::get(self::$application->href);
+
+        $redirectUrl = $application->createIdSiteUrl(array(
+            'callbackUri' => 'https://stormpath.com',
+            'state' => UUID::v4(),
+            'organizationNameKey' => 'testOrg',
+            'useSubDomain' => true,
+            'showOrganizationField' => true
+        ));
+
+        $this->assertContains('https://api.stormpath.com/sso?jwtRequest=', $redirectUrl);
+        $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+        $parts = explode('=',$redirectUrl);
+        JWT::$leeway = 10000;
+        $decoded = JWT::decode($parts[1], $apiSecret, ['HS256']);
+
+        $this->assertEquals('testOrg', $decoded->onk);
+        $this->assertTrue($decoded->usd);
+        $this->assertTrue($decoded->sof);
+    }
+
     /**
      * @expectedException \Stormpath\Exceptions\IdSite\InvalidCallbackUriException
      */
