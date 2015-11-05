@@ -1,4 +1,9 @@
-[![Build Status](https://api.travis-ci.org/stormpath/stormpath-sdk-php.png?branch=master,dev)](https://travis-ci.org/stormpath/stormpath-sdk-php)
+[![Build Status](https://api.travis-ci.org/stormpath/stormpath-sdk-php.svg?branch=master,dev)](https://travis-ci.org/stormpath/stormpath-sdk-php)
+[![Codecov](https://img.shields.io/codecov/c/github/stormpath/stormpath-sdk-php.svg)](https://codecov.io/github/stormpath/stormpath-sdk-php)
+[![Total Downloads](https://poser.pugx.org/stormpath/sdk/d/total.svg)](https://packagist.org/packages/stormpath/sdk)
+[![Latest Stable Version](https://poser.pugx.org/stormpath/sdk/v/stable.svg)](https://packagist.org/packages/stormpath/sdk)
+[![Latest Unstable Version](https://poser.pugx.org/stormpath/sdk/v/unstable.svg)](https://packagist.org/packages/stormpath/sdk)
+[![License](https://poser.pugx.org/stormpath/sdk/license.svg)](https://packagist.org/packages/stormpath/sdk)
 
 # Stormpath PHP SDK
 Stormpath is the first easy, secure user management and authentication service for developers. This is the PHP SDK to ease integration of its features with any PHP language based application.
@@ -18,7 +23,7 @@ On your project root, install Composer
 Configure the **stormpath/sdk** dependency in your 'composer.json' file:
 
     "require": {
-        "stormpath/sdk": "1.11.*@beta"
+        "stormpath/sdk": "1.12.*"
     }
 
 On your project root, install the the SDK with its dependencies:
