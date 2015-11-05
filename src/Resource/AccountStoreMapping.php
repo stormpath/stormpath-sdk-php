@@ -26,6 +26,7 @@ use Stormpath\Stormpath;
 class AccountStoreMapping extends InstanceResource implements Deletable {
 
     const APPLICATION               = "application";
+    const ORGANIZATION              = "organization";
     const ACCOUNT_STORE             = "accountStore";
     const LIST_INDEX                = "listIndex";
     const IS_DEFAULT_ACCOUNT_STORE  = "isDefaultAccountStore";
@@ -65,6 +66,11 @@ class AccountStoreMapping extends InstanceResource implements Deletable {
     public function getApplication(array $options = array()) {
 
         return $this->getResourceProperty(self::APPLICATION, Stormpath::APPLICATION, $options);
+    }
+
+    public function getOrganization(array $options = array()) {
+
+        return $this->getResourceProperty(self::ORGANIZATION, Stormpath::ORGANIZATION, $options);
     }
 
     public function getAccountStore(array $options = array()) {
