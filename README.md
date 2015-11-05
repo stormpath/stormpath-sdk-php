@@ -18,7 +18,7 @@ On your project root, install Composer
 Configure the **stormpath/sdk** dependency in your 'composer.json' file:
 
     "require": {
-        "stormpath/sdk": "1.11.*@beta"
+        "stormpath/sdk": "1.12.*"
     }
 
 On your project root, install the the SDK with its dependencies:
