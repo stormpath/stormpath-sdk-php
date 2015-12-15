@@ -1834,10 +1834,10 @@ The `Authorization` header contains a base64 encoding of the API Key and Secret.
 $application = \Stormpath\Resource\Application::get("https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu");
 
 $request = \Stormpath\Authc\Api\Request::createFromGlobals();
-$result = new ApiRequestAuthenticator($application)->authenticate($request);
+$result = (new ApiRequestAuthenticator($application))->authenticate($request);
 
-$account = $result->account;
-$apiKey = $result->apiKey;
+$account = $result->getApiKey()->account;
+$apiKey = $result->getApiKey();
 ```
 
 ##### Using `BasicRequestAuthenticator`
@@ -1846,10 +1846,10 @@ $apiKey = $result->apiKey;
 $application = \Stormpath\Resource\Application::get("https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu");
 
 $request = \Stormpath\Authc\Api\Request::createFromGlobals();
-$result = new BasicRequestAuthenticator($application)->authenticate($request);
+$result = (new BasicRequestAuthenticator($application))->authenticate($request);
 
-$account = $result->account;
-$apiKey = $result->apiKey;
+$account = $result->getApiKey()->account;
+$apiKey = $result->getApiKey();
 ```
 
 ### OAuth Authentication
@@ -1908,10 +1908,10 @@ Host: api.trooperapp.com
 $application = \Stormpath\Resource\Application::get("https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu");
 
 $request = \Stormpath\Authc\Api\Request::createFromGlobals();
-$result = new OAuthRequestAuthenticator($application)->authenticate($request);
+$result = (new OAuthRequestAuthenticator($application))->authenticate($request);
 
-$account = $result->account;
-$apiKey = $result->apiKey;
+$account = $result->getApiKey()->account;
+$apiKey = $result->getApiKey();
 ```
 
 You can also use the more specific `OAuthBearerRequestAuthenticator` to authenticate 
