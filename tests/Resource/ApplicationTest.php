@@ -175,7 +175,6 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
     /**
      * @test
-     * @expectedException \Stormpath\Resource\ResourceError
      */
     public function itDoesNotThrowIDSiteExceptionIfErrIsNotPresent()
     {
@@ -184,19 +183,45 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         // Create JWT Response with error
         $jwt = JWT::encode(
             array(
-                'jti'=>'123123123',
-                'iat'=>time(),
-                'iss'=>'https://api.stormpath.com/v1/applications/someAppUidHere',
-                'exp'=>time()+3600,
-                'irt'=>'123123',
-                'sub'=>self::$account
+                "iss" => "https://formal-ring.id.stormpath.io",
+                'sub'=>self::$account,
+                "aud" => "1PN3FXI0U79E2MHCF6XUYGU4Z",
+                "exp" => time()+100,
+                "iat" => 1450221187,
+                "jti" => "37Vljw5YV0dTNNP3V4h0SY",
+                "irt" => "370640ef-ea7c-4532-94ed-b55dc7fa006a",
+                "state" => "",
+                "isNewSub" => false,
+                "status" => "LOGOUT"
             ),
             $apiSecret
         );
 
-        // Handle ID Site Response
-        // This will throw resource error but we are good if we get there because it got past err check
         self::$application->handleIdSiteCallback('http://example.com?jwtResponse='.$jwt);
+    }
+
+    /** @test */
+    public function itWillReturnNullInAccountIfLoggedOut()
+    {
+        $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+        $jwt = JWT::encode(
+            [
+                "iss" => "https://formal-ring.id.stormpath.io",
+                "sub" => null,
+                "aud" => "1PN3FXI0U79E2MHCF6XUYGU4Z",
+                "exp" => time()+100,
+                "iat" => 1450221187,
+                "jti" => "37Vljw5YV0dTNNP3V4h0SY",
+                "irt" => "370640ef-ea7c-4532-94ed-b55dc7fa006a",
+                "state" => "",
+                "isNewSub" => false,
+                "status" => "LOGOUT"
+            ],
+            $apiSecret
+        );
+
+        $result = self::$application->handleIdSiteCallback('http://example.com?jwtResponse='.$jwt);
+        $this->assertNull($result->account);
     }
 
     protected function createAccount()
