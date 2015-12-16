@@ -2,9 +2,9 @@
 
 
 use Stormpath\Cache\Cacheable;
-use Stormpath\Tests\BaseTest;
+use Stormpath\Tests\TestCase;
 
-class CacheTest extends BaseTest
+class CacheTest extends TestCase
 {
 
     private static $application;

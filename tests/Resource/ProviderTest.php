@@ -29,7 +29,7 @@ use Stormpath\Resource\LinkedInProvider;
 use Stormpath\Resource\Provider;
 use Stormpath\Stormpath;
 
-class ProviderTest extends \Stormpath\Tests\BaseTest
+class ProviderTest extends \Stormpath\Tests\TestCase
 {
     public function testGetGoogleProvider()
     {

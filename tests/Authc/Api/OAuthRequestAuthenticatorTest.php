@@ -4,9 +4,9 @@ namespace Stormpath\Tests\Authc\Api;
 use Stormpath\Authc\Api\OAuthPasswordRequestAuthenticator;
 use Stormpath\Authc\Api\OAuthRequestAuthenticator;
 use Stormpath\Authc\Api\Request;
-use Stormpath\Tests\BaseTest;
+use Stormpath\Tests\TestCase;
 
-class OAuthRequestAuthenticatorTest extends BaseTest
+class OAuthRequestAuthenticatorTest extends TestCase
 {
 
     public static $account;

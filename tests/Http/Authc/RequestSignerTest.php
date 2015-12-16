@@ -2,9 +2,9 @@
 namespace Stormpath\Tests\Http\Authc;
 
 use Stormpath\Stormpath;
-use Stormpath\Tests\BaseTest;
+use Stormpath\Tests\TestCase;
 
-class RequestSignerTest extends BaseTest
+class RequestSignerTest extends TestCase
 {
     public function setUp()
     {

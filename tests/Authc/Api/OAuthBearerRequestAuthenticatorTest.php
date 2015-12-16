@@ -5,9 +5,9 @@ use Stormpath\Authc\Api\OAuthBearerAuthenticationResult;
 use Stormpath\Authc\Api\OAuthBearerRequestAuthenticator;
 use Stormpath\Authc\Api\OAuthClientCredentialsRequestAuthenticator;
 use Stormpath\Authc\Api\Request;
-use Stormpath\Tests\BaseTest;
+use Stormpath\Tests\TestCase;
 
-class OAuthBearerRequestAuthenticatorTest extends BaseTest
+class OAuthBearerRequestAuthenticatorTest extends TestCase
 {
 
     public static $account;

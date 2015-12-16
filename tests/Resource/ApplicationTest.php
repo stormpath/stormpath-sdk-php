@@ -30,7 +30,7 @@ use Stormpath\Resource\VerificationEmail;
 use Stormpath\Stormpath;
 use Stormpath\Util\UUID;
 
-class ApplicationTest extends \Stormpath\Tests\BaseTest {
+class ApplicationTest extends \Stormpath\Tests\TestCase {
 
     private static $application;
     private static $inited;
@@ -71,6 +71,8 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
             self::$application->delete();
         }
+
+        parent::tearDownAfterClass();
     }
 
     public function testGet()
@@ -534,6 +536,32 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $account->delete();
     }
 
+    public function testCanVerifySPToken()
+    {
+        $application = \Stormpath\Resource\Application::instantiate(array('name' => makeUniqueName('ApplicationTest'), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, $application, array('createDirectory' => true));
+
+        $email = makeUniqueName('ApplicationTest SendPassword') .'@unknown123.kot';
+        $account = \Stormpath\Resource\Account::instantiate(array(
+            'givenName' => 'Account Name',
+            'surname' => 'Surname',
+            'username' => 'super_unique_username',
+            'email' => $email,
+            'password' => 'superP4ss'));
+        $thisAccount = $application->createAccount($account);
+        $resetToken = $application->sendPasswordResetEmail($email, [], true);
+
+        $this->assertInstanceOf('\Stormpath\Resource\PasswordResetToken', $resetToken);
+
+        list($junk, $token) = explode('passwordResetTokens/',$resetToken->href);
+
+        $account = $application->verifyPasswordResetToken($token);
+        $this->assertInstanceOf('\Stormpath\Resource\Account', $account);
+
+        $thisAccount->delete();
+        $application->delete();
+    }
+
     public function testSendVerificationEmail()
     {
         $application = self::$application;
@@ -857,22 +885,6 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertNull($customData->favoriteDrink);
     }
 
-    /**
-     * @expectedException \Stormpath\Resource\ResourceError
-     */
-    public function testDelete()
-    {
-        $application = \Stormpath\Resource\Application::create(array('name' => makeUniqueName('ApplicationTest testDelete')));
-
-        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('testDelete', $application->name);
-
-        $href = $application->href;
-        $application->delete();
-
-        \Stormpath\Resource\Application::get($href);
-    }
-
     public function testShouldBeAbleToGetApplicationViaHTMLFragment()
     {
         $application = \Stormpath\Resource\Application::create(array('name' => makeUniqueName('ApplicationTest testFragment')));
@@ -892,9 +904,25 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertEquals($href, $app2->href);
 
         $application->delete();
-
-
     }
+
+    /**
+     * @expectedException \Stormpath\Resource\ResourceError
+     */
+    public function testDelete()
+    {
+        $application = \Stormpath\Resource\Application::create(array('name' => makeUniqueName('ApplicationTest testDelete')));
+
+        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
+        $this->assertContains('testDelete', $application->name);
+
+        $href = $application->href;
+        $application->delete();
+
+        \Stormpath\Resource\Application::get($href);
+    }
+
+
 
 
 
