@@ -20,7 +20,7 @@ namespace Stormpath\Tests\Resource;
 
 use Stormpath\Stormpath;
 
-class DirectoryTest extends \Stormpath\Tests\BaseTest {
+class DirectoryTest extends \Stormpath\Tests\TestCase {
 
     private static $directory;
     private static $inited;
@@ -46,6 +46,7 @@ class DirectoryTest extends \Stormpath\Tests\BaseTest {
         {
             self::$directory->delete();
         }
+        parent::tearDownAfterClass();
     }
 
     public function testGet()

@@ -18,7 +18,7 @@
 namespace Stormpath\Tests\Resource;
 
 
-class AccountStoreMappingTest extends \Stormpath\Tests\BaseTest {
+class AccountStoreMappingTest extends \Stormpath\Tests\TestCase {
 
     private static $application;
     private static $directory;
@@ -65,6 +65,7 @@ class AccountStoreMappingTest extends \Stormpath\Tests\BaseTest {
         {
             self::$directory->delete();
         }
+        parent::tearDownAfterClass();
     }
 
     public function testGet()

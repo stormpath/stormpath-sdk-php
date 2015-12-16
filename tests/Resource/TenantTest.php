@@ -26,7 +26,7 @@ use Stormpath\Resource\LinkedInProvider;
 use Stormpath\Resource\Tenant;
 use Stormpath\Stormpath;
 
-class TenantTest extends \Stormpath\Tests\BaseTest {
+class TenantTest extends \Stormpath\Tests\TestCase {
 
     public function testGet()
     {

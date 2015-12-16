@@ -1,7 +1,7 @@
 <?php
 
 
-class PasswordRefreshGrantTest extends \Stormpath\Tests\BaseTest
+class PasswordRefreshGrantTest extends \Stormpath\Tests\TestCase
 {
     private static $application;
     private static $account;
