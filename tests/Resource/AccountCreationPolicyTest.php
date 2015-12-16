@@ -5,7 +5,7 @@ namespace Stormpath\Tests\Resource;
 
 use Stormpath\Stormpath;
 
-class AccountCreationPolicyTest extends \Stormpath\Tests\BaseTest {
+class AccountCreationPolicyTest extends \Stormpath\Tests\TestCase {
 
     private static $directory;
 

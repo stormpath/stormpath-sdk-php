@@ -30,7 +30,7 @@ use Stormpath\Resource\VerificationEmail;
 use Stormpath\Stormpath;
 use Stormpath\Util\UUID;
 
-class ApplicationTest extends \Stormpath\Tests\BaseTest {
+class ApplicationTest extends \Stormpath\Tests\TestCase {
 
     private static $application;
     private static $inited;
@@ -71,6 +71,8 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
             self::$application->delete();
         }
+
+        parent::tearDownAfterClass();
     }
 
     public function testGet()
@@ -175,7 +177,6 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
 
     /**
      * @test
-     * @expectedException \Stormpath\Resource\ResourceError
      */
     public function itDoesNotThrowIDSiteExceptionIfErrIsNotPresent()
     {
@@ -184,19 +185,45 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         // Create JWT Response with error
         $jwt = JWT::encode(
             array(
-                'jti'=>'123123123',
-                'iat'=>time(),
-                'iss'=>'https://api.stormpath.com/v1/applications/someAppUidHere',
-                'exp'=>time()+3600,
-                'irt'=>'123123',
-                'sub'=>self::$account
+                "iss" => "https://formal-ring.id.stormpath.io",
+                'sub'=>self::$account,
+                "aud" => "1PN3FXI0U79E2MHCF6XUYGU4Z",
+                "exp" => time()+100,
+                "iat" => 1450221187,
+                "jti" => "37Vljw5YV0dTNNP3V4h0SY",
+                "irt" => "370640ef-ea7c-4532-94ed-b55dc7fa006a",
+                "state" => "",
+                "isNewSub" => false,
+                "status" => "LOGOUT"
             ),
             $apiSecret
         );
 
-        // Handle ID Site Response
-        // This will throw resource error but we are good if we get there because it got past err check
         self::$application->handleIdSiteCallback('http://example.com?jwtResponse='.$jwt);
+    }
+
+    /** @test */
+    public function itWillReturnNullInAccountIfLoggedOut()
+    {
+        $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+        $jwt = JWT::encode(
+            [
+                "iss" => "https://formal-ring.id.stormpath.io",
+                "sub" => null,
+                "aud" => "1PN3FXI0U79E2MHCF6XUYGU4Z",
+                "exp" => time()+100,
+                "iat" => 1450221187,
+                "jti" => "37Vljw5YV0dTNNP3V4h0SY",
+                "irt" => "370640ef-ea7c-4532-94ed-b55dc7fa006a",
+                "state" => "",
+                "isNewSub" => false,
+                "status" => "LOGOUT"
+            ],
+            $apiSecret
+        );
+
+        $result = self::$application->handleIdSiteCallback('http://example.com?jwtResponse='.$jwt);
+        $this->assertNull($result->account);
     }
 
     protected function createAccount()
@@ -507,6 +534,32 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertEquals($email, $result->account->email);
 
         $account->delete();
+    }
+
+    public function testCanVerifySPToken()
+    {
+        $application = \Stormpath\Resource\Application::instantiate(array('name' => makeUniqueName('ApplicationTest'), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, $application, array('createDirectory' => true));
+
+        $email = makeUniqueName('ApplicationTest SendPassword') .'@unknown123.kot';
+        $account = \Stormpath\Resource\Account::instantiate(array(
+            'givenName' => 'Account Name',
+            'surname' => 'Surname',
+            'username' => 'super_unique_username',
+            'email' => $email,
+            'password' => 'superP4ss'));
+        $thisAccount = $application->createAccount($account);
+        $resetToken = $application->sendPasswordResetEmail($email, [], true);
+
+        $this->assertInstanceOf('\Stormpath\Resource\PasswordResetToken', $resetToken);
+
+        list($junk, $token) = explode('passwordResetTokens/',$resetToken->href);
+
+        $account = $application->verifyPasswordResetToken($token);
+        $this->assertInstanceOf('\Stormpath\Resource\Account', $account);
+
+        $thisAccount->delete();
+        $application->delete();
     }
 
     public function testSendVerificationEmail()
@@ -832,22 +885,6 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertNull($customData->favoriteDrink);
     }
 
-    /**
-     * @expectedException \Stormpath\Resource\ResourceError
-     */
-    public function testDelete()
-    {
-        $application = \Stormpath\Resource\Application::create(array('name' => makeUniqueName('ApplicationTest testDelete')));
-
-        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('testDelete', $application->name);
-
-        $href = $application->href;
-        $application->delete();
-
-        \Stormpath\Resource\Application::get($href);
-    }
-
     public function testShouldBeAbleToGetApplicationViaHTMLFragment()
     {
         $application = \Stormpath\Resource\Application::create(array('name' => makeUniqueName('ApplicationTest testFragment')));
@@ -867,9 +904,25 @@ class ApplicationTest extends \Stormpath\Tests\BaseTest {
         $this->assertEquals($href, $app2->href);
 
         $application->delete();
-
-
     }
+
+    /**
+     * @expectedException \Stormpath\Resource\ResourceError
+     */
+    public function testDelete()
+    {
+        $application = \Stormpath\Resource\Application::create(array('name' => makeUniqueName('ApplicationTest testDelete')));
+
+        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
+        $this->assertContains('testDelete', $application->name);
+
+        $href = $application->href;
+        $application->delete();
+
+        \Stormpath\Resource\Application::get($href);
+    }
+
+
 
 
 

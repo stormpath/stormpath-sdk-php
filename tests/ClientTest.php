@@ -1,7 +1,7 @@
 <?php namespace Stormpath\Tests;
 
 
-class ClientTest extends BaseTest {
+class ClientTest extends TestCase {
 
     /**
      * @expectedException \InvalidArgumentException

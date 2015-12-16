@@ -20,7 +20,7 @@ namespace Stormpath\Tests\Resource;
 use Stormpath\Client;
 use Stormpath\Stormpath;
 
-class AccountTest extends \Stormpath\Tests\BaseTest {
+class AccountTest extends \Stormpath\Tests\TestCase {
 
     const GROUPS_COUNT = 45;
 
@@ -74,6 +74,7 @@ class AccountTest extends \Stormpath\Tests\BaseTest {
         {
             self::$directory->delete();
         }
+        parent::tearDownAfterClass();
     }
 
     public function testGet() {

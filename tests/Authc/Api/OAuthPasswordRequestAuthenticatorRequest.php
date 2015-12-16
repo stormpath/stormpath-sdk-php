@@ -2,9 +2,9 @@
 namespace Stormpath\Tests\Authc\Api;
 
 use Stormpath\Authc\Api\OAuthPasswordRequestAuthenticator;
-use Stormpath\Tests\BaseTest;
+use Stormpath\Tests\TestCase;
 
-class OAuthPasswordAuthenticationResult extends BaseTest
+class OAuthPasswordAuthenticationResult extends TestCase
 {
     public static $account;
 

@@ -18,7 +18,7 @@
 namespace Stormpath\Tests\Resource;
 
 
-class GroupMembershipTest extends \Stormpath\Tests\BaseTest {
+class GroupMembershipTest extends \Stormpath\Tests\TestCase {
 
     private static $directory;
     private static $group;
@@ -72,6 +72,8 @@ class GroupMembershipTest extends \Stormpath\Tests\BaseTest {
         {
             self::$directory->delete();
         }
+
+        parent::tearDownAfterClass();
     }
 
     public function testGet()

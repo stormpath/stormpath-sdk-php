@@ -19,7 +19,9 @@
 namespace Stormpath\Tests;
 
 
-class BaseTest extends \PHPUnit_Framework_TestCase
+use Stormpath\Client;
+
+class TestCase extends \PHPUnit_Framework_TestCase
 {
     const STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION = 'STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION';
     const STORMPATH_SDK_TEST_API_KEY_ID = 'STORMPATH_SDK_TEST_API_KEY_ID';
@@ -80,7 +82,7 @@ class BaseTest extends \PHPUnit_Framework_TestCase
 
     /**
      * This function instantiates a new client but doesn't modify
-     * the BaseTest::$client variable.
+     * the TestCase::$client variable.
      */
     protected function newClientInstance()
     {
@@ -98,12 +100,6 @@ class BaseTest extends \PHPUnit_Framework_TestCase
         return $newClient;
     }
 
-    public function testClient()
-    {
-        self::$client = \Stormpath\Client::getInstance();
-        $this->assertInstanceOf('Stormpath\Client', self::$client);
-    }
-
     protected static function createResource($parentHref, \Stormpath\Resource\Resource $resource, array $options = array())
     {
 
@@ -117,5 +113,10 @@ class BaseTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    public static function tearDownAfterClass()
+    {
+        self::$client = null;
+        Client::tearDown();
+    }
 
 }

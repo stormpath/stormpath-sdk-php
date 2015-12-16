@@ -23,7 +23,7 @@ use Stormpath\Stormpath;
 class ProviderAccountResult extends Resource
 {
     const ACCOUNT       = 'account';
-    const NEW_ACCOUNT   = 'newAccount';
+    const NEW_ACCOUNT   = 'isNewAccount';
     
     public function __construct($dataStore = null, \stdClass $properties = null, array $options = array())
     {

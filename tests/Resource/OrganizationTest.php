@@ -9,9 +9,9 @@ use Stormpath\Resource\Application;
 use Stormpath\Resource\Organization;
 use Stormpath\Resource\Tenant;
 use Stormpath\Stormpath;
-use Stormpath\Tests\BaseTest;
+use Stormpath\Tests\TestCase;
 
-class OrganizationTest extends BaseTest
+class OrganizationTest extends TestCase
 {
 
     private static $organization = null;

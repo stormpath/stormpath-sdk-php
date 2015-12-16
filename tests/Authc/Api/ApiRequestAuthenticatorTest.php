@@ -3,9 +3,9 @@ namespace Stormpath\Tests\Authc\Api;
 
 use Stormpath\Authc\Api\ApiRequestAuthenticator;
 use Stormpath\Authc\Api\Request;
-use Stormpath\Tests\BaseTest;
+use Stormpath\Tests\TestCase;
 
-class ApiRequestAuthenticatorTest extends BaseTest
+class ApiRequestAuthenticatorTest extends TestCase
 {
 
     public static $account;

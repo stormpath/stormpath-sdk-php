@@ -406,10 +406,14 @@ class Application extends InstanceResource implements Deletable
 
         $nonceStore->putNonce($jwt->irt);
 
-
-        $account = $this->getDataStore()->getResource($jwt->sub, Stormpath::ACCOUNT);
-
         $return = new \StdClass();
+
+        try {
+            $account = $this->getDataStore()->getResource($jwt->sub, Stormpath::ACCOUNT);
+        } catch (\Stormpath\Resource\ResourceError $re) {
+            $account = null;
+        }
+
 
         $return->account = $account;
         $return->state = $jwt->state;
