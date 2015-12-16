@@ -1,8 +1,19 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.12.1
+--------------
+
+Released on December 15, 2015
+
+ - Social Providers isNewAccount was always returning null.  This has been fixed (Fixes Issue #109)
+ - Handle ID Site would throw new exception if account was not valid, This prevented you from accessing state or any other properties
+ You can not access all properties, and account will just remain null. (Fixes Issue #110)
+ - Documentation issue on API Keys and Account for Request Authenticators. (Fixes Issue #105)
+ - Update the Base Test so it is not treated as a test. 
+
 Version 1.12.0
-------------------
+--------------
 
 Released on November 5, 2015
 
