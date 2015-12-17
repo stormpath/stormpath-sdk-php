@@ -1,6 +1,17 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.12.2
+--------------
+
+Released on December 16, 2015
+
+ - Fixed a bug where the accessToken and refreshTokens were not accessible from the Account
+ - We now show the refresh token object from OauthGrantAuthenticatorResult for all requests if enabled
+ - Removed logging from the phpunit tests. If code coverage is needed, you should now use the flag on phpunit
+ - Update Readme Documentation to reference the fixes and phpunit changes
+ - Removed branch alias from composer.json file
+
 Version 1.12.1
 --------------
 
