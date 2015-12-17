@@ -21,6 +21,7 @@ namespace Stormpath;
 class Stormpath
 {
     const ACCESS_TOKEN                          = 'AccessToken';
+    const ACCESS_TOKEN_LIST                     = 'AccessTokenList';
     const ACCOUNT                               = 'Account';
     const ACCOUNT_CREATION_POLICY               = "AccountCreationPolicy";
     const ACCOUNT_LIST                          = 'AccountList';
@@ -59,6 +60,7 @@ class Stormpath
     const PROVIDER_ACCOUNT_RESULT               = 'ProviderAccountResult';
     const PROVIDER_DATA                         = 'ProviderData';
     const REFRESH_TOKEN                         = 'RefreshToken';
+    const REFRESH_TOKEN_LIST                    = 'RefreshTokenList';
     const TENANT                                = 'Tenant';
     const VERIFICATION_EMAIL                    = 'VerificationEmail';
 
