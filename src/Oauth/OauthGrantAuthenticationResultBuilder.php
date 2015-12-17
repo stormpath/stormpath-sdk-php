@@ -65,9 +65,7 @@ class OauthGrantAuthenticationResultBuilder
         $this->accessTokenHref = $this->grantAuthenticationToken->getAccessTokenHref();
         $this->tokenType = $this->grantAuthenticationToken->getTokenType();
         $this->expiresIn = $this->grantAuthenticationToken->getExpiresIn();
-
-        if ($this->isRefreshGrantAuthRequest)
-            $this->refreshToken = $this->grantAuthenticationToken->getAsRefreshToken();
+        $this->refreshToken = $this->grantAuthenticationToken->getAsRefreshToken();
 
         return new OauthGrantAuthenticationResult($this);
     }

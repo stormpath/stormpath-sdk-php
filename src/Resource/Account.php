@@ -39,6 +39,8 @@ class Account extends InstanceResource implements Deletable
     const FULL_NAME                = "fullName";
     const TENANT                   = "tenant";
     const PROVIDER_DATA			   = "providerData";
+    const ACCESS_TOKENS            = "accessTokens";
+    const REFRESH_TOKENS           = "refreshTokens";
 
     const PATH                     = "accounts";
 
@@ -154,6 +156,16 @@ class Account extends InstanceResource implements Deletable
     public function getDirectory(array $options = array())
     {
         return $this->getResourceProperty(self::DIRECTORY, Stormpath::DIRECTORY, $options);
+    }
+
+    public function getAccessTokens(array $options = array())
+    {
+        return $this->getResourceProperty(self::ACCESS_TOKENS, Stormpath::ACCESS_TOKEN_LIST, $options);
+    }
+
+    public function getRefreshTokens(array $options = array())
+    {
+        return $this->getResourceProperty(self::REFRESH_TOKENS, Stormpath::REFRESH_TOKEN_LIST, $options);
     }
 
     public function getEmailVerificationToken(array $options = array())

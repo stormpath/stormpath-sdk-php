@@ -363,8 +363,6 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         self::$account->addGroup(\Stormpath\Resource\Group::instantiate());
     }
 
-
-
     public function testAddingCustomData()
     {
         $cd = self::$account->customData;

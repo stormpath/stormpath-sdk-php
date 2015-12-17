@@ -2,7 +2,6 @@
 [![Codecov](https://img.shields.io/codecov/c/github/stormpath/stormpath-sdk-php.svg)](https://codecov.io/github/stormpath/stormpath-sdk-php)
 [![Total Downloads](https://poser.pugx.org/stormpath/sdk/d/total.svg)](https://packagist.org/packages/stormpath/sdk)
 [![Latest Stable Version](https://poser.pugx.org/stormpath/sdk/v/stable.svg)](https://packagist.org/packages/stormpath/sdk)
-[![Latest Unstable Version](https://poser.pugx.org/stormpath/sdk/v/unstable.svg)](https://packagist.org/packages/stormpath/sdk)
 [![License](https://poser.pugx.org/stormpath/sdk/license.svg)](https://packagist.org/packages/stormpath/sdk)
 
 # Stormpath PHP SDK
@@ -1942,8 +1941,11 @@ Alternatively, configure the api key id and secret and run the tests:
     export STORMPATH_SDK_TEST_API_KEY_SECRET=API_KEY_SECRET_VALUE
     vendor/bin/phpunit
 
-After running the tests, find the code coverage information
-in the following directory: <code>tests/code-coverage</code>
+If you would like code coverage, please run the tests with the following:
+    
+    vendor/bin/phpunit --coverage-html=./code-coverage
+    
+The code coverage will be placed in the root of the package in a folder named `code-coverage`.  Once you have this folder, you can open it in your browser to view it.
 
 ## Contributing
 
