@@ -363,6 +363,18 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         self::$account->addGroup(\Stormpath\Resource\Group::instantiate());
     }
 
+    public function testItCanGetAccessTokensOffAccount()
+    {
+        $tokens = self::$account->accessTokens;
+        $this->assertInstanceOf('Stormpath\Resource\AccessTokenList', $tokens);
+    }
+
+    public function testItCanGetRefreshTokensOffAccount()
+    {
+        $tokens = self::$account->refreshTokens;
+        $this->assertInstanceOf('Stormpath\Resource\RefreshTokenList', $tokens);
+    }
+    
     public function testAddingCustomData()
     {
         $cd = self::$account->customData;
