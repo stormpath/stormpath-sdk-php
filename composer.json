@@ -35,11 +35,6 @@
             "Stormpath\\Tests\\": "tests/"
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.12-dev"
-        }
-    },
     "require": {
         "php": ">=5.4",
         "guzzle/guzzle": "3.9.*",

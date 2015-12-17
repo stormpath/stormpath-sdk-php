@@ -66,7 +66,7 @@ class PasswordRefreshGrantTest extends \Stormpath\Tests\TestCase
         $this->assertInstanceOf('Stormpath\Oauth\OauthGrantAuthenticationResult', self::$token);
         $this->assertInstanceOf('Stormpath\Resource\AccessToken', self::$token->getAccessToken());
         $this->assertCount(3, explode('.',self::$token->getAccessTokenString()));
-        $this->assertNull(self::$token->getRefreshToken());
+        $this->assertInstanceOf('Stormpath\Resource\RefreshToken', self::$token->getRefreshToken());
         $this->assertCount(3, explode('.',self::$token->getRefreshTokenString()));
         $this->assertcontains('/accessTokens/', self::$token->getAccessTokenHref());
         $this->assertEquals('Bearer', self::$token->getTokenType());
