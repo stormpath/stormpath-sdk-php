@@ -5,6 +5,8 @@
 [![License](https://poser.pugx.org/stormpath/sdk/license.svg)](https://packagist.org/packages/stormpath/sdk)
 
 # Stormpath PHP SDK
+
+[![Join the chat at https://gitter.im/stormpath/stormpath-sdk-php](https://badges.gitter.im/stormpath/stormpath-sdk-php.svg)](https://gitter.im/stormpath/stormpath-sdk-php?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Stormpath is the first easy, secure user management and authentication service for developers. This is the PHP SDK to ease integration of its features with any PHP language based application.
 
 ## Installation
