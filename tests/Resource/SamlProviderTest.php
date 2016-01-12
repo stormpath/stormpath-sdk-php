@@ -85,6 +85,39 @@ class SamlProviderTest extends TestCase
 
         $directory->delete();
     }
+    
+    /** @test */
+    public function getting_without_provider_at_end_of_url_automatically_fixes_itself()
+    {
+        $samlProvider = \Stormpath\Resource\SamlProvider::instantiate([
+            'ssoLoginUrl' => 'http://google.com/login',
+            'ssoLogoutUrl' => 'http://google.com/logout',
+            'encodedX509SigningCert' => self::getDummyCertForSaml(),
+            'requestSignatureAlgorithm' => 'RSA-SHA1'
+        ]);
+
+        $directory = \Stormpath\Resource\Directory::create([
+            'name' => makeUniqueName('DirectoryTest samlProvider'),
+            'provider' => $samlProvider
+        ]);
+
+        $providerHref = $directory->provider->href;
+        $parts = explode('/', $providerHref);
+        array_pop($parts);
+        $providerHref = implode('/',$parts);
+
+        $provider = SamlProvider::get($providerHref);
+
+        $this->assertInstanceOf('Stormpath\Resource\SamlProvider', $provider);
+        $this->assertEquals('http://google.com/login', $provider->getSsoLoginUrl());
+        $this->assertEquals('http://google.com/logout', $provider->getSsoLogoutUrl());
+        $this->assertEquals(self::getDummyCertForSaml(), $provider->getEncodedX509SigningCert());
+        $this->assertEquals('RSA-SHA1', $provider->getRequestSignatureAlgorithm());
+        $this->assertInstanceOf('Stormpath\Resource\SamlProviderMetadata', $provider->getServiceProviderMetadata());
+
+        $directory->delete();
+    }
+    
 
 
 }
