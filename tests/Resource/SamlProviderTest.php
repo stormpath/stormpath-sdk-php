@@ -47,7 +47,7 @@ class SamlProviderTest extends TestCase
             'requestSignatureAlgorithm' => 'RSA-SHA256'
         ]);
 
-        $this->assertInstanceOf(SamlProvider::class, $samlProvider);
+        $this->assertInstanceOf('Stormpath\Resource\SamlProvider', $samlProvider);
 
         $this->assertEquals('http://google.com/login', $samlProvider->getSsoLoginUrl());
         $this->assertEquals('http://google.com/logout', $samlProvider->getSsoLogoutUrl());
