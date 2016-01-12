@@ -246,4 +246,35 @@ class DirectoryTest extends \Stormpath\Tests\TestCase {
 
     }
 
+    /** @test */
+    public function a_directory_can_add_a_saml_provider()
+    {
+        $samlProvider = \Stormpath\Resource\SamlProvider::instantiate([
+            'ssoLoginUrl' => 'http://google.com/login',
+            'ssoLogoutUrl' => 'http://google.com/logout',
+            'encodedX509SigningCert' => $this->getDummyCertForSaml(),
+            'requestSignatureAlgorithm' => 'RSA-SHA1'
+        ]);
+
+        $directory = \Stormpath\Resource\Directory::create([
+            'name' => makeUniqueName('DirectoryTest samlProvider'),
+            'provider' => $samlProvider
+        ]);
+
+        $this->assertInstanceOf(\Stormpath\Resource\Directory::class, $directory);
+        $this->assertInstanceOf(\Stormpath\Resource\Provider::class, $directory->provider);
+        $this->assertEquals('saml', $directory->provider->providerId);
+
+        $directory->delete();
+    }
+
+
+
+
 }
+
+
+
+
+
+
