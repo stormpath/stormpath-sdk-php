@@ -76,12 +76,12 @@ class SamlProviderTest extends TestCase
 
         $provider = SamlProvider::get($providerHref);
 
-        $this->assertInstanceOf(SamlProvider::class, $provider);
+        $this->assertInstanceOf('Stormpath\Resource\SamlProvider', $provider);
         $this->assertEquals('http://google.com/login', $provider->getSsoLoginUrl());
         $this->assertEquals('http://google.com/logout', $provider->getSsoLogoutUrl());
         $this->assertEquals(self::getDummyCertForSaml(), $provider->getEncodedX509SigningCert());
         $this->assertEquals('RSA-SHA1', $provider->getRequestSignatureAlgorithm());
-        $this->assertInstanceOf(SamlProviderMetadata::class, $provider->getServiceProviderMetadata());
+        $this->assertInstanceOf('Stormpath\Resource\SamlProviderMetadata', $provider->getServiceProviderMetadata());
 
         $directory->delete();
     }

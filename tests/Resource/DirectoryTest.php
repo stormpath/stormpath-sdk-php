@@ -261,8 +261,8 @@ class DirectoryTest extends \Stormpath\Tests\TestCase {
             'provider' => $samlProvider
         ]);
 
-        $this->assertInstanceOf(\Stormpath\Resource\Directory::class, $directory);
-        $this->assertInstanceOf(\Stormpath\Resource\Provider::class, $directory->provider);
+        $this->assertInstanceOf('Stormpath\Resource\Directory', $directory);
+        $this->assertInstanceOf('Stormpath\Resource\Provider', $directory->provider);
         $this->assertEquals('saml', $directory->provider->providerId);
 
         $directory->delete();

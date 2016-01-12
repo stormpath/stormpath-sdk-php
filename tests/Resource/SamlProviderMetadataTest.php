@@ -49,7 +49,7 @@ class SamlProviderMetadataTest extends TestCase
     {
         $cert = self::$metadata->getX509SigningCert();
 
-        $this->assertInstanceOf(\Stormpath\Resource\X509SigningCert ::class, $cert);
+        $this->assertInstanceOf('Stormpath\Resource\X509SigningCert', $cert);
     }
 
     /** @test */
@@ -57,7 +57,7 @@ class SamlProviderMetadataTest extends TestCase
     {
         $servicePostEndpoint = self::$metadata->getAssertionConsumerServicePostEndpoint();
 
-        $this->assertInstanceOf(\Stormpath\Resource\AssertionConsumerServicePostEndpoint ::class, $servicePostEndpoint);
+        $this->assertInstanceOf('Stormpath\Resource\AssertionConsumerServicePostEndpoint', $servicePostEndpoint);
     }
 
     
