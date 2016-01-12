@@ -9,14 +9,14 @@ use Stormpath\Tests\TestCase;
 class SamlProviderTest extends TestCase
 {
     /** @test */
-    public function all_settable_items_can_be_set_on_the_object()
+    public function all_settable_items_can_be_set_on_the_object_and_is_chainable()
     {
         $samlProvider = new SamlProvider();
 
-        $this->assertInstanceOf(SamlProvider::class, $samlProvider->setSsoLoginUrl('something'));
-        $this->assertInstanceOf(SamlProvider::class, $samlProvider->setSsoLogoutUrl('something'));
-        $this->assertInstanceOf(SamlProvider::class, $samlProvider->setEncodedX509SigningCert('someCert'));
-        $this->assertInstanceOf(SamlProvider::class, $samlProvider->setRequestSignatureAlgorithm('RSA-SHA256'));
+        $this->assertInstanceOf('Stormpath\Resource\SamlProvider', $samlProvider->setSsoLoginUrl('something'));
+        $this->assertInstanceOf('Stormpath\Resource\SamlProvider', $samlProvider->setSsoLogoutUrl('something'));
+        $this->assertInstanceOf('Stormpath\Resource\SamlProvider', $samlProvider->setEncodedX509SigningCert('someCert'));
+        $this->assertInstanceOf('Stormpath\Resource\SamlProvider', $samlProvider->setRequestSignatureAlgorithm('RSA-SHA256'));
 
     }
 
