@@ -19,17 +19,26 @@ namespace Stormpath\Resource;
 
 use Stormpath\Client;
 use Stormpath\DataStore\InternalDataStore;
+use Stormpath\Saml\AttributeStatementMappingRules;
 use Stormpath\Stormpath;
 
 /** @since 1.13.0 */
-class SamlProvider extends Provider
+class SamlProvider extends Provider implements Saveable
 {
-    const SSO_LOGIN_URL                 = "ssoLoginUrl";
-    const SSO_LOGOUT_URL                = "ssoLogoutUrl";
-    const ENCODED_X509_SIGNING_CERT     = "encodedX509SigningCert";
-    const REQUEST_SIGNATURE_ALGOITHM    = "requestSignatureAlgorithm";
-    const SAML_PROVIDER_METADATA        = "serviceProviderMetadata";
-    const SAML_PROVIDER_ID              = "saml";
+    const SSO_LOGIN_URL                         = "ssoLoginUrl";
+    const SSO_LOGOUT_URL                        = "ssoLogoutUrl";
+    const ENCODED_X509_SIGNING_CERT             = "encodedX509SigningCert";
+    const REQUEST_SIGNATURE_ALGOITHM            = "requestSignatureAlgorithm";
+    const ATTRIBUTE_STATEMENT_MAPPING_RULES     = "attributeStatementMappingRules";
+    const SAML_PROVIDER_METADATA                = "serviceProviderMetadata";
+
+    const SAML_PROVIDER_ID                      = "saml";
+
+    public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null)
+    {
+        parent::__construct($dataStore, $properties);
+        $this->setProperty(self::PROVIDER_ID, self::SAML_PROVIDER_ID);
+    }
 
     /**
      * Retreive a SAML Provider based on the Href.
@@ -46,25 +55,19 @@ class SamlProvider extends Provider
             $href = $href.'/'.self::PATH;
         }
 
-        return Client::get($href, Stormpath::SAML_PROVIDER, Directory::PATH, $options);
+        return Client::get($href, Stormpath::SAML_PROVIDER, null, $options);
     }
 
     /**
-     * Create an instance of SAML Provider.
+     * Create a new SAML Provider instance with properties.
      *
      * @since 1.13.0
-     * @param null|array $properties
+     * @param array|null $properties
      * @return \Stormpath\Resource\SamlProvider
      */
     public static function instantiate($properties = null)
     {
         return Client::instantiate(Stormpath::SAML_PROVIDER, $properties);
-    }
-
-    public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null)
-    {
-        parent::__construct($dataStore, $properties);
-        $this->setProperty(self::PROVIDER_ID, self::SAML_PROVIDER_ID);
     }
 
     /**
@@ -121,12 +124,25 @@ class SamlProvider extends Provider
      *
      * @since 1.13.0
      * @param array $options
-     * @return null|\Stormpath\DataStore\a
+     * @return \Stormpath\Resource\SamlProviderData
      */
     public function getServiceProviderMetadata(array $options = [])
     {
-        return $this->getResourceProperty(self::SAML_PROVIDER_METADATA, Stormpath::SAML_PROVIDER_METADATA, $options);
+        return $this->getResourceProperty(self::SAML_PROVIDER_METADATA, Stormpath::SAML_PROVIDER_DATA, $options);
     }
+
+    /**
+     * Get the Attribute Statement Mapping Rules for the SAML Provider.
+     *
+     * @since 1.13.0
+     * @param array $options
+     * @return \Stormpath\Saml\AttributeStatementMappingRules
+     */
+    public function getAttributeStatementMappingRules(array $options = [])
+    {
+        return $this->getResourceProperty(self::ATTRIBUTE_STATEMENT_MAPPING_RULES, Stormpath::ATTRIBUTE_STATEMENT_MAPPING_RULES, $options);
+    }
+
 
     /**
      * Set the URL at the IdP to which SAML authentication requests should be sent.
@@ -185,4 +201,21 @@ class SamlProvider extends Provider
         return $this;
     }
 
+    /**
+     * Set the Attribute Statement Mapping Rules for the SAML Provider.
+     *
+     * @since 1.13.0
+     * @param AttributeStatementMappingRules $attributeStatementMappingRules
+     * @return self
+     */
+    public function setAttributeStatementMappingRules(AttributeStatementMappingRules $attributeStatementMappingRules)
+    {
+        $this->setProperty(self::ATTRIBUTE_STATEMENT_MAPPING_RULES, $attributeStatementMappingRules);
+        return $this;
+    }
+
+    public function save()
+    {
+        $this->getDataStore()->save($this);
+    }
 }

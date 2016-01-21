@@ -60,12 +60,15 @@ class SamlProviderMetadataTest extends TestCase
         $this->assertInstanceOf('Stormpath\Resource\AssertionConsumerServicePostEndpoint', $servicePostEndpoint);
     }
 
-    
+
 
     public static function tearDownAfterClass()
     {
         self::$directory->delete();
         parent::tearDownAfterClass();
     }
+
+
+
 
 }

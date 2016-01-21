@@ -78,6 +78,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         \Stormpath\Client::$cacheManager = 'Array';
 
         self::$client = \Stormpath\Client::getInstance();
+
     }
 
     /**

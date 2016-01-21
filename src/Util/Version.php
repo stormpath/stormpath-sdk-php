@@ -20,6 +20,6 @@ namespace Stormpath\Util;
 
 class Version
 {
-    const SDK_VERSION = '1.12.1';
+    const SDK_VERSION = '1.13.0';
 
 }

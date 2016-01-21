@@ -17,6 +17,9 @@ namespace Stormpath\DataStore;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+use Stormpath\Saml\AttributeStatementMappingRuleBuilder;
+use Stormpath\Saml\AttributeStatementMappingRulesBuilder;
+
 class DefaultResourceFactory implements ResourceFactory
 {
 
@@ -43,11 +46,19 @@ class DefaultResourceFactory implements ResourceFactory
             $newClass->customData;
         }
 
+        if($newClass instanceof \Stormpath\Resource\SamlProvider) {
+            $newClass = $this->convertSamlAttributeStatementMappingRules($newClass);
+        }
+
         return $newClass;
     }
 
     private function qualifyClassName($className)
     {
+        if (class_exists($className) && strstr($className, 'Stormpath')) {
+            return $className;
+        }
+
         if (strpos($className, self::RESOURCE_PATH) === false)
         {
             return self::RESOURCE_PATH .$className;
@@ -55,6 +66,28 @@ class DefaultResourceFactory implements ResourceFactory
 
         return $className;
 
+    }
+
+    private function convertSamlAttributeStatementMappingRules($newClass)
+    {
+        $mappingRules = $newClass->getAttributeStatementMappingRules();
+        if(null === $mappingRules) {
+            return $newClass;
+        }
+
+        $items = $mappingRules->getItems();
+        $newItems = [];
+
+        $itemBuilder = new AttributeStatementMappingRuleBuilder();
+        foreach($items as $item) {
+            $newItems[] = $itemBuilder->setName($item->name)
+                ->setNameFormat($item->nameFormat)
+                ->setAccountAttributes($item->accountAttributes)
+                ->build();
+        }
+
+        $newClass->getAttributeStatementMappingRules()->items = $newItems;
+        return $newClass;
     }
 
 }

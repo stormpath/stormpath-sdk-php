@@ -92,7 +92,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
             'state' => UUID::v4()
         ));
 
-        $this->assertContains('https://api.stormpath.com/sso?jwtRequest=', $redirectUrl);
+        $this->assertContains('.stormpath.com/sso?jwtRequest=', $redirectUrl);
     }
 
 
@@ -106,7 +106,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
             'state' => UUID::v4()
         ));
 
-        $this->assertContains('https://api.stormpath.com/sso/logout?jwtRequest=', $redirectUrl);
+        $this->assertContains('.stormpath.com/sso/logout?jwtRequest=', $redirectUrl);
     }
 
     public function testCreateIdSiteURLWithNameKeySettings()
@@ -121,7 +121,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
             'showOrganizationField' => true
         ));
 
-        $this->assertContains('https://api.stormpath.com/sso?jwtRequest=', $redirectUrl);
+        $this->assertContains('.stormpath.com/sso?jwtRequest=', $redirectUrl);
         $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
         $parts = explode('=',$redirectUrl);
         JWT::$leeway = 10000;
@@ -921,6 +921,26 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
 
         \Stormpath\Resource\Application::get($href);
     }
+    
+    /** @test */
+    public function an_application_should_allow_setting_authorized_callback_uri()
+    {
+        $application = \Stormpath\Resource\Application::create(array('name' => makeUniqueName('ApplicationTest authorizedCallbackUri')));
+
+        $application->setAuthorizedCallbackUris([
+            'http://myapplication.com/whatever/callback',
+            'http://myapplication.com/whatever/callback2'
+        ]);
+
+        $application->save();
+
+        $application = \Stormpath\Resource\Application::get($application->href);
+
+        $this->assertCount(2, $application->authorizedCallbackUris);
+
+        $application->delete();
+    }
+    
 
 
 
