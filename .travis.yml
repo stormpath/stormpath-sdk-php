@@ -21,3 +21,6 @@ notifications:
   hipchat:
     rooms:
       secure: DN61iUJL9kBtBfPqdHZk67IvadLdSR8+X2dV79qxx/OAFjhu+rW/K0PQp2VEgpUwHwROJxPhxiwXO8OLaA8v7rD7yp9diYwG8gjrmbOcLOphPhMuRlxSfDddWS7Eo7C177KfB2/WEbFhXhav4rDeso8xRUvGJwxqe1TYLQ7cwZo=
+    template:
+      - '%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} (<a href="%{build_url}">Details</a>/<a href="%{compare_url}">Change view</a>)'
+    format: html
