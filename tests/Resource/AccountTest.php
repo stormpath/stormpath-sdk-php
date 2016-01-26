@@ -220,15 +220,19 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
     public function testSave()
     {
-        $account = self::$account;
-        $account->username = 'changed_username';
-        $account->email = 'changed_email@unknown123.kot';
-        $account->password = 'changedPassw0rd';
+        try {
+            $account = self::$account;
+            $account->username = 'changed_username';
+            $account->email = 'changed_email@unknown123.kot';
+            $account->password = 'changedPassw0rd';
 
-        $account->save();
+            $account->save();
 
-        $this->assertEquals('changed_username', $account->username);
-        $this->assertEquals('changed_email@unknown123.kot', $account->email);
+            $this->assertEquals('changed_username', $account->username);
+            $this->assertEquals('changed_email@unknown123.kot', $account->email);
+        } catch(\Exception $e) {
+            var_dump($e);
+        }
     }
 
     public function testApiKey()

@@ -1,26 +1,26 @@
 language: php
-
 php:
 - 5.6
 - 5.5
 - 5.4
-
 sudo: false
-
 services:
-  - redis-server
-  - memcached
-
+- redis-server
+- memcached
 before_script:
 - composer self-update
 - travis_retry composer install --prefer-dist --no-interaction
 - mkdir -p ~/.phpenv/versions/$(phpenv version-name)/etc
 - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-
 script:
-  - travis_retry vendor/bin/phpunit --coverage-clover build/logs/clover.xml
-
+- travis_retry vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
-
+- bash <(curl -s https://codecov.io/bash)
+notifications:
+  hipchat:
+    rooms:
+      secure: DN61iUJL9kBtBfPqdHZk67IvadLdSR8+X2dV79qxx/OAFjhu+rW/K0PQp2VEgpUwHwROJxPhxiwXO8OLaA8v7rD7yp9diYwG8gjrmbOcLOphPhMuRlxSfDddWS7Eo7C177KfB2/WEbFhXhav4rDeso8xRUvGJwxqe1TYLQ7cwZo=
+    template:
+      - '%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} (<a href="%{build_url}">Details</a>/<a href="%{compare_url}">Change view</a>)'
+    format: html

@@ -42,6 +42,7 @@ class HttpClientRequestExecutor implements RequestExecutor
     public function executeRequest(Request $request, $redirectsLimit = 10)
     {
         $requestHeaders = $request->getHeaders();
+
         $apiKey = $request->getApiKey();
 
         if ($apiKey)
