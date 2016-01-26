@@ -1,6 +1,16 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.13.0
+--------------
+
+Released on January 26, 2015
+
+ - Added SAML to the SDK!
+ - Add ability to use the password reset token from the normal workflow inside of the ID Site
+ - Updated Copyright Dates in all files.
+ - Updated travis notification to send message to HipChat channel
+ 
 Version 1.12.2
 --------------
 
