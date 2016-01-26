@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Stormpath, Inc.
+ * Copyright 2016 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +78,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         \Stormpath\Client::$cacheManager = 'Array';
 
         self::$client = \Stormpath\Client::getInstance();
+
     }
 
     /**
@@ -117,6 +118,31 @@ class TestCase extends \PHPUnit_Framework_TestCase
     {
         self::$client = null;
         Client::tearDown();
+    }
+
+    protected static function getDummyCertForSaml()
+    {
+        //THIS IS A DUMMY CERT GENERATED AT https://samltool.com/self_signed_certs.php
+        return "-----BEGIN CERTIFICATE-----
+MIIDWTCCAkCgAwIBAgIBADANBgkqhkiG9w0BAQ0FADBGMQswCQYDVQQGEwJ1czEL
+MAkGA1UECAwCQ0ExEjAQBgNVBAoMCVN0b3JtcGF0aDEWMBQGA1UEAwwNc3Rvcm1w
+YXRoLmNvbTAeFw0xNjAxMTIxOTA5MTFaFw0xNzAxMTExOTA5MTFaMEYxCzAJBgNV
+BAYTAnVzMQswCQYDVQQIDAJDQTESMBAGA1UECgwJU3Rvcm1wYXRoMRYwFAYDVQQD
+DA1zdG9ybXBhdGguY29tMIIBIzANBgkqhkiG9w0BAQEFAAOCARAAMIIBCwKCAQIA
+1/ldduqgCZ7PeBtZkfSOnbl69bJEpqzGBo9TPgEV8zXfoeEBGXAyYMqoic9o68Ud
+upfRAwk7+XX+aHMh5bxhO7ie5h6wNe1RgCDlXJWkkfnEoMHKZ8i1abnkvTa6Bi0o
+NqbbC+luuOx0gKlpAl2eBR2lFDH/ACGIM9jSfwVBLjbzaSfZIfZ8DherxsNrC03t
+r9bM+tmUtxveZ55npPI1fB4fjmLNPgYSv9QhOQOuEMUC6QnX30KN/R/aiTIPeVJH
+a4FKH4Ad6oZbjcQxzckR0NDgDgy3B6+pm5IgcnICoRIjd0jK5h83eXwXbvb6wUEz
+gHEKFJ0+z4xIoXXasnzLnNMCAwEAAaNQME4wHQYDVR0OBBYEFIAzgHtK1XgsRiG3
+W+GaZwwBqsEZMB8GA1UdIwQYMBaAFIAzgHtK1XgsRiG3W+GaZwwBqsEZMAwGA1Ud
+EwQFMAMBAf8wDQYJKoZIhvcNAQENBQADggECAGwRBabrldcTSoSm03/pXBvosS/E
+RM82A0kfIYZSeStMU0LBSacSNooBtJNY7o0ZATGObWjHQmj2u8e6Qgt8PHeOvYCw
+L1pTnNygLpKmrgWdGMgUM+yMLmduvaBXRFLrb9xhwoiOB3b2CZtqyvOgmudRN3M5
+FSGg2SOHbdpEqN8sWY+LjNLmVPsGxCbI4OHeLXfZ0fCiJVCZi6ep+STFgQHsuMF6
+exOFNg/LNzrC8e4ldJ/U0hjmqDctvFYqSjWVfqu8GzOrEsdteDapVJxHu6dD9TAu
+HeqcSVN05izamtRPc1BUeLos/6LuUpDztlolcXaD+ISTv2/G13L3dxfvub7s
+-----END CERTIFICATE-----";
     }
 
 }

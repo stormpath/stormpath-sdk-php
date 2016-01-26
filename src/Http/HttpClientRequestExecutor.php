@@ -4,7 +4,7 @@ namespace Stormpath\Http;
 
 
 /*
- * Copyright 2013 Stormpath, Inc.
+ * Copyright 2016 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ class HttpClientRequestExecutor implements RequestExecutor
     public function executeRequest(Request $request, $redirectsLimit = 10)
     {
         $requestHeaders = $request->getHeaders();
+
         $apiKey = $request->getApiKey();
 
         if ($apiKey)

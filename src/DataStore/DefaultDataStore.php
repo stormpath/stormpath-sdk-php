@@ -3,7 +3,7 @@
 namespace Stormpath\DataStore;
 
 /*
- * Copyright 2013 Stormpath, Inc.
+ * Copyright 2016 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,7 +151,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         if (!strlen($href))
         {
-            throw new InvalidArgumentException('save may only be called on objects that have already been persisted (i.e. they have an existing href).');
+            throw new \InvalidArgumentException('save may only be called on objects that have already been persisted (i.e. they have an existing href).');
         }
 
         if ($this->needsToBeFullyQualified($href))
@@ -298,7 +298,6 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
                                                   ->setPhpVersion(phpversion())
                                                   ->build();
 
-
         if ($body = $request->getBody())
         {
             $headers['Content-Type'] = 'application/json';
@@ -351,12 +350,30 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
                 $property = $this->toStdClass($property);
             }
 
-
-
             $properties->$name = $property;
         }
 
         return $properties;
+    }
+
+    private function objectArrayToStdClass($property)
+    {
+        $properties = new \stdClass();
+
+        $class = new \ReflectionClass($property);
+
+        $classProperties = $class->getProperties();
+
+        foreach($classProperties as $prop) {
+            $method = 'get'.ucfirst($prop->name);
+            if(method_exists($property, $method)) {
+
+                $properties->{$prop->name} = $property->$method();
+            }
+        }
+
+        return $properties;
+
     }
 
     private function toSimpleReference($propertyName, \stdClass $properties)

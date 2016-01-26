@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Stormpath, Inc.
+ * Copyright 2016 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -220,15 +220,19 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
     public function testSave()
     {
-        $account = self::$account;
-        $account->username = 'changed_username';
-        $account->email = 'changed_email@unknown123.kot';
-        $account->password = 'changedPassw0rd';
+        try {
+            $account = self::$account;
+            $account->username = 'changed_username';
+            $account->email = 'changed_email@unknown123.kot';
+            $account->password = 'changedPassw0rd';
 
-        $account->save();
+            $account->save();
 
-        $this->assertEquals('changed_username', $account->username);
-        $this->assertEquals('changed_email@unknown123.kot', $account->email);
+            $this->assertEquals('changed_username', $account->username);
+            $this->assertEquals('changed_email@unknown123.kot', $account->email);
+        } catch(\Exception $e) {
+            var_dump($e);
+        }
     }
 
     public function testApiKey()
@@ -362,6 +366,20 @@ class AccountTest extends \Stormpath\Tests\TestCase {
     {
         self::$account->addGroup(\Stormpath\Resource\Group::instantiate());
     }
+
+
+    public function testItCanGetAccessTokensOffAccount()
+    {
+        $tokens = self::$account->accessTokens;
+        $this->assertInstanceOf('Stormpath\Resource\AccessTokenList', $tokens);
+    }
+
+    public function testItCanGetRefreshTokensOffAccount()
+    {
+        $tokens = self::$account->refreshTokens;
+        $this->assertInstanceOf('Stormpath\Resource\RefreshTokenList', $tokens);
+    }
+    
 
     public function testAddingCustomData()
     {

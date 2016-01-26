@@ -22,7 +22,7 @@ On your project root, install Composer
 Configure the **stormpath/sdk** dependency in your 'composer.json' file:
 
     "require": {
-        "stormpath/sdk": "1.12.*"
+        "stormpath/sdk": "1.13.*"
     }
 
 On your project root, install the the SDK with its dependencies:
@@ -639,6 +639,21 @@ $forgotLink = $application->createIdSiteUrl(['path'=>'/#/forgot','callbackUri'=>
 header('Location:'.$forgotLink);  //or any other form of redirect to the $loginLink you want to use.
 ```
 
+##### Using SP_Token for password reset from workflow in ID Site
+
+We allow you to use the Workflow for password reset outside of the ID Site system, but enable you to use the password
+reset screens of the ID Site to do the password reset.  To allow for this, you need to pass in the `sp_token` parameter 
+that was provided in the email of the password reset.
+```php
+$application = \Stormpath\Resource\Application::get('{APPLICATION_ID}');
+$location = $application->createIdSiteUrl([
+    'path'=>'/#/reset', 
+    'sp_token'=>'{{SP_TOKEN}}',
+    'callbackUri'=>'{{CALLBACK_URI}}'
+]);
+header('Location:'.$forgotLink);  //or any other form of redirect to the $loginLink you want to use.
+```
+
 Again, with all these methods, You will want your application to link to an internal page where the JWT is created at 
 that time.  Without doing this, a user will only have 60 seconds to click on the link before the JWT expires.
 
@@ -917,6 +932,167 @@ $authenticationRequest = new UsernamePasswordRequest('usernameOrEmail', 'passwor
     array('accountStore' => $accountStore));
 $result = $application->authenticateAccount($authenticationRequest);
 ```
+
+
+### Authenticating Against a SAML Directory
+
+
+SAML is an XML-based standard for exchanging authentication and authorization data between security domains. Stormpath enables you to allow customers to log-in by authenticating with an external SAML Identity Provider. 
+
+#### Stormpath as a Service Provider 
+
+The specific use case that Stormpath supports is user-initiated single sign-on. In this scenario, a user requests a protected resource (e.g. your application). Your application, with the help of Stormpath, then confirms the users identity in order to determine whether they are able to access the resource. In SAML terminology, the user is the **User Agent**, your application (along with Stormpath) is the **Service Provider**, and the third-party SAML authentication site is the **Identity Provider** or **IdP**. 
+
+The broad strokes of the process are as follows:
+
+- User Agent requests access from Service Provider 
+- Service Provider responds with redirect to Identity Provider 
+- Identity Provider authenticates the user
+- Identity provider redirects user back to Service Provider along with SAML assertions.
+- Service Provider receives SAML assertions and either creates or retrieves Account information  
+
+Just like with Mirror and Social Directories, the user information that is returned from the IdP is used by Stormpath to either identify an existing Account resource, or create a new one. In the case of new Account creation, Stormpath will map the information in the response onto its own resources. In this section we will walk you through the process of configuring your SAML Directory, as well as giving you an overview of how the SAML Authentication process works. 
+
+
+#### Configuring Stormpath as a Service Provider 
+
+Configuration is stored in the Directory's `Provider resource `. Both of these resources must also be linked with an `AccountStoreMapping`. Here we will explain to you the steps that are required to configure Stormpath as a SAML Service Provider. 
+
+##### Step 1: Gather IDP Data 
+
+You will need the following information from your IdP:
+
+- **SSO Login URL** - The URL at the IdP to which SAML authentication requests should be sent. This is often called an "SSO URL", "Login URL" or "Sign-in URL".
+- **SSO Logout URL** - The URL at the IdP to which SAML logout requests should be sent. This is often called a "Logout URL", "Global Logout URL" or "Single Logout URL".
+- **Signing Cert** - The IdP will digitally sign auth assertions and Stormpath will need to validate the signature.  This will usually be in .pem or .crt format, but Stormpath requires the text value.
+- **Signing Algorithm** - You will need the name of the signing algorithm that your IdP uses. It will be either "RSA-SHA256" or "RSA-SHA1".
+
+##### Step 2: Configure Your SAML Directory
+
+Input the data you gathered in Step 1 above into your Directory's Provider resource, and then pass that along as part of the Directory creation HTTP POST:
+
+```
+$samlProvider = \Stormpath\Resource\SamlProvider::instantiate([
+            'ssoLoginUrl' => 'http://google.com/login',
+            'ssoLogoutUrl' => 'http://google.com/logout',
+            'encodedX509SigningCert' => $this->getDummyCertForSaml(),
+            'requestSignatureAlgorithm' => 'RSA-SHA1'
+        ]);
+
+        $directory = \Stormpath\Resource\Directory::create([
+            'name' => makeUniqueName('DirectoryTest samlProvider'),
+            'provider' => $samlProvider
+        ]);
+```
+
+
+
+ > Notice that new lines in the certificate are separated with a ``\n`` character.
+
+
+##### Retrieve Your Service Provider Metadata
+
+Next you will have to configure your Stormpath-powered application as a Service Provider in your Identity Provider. This means that you will need to retrieve the correct metadata from Stormpath. 
+
+In order to retrieve the required values, start by sending a GET to the Directory's Provider:
+
+```
+    $provider = Stormpath\Resource\SamlProvider::get(self::$directory->provider->href);
+    $providerMetaData = $provider->serviceProviderMetadata
+```
+
+From this metadata, you will need two values:
+ 
+- **Assertion Consumer Service URL**: This is the location the IdP will send its response to. 
+- **X509 Signing Certificate**: The certificate that is used to sign the requests sent to the IdP. If you retrieve XML, the certificate will be embedded. If you retrieve JSON, you'll have to follow a further ``/x509certificates`` link to retrieve it. 
+
+You will also need two other values, which will always be the same:
+
+- **SAML Request Binding:** Set to ``HTTP-Redirect``.
+- **SAML Response Binding:** Set to ``HTTP-Post``.
+
+##### Step 4: Configure Your Service Provider in Your Identity Provider 
+
+Log-in to your Identity Provider (Salesforce, OneLogin, etc) and enter the information you retrieved in the previous step into the relevant application configuration fields. The specific steps to follow here will depend entirely on what Identity Provider you use, and for more information you should consult your Identity Provider's SAML documentation. 
+
+##### Step 5: Configure Your Application
+
+The Stormpath `Application` Resource has two parts that are relevant to SAML: 
+
+- an ``authorizedCallbackUri`` Array that defines the authorized URIs that the IdP can return your user to. These should be URIs that you host yourself. 
+- an embedded ``samlPolicy`` object that contains information about the SAML flow configuration and endpoints.
+
+``` 
+    $application->setAuthorizedCallbackUris([
+        'http://myapplication.com/whatever/callback',
+        'http://myapplication.com/whatever/callback2'
+    ]);
+
+    $application->save();
+ 
+```
+
+##### Step 6: Add the SAML Directory as an Account Store
+
+Now you last thing you have to do is map the new Directory to your Application with an Account Store Mapping. 
+
+
+##### Step 7: Configure SAML Assertion Mapping 
+
+The Identity Provider's SAML response contains assertions about the user's identity, which Stormpath can use to create and populate a new Account resource. 
+
+``` xml 
+
+  <saml:AttributeStatement>
+    <saml:Attribute Name="uid" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+      <saml:AttributeValue xsi:type="xs:string">test</saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute Name="mail" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+      <saml:AttributeValue xsi:type="xs:string">jane@example.com</saml:AttributeValue>
+    </saml:Attribute>
+      <saml:Attribute Name="location" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+      <saml:AttributeValue xsi:type="xs:string">Tampa, FL</saml:AttributeValue>
+    </saml:Attribute>
+  </saml:AttributeStatement>
+
+The Attribute Assertions (`<saml:AttributeStatement>`) are brought into Stormpath and become Account and customData attributes.
+
+SAML Assertion mapping is defined in an **attributeStatementMappingRules** object found inside the Directory's Provider object, or directly: `/v1/attributeStatementMappingRules/$RULES_ID`.
+
+##### Mapping Rules 
+
+The rules have three different components:
+
+- **name**: The SAML Attribute name 
+- **nameFormat**: The name format for this SAML Attribute, expressed as a Uniform Resource Name (URN). 
+- **accountAttributes**: This is an array of Stormpath Account or customData (`customData.$KEY_NAME`) attributes that will map to this SAML Attribute.
+
+
+
+In order to create the mapping rules, we simply send the following:
+
+```
+	$provider = \Stormpath\Resource\SamlProvider::get($directory->provider->href);
+
+	$ruleBuilder = new \Stormpath\Saml\AttributeStatementMappingRuleBuilder();
+	$rule = $ruleBuilder->setName('test1')
+		->setAccountAttributes(['customData.test1'])
+		->build();
+
+	$rule2 = $ruleBuilder->setName('test2')
+		->setAccountAttributes(['customData.test2'])
+		->build();
+
+
+	$rulesBuilder = new \Stormpath\Saml\AttributeStatementMappingRulesBuilder();
+	$rulesBuilder->setAttributeStatementMappingRules([$rule, $rule2]);
+	$rules = $rulesBuilder->build();
+
+	$provider->setAttributeStatementMappingRules($rules);
+
+	$provider->save();
+```
+
 
 ### Verify an Account's email address
 

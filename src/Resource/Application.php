@@ -3,7 +3,7 @@
 namespace Stormpath\Resource;
 
 /*
- * Copyright 2013 Stormpath, Inc.
+ * Copyright 2016 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ class Application extends InstanceResource implements Deletable
     const LOGIN_ATTEMPTS                = "loginAttempts";
     const OAUTH_POLICY                  = "oAuthPolicy";
     const CUSTOM_DATA                   = "customData";
+    const AUTHORIZED_CALLBACK_URIS      = "authorizedCallbackUris";
 
     const PATH                          = "applications";
 
@@ -110,6 +111,32 @@ class Application extends InstanceResource implements Deletable
         {
             $this->setProperty(self::STATUS, Stormpath::$Statuses[$uprStatus]);
         }
+    }
+
+    /**
+     * Array that defines the authorized URIs that the IdP can return your
+     * user to. These should be URIs that you host yourself.
+     *
+     * @since 1.13.0
+     * @param array $uris
+     * @return self
+     */
+    public function setAuthorizedCallbackUris(array $uris = [])
+    {
+        $this->setProperty(self::AUTHORIZED_CALLBACK_URIS, $uris);
+        return $this;
+    }
+
+    /**
+     * Returns Array that defines the authorized URIs that the IdP can return
+     * your user to. These should be URIs that you host yourself.
+     *
+     * @since 1.13.0
+     * @return array
+     */
+    public function getAuthorizedCallbackUris()
+    {
+        return (array) $this->getProperty(self::AUTHORIZED_CALLBACK_URIS);
     }
 
     public function getTenant(array $options = array())
@@ -346,6 +373,10 @@ class Application extends InstanceResource implements Deletable
             'cb_uri'    => $options['callbackUri']
         );
 
+        if(isset($options['sp_token'])) {
+            $token['sp_token'] = $options['sp_token'];
+        }
+        
         if(isset($options['organizationNameKey'])) {
             $token['onk'] = $options['organizationNameKey'];
         }
