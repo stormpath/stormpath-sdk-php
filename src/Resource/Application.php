@@ -346,6 +346,10 @@ class Application extends InstanceResource implements Deletable
             'cb_uri'    => $options['callbackUri']
         );
 
+        if(isset($options['sp_token'])) {
+            $token['sp_token'] = $options['sp_token'];
+        }
+        
         if(isset($options['organizationNameKey'])) {
             $token['onk'] = $options['organizationNameKey'];
         }

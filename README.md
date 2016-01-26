@@ -639,6 +639,21 @@ $forgotLink = $application->createIdSiteUrl(['path'=>'/#/forgot','callbackUri'=>
 header('Location:'.$forgotLink);  //or any other form of redirect to the $loginLink you want to use.
 ```
 
+##### Using SP_Token for password reset from workflow in ID Site
+
+We allow you to use the Workflow for password reset outside of the ID Site system, but enable you to use the password
+reset screens of the ID Site to do the password reset.  To allow for this, you need to pass in the `sp_token` parameter 
+that was provided in the email of the password reset.
+```php
+$application = \Stormpath\Resource\Application::get('{APPLICATION_ID}');
+$location = $application->createIdSiteUrl([
+    'path'=>'/#/reset', 
+    'sp_token'=>'{{SP_TOKEN}}',
+    'callbackUri'=>'{{CALLBACK_URI}}'
+]);
+header('Location:'.$forgotLink);  //or any other form of redirect to the $loginLink you want to use.
+```
+
 Again, with all these methods, You will want your application to link to an internal page where the JWT is created at 
 that time.  Without doing this, a user will only have 60 seconds to click on the link before the JWT expires.
 
