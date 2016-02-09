@@ -6,43 +6,13 @@ use Stormpath\Tests\TestCase;
 
 class CacheTest extends TestCase
 {
-
-    private static $application;
-    private static $inited;
-
-    protected static function init()
-    {
-
-        self::$application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache '. md5(time().microtime().uniqid())));
-        self::$inited = true;
-
-    }
-
-    public function setUp()
-    {
-        if (!self::$inited) {
-            self::init();
-        }
-
-    }
-
-
-    public static function tearDownAfterClass()
-    {
-        if (self::$application) {
-            self::$application->delete();
-        }
-        parent::tearDownAfterClass();
-
-    }
-
     public function testGetFromCache()
     {
 
-        $application = self::$application;
+        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Get '. md5(time().microtime().uniqid())));
 
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('Another App for Cache', $application->name);
+        $this->assertContains('Another App for Cache Get', $application->name);
 
 
         // Get the application from cache and change the name of it.
@@ -66,8 +36,9 @@ class CacheTest extends TestCase
 
         $application = \Stormpath\Resource\Application::get($application->href);
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('Another App for Cache', $application->name);
+        $this->assertContains('Another App for Cache Get', $application->name);
 
+        $application->delete();
     }
 
     public function testDeletesFromCacheWhenResourceIsDeleted()
