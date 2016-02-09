@@ -9,7 +9,11 @@ class RedisCacheTest extends \PHPUnit_Framework_TestCase {
 
     public function setUp()
     {
-        $cacheManager = new \Stormpath\Cache\RedisCacheManager(array('redis'=>array('host'=>'127.0.0.1', 'port'=>'6379', 'password'=>null)));
+        $redisHost = getenv('REDIS_HOST') ?: '127.0.0.1';
+        $redisPort = getenv('REDIS_PORT') ?: '6379';
+        $redisPassword = getenv('REDIS_PASSWORD') ?: null;
+
+        $cacheManager = new \Stormpath\Cache\RedisCacheManager(array('redis'=>array('host'=>$redisHost, 'port'=>$redisPort, 'password'=>$redisPassword)));
 
         $this->cache = $cacheManager->getCache();
 

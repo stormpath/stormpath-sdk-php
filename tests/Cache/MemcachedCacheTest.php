@@ -9,7 +9,11 @@ class MemcachedCacheTest extends \PHPUnit_Framework_TestCase {
 
     public function setUp()
     {
-        $cacheManager = new \Stormpath\Cache\MemcachedCacheManager(array('memcached'=>array(array('host'=>'127.0.0.1', 'port'=>'11211', 'password'=>null))));
+        $memcachedHost = getenv('MEMCACHED_HOST') ?: '127.0.0.1';
+        $memcachedPort = getenv('MEMCACHED_PORT') ?: '11211';
+        $memcachedPassword = getenv('MEMCACHED_PASSWORD') ?: null;
+
+        $cacheManager = new \Stormpath\Cache\MemcachedCacheManager(array('memcached'=>array(array('host'=>$memcachedHost, 'port'=>$memcachedPort, $memcachedPassword=>null))));
 
         $this->cache = $cacheManager->getCache();
 
