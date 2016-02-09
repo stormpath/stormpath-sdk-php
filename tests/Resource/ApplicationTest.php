@@ -30,6 +30,7 @@ use Stormpath\Resource\VerificationEmail;
 use Stormpath\Stormpath;
 use Stormpath\Util\UUID;
 
+/** @group multipleApps */
 class ApplicationTest extends \Stormpath\Tests\TestCase {
 
     private static $application;

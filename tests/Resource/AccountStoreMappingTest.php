@@ -17,7 +17,7 @@
 
 namespace Stormpath\Tests\Resource;
 
-
+/** @group multipleApps */
 class AccountStoreMappingTest extends \Stormpath\Tests\TestCase {
 
     private static $application;
