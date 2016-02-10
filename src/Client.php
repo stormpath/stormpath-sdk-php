@@ -18,12 +18,18 @@ namespace Stormpath;
  * limitations under the License.
  */
 
+use Stormpath\Cache\CacheManager;
+use Stormpath\Cache\PSR6CacheManagerInterface;
+use Stormpath\Cache\CachePSR6Adapter;
 use Stormpath\DataStore\DefaultDataStore;
+use Stormpath\Exceptions\Cache\InvalidCacheManagerException;
+use Stormpath\Exceptions\Cache\InvalidLegacyCacheManagerException;
 use Stormpath\Http\Authc\RequestSigner;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Resource\Resource;
 use Stormpath\Stormpath;
 use Stormpath\Util\Magic;
+use Cache\Taggable\TaggablePSR6PoolAdapter;
 
 function toObject($properties)
 {
@@ -91,7 +97,7 @@ class Client extends Magic
 
     private static $instance;
 
-    private $cacheManagerInstance;
+    private $cachePool;
 
     private $dataStore;
 
@@ -113,8 +119,25 @@ class Client extends Magic
 
         $requestExecutor = new HttpClientRequestExecutor($requestSigner);
 
-        $this->cacheManagerInstance = new self::$cacheManager($cacheManagerOptions);
-        $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cacheManagerInstance, $baseUrl);
+        if (is_string($cacheManager)) { // Legacy cache manager
+            $legacyCache = new $cacheManager($cacheManagerOptions);
+
+            if ($legacyCache instanceOf CacheManager) {
+                $cache = $legacyCache->getCache();
+                $cache = new CachePSR6Adapter($cache);
+            } else if ($legacyCache instanceOf PSR6CacheManagerInterface) {
+                $cache = $legacyCache->getCachePool($cacheManagerOptions);
+            } else {
+                throw new InvalidLegacyCacheManagerException("Legacy cache manager is not an instance of Stormpath\Cache\CacheManager");
+            }
+        } elseif ($cacheManager instanceOf PSR6CacheManagerInterface) {
+            $cache = $cacheManager->getCachePool($cacheManagerOptions);
+        } else {
+            throw new InvalidCacheManagerException("Invalid cache manager");
+        }
+
+        $this->cachePool = TaggablePSR6PoolAdapter::makeTaggable($cache);
+        $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cachePool, $baseUrl);
     }
 
     public static function get($href, $className, $path = null, array $options = array())
@@ -189,9 +212,9 @@ class Client extends Magic
         return $this->dataStore;
     }
 
-    public function getCacheManager()
+    public function getCachePool()
     {
-        return $this->cacheManagerInstance;
+        return $this->cachePool;
     }
 
     public static function tearDown()

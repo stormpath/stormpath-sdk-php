@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
+use Cache\Adapter\Redis\RedisCachePool;
+use Redis;
 
-class RedisCacheManager implements CacheManager {
+class RedisCacheManager implements PSR6CacheManagerInterface {
 
-    public function __construct($options)
+    public function getCachePool($options)
     {
-        $this->options = $options;
-    }
+        $redis = new Redis();
+        $redis->connect($options['redis']['host']);
+        $redis->auth($options['redis']['password']);
 
-    public function getCache()
-    {
-
-        return new RedisCache($this->options);
+        return new RedisCachePool($redis);
     }
 }

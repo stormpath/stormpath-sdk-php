@@ -29,26 +29,29 @@ use Stormpath\Resource\Resource;
 use Stormpath\Resource\ResourceError;
 use Stormpath\Stormpath;
 use Stormpath\Util\UserAgentBuilder;
+use Stormpath\Cache\PSR6CacheKeyTrait;
+use Cache\Taggable\TaggablePoolInterface;
+use Stormpath\Cache\Tags\CacheTagExtractor;
 
 class DefaultDataStore extends Cacheable implements InternalDataStore
 {
+    use PSR6CacheKeyTrait;
 
     private $requestExecutor;
     private $resourceFactory;
     private $baseUrl;
-    protected $cacheManager;
+    protected $cachePool;
 
     private $apiKey;
 
     const DEFAULT_SERVER_HOST = 'api.stormpath.com';
     const DEFAULT_API_VERSION = '1';
 
-    public function __construct(RequestExecutor $requestExecutor, ApiKey $apiKey, $cacheManager, $baseUrl = null)
+    public function __construct(RequestExecutor $requestExecutor, ApiKey $apiKey, TaggablePoolInterface $cachePool, $baseUrl = null)
     {
         $this->requestExecutor = $requestExecutor;
         $this->resourceFactory = new DefaultResourceFactory($this);
-        $this->cacheManager = $cacheManager;
-        $this->cache = $this->cacheManager->getCache();
+        $this->cachePool = $cachePool;
 
         $this->apiKey = $apiKey;
 
@@ -113,12 +116,25 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         $queryString = $this->getQueryString($options);
 
-        if (!$data = $this->isResourceCached($href, $options)) {
-            $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
-        }
+        $item = $this->cachePool->getItem($this->createCacheKey($href, $options));
 
-        if($this->resourceIsCacheable($data)) {
-            $this->addDataToCache($data, $queryString);
+        if (!$item->isHit()) {
+            $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
+
+            if($this->responseIsCacheable($data, $options)) {
+                $item->set($data);
+
+                if (isset($options['expand'])) {
+                    $cacheTags = CacheTagExtractor::extractCacheTags($data, (string)$options['expand']);
+                    $cacheTags = array_map([$this, 'normalizeHrefAsCacheTag'], $cacheTags);
+
+                    $item->setTags($cacheTags);
+                }
+
+                $this->cachePool->save($item);
+            }
+        } else {
+            $data = $item->get();
         }
 
         $resolver = DefaultClassNameResolver::getInstance();
@@ -182,7 +198,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     public function removeCustomDataItem(Resource $resource, $key)
     {
         $delete = $this->executeRequest(Request::METHOD_DELETE, $resource->getHref().'/'.$key);
-        $this->removeCustomDataItemFromCache($resource, $key);
+        $this->removeResourceFromCache($resource);
         return $delete;
     }
 
@@ -258,6 +274,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         {
             $href = $this->qualify($href);
         }
+
         $response = $this->executeRequest(Request::METHOD_POST,
                                           $href,
                                           json_encode($this->toStdClass($resource)),
@@ -276,12 +293,12 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         	}
         	unset($response->httpStatus);
         }
-        
-        
-        $this->removeResourceFromCache($resource);
 
-        if($this->resourceIsCacheable($response)) {
-            $this->addDataToCache($response, $query);
+        $this->removeHrefFromCache($href);
+        $this->removeHrefFromCache($response->href);
+
+        if($this->responseIsCacheable($response)) {
+            $this->addNonExpandedResponseToCache($response, $query);
         }
 
         return $this->resourceFactory->instantiate($returnType, array($response, $query));
@@ -415,12 +432,43 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     /** This method is not for use by enduser.
      *  The method will be removed without warning
      *  at a future time.  */
-    public function getCacheManager() {
-        return $this->cacheManager;
+    public function getCachePool() {
+        return $this->cachePool;
     }
 
     public function getApiKey() {
         return $this->apiKey;
     }
 
+    protected function responseIsCacheable($response)
+    {
+        return $this->resourceIsCacheable($response);
+    }
+
+    protected function removeResourceFromCache($resource)
+    {
+        $this->removeHrefFromCache($resource->getHref());
+    }
+
+    protected function removeHrefFromCache($href)
+    {
+        $this->cachePool->deleteItem($this->createCacheKey($href));
+
+        $this->cachePool->clearTags([$this->normalizeHrefAsCacheTag($href)]);
+    }
+
+    protected function addNonExpandedResponseToCache($response, $query)
+    {
+        if($this->responseIsCacheable($response)) {
+            $item = $this->cachePool->getItem($this->createCacheKey($response->href));
+            $item->set($response);
+
+            $this->cachePool->save($item);
+        }
+    }
+
+    protected function normalizeHrefAsCacheTag($tag)
+    {
+        return $this->createCacheKey($tag);
+    }
 }

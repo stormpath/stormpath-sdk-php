@@ -82,7 +82,7 @@ class ClientTest extends TestCase {
     {
         \Stormpath\Client::tearDown();
         $client = \Stormpath\Client::getInstance();
-        $this->assertInstanceOf('Stormpath\Cache\ArrayCacheManager', $client->getCacheManager());
+        $this->assertInstanceOf('Cache\Taggable\TaggablePoolInterface', $client->getCachePool());
 
     }
 
