@@ -25,8 +25,8 @@ class PSR6InstanceCacheManager implements PSR6CacheManagerInterface {
         $this->pool = $pool;
     }
 
-    public function getCache($options)
+    public function getCachePool($options)
     {
-        return $pool;
+        return $this->pool;
     }
 }
