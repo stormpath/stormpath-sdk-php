@@ -3,7 +3,7 @@
 namespace Stormpath\Resource;
 
 /*
- * Copyright 2016 Stormpath, Inc.
+ * Copyright 2013 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ class ResourceError extends \RuntimeException
 
     public function __construct(Error $error)
     {
-        parent::__construct(($error->getMessage()) ? $error->getMessage() : '');
+        parent::__construct(($error->getMessage()) ? $error->getMessage() : '', $error->getCode());
         $this->error = $error;
     }
 
