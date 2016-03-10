@@ -19,7 +19,7 @@ Licensing:
 - [ ] Any new files contain the copyright header directly after the opening <?php line
 
 Branching:
-- [ ] My submission is based on master branch.
+- [ ] My submission is based on dev branch
 - [ ] My submission is compatible with latest master branch updates (no conflicts, I did a rebase if it was necessary).
 - [ ] The name of the branch I want to merge upstream is not 'master'.
 - [ ] My branch name follows the pattern *feature/some-new-shiny-feature* (for new features).
