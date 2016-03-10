@@ -24,7 +24,7 @@ class ResourceError extends \RuntimeException
 
     public function __construct(Error $error)
     {
-        parent::__construct(($error->getMessage()) ? $error->getMessage() : '');
+        parent::__construct(($error->getMessage()) ? $error->getMessage() : '', $error->getCode());
         $this->error = $error;
     }
 
