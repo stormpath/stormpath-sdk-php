@@ -45,9 +45,7 @@ class ApiKeyEncryptionOptions
                 $options[self::ENCRYPTION_KEY_ITERATIONS] :
                 self::DEFAULT_ENCRYPTION_KEY_ITERATIONS;
 
-            $salt = function_exists('openssl_random_pseudo_bytes') ?
-                openssl_random_pseudo_bytes(16) :
-                substr(md5(uniqid('', true)), -16);
+            $salt = openssl_random_pseudo_bytes(16);
 
             $this->options[self::ENCRYPTION_KEY_SALT] = ApiKeyEncryptionUtils::base64url_encode($salt);
         }
