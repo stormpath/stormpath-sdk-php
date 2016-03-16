@@ -2,6 +2,9 @@
 
 namespace Stormpath\Authc\Api;
 
+use phpseclib\Crypt\AES as ModernAES;
+use Crypt_AES as OldAES;
+
 /*
  * Copyright 2016 Stormpath, Inc.
  *
@@ -28,7 +31,12 @@ class ApiKeyEncryptionUtils
         $keyLengthBits = $options->getEncryptionKeySize();
         $iv = substr($decodedSecret, 0, 16);
 
-        $aes = new \Crypt_AES();
+        if (class_exists('phpseclib\Crypt\AES')) {
+            $aes = new ModernAES();
+        } else {
+            $aes = new OldAES();
+        }
+
         $aes->setPassword($password, 'pbkdf2', 'sha1', $salt, $iterations, $keyLengthBits / 8);
         $aes->setKeyLength($keyLengthBits);
         $aes->setIV($iv);

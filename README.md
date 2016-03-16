@@ -22,7 +22,7 @@ On your project root, install Composer
 Configure the **stormpath/sdk** dependency in your 'composer.json' file:
 
     "require": {
-        "stormpath/sdk": "1.13.*"
+        "stormpath/sdk": "1.14.*"
     }
 
 On your project root, install the the SDK with its dependencies:
@@ -2009,7 +2009,7 @@ The `Authorization` header contains a base64 encoding of the API Key and Secret.
 $application = \Stormpath\Resource\Application::get("https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu");
 
 $request = \Stormpath\Authc\Api\Request::createFromGlobals();
-$result = (new ApiRequestAuthenticator($application))->authenticate($request);
+$result = (new \Stormpath\Authc\Api\ApiRequestAuthenticator($application))->authenticate($request);
 
 $account = $result->getApiKey()->account;
 $apiKey = $result->getApiKey();
@@ -2021,7 +2021,7 @@ $apiKey = $result->getApiKey();
 $application = \Stormpath\Resource\Application::get("https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu");
 
 $request = \Stormpath\Authc\Api\Request::createFromGlobals();
-$result = (new BasicRequestAuthenticator($application))->authenticate($request);
+$result = (new \Stormpath\Authc\Api\BasicRequestAuthenticator($application))->authenticate($request);
 
 $account = $result->getApiKey()->account;
 $apiKey = $result->getApiKey();
@@ -2047,7 +2047,7 @@ The `Authorization` header contains a base64 encoding of the API Key and Secret.
 $application = \Stormpath\Resource\Application::get("https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu");
 
 $request = \Stormpath\Authc\Api\Request::createFromGlobals();
-$result = new ApiRequestAuthenticator($application)->authenticate($request);
+$result = (new \Stormpath\Authc\Api\ApiRequestAuthenticator($application))->authenticate($request);
 
 $tokenResponse = $result->tokenResponse;
 $token = $tokenResponse->accessToken;
@@ -2083,7 +2083,7 @@ Host: api.trooperapp.com
 $application = \Stormpath\Resource\Application::get("https://api.stormpath.com/v1/applications/24mp4us71ntza6lBwlu");
 
 $request = \Stormpath\Authc\Api\Request::createFromGlobals();
-$result = (new OAuthRequestAuthenticator($application))->authenticate($request);
+$result = (new \Stormpath\Authc\Api\OAuthRequestAuthenticator($application))->authenticate($request);
 
 $account = $result->getApiKey()->account;
 $apiKey = $result->getApiKey();
