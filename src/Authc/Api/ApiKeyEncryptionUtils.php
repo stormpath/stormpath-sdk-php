@@ -31,7 +31,7 @@ class ApiKeyEncryptionUtils
         $keyLengthBits = $options->getEncryptionKeySize();
         $iv = substr($decodedSecret, 0, 16);
 
-        if (class_exists(ModernAES::class)) {
+        if (class_exists('phpseclib\Crypt\AES')) {
             $aes = new ModernAES();
         } else {
             $aes = new OldAES();
