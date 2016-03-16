@@ -6,4 +6,4 @@
 .travis.yml export-ignore
 phpunit.xml.dist export-ignore
 CHANGES.md export-ignore
-README.md
+README.md export-ignore
