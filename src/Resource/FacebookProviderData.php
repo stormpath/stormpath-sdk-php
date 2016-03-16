@@ -22,7 +22,19 @@ class FacebookProviderData extends ProviderData
 {
     const PROVIDER_ID   = 'facebook';
 
+    const CODE          = 'code';
     const ACCESS_TOKEN  = 'accessToken';
+    const REFRESH_TOKEN = 'refreshToken';
+
+    public function getCode()
+    {
+        return $this->getProperty(self::CODE);
+    }
+
+    public function setCode($code)
+    {
+        $this->setProperty(self::CODE, $code);
+    }
 
     public function getAccessToken()
     {
@@ -32,6 +44,16 @@ class FacebookProviderData extends ProviderData
     public function setAccessToken($accessToken)
     {
         $this->setProperty(self::ACCESS_TOKEN, $accessToken);
+    }
+
+    public function getRefreshToken()
+    {
+        return $this->getProperty(self::REFRESH_TOKEN);
+    }
+
+    public function setRefreshToken($refreshToken)
+    {
+        $this->setProperty(self::REFRESH_TOKEN, $refreshToken);
     }
 
 }

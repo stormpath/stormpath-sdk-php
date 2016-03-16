@@ -27,6 +27,7 @@ use Stormpath\Stormpath;
 class FacebookProviderAccountRequest implements ProviderAccountRequest
 {
     const ACCESS_TOKEN  = 'accessToken';
+    const CODE          = 'code';
 
     private $options;
 
@@ -48,13 +49,17 @@ class FacebookProviderAccountRequest implements ProviderAccountRequest
 
         $providerData->providerId = FacebookProviderData::PROVIDER_ID;
 
-        if (isset($this->options[self::ACCESS_TOKEN]))
+        if (isset($this->options[self::CODE]))
+        {
+            $providerData->code = $this->options[self::CODE];
+        }
+        else if (isset($this->options[self::ACCESS_TOKEN]))
         {
             $providerData->accessToken = $this->options[self::ACCESS_TOKEN];
         }
         else
         {
-            throw new \InvalidArgumentException('accessToken must be set for FacebookProviderAccountRequest');
+            throw new \InvalidArgumentException('Either code or accessToken must be set for FacebookProviderAccountRequest');
         }
 
         return $providerData;
