@@ -1,10 +1,24 @@
 stormpath-sdk-php Changelog
 ===========================
 
+Version 1.14.0
+--------------
+
+Released on March 16, 2016 
+
+ - Documentation updates
+ - Using openssl for apiKey options (Fixes #132)
+ - Added Github Templates for PRs and Issues (Fixes #138)
+ - Passing code to Exception off of Resource Exception (Fixes #138)
+ - Update Facebok Provider to include code and access_token (Fixes #142)
+ - Official Support for PHP 7 (Fixes #144)
+ - Updated PHP Sec Library (Fixes #144)
+ - Added .gitattributes for cleaner composer (Fixes #123)
+ 
 Version 1.13.0
 --------------
 
-Released on January 26, 2015
+Released on January 26, 2016
 
  - Added SAML to the SDK!
  - Add ability to use the password reset token from the normal workflow inside of the ID Site
