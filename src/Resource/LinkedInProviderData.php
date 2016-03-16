@@ -23,6 +23,7 @@ class LinkedInProviderData extends ProviderData
     const PROVIDER_ID   = 'linkedin';
 
     const ACCESS_TOKEN  = 'accessToken';
+    const CODE          = 'code';
 
     public function getAccessToken()
     {
@@ -32,6 +33,16 @@ class LinkedInProviderData extends ProviderData
     public function setAccessToken($accessToken)
     {
         $this->setProperty(self::ACCESS_TOKEN, $accessToken);
+    }
+
+    public function getCode()
+    {
+        return $this->getProperty(self::CODE);
+    }
+
+    public function setCode($code)
+    {
+        $this->setProperty(self::CODE, $code);
     }
 
 }

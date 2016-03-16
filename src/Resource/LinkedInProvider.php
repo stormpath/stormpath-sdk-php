@@ -27,6 +27,7 @@ class LinkedInProvider extends Provider
     const CLIENT_ID             = 'clientId';
     const CLIENT_SECRET         = 'clientSecret';
     const LINKEDIN_PROVIDER_ID  = 'linkedin';
+    const REDIRECT_URI          = 'redirectUri';
 
     public static function get($href, array $options = array())
     {
@@ -69,4 +70,13 @@ class LinkedInProvider extends Provider
         $this->setProperty(self::CLIENT_SECRET, $clientSecret);
     }
 
+    public function getRedirectUri()
+    {
+        return $this->getProperty(self::REDIRECT_URI);
+    }
+
+    public function setRedirectUri($redirectUri)
+    {
+        $this->setProperty(self::REDIRECT_URI, $redirectUri);
+    }
 }
