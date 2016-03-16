@@ -18,6 +18,8 @@ namespace Stormpath\Authc\Api;
  * limitations under the License.
  */
 
+use phpseclib\Crypt\AES;
+
 class ApiKeyEncryptionUtils
 {
     public static function decrypt($secret, $password, ApiKeyEncryptionOptions $options)
@@ -28,7 +30,8 @@ class ApiKeyEncryptionUtils
         $keyLengthBits = $options->getEncryptionKeySize();
         $iv = substr($decodedSecret, 0, 16);
 
-        $aes = new \Crypt_AES();
+
+        $aes = new AES();
         $aes->setPassword($password, 'pbkdf2', 'sha1', $salt, $iterations, $keyLengthBits / 8);
         $aes->setKeyLength($keyLengthBits);
         $aes->setIV($iv);
