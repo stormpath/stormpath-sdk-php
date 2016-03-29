@@ -26,11 +26,13 @@ use Stormpath\Http\RequestExecutor;
 use Stormpath\Resource\CustomData;
 use Stormpath\Resource\Error;
 use Stormpath\Resource\Resource;
+use Stormpath\Resource\Directory;
 use Stormpath\Resource\ResourceError;
 use Stormpath\Stormpath;
 use Stormpath\Util\UserAgentBuilder;
 use Stormpath\Cache\PSR6CacheKeyTrait;
 use Cache\Taggable\TaggablePoolInterface;
+use Cache\Taggable\TaggableItemInterface;
 use Stormpath\Cache\Tags\CacheTagExtractor;
 
 class DefaultDataStore extends Cacheable implements InternalDataStore
@@ -121,15 +123,13 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         if (!$item->isHit()) {
             $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
 
-            if($this->responseIsCacheable($data, $options)) {
+            if ($this->responseIsCacheable($data)) {
                 $item->set($data);
 
-                if (isset($options['expand'])) {
-                    $cacheTags = CacheTagExtractor::extractCacheTags($data, (string)$options['expand']);
-                    $cacheTags = array_map([$this, 'normalizeHrefAsCacheTag'], $cacheTags);
+                $cacheTags = CacheTagExtractor::extractCacheTags($data);
+                $cacheTags = array_map([$this, 'normalizeHrefAsCacheTag'], $cacheTags);
 
-                    $item->setTags($cacheTags);
-                }
+                $item->setTags($cacheTags);
 
                 $this->cachePool->save($item);
             }
@@ -295,10 +295,12 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         }
 
         $this->removeHrefFromCache($href);
-        $this->removeHrefFromCache($response->href);
+        if (isset($response->href)) {
+            $this->removeHrefFromCache($response->href);
+        }
 
         if($this->responseIsCacheable($response)) {
-            $this->addNonExpandedResponseToCache($response, $query);
+            $this->addResponseToCache($response, http_build_query($query));
         }
 
         return $this->resourceFactory->instantiate($returnType, array($response, $query));
@@ -447,7 +449,13 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     protected function removeResourceFromCache($resource)
     {
-        $this->removeHrefFromCache($resource->getHref());
+        switch (true) {
+            case $resource instanceof Directory:
+                $this->cachePool->clear();
+                break;
+            default:
+                $this->removeHrefFromCache($resource->getHref());
+        }
     }
 
     protected function removeHrefFromCache($href)
@@ -457,11 +465,24 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $this->cachePool->clearTags([$this->normalizeHrefAsCacheTag($href)]);
     }
 
-    protected function addNonExpandedResponseToCache($response, $query)
+    protected function addResponseToCache(\stdClass $response, $query, array $options = [], TaggableItemInterface $item = null)
     {
-        if($this->responseIsCacheable($response)) {
-            $item = $this->cachePool->getItem($this->createCacheKey($response->href));
+        $href = $response->href;
+        if ($query) {
+            $href .= '?'.$query;
+        }
+
+        if (!$item) {
+            $item = $this->cachePool->getItem($this->createCacheKey($href, $options));
+        }
+
+        if($this->responseIsCacheable($response, $options)) {
             $item->set($response);
+
+            $cacheTags = CacheTagExtractor::extractCacheTags($response);
+            $cacheTags = array_map([$this, 'normalizeHrefAsCacheTag'], $cacheTags);
+
+            $item->setTags($cacheTags);
 
             $this->cachePool->save($item);
         }

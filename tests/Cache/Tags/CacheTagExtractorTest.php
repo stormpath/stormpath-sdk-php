@@ -83,7 +83,27 @@ EOJ;
 
         $tags = CacheTagExtractor::extractCacheTags($document, "tenant");
 
-        $this->assertEquals(["https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk"], $tags);
+       $this->assertEquals(count($tags), count(array_intersect([
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/refreshTokens',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/accessTokens',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/apiKeys',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/groupMemberships',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/applications',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/groups',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/idSites',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/groups',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/agents',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/accounts',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/directories',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/applications',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/organizations',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/customData',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk',
+            'https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/providerData',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/customData',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM',
+        ], $tags)));
     }
 
 
@@ -195,10 +215,32 @@ EOJ;
 
         $tags = CacheTagExtractor::extractCacheTags($document, "groups");
 
-        $this->assertEquals(0, count(array_diff([
-            "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/groups",
-            "https://api.stormpath.com/v1/groups/4EOPdPzOz8SrIaPmXxOAJY",
-            "https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8"
+        $this->assertEquals(count($tags), count(array_intersect([
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/refreshTokens',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/accessTokens',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/apiKeys',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/groupMemberships',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/applications',
+            'https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8/applications',
+            'https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8/accountMemberships',
+            'https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8/accounts',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk',
+            'https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE',
+            'https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8/customData',
+            'https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8',
+            'https://api.stormpath.com/v1/groups/4EOPdPzOz8SrIaPmXxOAJY/applications',
+            'https://api.stormpath.com/v1/groups/4EOPdPzOz8SrIaPmXxOAJY/accountMemberships',
+            'https://api.stormpath.com/v1/groups/4EOPdPzOz8SrIaPmXxOAJY/accounts',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk',
+            'https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE',
+            'https://api.stormpath.com/v1/groups/4EOPdPzOz8SrIaPmXxOAJY/customData',
+            'https://api.stormpath.com/v1/groups/4EOPdPzOz8SrIaPmXxOAJY',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/groups',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk',
+            'https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/providerData',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/customData',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM',
         ], $tags)));
     }
 
@@ -282,134 +324,27 @@ EOJ;
 EOJ;
         $document = json_decode($docJson);
 
-        $tags = CacheTagExtractor::extractCacheTags($document, "groups(limit:10,offset:1)");
+        $tags = CacheTagExtractor::extractCacheTags($document);
 
-        $this->assertEquals(0, count(array_diff([
-            "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/groups",
-            "https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8"
-        ], $tags)));
-    }
-
-    public function testExtractMultipleExpansionTags()
-    {
-        $docJson = <<<EOJ
-{
-  "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM",
-  "username": "magnus+stormpathtest@fervo.se",
-  "email": "magnus+stormpathtest@fervo.se",
-  "givenName": "Magnus",
-  "middleName": null,
-  "surname": "Nordlander",
-  "fullName": "Magnus Nordlander",
-  "status": "ENABLED",
-  "createdAt": "2016-02-09T15:54:50.178Z",
-  "modifiedAt": "2016-02-09T15:54:50.178Z",
-  "emailVerificationToken": null,
-  "customData": {
-    "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/customData"
-  },
-  "providerData": {
-    "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/providerData"
-  },
-  "directory": {
-    "href": "https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE",
-    "name": "Stormpath Administrators",
-    "description": "Default directory for accounts and groups that may access Stormpath IAM.",
-    "status": "ENABLED",
-    "createdAt": "2016-02-09T15:54:50.167Z",
-    "modifiedAt": "2016-02-09T15:54:50.167Z",
-    "tenant": {
-      "href": "https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk"
-    },
-    "provider": {
-      "href": "https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE/provider"
-    },
-    "customData": {
-      "href": "https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE/customData"
-    },
-    "passwordPolicy": {
-      "href": "https://api.stormpath.com/v1/passwordPolicies/3VtCLkEb2taKu7zHsdPpVE"
-    },
-    "accountCreationPolicy": {
-      "href": "https://api.stormpath.com/v1/accountCreationPolicies/3VtCLkEb2taKu7zHsdPpVE"
-    },
-    "accounts": {
-      "href": "https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE/accounts"
-    },
-    "applicationMappings": {
-      "href": "https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE/applicationMappings"
-    },
-    "applications": {
-      "href": "https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE/applications"
-    },
-    "groups": {
-      "href": "https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE/groups"
-    },
-    "organizations": {
-      "href": "https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE/organizations"
-    },
-    "organizationMappings": {
-      "href": "https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE/organizationMappings"
-    }
-  },
-  "tenant": {
-    "href": "https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk",
-    "name": "tough-crown",
-    "key": "tough-crown",
-    "createdAt": "2016-02-09T15:54:50.158Z",
-    "modifiedAt": "2016-02-09T15:54:50.608Z",
-    "customData": {
-      "href": "https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/customData"
-    },
-    "organizations": {
-      "href": "https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/organizations"
-    },
-    "applications": {
-      "href": "https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/applications"
-    },
-    "directories": {
-      "href": "https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/directories"
-    },
-    "accounts": {
-      "href": "https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/accounts"
-    },
-    "agents": {
-      "href": "https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/agents"
-    },
-    "groups": {
-      "href": "https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/groups"
-    },
-    "idSites": {
-      "href": "https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk/idSites"
-    }
-  },
-  "groups": {
-    "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/groups"
-  },
-  "applications": {
-    "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/applications"
-  },
-  "groupMemberships": {
-    "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/groupMemberships"
-  },
-  "apiKeys": {
-    "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/apiKeys"
-  },
-  "accessTokens": {
-    "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/accessTokens"
-  },
-  "refreshTokens": {
-    "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/refreshTokens"
-  }
-}
-EOJ;
-        $document = json_decode($docJson);
-
-        $tags = CacheTagExtractor::extractCacheTags($document, "tenant,directory");
-
-        $this->assertEquals(0, count(array_diff([
-            "https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk",
-            "https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE",
+        $this->assertEquals(count($tags), count(array_intersect([
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/refreshTokens',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/accessTokens',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/apiKeys',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/groupMemberships',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/applications',
+            'https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8/applications',
+            'https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8/accountMemberships',
+            'https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8/accounts',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk',
+            'https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE',
+            'https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8/customData',
+            'https://api.stormpath.com/v1/groups/s8uvSRUj16PWmScc2vHO8',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/groups',
+            'https://api.stormpath.com/v1/tenants/3VsmPQTUvQl52zSTeqapBk',
+            'https://api.stormpath.com/v1/directories/3VtCLkEb2taKu7zHsdPpVE',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/providerData',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM/customData',
+            'https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM',
         ], $tags)));
     }
 }

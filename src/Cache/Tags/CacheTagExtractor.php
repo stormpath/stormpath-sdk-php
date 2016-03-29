@@ -7,43 +7,26 @@ namespace Stormpath\Cache\Tags;
 */
 class CacheTagExtractor
 {
-    public static function extractCacheTags($document, $expandString)
+    public static function extractCacheTags($document)
     {
         $cacheTags = [];
 
-        preg_match_all('/([^\,\(]+)(\(.+?\))?,?/', $expandString, $matches);
+        if (isset($document->href)) {
+            $cacheTags[] = $document->href;
+        }
 
-        foreach ($matches[1] as $expansion) {
-            if (isset($document->$expansion)) {
-                $cacheTags = array_merge(self::processExpansion($document->$expansion), $cacheTags);
+        foreach ($document as $key => $value) {
+            if (is_object($value) && isset($value->href)) {
+                $cacheTags = array_merge(self::extractCacheTags($value), $cacheTags);
+            }
+
+            if ($key === 'items') {
+                foreach ($value as $item) {
+                    $cacheTags = array_merge(self::extractCacheTags($item), $cacheTags);
+                }
             }
         }
 
-        return $cacheTags;
-    }
-
-    private static function processExpansion($expansion)
-    {
-        $cacheTags = [];
-        if(isset($expansion->href)) {
-            $cacheTags[] = $expansion->href;
-        }
-
-        if (isset($expansion->items)) {
-            $cacheTags = array_merge(self::processCollectionItems($expansion->items), $cacheTags);
-        }
-
-        return $cacheTags;
-    }
-
-    private static function processCollectionItems($items)
-    {
-        $cacheTags = [];
-        foreach ($items as $item) {
-            if (isset($item->href)) {
-                $cacheTags[] = $item->href;
-            }
-        }
         return $cacheTags;
     }
 }

@@ -4,9 +4,13 @@ namespace Stormpath\Cache;
 
 trait PSR6CacheKeyTrait
 {
-    protected function createCacheKey($href, $options = [])
+    protected function createCacheKey($href, $query = null, $options = [])
     {
-        $key = $href;
+        if (is_array($query)) {
+            ksort($query);
+            $query = http_build_query($query);
+        }
+        $key = $href.'?'.$query;
         if(!empty($options)) {
             $key .= '_' . implode('_',$options);
         }
