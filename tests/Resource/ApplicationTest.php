@@ -30,6 +30,7 @@ use Stormpath\Resource\VerificationEmail;
 use Stormpath\Stormpath;
 use Stormpath\Util\UUID;
 
+/** @group multipleApps */
 class ApplicationTest extends \Stormpath\Tests\TestCase {
 
     private static $application;
@@ -55,7 +56,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
 
     public static function tearDownAfterClass()
     {
-        if (self::$application)
+        if (self::$application && self::$application->href)
         {
             $accountStoreMappings = self::$application->accountStoreMappings;
 

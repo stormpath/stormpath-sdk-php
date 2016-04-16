@@ -18,7 +18,6 @@
 namespace Stormpath\Tests\Resource;
 
 
-use Stormpath\Cache\NullCacheManager;
 use Stormpath\Resource\Account;
 use Stormpath\Resource\Application;
 use Stormpath\Resource\Directory;
@@ -225,9 +224,9 @@ class ProviderTest extends \Stormpath\Tests\TestCase
     {
         $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
         $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
-        $cacheManager = $this->getMock('\Stormpath\Cache\CacheManager');
+        $cache = $this->getMock('\Cache\Taggable\TaggablePoolInterface');
         $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
-            array('create'), array($requestExecutor, $apiKey, $cacheManager));
+            array('create'), array($requestExecutor, $apiKey, $cache));
 
         $code = "4/XrsKzIJuy3ye57eqbanlQDN1wZHYfaUV-MFyC6dRjRw.wnCoOEKwnlwXXmXvfARQvthKMCbPmgI";
         $providerAccountRequest = new \Stormpath\Provider\GoogleProviderAccountRequest(array(
@@ -265,9 +264,9 @@ class ProviderTest extends \Stormpath\Tests\TestCase
     {
         $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
         $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
-        $cacheManager = $this->getMock('\Stormpath\Cache\CacheManager');
+        $cache = $this->getMock('\Cache\Taggable\TaggablePoolInterface');
         $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
-            array('create'), array($requestExecutor, $apiKey, $cacheManager));
+            array('create'), array($requestExecutor, $apiKey, $cache));
 
         $accessToken = "4/XrsKzIJuy3ye57eqbanlQDN1wZHYfaUV-MFyC6dRjRw.wnCoOEKwnlwXXmXvfARQvthKMCbPmgI";
         $providerAccountRequest = new \Stormpath\Provider\FacebookProviderAccountRequest(array(
@@ -304,9 +303,9 @@ class ProviderTest extends \Stormpath\Tests\TestCase
     {
         $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
         $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
-        $cacheManager = $this->getMock('\Stormpath\Cache\CacheManager');
+        $cache = $this->getMock('\Cache\Taggable\TaggablePoolInterface');
         $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
-            array('create'), array($requestExecutor, $apiKey, $cacheManager));
+            array('create'), array($requestExecutor, $apiKey, $cache));
 
         $accessToken = "4/XrsKzIJuy3ye57eqbanlQDN1wZHYfaUV-MFyC6dRjRw.wnCoOEKwnlwXXmXvfARQvthKMCbPmgI";
         $providerAccountRequest = new \Stormpath\Provider\GithubProviderAccountRequest(array(
@@ -343,9 +342,9 @@ class ProviderTest extends \Stormpath\Tests\TestCase
     {
         $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
         $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
-        $cacheManager = $this->getMock('\Stormpath\Cache\CacheManager');
+        $cache = $this->getMock('\Cache\Taggable\TaggablePoolInterface');
         $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
-            array('create'), array($requestExecutor, $apiKey, $cacheManager));
+            array('create'), array($requestExecutor, $apiKey, $cache));
 
         $accessToken = "4/XrsKzIJuy3ye57eqbanlQDN1wZHYfaUV-MFyC6dRjRw.wnCoOEKwnlwXXmXvfARQvthKMCbPmgI";
         $providerAccountRequest = new \Stormpath\Provider\LinkedInProviderAccountRequest(array(

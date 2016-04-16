@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+use Symfony\Component\Debug\Debug;
+
+Debug::enable();
+
 error_reporting(E_ALL | E_STRICT);
 
 function makeUniqueName($provided = null)

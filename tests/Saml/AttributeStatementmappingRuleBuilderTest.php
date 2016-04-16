@@ -2,6 +2,7 @@
 
 namespace Stormpath\Tests\Saml;
 
+/** @group saml */
 class AttributeStatementMappingRuleBuilderTest extends \PHPUnit_Framework_TestCase
 {
 
