@@ -211,11 +211,11 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
             [
                 "iss" => "https://formal-ring.id.stormpath.io",
                 "sub" => null,
-                "aud" => "1PN3FXI0U79E2MHCF6XUYGU4Z",
+                "aud" => UUID::v4(),
                 "exp" => time()+100,
                 "iat" => 1450221187,
-                "jti" => "37Vljw5YV0dTNNP3V4h0SY",
-                "irt" => "370640ef-ea7c-4532-94ed-b55dc7fa006a",
+                "jti" => UUID::v4(),
+                "irt" => UUID::v4(),
                 "state" => "",
                 "isNewSub" => false,
                 "status" => "LOGOUT"
