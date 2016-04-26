@@ -145,9 +145,6 @@ class CacheTest extends TestCase
         $item = $cachePool->getItem($this->createCacheKey($application->href, array('expand' => 'customData')));
         $this->assertFalse($item->isHit());
 
-        $item = $cachePool->getItem($this->createCacheKey($application->href));
-        $this->assertTrue($item->isHit());
-
         $application->delete();
     }
 }
