@@ -1,55 +1,32 @@
 <?php namespace Stormpath\Tests\Cache;
 
-
 use Stormpath\Cache\Cacheable;
+use Stormpath\Cache\PSR6CacheKeyTrait;
+use Stormpath\Client;
 use Stormpath\Tests\TestCase;
 
 class CacheTest extends TestCase
 {
-
-    private static $application;
-    private static $inited;
-
-    protected static function init()
-    {
-
-        self::$application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache '. md5(time().microtime().uniqid())));
-        self::$inited = true;
-
-    }
-
-    public function setUp()
-    {
-        if (!self::$inited) {
-            self::init();
-        }
-
-    }
-
-
-    public static function tearDownAfterClass()
-    {
-        if (self::$application) {
-            self::$application->delete();
-        }
-        parent::tearDownAfterClass();
-
-    }
+    use PSR6CacheKeyTrait;
 
     public function testGetFromCache()
     {
 
-        $application = self::$application;
+        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Get '. md5(time().microtime().uniqid())));
 
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('Another App for Cache', $application->name);
+        $this->assertContains('Another App for Cache Get', $application->name);
 
 
         // Get the application from cache and change the name of it.
-        $cache = parent::$client->dataStore->cache;
-        $appInCache = $cache->get($application->href);
+        $cachePool = Client::getInstance()->getCachePool();
+        $item = $cachePool->getItem($this->createCacheKey($application->href));
+        $this->assertTrue($item->isHit(), 'Application not found in cache');
+        $appInCache = $item->get();
         $appInCache->name = 'Test';
-        $cache->put($application->href, $appInCache, 10);
+        $item->set($appInCache);
+        $item->expiresAfter(60);
+        $cachePool->save($item);
 
 
         // Because the app is already in cache, and we just changed the name... Lets
@@ -61,34 +38,35 @@ class CacheTest extends TestCase
 
 
         // Now lets delete the cache and see if it is the orig name from the api.
-        $cache->delete($application->href);
+        $cachePool->deleteItem($this->createCacheKey($application->href));
 
 
         $application = \Stormpath\Resource\Application::get($application->href);
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('Another App for Cache', $application->name);
+        $this->assertContains('Another App for Cache Get', $application->name);
 
+        $application->delete();
     }
 
     public function testDeletesFromCacheWhenResourceIsDeleted()
     {
         $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Delete '. md5(time().microtime().uniqid())));
-        $cache = parent::$client->dataStore->cache;
+        $cachePool = Client::getInstance()->getCachePool();
 
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
         $this->assertContains('Another App for Cache Delete', $application->name);
 
         $application->delete();
 
-        $appInCache = $cache->get($application->href);
+        $item = $cachePool->getItem($this->createCacheKey($application->href));
 
-        $this->assertNull($appInCache);
+        $this->assertFalse($item->isHit());
     }
 
     public function testWillUpdateCacheWhenResourceUpdates()
     {
         $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Update '. md5(time().microtime().uniqid())));
-        $cache = parent::$client->dataStore->cache;
+        $cachePool = Client::getInstance()->getCachePool();
 
         $this->assertInstanceOf('Stormpath\Resource\Application', $application);
         $this->assertContains('Another App for Cache Update', $application->name);
@@ -96,7 +74,9 @@ class CacheTest extends TestCase
         $application->name = 'Test Update '. md5(time().microtime().uniqid());
         $application->save();
 
-        $appInCache = $cache->get($application->href);
+        $item = $cachePool->getItem($this->createCacheKey($application->href));
+        $this->assertTrue($item->isHit(), 'Application not found in cache');
+        $appInCache = $item->get();
 
 
         $this->assertContains('Test Update', $appInCache->name);
@@ -105,23 +85,25 @@ class CacheTest extends TestCase
 
     public function testNullCacheDoesNotCache()
     {
-        $origClient = parent::$client->dataStore->cache;
+        $origClient = parent::$client;
         parent::$client->tearDown();
         \Stormpath\Client::$cacheManager = 'Null';
 
         $client = \Stormpath\Client::getInstance();
-        $cache = $client->cacheManager->getCache();
+        $cachePool = $client->getCachePool();
 
         $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Null Cache '. md5(time().microtime().uniqid())));
 
-        $appInCache = $cache->get($application->href);
+        $item = $cachePool->getItem($this->createCacheKey($application->href));
 
-        $this->assertNull($appInCache);
+        $this->assertFalse($item->isHit());
 
         $application->delete();
 
 
         parent::$client = $origClient;
+        parent::$client->tearDown();
+        \Stormpath\Client::$cacheManager = 'Array';
     }
 
     public function testWillNotCacheHrefOnlyObject()
@@ -137,7 +119,34 @@ class CacheTest extends TestCase
         $this->assertFalse($isCacheable);
     }
 
+    public function testWillInvalidateExpands()
+    {
+        $cachePool = Client::getInstance()->getCachePool();
 
+        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Expand tagging '. md5(time().microtime().uniqid())));
+
+        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
+        $this->assertContains('Another App for Cache Expand tagging', $application->name);
+
+        $item = $cachePool->getItem($this->createCacheKey($application->href));
+        $this->assertTrue($item->isHit());
+
+        $expandedApplication = Client::getInstance()
+            ->getDataStore()
+            ->getResource($application->href, \Stormpath\Stormpath::APPLICATION, array('expand' => 'customData'));
+
+        $item = $cachePool->getItem($this->createCacheKey($application->href, array('expand' => 'customData')));
+        $this->assertTrue($item->isHit());
+
+        $customData = $expandedApplication->getCustomData();
+        $customData->foo = 'bar';
+        $customData->save();
+
+        $item = $cachePool->getItem($this->createCacheKey($application->href, array('expand' => 'customData')));
+        $this->assertFalse($item->isHit());
+
+        $application->delete();
+    }
 }
 
 class CacheTestingMock extends Cacheable

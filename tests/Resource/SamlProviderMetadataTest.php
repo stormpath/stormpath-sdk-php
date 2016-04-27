@@ -5,6 +5,7 @@ namespace Stormpath\Tests\Resource;
 use Stormpath\Resource\SamlProvider;
 use Stormpath\Tests\TestCase;
 
+/** @group saml */
 class SamlProviderMetadataTest extends TestCase
 {
     private static $samlProvider;

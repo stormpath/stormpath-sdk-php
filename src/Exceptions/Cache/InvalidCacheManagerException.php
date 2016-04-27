@@ -1,4 +1,4 @@
-<?php namespace Stormpath\Cache;
+<?php namespace Stormpath\Exceptions\Cache;
 /*
  * Copyright 2016 Stormpath, Inc.
  *
@@ -15,12 +15,6 @@
  * limitations under the License.
  */
 
-use Cache\Adapter\PHPArray\ArrayCachePool;
+class InvalidCacheManagerException extends \LogicException {
 
-class ArrayCacheManager implements PSR6CacheManagerInterface {
-
-    public function getCachePool($options)
-    {
-        return new ArrayCachePool();
-    }
 }

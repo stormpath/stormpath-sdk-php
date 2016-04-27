@@ -15,29 +15,16 @@
  * limitations under the License.
  */
 
+use Cache\Adapter\Memcached\MemcachedCachePool;
+use Memcached;
 
+class MemcachedCacheManager implements PSR6CacheManagerInterface {
 
-class MemcachedCacheManager implements CacheManager {
-
-
-    public function __construct($options)
+    public function getCachePool($options)
     {
-        $this->options = $options;
+        $memcached = new Memcached();
+        $memcached->addServers($options['memcached']);
+
+        return new MemcachedCachePool($memcached);
     }
-
-    /**
-     * @return MemcachedCache
-     * Privide region
-     * cache per region
-     * Singleton for the regions cache
-     */
-    public function getCache()
-    {
-
-        return new MemcachedCache($this->options);
-    }
-
-
-
-
 }
