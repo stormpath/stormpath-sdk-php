@@ -1,6 +1,17 @@
 stormpath-sdk-php Changelog
 ===========================
 
+
+Version 1.15.0
+--------------
+
+Released on June 14, 2016 
+
+ - PSR-6 Caching (Resolves #130, Fixes #24, Fixes #48)
+ - SAML Tests grouped for easy developer plan testing (Fixes #131)
+ - Update Readme for moved docs to http://docs.stormpath.com/php/product-guide/latest/
+ 
+ 
 Version 1.14.0
 --------------
 
