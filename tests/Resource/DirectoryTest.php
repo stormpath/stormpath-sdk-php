@@ -246,7 +246,10 @@ class DirectoryTest extends \Stormpath\Tests\TestCase {
 
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group saml
+     */
     public function a_directory_can_add_a_saml_provider()
     {
         $samlProvider = \Stormpath\Resource\SamlProvider::instantiate([

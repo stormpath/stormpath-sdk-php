@@ -15,12 +15,18 @@
  * limitations under the License.
  */
 
-use Cache\Adapter\PHPArray\ArrayCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 
-class ArrayCacheManager implements PSR6CacheManagerInterface {
+class PSR6InstanceCacheManager implements PSR6CacheManagerInterface {
+    protected $pool;
+
+    public function __construct(CacheItemPoolInterface $pool)
+    {
+        $this->pool = $pool;
+    }
 
     public function getCachePool($options)
     {
-        return new ArrayCachePool();
+        return $this->pool;
     }
 }

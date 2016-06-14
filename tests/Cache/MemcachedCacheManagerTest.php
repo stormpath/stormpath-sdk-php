@@ -7,17 +7,29 @@ class MemcachedCacheManagerTest extends \PHPUnit_Framework_TestCase {
 
     public function testIsInstanciable()
     {
-        $cacheManager = new \Stormpath\Cache\MemcachedCacheManager(array('memcached'=>array(array('host'=>'127.0.0.1', 'port'=>'11211', 'password'=>null))));
+        $cacheManager = new \Stormpath\Cache\MemcachedCacheManager();
 
         $this->assertInstanceOf("Stormpath\\Cache\\MemcachedCacheManager", $cacheManager);
     }
 
     public function testCanGetCache()
     {
-        $cacheManager = new \Stormpath\Cache\MemcachedCacheManager(array('memcached'=>array(array('host'=>'127.0.0.1', 'port'=>'11211', 'password'=>null))));
+        if (!extension_loaded('memcached')) {
+            $this->markTestSkipped(
+              'The Memcached extension is not available.'
+            );
+        }
 
-        $cache = $cacheManager->getCache();
+        $cacheManager = new \Stormpath\Cache\MemcachedCacheManager();
 
-        $this->assertInstanceOf("Stormpath\\Cache\\MemcachedCache", $cache);
+        $memcachedHost = getenv('MEMCACHED_HOST') ?: '127.0.0.1';
+        $memcachedPort = getenv('MEMCACHED_PORT') ?: '11211';
+        $memcachedPassword = getenv('MEMCACHED_PASSWORD') ?: null;
+
+        $options = array('memcached'=>array(array('host'=>$memcachedHost, 'port'=>$memcachedPort, 'password'=>$memcachedPassword)));
+
+        $cache = $cacheManager->getCachePool($options);
+
+        $this->assertInstanceOf("Psr\\Cache\\CacheItemPoolInterface", $cache);
     }
 }

@@ -15,16 +15,12 @@
  * limitations under the License.
  */
 
+use Cache\Adapter\Void\VoidCachePool;
 
-class NullCacheManager implements CacheManager {
+class NullCacheManager implements PSR6CacheManagerInterface {
 
-    public function __construct($options)
+    public function getCachePool($options)
     {
-        $this->options = $options;
-    }
-
-    public function getCache()
-    {
-        return new NullCache();
+        return new VoidCachePool();
     }
 }

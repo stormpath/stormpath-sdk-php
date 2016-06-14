@@ -17,6 +17,11 @@ namespace Stormpath;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+use Stormpath\Cache\ArrayCacheManager;
+use Stormpath\Cache\MemcachedCacheManager;
+use Stormpath\Cache\NullCacheManager;
+use Stormpath\Cache\RedisCacheManager;
+use Stormpath\Cache\PSR6CacheManagerInterface;
 use Stormpath\Cache\Exceptions\InvalidCacheManagerException;
 use Stormpath\Http\Authc\SAuthc1RequestSigner;
 use Stormpath\Http\DefaultRequest;
@@ -211,7 +216,26 @@ class ClientBuilder extends Magic
 
     public function setCacheManager($cacheManager)
     {
-        $this->cacheManager = $this->qualifyCacheManager($cacheManager);
+        if ($cacheManager instanceOf PSR6CacheManagerInterface) {
+            $this->cacheManager = $cacheManager;
+        } else {
+            switch ($cacheManager) {
+                case 'Array':
+                    $this->cacheManager = new ArrayCacheManager;
+                    break;
+                case 'Memcached':
+                    $this->cacheManager = new MemcachedCacheManager;
+                    break;
+                case 'Redis':
+                    $this->cacheManager = new RedisCacheManager;
+                    break;
+                case 'Null':
+                    $this->cacheManager = new NullCacheManager;
+                    break;
+                default: // Legacy cache
+                    $this->cacheManager = $this->qualifyCacheManager($cacheManager);
+            }
+        }
 
         return $this;
     }
@@ -220,7 +244,7 @@ class ClientBuilder extends Magic
     {
         $this->cacheManagerOptions = $this->setCacheOptionsArray($cacheManagerOptions);
         if(!$this->cacheManager) {
-            $this->cacheManager = $this->qualifyCacheManager($this->cacheManagerOptions['cachemanager']);
+            $this->setCacheManager($this->cacheManagerOptions['cachemanager']);
         }
         return $this;
     }

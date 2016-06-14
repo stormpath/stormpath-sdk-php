@@ -36,42 +36,4 @@ abstract class Cacheable {
 
     }
 
-    protected function isResourceCached($href, $options = array())
-    {
-        $key = $this->createKey($href, $options);
-        $data = $this->cache->get($key);
-
-        return $data;
-    }
-
-    protected function addDataToCache($data, $options = array())
-    {
-
-
-        $key = $this->createKey($data->href, $options);
-        $this->cache->put($key, $data, $this->cacheManager->options['ttl']);
-    }
-
-    protected function removeResourceFromCache($resource)
-    {
-        $this->cache->delete($resource->getHref());
-    }
-
-    protected function removeCustomDataItemFromCache($resource, $key)
-    {
-        $cache = $this->cache->get($resource->getHref());
-        unset($cache->$key);
-    }
-
-    private function createKey($href, $options)
-    {
-        $key = $href;
-        if(!empty($options)) {
-            $key .= ':' . implode(':',$options);
-        }
-
-        return $key;
-    }
-
-
 }

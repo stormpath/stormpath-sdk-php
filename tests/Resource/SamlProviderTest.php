@@ -7,6 +7,7 @@ use Stormpath\Resource\SamlProvider;
 use Stormpath\Resource\SamlProviderMetadata;
 use Stormpath\Tests\TestCase;
 
+/** @group saml */
 class SamlProviderTest extends TestCase
 {
     /** @test */

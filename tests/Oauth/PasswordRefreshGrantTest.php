@@ -6,7 +6,6 @@ class PasswordRefreshGrantTest extends \Stormpath\Tests\TestCase
     private static $application;
     private static $account;
     private static $inited;
-    private static $token;
 
     protected static function init()
     {
@@ -61,16 +60,16 @@ class PasswordRefreshGrantTest extends \Stormpath\Tests\TestCase
         $passwordGrant = new \Stormpath\Oauth\PasswordGrantRequest(self::$account->username, 'superP4ss');
 
         $auth = new \Stormpath\Oauth\PasswordGrantAuthenticator(self::$application);
-        self::$token = $auth->authenticate($passwordGrant);
+        $token = $auth->authenticate($passwordGrant);
 
-        $this->assertInstanceOf('Stormpath\Oauth\OauthGrantAuthenticationResult', self::$token);
-        $this->assertInstanceOf('Stormpath\Resource\AccessToken', self::$token->getAccessToken());
-        $this->assertCount(3, explode('.',self::$token->getAccessTokenString()));
-        $this->assertInstanceOf('Stormpath\Resource\RefreshToken', self::$token->getRefreshToken());
-        $this->assertCount(3, explode('.',self::$token->getRefreshTokenString()));
-        $this->assertcontains('/accessTokens/', self::$token->getAccessTokenHref());
-        $this->assertEquals('Bearer', self::$token->getTokenType());
-        $this->assertTrue(is_integer(self::$token->getExpiresIn()));
+        $this->assertInstanceOf('Stormpath\Oauth\OauthGrantAuthenticationResult', $token);
+        $this->assertInstanceOf('Stormpath\Resource\AccessToken', $token->getAccessToken());
+        $this->assertCount(3, explode('.',$token->getAccessTokenString()));
+        $this->assertInstanceOf('Stormpath\Resource\RefreshToken', $token->getRefreshToken());
+        $this->assertCount(3, explode('.',$token->getRefreshTokenString()));
+        $this->assertcontains('/accessTokens/', $token->getAccessTokenHref());
+        $this->assertEquals('Bearer', $token->getTokenType());
+        $this->assertTrue(is_integer($token->getExpiresIn()));
     }
 
     /**
@@ -78,7 +77,12 @@ class PasswordRefreshGrantTest extends \Stormpath\Tests\TestCase
      */
     public function it_responds_to_refresh_grant_types()
     {
-        $refreshGrant = new \Stormpath\Oauth\RefreshGrantRequest(self::$token->getRefreshTokenString());
+        $passwordGrant = new \Stormpath\Oauth\PasswordGrantRequest(self::$account->username, 'superP4ss');
+
+        $auth = new \Stormpath\Oauth\PasswordGrantAuthenticator(self::$application);
+        $token = $auth->authenticate($passwordGrant);
+
+        $refreshGrant = new \Stormpath\Oauth\RefreshGrantRequest($token->getRefreshTokenString());
 
         $auth = new \Stormpath\Oauth\RefreshGrantAuthenticator(self::$application);
         $result = $auth->authenticate($refreshGrant);

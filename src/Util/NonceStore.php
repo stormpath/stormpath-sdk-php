@@ -5,7 +5,7 @@ use Stormpath\DataStore\DataStore;
 
 class NonceStore {
     // @codeCoverageIgnoreStart
-    private $cache;
+    private $pool;
 
     public static function generateNonce()
     {
@@ -14,17 +14,21 @@ class NonceStore {
 
     public function __construct(DataStore $dataStore)
     {
-        $this->cache = $dataStore->getCacheManager()->getCache();
+        $this->pool = $dataStore->getCachePool();
     }
 
     public function getNonce($nonce)
     {
-        return $this->cache->get('nonce_'.$nonce);
+        $item = $this->pool->getItem('nonce_'.$nonce);
+        return $item->get();
     }
 
     public function putNonce($nonce)
     {
-        $this->cache->put('nonce_'.$nonce,$nonce,1);
+        $item = $this->pool->getItem('nonce_'.$nonce);
+        $item->set($nonce);
+        $item->expiresAfter(60);
+        $this->pool->save($item);
     }
     // @codeCoverageIgnoreStart
 }
