@@ -5,8 +5,8 @@
 [![Total Downloads](https://poser.pugx.org/stormpath/sdk/d/total.svg)](https://packagist.org/packages/stormpath/sdk)
 [![Latest Stable Version](https://poser.pugx.org/stormpath/sdk/v/stable.svg)](https://packagist.org/packages/stormpath/sdk)
 [![License](https://poser.pugx.org/stormpath/sdk/license.svg)](https://packagist.org/packages/stormpath/sdk)
-[![Join the chat at https://gitter.im/stormpath/stormpath-sdk-php](https://badges.gitter.im/stormpath/stormpath-sdk-php.svg)](https://gitter.im/stormpath/stormpath-sdk-php?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
+[![Chat](https://img.shields.io/badge/chat-on%20freenode%20-green.svg)](http://webchat.freenode.net/?channels=#stormpath)
+[![Support](https://img.shields.io/badge/support-support@stormpath.com-blue.svg)](mailto:support@stormpath.com?subject=Stormpath+PHP+SDK)
 
 [Stormpath](https://stormpath.com) is a complete user management API.  This
 library gives your PHP application access to all of Stormpath's features:
