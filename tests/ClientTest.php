@@ -16,6 +16,8 @@
  */
 
 
+use Stormpath\Stormpath;
+
 class ClientTest extends TestCase {
 
     /**
@@ -83,6 +85,20 @@ class ClientTest extends TestCase {
         \Stormpath\Client::tearDown();
         $client = \Stormpath\Client::getInstance();
         $this->assertInstanceOf('Cache\Taggable\TaggablePoolInterface', $client->getCachePool());
+
+    }
+
+    /** @test */
+    public function the_options_array_is_cleared_after_each_request()
+    {
+        $client = \Stormpath\Client::getInstance();
+
+        $tenant = $client->getDataStore()->getResource('/tenants/current', Stormpath::TENANT, ['expand'=>'applications']);
+
+
+        foreach($tenant->getApplications() as $application) {
+            $this->assertEmpty($application->getAccounts()->getOptions());
+        }
 
     }
 
