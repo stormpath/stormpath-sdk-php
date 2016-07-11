@@ -60,6 +60,7 @@ class DirectoryTest extends \Stormpath\Tests\TestCase {
         $this->assertInstanceOf('\Stormpath\Resource\AccountList', $directory->accounts);
         $this->assertInstanceOf('\Stormpath\Resource\Tenant', $directory->tenant);
         $this->assertEquals(self::$client->tenant->name, $directory->tenant->name);
+        $this->assertInstanceOf('\Stormpath\Directory\PasswordPolicy', $directory->passwordPolicy);
     }
 
     public function testCreate()

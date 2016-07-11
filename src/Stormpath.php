@@ -57,6 +57,7 @@ class Stormpath
     const ORGANIZATION                                  = 'Organization';
     const ORGANIZATION_LIST                             = 'OrganizationList';
     const PASSWORD_RESET_TOKEN                          = 'PasswordResetToken';
+    const PASSWORD_POLICY                               = 'Stormpath\Directory\PasswordPolicy';
     const PROVIDER                                      = 'Provider';
     const PROVIDER_ACCOUNT_ACCESS                       = 'ProviderAccountAccess';
     const PROVIDER_ACCOUNT_RESULT                       = 'ProviderAccountResult';
