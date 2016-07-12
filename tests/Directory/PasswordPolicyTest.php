@@ -131,6 +131,13 @@ class PasswordPolicyTest extends \Stormpath\Tests\TestCase
         $strength = self::$passwordPolicy->getStrength();
         $this->assertInstanceOf(\Stormpath\Directory\PasswordStrength::class, $strength);
     }
+    
+    /** @test */
+    public function accessor_for_reset_email_templates_returns_resource()
+    {
+        $resetEmailTemplates = self::$passwordPolicy->getResetEmailTemplates();
+        $this->assertInstanceOf(\Stormpath\Resource\AbstractCollectionResource::class, $resetEmailTemplates);
+    }
 
 
 
