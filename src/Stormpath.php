@@ -65,6 +65,8 @@ class Stormpath
     const PROVIDER_DATA                                 = 'ProviderData';
     const REFRESH_TOKEN                                 = 'RefreshToken';
     const REFRESH_TOKEN_LIST                            = 'RefreshTokenList';
+    const MODELED_EMAIL_TEMPLATE                        = 'Stormpath\Mail\ModeledEmailTemplate';
+    const MODELED_EMAIL_TEMPLATE_LIST                   = 'Stormpath\Mail\ModeledEmailTemplateList';
     const SAML_PROVIDER                                 = 'SamlProvider';
     const SAML_PROVIDER_DATA                            = 'SamlProviderData';
     const TENANT                                        = 'Tenant';
@@ -88,6 +90,9 @@ class Stormpath
     const SAUTHC1_AUTHENTICATION_SCHEME                 = 'SAuthc1';
     const BASIC_AUTHENTICATION_SCHEME                   = 'Basic';
 
+    const MIME_PLAIN_TEXT                               = 'text/plain';
+    const MIME_HTML                                     = 'text/html';
+
     public static $Statuses             = array(self::DISABLED => self::DISABLED,
                                             self::ENABLED => self::ENABLED);
 
@@ -98,5 +103,9 @@ class Stormpath
 
     public static $Sorts                = array(self::ASCENDING => self::ASCENDING,
                                             self::DESCENDING => self::DESCENDING);
+
+    public static $MimeTypes            = array(
+                                            self::MIME_PLAIN_TEXT => self::MIME_PLAIN_TEXT,
+                                            self::MIME_HTML => self::MIME_HTML);
 
 }
