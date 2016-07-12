@@ -27,6 +27,7 @@ class PasswordPolicy extends InstanceResource
     const RESET_TOKEN_TTL               = "resetTokenTtl";
     const PASSWORD_STRENGTH             = "strength";
     const RESET_EMAIL_STATUS            = "resetEmailStatus";
+    const RESET_EMAIL_TEMPLATES         = "resetEmailTemplates";
     const RESET_SUCCESS_EMAIL_STATUS    = "resetSuccessEmailStatus";
 
     const PATH                          = 'passwordPolicies';
@@ -69,5 +70,10 @@ class PasswordPolicy extends InstanceResource
     public function getStrength(array $options = [])
     {
         return $this->getResourceProperty(self::PASSWORD_STRENGTH, Stormpath::PASSWORD_STRENGTH, $options);
+    }
+
+    public function getResetEmailTemplates(array $options = [])
+    {
+        return $this->getResourceProperty(self::RESET_EMAIL_TEMPLATES, Stormpath::MODELED_EMAIL_TEMPLATE_LIST, $options);
     }
 }
