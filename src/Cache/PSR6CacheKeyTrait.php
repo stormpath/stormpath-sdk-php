@@ -8,6 +8,9 @@ trait PSR6CacheKeyTrait
     {
         if (is_array($query)) {
             ksort($query);
+            foreach ($query as $key => $value) {
+                $query[$key] = (string) $value;
+            }
             $query = http_build_query($query);
         }
         $key = $href.'?'.$query;
