@@ -17,11 +17,16 @@
 
 namespace Stormpath\Resource;
 
+use Stormpath\Stormpath;
+
 class AccountCreationPolicy extends InstanceResource implements Saveable {
 
-    const VERIFICATION_EMAIL_STATUS             = 'verificationEmailStatus';
     const WELCOME_EMAIL_STATUS                  = 'welcomeEmailStatus';
+    const WELCOME_EMAIL_TEMPLATES               = 'welcomeEmailTemplates';
+    const VERIFICATION_EMAIL_STATUS             = 'verificationEmailStatus';
+    const VERIFICATION_EMAIL_TEMPLATES          = 'verificationEmailTemplates';
     const VERIFICATION_SUCCESS_EMAIL_STATUS     = 'verificationSuccessEmailStatus';
+    const VERIFICATION_SUCCESS_EMAIL_TEMPLATES  = 'verificationSuccessEmailTemplates';
 
     public function setVerificationEmailStatus($status)
     {
@@ -51,5 +56,20 @@ class AccountCreationPolicy extends InstanceResource implements Saveable {
     public function getVerificationSuccessEmailStatus()
     {
         return $this->getProperty(self::VERIFICATION_SUCCESS_EMAIL_STATUS);
+    }
+
+    public function getVerificationEmailTemplates(array $options = [])
+    {
+        return $this->getResourceProperty(self::VERIFICATION_EMAIL_TEMPLATES, Stormpath::MODELED_EMAIL_TEMPLATE_LIST, $options);
+    }
+
+    public function getVerificationSuccessEmailTemplates(array $options = [])
+    {
+        return $this->getResourceProperty(self::VERIFICATION_SUCCESS_EMAIL_TEMPLATES, Stormpath::UNMODELED_EMAIL_TEMPLATE_LIST, $options);
+    }
+
+    public function getWelcomeEmailTemplates(array $options = [])
+    {
+        return $this->getResourceProperty(self::WELCOME_EMAIL_TEMPLATES, Stormpath::UNMODELED_EMAIL_TEMPLATE_LIST, $options);
     }
 }
