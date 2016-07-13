@@ -70,6 +70,8 @@ class Stormpath
     const SAML_PROVIDER                                 = 'SamlProvider';
     const SAML_PROVIDER_DATA                            = 'SamlProviderData';
     const TENANT                                        = 'Tenant';
+    const UNMODELED_EMAIL_TEMPLATE                      = 'Stormpath\Mail\UnmodeledEmailTemplate';
+    const UNMODELED_EMAIL_TEMPLATE_LIST                 = 'Stormpath\Mail\UnmodeledEmailTemplateList';
     const VERIFICATION_EMAIL                            = 'VerificationEmail';
     const X509_SIGNING_CERT                             = 'X509SigningCert';
 

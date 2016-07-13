@@ -29,6 +29,7 @@ class PasswordPolicy extends InstanceResource
     const RESET_EMAIL_STATUS            = "resetEmailStatus";
     const RESET_EMAIL_TEMPLATES         = "resetEmailTemplates";
     const RESET_SUCCESS_EMAIL_STATUS    = "resetSuccessEmailStatus";
+    const RESET_SUCCESS_EMAIL_TEMPLATES = "resetSuccessEmailTemplates";
 
     const PATH                          = 'passwordPolicies';
 
@@ -76,4 +77,11 @@ class PasswordPolicy extends InstanceResource
     {
         return $this->getResourceProperty(self::RESET_EMAIL_TEMPLATES, Stormpath::MODELED_EMAIL_TEMPLATE_LIST, $options);
     }
+
+    public function getResetSuccessEmailTemplates(array $options = [])
+    {
+        return $this->getResourceProperty(self::RESET_SUCCESS_EMAIL_TEMPLATES, Stormpath::UNMODELED_EMAIL_TEMPLATE_LIST, $options);
+    }
+
+
 }
