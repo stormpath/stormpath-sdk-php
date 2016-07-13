@@ -38,7 +38,7 @@ abstract class EmailTemplate extends InstanceResource
      */
     public function getHref()
     {
-        return $this->getProperty(self::HREF);
+        return $this->getProperty(self::HREF_PROP_NAME);
     }
 
     /**
