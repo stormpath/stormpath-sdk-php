@@ -41,6 +41,7 @@ class Account extends InstanceResource implements Deletable
     const PROVIDER_DATA			   = "providerData";
     const ACCESS_TOKENS            = "accessTokens";
     const REFRESH_TOKENS           = "refreshTokens";
+    const PASSWORD_MODIFIED_AT     = "passwordModifiedAt";
 
     const PATH                     = "accounts";
 
@@ -181,6 +182,11 @@ class Account extends InstanceResource implements Deletable
     public function getTenant(array $options = array()) {
 
         return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
+    }
+
+    public function getPasswordModifedAt()
+    {
+        return $this->getProperty(self::PASSWORD_MODIFIED_AT );
     }
     
     public function getProviderData(array $options = array())

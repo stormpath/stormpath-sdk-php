@@ -707,6 +707,27 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $account->delete();
     }
 
+    /** @test */
+    public function a_password_modified_at_date_is_available()
+    {
+        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+            'middleName' => 'Middle Name',
+            'surname' => 'Surname',
+            'username' => makeUniqueName('AccountTest testAddGroup') . 'username',
+            'email' => makeUniqueName('AccountTest testAddGroup') .'@unknown123.kot',
+            'password' => 'superP4ss'));
+
+        $account = self::$directory->createAccount($account);
+
+        $account->password = 'superP4ss!';
+        $account->save();
+
+        $this->assertNotNull($account->passwordModifedAt);
+
+        $account->delete();
+    }
+
+
     public function tearDown()
     {
         if (self::$application)
