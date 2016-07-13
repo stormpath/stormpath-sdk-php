@@ -133,11 +133,19 @@ class PasswordPolicyTest extends \Stormpath\Tests\TestCase
     }
     
     /** @test */
-    public function accessor_for_reset_email_templates_returns_resource()
+    public function accessor_for_reset_email_templates_returns_modeled_email_template_list_resource()
     {
         $resetEmailTemplates = self::$passwordPolicy->getResetEmailTemplates();
-        $this->assertInstanceOf(\Stormpath\Resource\AbstractCollectionResource::class, $resetEmailTemplates);
+        $this->assertInstanceOf(\Stormpath\Mail\ModeledEmailTemplateList::class, $resetEmailTemplates);
     }
+
+    /** @test */
+    public function accessor_for_reset_success_email_templates_returns_unmodeled_email_template_list_resource()
+    {
+        $resetSuccessEmailTemplates = self::$passwordPolicy->getResetSuccessEmailTemplates();
+        $this->assertInstanceOf(\Stormpath\Mail\UnmodeledEmailTemplateList::class, $resetSuccessEmailTemplates);
+    }
+
 
 
 
