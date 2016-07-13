@@ -54,7 +54,7 @@ class ModeledEmailTemplate extends EmailTemplate
      */
     public function getLinkBaseUrl()
     {
-        $defaultModel = $this->getDefaultModel();
+        $defaultModel = (array)$this->getDefaultModel();
 
         if(empty($defaultModel) || !key_exists(self::LINK_BASE_URL, $defaultModel)) {
             return null;
@@ -95,10 +95,9 @@ class ModeledEmailTemplate extends EmailTemplate
             throw new \InvalidArgumentException('The defaultModel must contain the "linkBaseUrl" reserved property');
         }
 
-        return parent::save();
+        parent::save();
+
+        return;
     }
-
-
-
 
 }
