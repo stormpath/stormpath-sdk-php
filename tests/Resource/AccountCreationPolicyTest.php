@@ -85,6 +85,28 @@ class AccountCreationPolicyTest extends \Stormpath\Tests\TestCase {
         $this->disableAndTest('welcomeEmailStatus');
     }
 
+    /** @test */
+    public function accessor_for_verification_email_templates_returns_modeled_email_template_list_resource()
+    {
+        $verificationEmailTemplates = self::$acp->getVerificationEmailTemplates();
+        $this->assertInstanceOf(\Stormpath\Mail\ModeledEmailTemplateList::class, $verificationEmailTemplates);
+    }
+
+    /** @test */
+    public function accessor_for_verification_success_email_templates_returns_unmodeled_email_template_list_resource()
+    {
+        $verificationSuccessEmailTemplates = self::$acp->getVerificationSuccessEmailTemplates();
+        $this->assertInstanceOf(\Stormpath\Mail\UnmodeledEmailTemplateList::class, $verificationSuccessEmailTemplates);
+    }
+
+    /** @test */
+    public function accessor_for_welcome_email_templates_returns_unmodeled_email_template_list_resource()
+    {
+        $welcomeEmailTemplates = self::$acp->getWelcomeEmailTemplates();
+        $this->assertInstanceOf(\Stormpath\Mail\UnmodeledEmailTemplateList::class, $welcomeEmailTemplates);
+    }
+
+
     public static function tearDownAfterClass()
     {
         self::$directory->delete();
