@@ -281,6 +281,27 @@ class ModeledEmailTemplateTest extends TestCase
         static::$modeledEmailTemplate->save();
     }
 
+    /** @test */
+    public function the_email_template_can_be_saved()
+    {
+        $directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('ModeledEmailTemplate'), 'description' => 'Main Directory description'));
+        self::createResource(\Stormpath\Resource\Directory::PATH, $directory);
+
+        foreach($directory->passwordPolicy->getResetEmailTemplates() as $emailTemplate) {
+            $emailTemplate->fromName = 'John Doe';
+            $emailTemplate->save();
+        }
+
+
+
+        foreach($directory->passwordPolicy->getResetEmailTemplates() as $emailTemplate) {
+            $this->assertEquals('John Doe', $emailTemplate->fromName);
+        }
+
+        $directory->delete();
+    }
+
+
 
 
 
