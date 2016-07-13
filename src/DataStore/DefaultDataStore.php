@@ -353,13 +353,14 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $property = $resource->getProperty($name);
 
             $nameIsCustomData = $name == CustomData::CUSTOMDATA_PROP_NAME;
+            $nameIsDefaultModel = $name == 'defaultModel';
 
             if ($property instanceof \Stormpath\Resource\CustomData)
             {
                 $property = $this->toStdClass($property, true);
             }
 
-            else if ($property instanceof \stdClass && $customData === false && !$nameIsCustomData)
+            else if ($property instanceof \stdClass && $customData === false && !$nameIsCustomData && !$nameIsDefaultModel)
             {
                 $property = $this->toSimpleReference($name, $property);
             }
