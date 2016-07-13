@@ -77,6 +77,14 @@ class ModeledEmailTemplateTest extends TestCase
     }
 
     /** @test */
+    public function href_is_accessible()
+    {
+        $this->assertEquals(static::$properties['href'], static::$modeledEmailTemplate->getHref());
+        $this->assertEquals(static::$properties['href'], static::$modeledEmailTemplate->href);
+
+    }
+
+    /** @test */
     public function name_is_accessible()
     {
         $this->assertEquals(static::$properties['name'], static::$modeledEmailTemplate->getName());
