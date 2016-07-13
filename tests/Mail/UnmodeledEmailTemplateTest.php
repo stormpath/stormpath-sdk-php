@@ -22,7 +22,7 @@ use Stormpath\Mail\UnmodeledEmailTemplateList;
 use Stormpath\Stormpath;
 use Stormpath\Tests\TestCase;
 
-class ModeledEmailTemplateTest extends TestCase
+class UnmodeledEmailTemplateTest extends TestCase
 {
     private static $modeledEmailTemplate;
     private static $properties;
