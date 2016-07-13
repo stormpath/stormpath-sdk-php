@@ -719,12 +719,13 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
         $account = self::$directory->createAccount($account);
 
-        $this->assertNotEquals($account->getProperty('createdAt'), $account->getPasswordModifedAt());
+        $origPasswordModified = $account->getPasswordModifedAt();
 
         $account->password = 'superP4ss!';
         $account->save();
 
-        $this->assertNotNull($account->passwordModifedAt);
+        $account = \Stormpath\Resource\Account::get($account->getProperty('href'));
+        $this->assertNotEquals($origPasswordModified, $account->passwordModifedAt);
 
         $account->delete();
     }
