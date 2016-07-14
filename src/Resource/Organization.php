@@ -62,6 +62,14 @@ class Organization extends AccountStore implements Deletable
         return Client::create('/'.self::PATH, $organization, $options);
     }
 
+    public function createAccount(Account $account, array $options = array())
+    {
+        $accounts = $this->getAccounts();
+        $href = $accounts->getHref();
+
+        return $this->getDataStore()->create($href, $account, Stormpath::ACCOUNT, $options);
+    }
+
     public function getAccounts(array $options = [])
     {
         return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT, $options);
