@@ -229,6 +229,50 @@ class OrganizationTest extends TestCase
         Organization::get($href);
     }
 
+    /** @test */
+    public function an_account_can_be_added_to_organization()
+    {
+        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+            'surname' => 'Surname',
+            'email' => makeUniqueName('DirectoryTest createAccount') . '@unknown123.kot',
+            'password' => 'superP4ss'));
+
+        $organization = Organization::instantiate([
+            'name' => makeUniqueName('OrganizationForTests'),
+            'nameKey' => 'nk'.md5(uniqid()),
+            'description' => 'Organization used for the tests in OrganizationTest for PHP SDK'
+        ]);
+
+        $directory = \Stormpath\Resource\Directory::instantiate([
+            'name' => makeUniqueName('OrgTest'),
+            'description' => 'Description of Main Directory',
+            'status' => 'enabled'
+        ]);
+        $organization = self::createResource(Organization::PATH, $organization);
+        $directory = self::createResource(\Stormpath\Resource\Directory::PATH, $directory);
+
+        $accountStoreMapping = \Stormpath\Resource\AccountStoreMapping::instantiate([
+            'organization' => $organization,
+            'accountStore' => $directory,
+            'isDefaultAccountStore' => true,
+            'isDefaultGroupStore' => true
+        ]);
+
+        $organization->createOrganizationAccountStoreMapping($accountStoreMapping);
+
+
+        $organization->createAccount($account, array('registrationWorkflowEnabled' => false));
+
+        $account = \Stormpath\Resource\Account::get($account->href);
+
+        $this->assertContains('OrgTest', $account->directory->name);
+        $this->assertEquals('Account Name', $account->givenName);
+
+        $directory->delete();
+        $organization->delete();
+    }
+
+
     public static function tearDownAfterClass()
     {
         if(self::$organization)
