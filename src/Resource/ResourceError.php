@@ -47,4 +47,9 @@ class ResourceError extends \RuntimeException
     {
         return $this->error ? $this->error->getMoreInfo() : null;
     }
+
+    public function getRequestId()
+    {
+        return $this->error ? $this->error->getRequestId() : null;
+    }
 }
