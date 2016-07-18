@@ -724,6 +724,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
             $this->assertContains('Invalid', $re->getMessage());
             $this->assertEquals("Login attempt failed because there is no Account in the Application's associated Account Stores with the specified username or email.", $re->getDeveloperMessage());
             $this->assertContains('7104', $re->getMoreInfo());
+            $this->assertNotNull($re->getRequestId());
         }
 
         try
