@@ -233,7 +233,12 @@ class Account extends InstanceResource implements Deletable
         $apiKeyOptions = new ApiKeyEncryptionOptions($options);
         $options = array_merge($options, $apiKeyOptions->toArray());
 
-        $apiKey = $this->getDataStore()->instantiate(Stormpath::API_KEY);
+        $properties = new \stdClass();
+
+        if(isset($options['name'])) { $properties->name = $options['name']; }
+        if(isset($options['description'])) { $properties->description = $options['description']; }
+
+        $apiKey = $this->getDataStore()->instantiate(Stormpath::API_KEY, $properties);
 
         $apiKey = $this->getDataStore()->create($this->getHref() . '/' . ApiKey::PATH,
             $apiKey, Stormpath::API_KEY, $options);
