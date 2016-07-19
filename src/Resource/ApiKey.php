@@ -24,14 +24,17 @@ use Stormpath\Stormpath;
 
 class ApiKey extends InstanceResource implements Deletable
 {
-    const ID        = "id";
-    const SECRET    = "secret";
-    const STATUS    = "status";
+    const ID            = "id";
+    const SECRET        = "secret";
+    const STATUS        = "status";
+    
+    const NAME          = "name";
+    const DESCRIPTION   = "description";
 
-    const ACCOUNT   = "account";
-    const TENANT    = "tenant";
+    const ACCOUNT       = "account";
+    const TENANT        = "tenant";
 
-    const PATH      = "apiKeys";
+    const PATH          = "apiKeys";
 
     private $apiKeyMetadata;
 
@@ -78,6 +81,58 @@ class ApiKey extends InstanceResource implements Deletable
     {
         $this->apiKeyMetadata = $metadata;
     }
+    
+    /**
+     * Gets the name property
+     *
+     * @return 
+     */
+    public function getName()
+    {
+        return $this->getProperty(self::NAME);
+    }
+
+    /**
+     * Sets the name property
+     *
+     * @param string $name The name of the object
+     * @return self
+     */
+    public function setName($name)
+    {
+        $this->setProperty(self::NAME, $name);
+
+        return $this;
+    }
+
+
+    
+    /**
+     * Gets the description property
+     *
+     * @return 
+     */
+    public function getDescription()
+    {
+        return $this->getProperty(self::DESCRIPTION);
+    } 
+    
+    /**
+     * Sets the description property
+     *
+     * @param string $description The description of the object
+     * @return self
+     */
+    public function setDescription($description)
+    {
+        $this->setProperty(self::DESCRIPTION, $description);
+
+        return $this;
+    }
+
+
+    
+    
 
     public function delete()
     {

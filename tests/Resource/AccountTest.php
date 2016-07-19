@@ -238,14 +238,32 @@ class AccountTest extends \Stormpath\Tests\TestCase {
     public function testApiKey()
     {
         $account = self::$account;
-        $apiKey = $account->createApiKey();
+        $apiKey = $account->createApiKey([
+            'name' => 'Test Api Key',
+            'description' => 'Description'
+        ]);
 
         $this->assertNotEmpty($apiKey->id);
         $this->assertNotEmpty($apiKey->secret);
         $this->assertNotEmpty($apiKey->status);
-        
+        $this->assertEquals('Test Api Key', $apiKey->getName());
+        $this->assertEquals('Description', $apiKey->getDescription());
+
+
+        $apiKey->setName('Name');
+        $apiKey->setDescription('Desc');
+
+        $this->assertEquals('Name', $apiKey->getName());
+        $this->assertEquals('Desc', $apiKey->getDescription());
+
         $this->assertEquals($account->href, $apiKey->account->href);
+        $this->assertContains('/tenants/', $apiKey->tenant->href);
+
+        $apiKey2 = $account->createApiKey();
+        $this->assertNull($apiKey2->getName());
+        $this->assertNull($apiKey2->getDescription());
     }
+
 
     public function testGroupsOptions()
     {
