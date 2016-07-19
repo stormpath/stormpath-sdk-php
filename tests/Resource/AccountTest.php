@@ -258,6 +258,10 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
         $this->assertEquals($account->href, $apiKey->account->href);
         $this->assertContains('/tenants/', $apiKey->tenant->href);
+
+        $apiKey2 = $account->createApiKey();
+        $this->assertNull($apiKey2->getName());
+        $this->assertNull($apiKey2->getDescription());
     }
 
 
