@@ -85,6 +85,164 @@ class AccountCreationPolicyTest extends \Stormpath\Tests\TestCase {
         $this->disableAndTest('welcomeEmailStatus');
     }
 
+    /** @test */
+    public function accessor_for_verification_email_templates_returns_modeled_email_template_list_resource()
+    {
+        $verificationEmailTemplates = self::$acp->getVerificationEmailTemplates();
+        $this->assertInstanceOf(\Stormpath\Mail\ModeledEmailTemplateList::class, $verificationEmailTemplates);
+    }
+
+    /** @test */
+    public function accessor_for_verification_success_email_templates_returns_unmodeled_email_template_list_resource()
+    {
+        $verificationSuccessEmailTemplates = self::$acp->getVerificationSuccessEmailTemplates();
+        $this->assertInstanceOf(\Stormpath\Mail\UnmodeledEmailTemplateList::class, $verificationSuccessEmailTemplates);
+    }
+
+    /** @test */
+    public function accessor_for_welcome_email_templates_returns_unmodeled_email_template_list_resource()
+    {
+        $welcomeEmailTemplates = self::$acp->getWelcomeEmailTemplates();
+        $this->assertInstanceOf(\Stormpath\Mail\UnmodeledEmailTemplateList::class, $welcomeEmailTemplates);
+    }
+
+    /** @test */
+    public function email_domain_whitelist_returns_array()
+    {
+        $emailWhitelist = self::$acp->getEmailDomainWhitelist();
+        $this->assertTrue(is_array($emailWhitelist));
+    }
+
+    /** @test */
+    public function ability_to_set_domain_whitelist()
+    {
+        $this->assertEmpty(self::$acp->getEmailDomainWhitelist());
+
+        self::$acp->setEmailDomainWhitelist(['abc.com', 'xyz.com']);
+
+        $this->assertCount(2, self::$acp->getEmailDomainWhitelist());
+
+        self::$acp->setEmailDomainWhitelist([]);
+
+        $this->assertCount(0, self::$acp->getEmailDomainWhitelist());
+
+    }
+
+
+    /** @test */
+    public function ability_to_add_domain_whitelist()
+    {
+        $this->assertEmpty(self::$acp->getEmailDomainWhitelist());
+
+        self::$acp->addEmailDomainWhitelist('gmail.com');
+        self::$acp->addEmailDomainWhitelist('stormpath.com');
+        self::$acp->addEmailDomainWhitelist('stormpath.com');
+
+        $this->assertCount(2, self::$acp->getEmailDomainWhitelist());
+
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function must_pass_string_to_add_domain_whitelist()
+    {
+        self::$acp->addEmailDomainWhitelist(['gmail.com']);
+    }
+
+
+    /** @test */
+    public function ability_to_remove_single_whitelist_domain()
+    {
+        self::$acp->setEmailDomainWhitelist([]);
+        self::$acp->addEmailDomainWhitelist('gmail.com');
+        self::$acp->addEmailDomainWhitelist('stormpath.com');
+        self::$acp->addEmailDomainWhitelist('xyz.com');
+        $this->assertCount(3, self::$acp->getEmailDomainWhitelist());
+
+        self::$acp->removeEmailDomainWhitelist('xyz.com');
+        $this->assertCount(2, self::$acp->getEmailDomainWhitelist());
+
+        self::$acp->removeEmailDomainWhitelist('gmail.com');
+        $this->assertCount(1, self::$acp->getEmailDomainWhitelist());
+
+        self::$acp->removeEmailDomainWhitelist('blah.com');
+        $this->assertCount(1, self::$acp->getEmailDomainWhitelist());
+
+    }
+
+
+
+    /** @test */
+    public function email_domain_blacklist_returns_array()
+    {
+        $emailBlacklist = self::$acp->getEmailDomainBlacklist();
+        $this->assertTrue(is_array($emailBlacklist));
+    }
+
+
+    /** @test */
+    public function ability_to_set_domain_blacklist()
+    {
+        $this->assertEmpty(self::$acp->getEmailDomainBlacklist());
+
+        self::$acp->setEmailDomainBlacklist(['abc.com', 'xyz.com']);
+
+        $this->assertCount(2, self::$acp->getEmailDomainBlacklist());
+
+        self::$acp->setEmailDomainBlacklist([]);
+
+        $this->assertCount(0, self::$acp->getEmailDomainBlacklist());
+
+    }
+
+
+    /** @test */
+    public function ability_to_add_domain_blacklist()
+    {
+        $this->assertEmpty(self::$acp->getEmailDomainBlacklist());
+
+        self::$acp->addEmailDomainBlacklist('gmail.com');
+        self::$acp->addEmailDomainBlacklist('stormpath.com');
+        self::$acp->addEmailDomainBlacklist('stormpath.com');
+
+        $this->assertCount(2, self::$acp->getEmailDomainBlacklist());
+
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function must_pass_string_to_add_domain_blacklist()
+    {
+        self::$acp->addEmailDomainBlacklist(['gmail.com']);
+    }
+
+
+    /** @test */
+    public function ability_to_remove_single_blacklist_domain()
+    {
+        self::$acp->setEmailDomainBlacklist([]);
+        self::$acp->addEmailDomainBlacklist('gmail.com');
+        self::$acp->addEmailDomainBlacklist('stormpath.com');
+        self::$acp->addEmailDomainBlacklist('xyz.com');
+        $this->assertCount(3, self::$acp->getEmailDomainBlacklist());
+
+        self::$acp->removeEmailDomainBlacklist('xyz.com');
+        $this->assertCount(2, self::$acp->getEmailDomainBlacklist());
+
+        self::$acp->removeEmailDomainBlacklist('gmail.com');
+        $this->assertCount(1, self::$acp->getEmailDomainBlacklist());
+
+        self::$acp->removeEmailDomainBlacklist('blah.com');
+        $this->assertCount(1, self::$acp->getEmailDomainBlacklist());
+
+    }
+    
+
+
     public static function tearDownAfterClass()
     {
         self::$directory->delete();

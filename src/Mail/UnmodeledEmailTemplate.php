@@ -1,7 +1,4 @@
 <?php
-
-namespace Stormpath\Util;
-
 /*
  * Copyright 2016 Stormpath, Inc.
  *
@@ -18,8 +15,6 @@ namespace Stormpath\Util;
  * limitations under the License.
  */
 
-class Version
-{
-    const SDK_VERSION = '1.16.0';
+namespace Stormpath\Mail;
 
-}
+class UnmodeledEmailTemplate extends EmailTemplate {}

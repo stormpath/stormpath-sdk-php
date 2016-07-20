@@ -31,6 +31,7 @@ class Directory extends AccountStore implements Deletable
     const TENANT      = "tenant";
     const PROVIDER    = "provider";
     const CUSTOM_DATA = "customData";
+    const PASSWORD_POLICY = "passwordPolicy";
     const ACCOUNT_CREATION_POLICY = "accountCreationPolicy";
 
     const PATH        = "directories";
@@ -154,6 +155,11 @@ class Directory extends AccountStore implements Deletable
     public function getProvider(array $options = array())
     {
         return $this->getResourceProperty(self::PROVIDER, Stormpath::PROVIDER, $options);
+    }
+
+    public function getPasswordPolicy(array $options = [])
+    {
+        return $this->getResourceProperty(self::PASSWORD_POLICY, Stormpath::PASSWORD_POLICY, $options);
     }
 
     public function delete() {

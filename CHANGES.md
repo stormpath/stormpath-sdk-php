@@ -2,6 +2,21 @@ stormpath-sdk-php Changelog
 ===========================
 
 
+Version 1.16.0
+--------------
+
+Released on July 20, 2016 
+ 
+ - Fix cache key for resources 
+ - Adds method for getting access to the password modified at property off account
+ - Work with Password Policy from Directory
+ - Password Reuse policy
+ - Adds ability to work with all email templates
+ - Now able to add an account directly from the organization resource
+ - Create and work with email blacklist and whitelist.
+ - Request ID now part of the resource error and error
+ - Name and Description can be added to API Keys
+
 Version 1.15.0
 --------------
 

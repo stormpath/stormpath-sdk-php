@@ -25,6 +25,7 @@ class Error extends Resource
     const MESSAGE     = "message";
     const DEV_MESSAGE = "developerMessage";
     const MORE_INFO   = "moreInfo";
+    const REQUEST_ID  = "requestId";
 
     public function __construct(\stdClass $properties)
     {
@@ -54,6 +55,11 @@ class Error extends Resource
     public function getMoreInfo()
     {
         return $this->getProperty(self::MORE_INFO);
+    }
+
+    public function getRequestId()
+    {
+        return $this->getProperty(self::REQUEST_ID);
     }
 
 }

@@ -238,4 +238,5 @@ class TenantTest extends \Stormpath\Tests\TestCase {
         $this->assertEquals($expectedDirectory, $returnedDirectory);
     }
 
+
 }

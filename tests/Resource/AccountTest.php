@@ -238,14 +238,32 @@ class AccountTest extends \Stormpath\Tests\TestCase {
     public function testApiKey()
     {
         $account = self::$account;
-        $apiKey = $account->createApiKey();
+        $apiKey = $account->createApiKey([
+            'name' => 'Test Api Key',
+            'description' => 'Description'
+        ]);
 
         $this->assertNotEmpty($apiKey->id);
         $this->assertNotEmpty($apiKey->secret);
         $this->assertNotEmpty($apiKey->status);
-        
+        $this->assertEquals('Test Api Key', $apiKey->getName());
+        $this->assertEquals('Description', $apiKey->getDescription());
+
+
+        $apiKey->setName('Name');
+        $apiKey->setDescription('Desc');
+
+        $this->assertEquals('Name', $apiKey->getName());
+        $this->assertEquals('Desc', $apiKey->getDescription());
+
         $this->assertEquals($account->href, $apiKey->account->href);
+        $this->assertContains('/tenants/', $apiKey->tenant->href);
+
+        $apiKey2 = $account->createApiKey();
+        $this->assertNull($apiKey2->getName());
+        $this->assertNull($apiKey2->getDescription());
     }
+
 
     public function testGroupsOptions()
     {
@@ -706,6 +724,27 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
         $account->delete();
     }
+
+    /** @test */
+    public function a_password_modified_at_date_is_available()
+    {
+        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+            'middleName' => 'Middle Name',
+            'surname' => 'Surname',
+            'username' => makeUniqueName('AccountTest testAddGroup') . 'username',
+            'email' => makeUniqueName('AccountTest testAddGroup') .'@unknown123.kot',
+            'password' => 'superP4ss'));
+
+        $account = self::$directory->createAccount($account);
+
+        $account->password = 'superP4ss!';
+        $account->save();
+
+        $this->assertNotNull($account->passwordModifedAt);
+
+        $account->delete();
+    }
+
 
     public function tearDown()
     {

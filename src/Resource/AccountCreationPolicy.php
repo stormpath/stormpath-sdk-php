@@ -17,11 +17,18 @@
 
 namespace Stormpath\Resource;
 
+use Stormpath\Stormpath;
+
 class AccountCreationPolicy extends InstanceResource implements Saveable {
 
-    const VERIFICATION_EMAIL_STATUS             = 'verificationEmailStatus';
     const WELCOME_EMAIL_STATUS                  = 'welcomeEmailStatus';
+    const EMAIL_DOMAIN_WHITELIST                = 'emailDomainWhitelist';
+    const EMAIL_DOMAIN_BLACKLIST                = 'emailDomainBlacklist';
+    const WELCOME_EMAIL_TEMPLATES               = 'welcomeEmailTemplates';
+    const VERIFICATION_EMAIL_STATUS             = 'verificationEmailStatus';
+    const VERIFICATION_EMAIL_TEMPLATES          = 'verificationEmailTemplates';
     const VERIFICATION_SUCCESS_EMAIL_STATUS     = 'verificationSuccessEmailStatus';
+    const VERIFICATION_SUCCESS_EMAIL_TEMPLATES  = 'verificationSuccessEmailTemplates';
 
     public function setVerificationEmailStatus($status)
     {
@@ -52,4 +59,114 @@ class AccountCreationPolicy extends InstanceResource implements Saveable {
     {
         return $this->getProperty(self::VERIFICATION_SUCCESS_EMAIL_STATUS);
     }
+
+    public function getVerificationEmailTemplates(array $options = [])
+    {
+        return $this->getResourceProperty(self::VERIFICATION_EMAIL_TEMPLATES, Stormpath::MODELED_EMAIL_TEMPLATE_LIST, $options);
+    }
+
+    public function getVerificationSuccessEmailTemplates(array $options = [])
+    {
+        return $this->getResourceProperty(self::VERIFICATION_SUCCESS_EMAIL_TEMPLATES, Stormpath::UNMODELED_EMAIL_TEMPLATE_LIST, $options);
+    }
+
+    public function getWelcomeEmailTemplates(array $options = [])
+    {
+        return $this->getResourceProperty(self::WELCOME_EMAIL_TEMPLATES, Stormpath::UNMODELED_EMAIL_TEMPLATE_LIST, $options);
+    }
+
+    /**
+     * Gets the emailDomainWhitelist property
+     *
+     * @return array
+     */
+    public function getEmailDomainWhitelist()
+    {
+        return $this->getProperty(self::EMAIL_DOMAIN_WHITELIST);
+    }
+
+    public function addEmailDomainWhitelist($domain)
+    {
+        if(!is_string($domain)) throw new \InvalidArgumentException('Domain must be a string');
+
+        $whitelist = $this->getProperty(self::EMAIL_DOMAIN_WHITELIST);
+        $whitelist[] = $domain;
+        $this->setEmailDomainWhitelist(array_unique($whitelist));
+    }
+
+    public function removeEmailDomainWhitelist($domain)
+    {
+        $whitelist = $this->getProperty(self::EMAIL_DOMAIN_WHITELIST);
+
+        $key = array_search($domain, $whitelist);
+        if($key !== false) {
+            unset($whitelist[$key]);
+        }
+
+        $this->setEmailDomainWhitelist(array_unique($whitelist));
+    }
+    
+    /**
+     * Sets the emailDomainWhitelist property
+     *
+     * @param  $emailDomainWhitelist The emailDomainWhitelist of the object
+     * @return self
+     */
+    public function setEmailDomainWhitelist($emailDomainWhitelist)
+    {
+        $this->setProperty(self::EMAIL_DOMAIN_WHITELIST, $emailDomainWhitelist);
+        
+        return $this; 
+    } 
+    
+    
+
+    /**
+     * Gets the emailDomainBlacklist property
+     *
+     * @return
+     */
+    public function getEmailDomainBlacklist()
+    {
+        return $this->getProperty(self::EMAIL_DOMAIN_BLACKLIST);
+    }
+
+
+    public function addEmailDomainBlacklist($domain)
+    {
+        if(!is_string($domain)) throw new \InvalidArgumentException('Domain must be a string');
+
+        $blacklist = $this->getProperty(self::EMAIL_DOMAIN_BLACKLIST);
+        $blacklist[] = $domain;
+        $this->setEmailDomainBlacklist(array_unique($blacklist));
+    }
+
+    public function removeEmailDomainBlacklist($domain)
+    {
+        $blacklist = $this->getProperty(self::EMAIL_DOMAIN_BLACKLIST);
+
+        $key = array_search($domain, $blacklist);
+        if($key !== false) {
+            unset($blacklist[$key]);
+        }
+
+        $this->setEmailDomainBlacklist(array_unique($blacklist));
+    }
+
+    /**
+     * Sets the emailDomainBlacklist property
+     *
+     * @param  $emailDomainBlacklist The emailDomainBlacklist of the object
+     * @return self
+     */
+    public function setEmailDomainBlacklist($emailDomainBlacklist)
+    {
+        $this->setProperty(self::EMAIL_DOMAIN_BLACKLIST, $emailDomainBlacklist);
+
+        return $this;
+    }
+
+
+
+
 }

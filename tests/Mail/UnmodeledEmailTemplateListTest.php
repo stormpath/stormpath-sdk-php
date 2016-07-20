@@ -1,7 +1,4 @@
 <?php
-
-namespace Stormpath\Util;
-
 /*
  * Copyright 2016 Stormpath, Inc.
  *
@@ -17,9 +14,18 @@ namespace Stormpath\Util;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+namespace Stormpath\Tests\Mail;
 
-class Version
+use Stormpath\Mail\UnmodeledEmailTemplateList;
+use Stormpath\Tests\TestCase;
+
+class UnmodeledEmailTemplateListTest extends TestCase
 {
-    const SDK_VERSION = '1.16.0';
+    /** @test */
+    public function returns_correct_item_class_name()
+    {
+        $modeledEmailTemplateList = new UnmodeledEmailTemplateList();
+        $this->assertEquals('Stormpath\Mail\UnmodeledEmailTemplate', $modeledEmailTemplateList->getItemClassName());
+    }
 
 }

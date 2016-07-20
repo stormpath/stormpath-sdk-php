@@ -41,6 +41,7 @@ class Account extends InstanceResource implements Deletable
     const PROVIDER_DATA			   = "providerData";
     const ACCESS_TOKENS            = "accessTokens";
     const REFRESH_TOKENS           = "refreshTokens";
+    const PASSWORD_MODIFIED_AT     = "passwordModifiedAt";
 
     const PATH                     = "accounts";
 
@@ -182,6 +183,11 @@ class Account extends InstanceResource implements Deletable
 
         return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
     }
+
+    public function getPasswordModifedAt()
+    {
+        return $this->getProperty(self::PASSWORD_MODIFIED_AT );
+    }
     
     public function getProviderData(array $options = array())
     {
@@ -227,7 +233,12 @@ class Account extends InstanceResource implements Deletable
         $apiKeyOptions = new ApiKeyEncryptionOptions($options);
         $options = array_merge($options, $apiKeyOptions->toArray());
 
-        $apiKey = $this->getDataStore()->instantiate(Stormpath::API_KEY);
+        $properties = new \stdClass();
+
+        if(isset($options['name'])) { $properties->name = $options['name']; }
+        if(isset($options['description'])) { $properties->description = $options['description']; }
+
+        $apiKey = $this->getDataStore()->instantiate(Stormpath::API_KEY, $properties);
 
         $apiKey = $this->getDataStore()->create($this->getHref() . '/' . ApiKey::PATH,
             $apiKey, Stormpath::API_KEY, $options);
