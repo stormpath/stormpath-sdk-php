@@ -222,7 +222,7 @@ class ProviderTest extends \Stormpath\Tests\TestCase
 
     public function testGoogleProviderAccount()
     {
-        $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
+        $requestExecutor = $this->getMock('\Stormpath\Http\Psr7\Psr7RequestExecutor');
         $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
         $cache = $this->getMock('\Cache\Taggable\TaggablePoolInterface');
         $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
@@ -262,7 +262,7 @@ class ProviderTest extends \Stormpath\Tests\TestCase
 
     public function testFacebookProviderAccount()
     {
-        $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
+        $requestExecutor = $this->getMock('\Stormpath\Http\Psr7\Psr7RequestExecutor');
         $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
         $cache = $this->getMock('\Cache\Taggable\TaggablePoolInterface');
         $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
@@ -301,7 +301,7 @@ class ProviderTest extends \Stormpath\Tests\TestCase
 
     public function testGithubProviderAccount()
     {
-        $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
+        $requestExecutor = $this->getMock('\Stormpath\Http\Psr7\Psr7RequestExecutor');
         $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
         $cache = $this->getMock('\Cache\Taggable\TaggablePoolInterface');
         $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',
@@ -340,7 +340,7 @@ class ProviderTest extends \Stormpath\Tests\TestCase
 
     public function testLinkedInProviderAccount()
     {
-        $requestExecutor = $this->getMock('\Stormpath\Http\RequestExecutor');
+        $requestExecutor = $this->getMock('\Stormpath\Http\Psr7\Psr7RequestExecutor');
         $apiKey = $this->getMock('\Stormpath\ApiKey', array(), array("mockId", "mockSecret"));
         $cache = $this->getMock('\Cache\Taggable\TaggablePoolInterface');
         $dataStore = $this->getMock('\Stormpath\DataStore\DefaultDataStore',

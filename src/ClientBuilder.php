@@ -17,19 +17,17 @@ namespace Stormpath;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+use Http\Discovery\HttpClientDiscovery;
 use Stormpath\Cache\ArrayCacheManager;
 use Stormpath\Cache\MemcachedCacheManager;
 use Stormpath\Cache\NullCacheManager;
-use Stormpath\Cache\RedisCacheManager;
 use Stormpath\Cache\PSR6CacheManagerInterface;
-use Stormpath\Cache\Exceptions\InvalidCacheManagerException;
-use Stormpath\Http\Authc\SAuthc1RequestSigner;
+use Stormpath\Cache\RedisCacheManager;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\HttpClientRequestExecutor;
+use Stormpath\Http\Psr7\HttplugPsr7RequestExecutor;
 use Stormpath\Http\Request;
 use Stormpath\Util\Magic;
-use Stormpath\Util\Spyc;
-use Stormpath\Util\YAMLUtil;
 
 /**
  * A <a href="http://en.wikipedia.org/wiki/Builder_pattern">Builder design pattern</a> implementation used to
@@ -312,12 +310,14 @@ class ClientBuilder extends Magic
         $signer = $this->resolveSigner();
         $requestSigner = new $signer;
 
+        $executor = new HttplugPsr7RequestExecutor(HttpClientDiscovery::find(), $apiKey, $requestSigner);
+
         return new Client(
             $apiKey,
             $this->cacheManager,
             $this->cacheManagerOptions,
             $this->baseURL,
-            $requestSigner
+            $executor
         );
 
     }

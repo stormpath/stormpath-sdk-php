@@ -18,11 +18,17 @@ namespace Stormpath\Http\Authc;
  * limitations under the License.
  */
 
+use Psr\Http\Message\RequestInterface;
 use Stormpath\ApiKey;
-use Stormpath\Http\Request;
 
 interface RequestSigner
 {
-    public function sign(Request $request, ApiKey $apiKey);
+    /**
+     * Signs the request
+     *
+     * @param  RequestInterface $request The request before it's signed
+     * @param  ApiKey           $apiKey  Your API key
+     * @return RequestInterface          A signed copy of the request
+     */
+    public function sign(RequestInterface $request, ApiKey $apiKey);
 }
-

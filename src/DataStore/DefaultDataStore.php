@@ -18,22 +18,22 @@ namespace Stormpath\DataStore;
  * limitations under the License.
  */
 
+use Cache\Taggable\TaggableItemInterface;
+use Cache\Taggable\TaggablePoolInterface;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Uri;
 use Stormpath\ApiKey;
 use Stormpath\Cache\Cacheable;
-use Stormpath\Http\DefaultRequest;
-use Stormpath\Http\Request;
-use Stormpath\Http\RequestExecutor;
+use Stormpath\Cache\PSR6CacheKeyTrait;
+use Stormpath\Cache\Tags\CacheTagExtractor;
+use Stormpath\Http\Psr7\Psr7RequestExecutor;
 use Stormpath\Resource\CustomData;
+use Stormpath\Resource\Directory;
 use Stormpath\Resource\Error;
 use Stormpath\Resource\Resource;
-use Stormpath\Resource\Directory;
 use Stormpath\Resource\ResourceError;
 use Stormpath\Stormpath;
 use Stormpath\Util\UserAgentBuilder;
-use Stormpath\Cache\PSR6CacheKeyTrait;
-use Cache\Taggable\TaggablePoolInterface;
-use Cache\Taggable\TaggableItemInterface;
-use Stormpath\Cache\Tags\CacheTagExtractor;
 
 class DefaultDataStore extends Cacheable implements InternalDataStore
 {
@@ -49,7 +49,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     const DEFAULT_SERVER_HOST = 'api.stormpath.com';
     const DEFAULT_API_VERSION = '1';
 
-    public function __construct(RequestExecutor $requestExecutor, ApiKey $apiKey, TaggablePoolInterface $cachePool, $baseUrl = null)
+    public function __construct(Psr7RequestExecutor $requestExecutor, ApiKey $apiKey, TaggablePoolInterface $cachePool, $baseUrl = null)
     {
         $this->requestExecutor = $requestExecutor;
         $this->resourceFactory = new DefaultResourceFactory($this);
@@ -121,7 +121,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $item = $this->cachePool->getItem($this->createCacheKey($href, $options));
 
         if (!$item->isHit()) {
-            $data = $this->executeRequest(Request::METHOD_GET, $href, '', $queryString);
+            $data = $this->executeRequest('GET', $href, '', $queryString);
 
             if ($this->responseIsCacheable($data)) {
                 $item->set($data);
@@ -190,21 +190,16 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     public function delete(Resource $resource)
     {
-        $delete = $this->executeRequest(Request::METHOD_DELETE, $resource->getHref());
+        $delete = $this->executeRequest('DELETE', $resource->getHref());
         $this->removeResourceFromCache($resource);
         return $delete;
     }
 
     public function removeCustomDataItem(Resource $resource, $key)
     {
-        $delete = $this->executeRequest(Request::METHOD_DELETE, $resource->getHref().'/'.$key);
+        $delete = $this->executeRequest('DELETE', $resource->getHref() . '/' . $key);
         $this->removeResourceFromCache($resource);
         return $delete;
-    }
-
-    public function getRequestExecutor()
-    {
-        return $this->requestExecutor;
     }
 
     protected function needsToBeFullyQualified($href)
@@ -226,34 +221,50 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     private function executeRequest($httpMethod, $href, $body = '', array $query = array())
     {
-        $request = new DefaultRequest(
-                       $this->apiKey,
-                       $httpMethod,
-                       $href,
-                       $query,
-                       array(),
-                       $body,
-                       strlen($body));
+        $headers = [];
+        $headers['Accept'] = 'application/json';
 
-        $this->applyDefaultRequestHeaders($request);
+        $userAgentBuilder = new UserAgentBuilder;
+        $headers['User-Agent'] = $userAgentBuilder->setOsName(php_uname('s'))
+            ->setOsVersion(php_uname('r'))
+            ->setPhpVersion(phpversion())
+            ->build();
+
+        if ($body) {
+            $headers['Content-Type'] = 'application/json';
+
+            if (strpos($href, '/oauth/token')) {
+                $arr = json_decode($body);
+                $arr = (array) $arr;
+                ksort($arr);
+                $body = http_build_query($arr);
+
+                $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            }
+        }
+
+        $uri = new Uri($href);
+        foreach ($query as $key => $value) {
+            $uri = Uri::withQueryValue($uri, $key, $value);
+        }
+
+        $request = new Request($httpMethod, $uri, $headers, $body);
 
         $response = $this->requestExecutor->executeRequest($request);
 
         $result = $response->getBody() ? json_decode($response->getBody()) : null;
 
-        if (isset($result) && $result instanceof \stdClass)
-        {
-        	$result->httpStatus = $response->getHttpStatus();
+        if (isset($result) && $result instanceof \stdClass) {
+            $result->httpStatus = $response->getStatusCode();
         }
-        
-        if ($response->isError())
-        {
+
+        if ($response->getStatusCode() < 200 || $response->getStatusCode() > 299) {
             $errorResult = $result;
 
             //if the response does not come with a body, we create the error with the http status
             if (!$errorResult) {
                 // @codeCoverageIgnoreStart
-                $status = $response->getHttpStatus();
+                $status = $response->getStatusCode();
                 $errorResult = new \stdClass();
                 $errorResult->$status = $status;
                 // @codeCoverageIgnoreEnd
@@ -261,8 +272,6 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $error = new Error($errorResult);
             throw new ResourceError($error);
         }
-
-
 
         return $result;
 
@@ -275,11 +284,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $href = $this->qualify($href);
         }
 
-        $response = $this->executeRequest(Request::METHOD_POST,
-                                          $href,
-                                          json_encode($this->toStdClass($resource)),
-                                          $query);
-        
+        $response = $this->executeRequest('POST',
+            $href,
+            json_encode($this->toStdClass($resource)),
+            $query);
+
         //provider's account creation status (whether it is new or not) is returned in the HTTP response
         //status. The resource factory does not provide a way to pass such information when instantiating a resource. Thus,
         //after the resource has been instantiated we are going to manipulate it before returning it in order to set the
@@ -304,36 +313,6 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         }
 
         return $this->resourceFactory->instantiate($returnType, array($response, $query));
-    }
-
-    private function applyDefaultRequestHeaders(Request $request)
-    {
-        $headers = $request->getHeaders();
-        $headers['Accept'] = 'application/json';
-
-        $userAgentBuilder = new UserAgentBuilder;
-        $headers['User-Agent'] = $userAgentBuilder->setOsName(php_uname('s'))
-                                                  ->setOsVersion(php_uname('r'))
-                                                  ->setPhpVersion(phpversion())
-                                                  ->build();
-
-        if ($body = $request->getBody())
-        {
-            $headers['Content-Type'] = 'application/json';
-
-            if(strpos($request->getResourceUrl(), '/oauth/token')) {
-                $arr = json_decode($body);
-                $arr = (array) $arr;
-                ksort($arr);
-                $body = http_build_query($arr);
-                $request->setBody($body, strlen($body));
-
-                $headers['Content-Type'] = 'application/x-www-form-urlencoded';
-                $headers['Content-Length'] = $request->getContentLength();
-            }
-        }
-
-        $request->setHeaders($headers);
     }
 
     private function toStdClass(Resource $resource, $customData = false)

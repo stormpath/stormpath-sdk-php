@@ -1,6 +1,8 @@
 <?php
 
-namespace Stormpath\Http;
+namespace Stormpath\Http\Psr7;
+
+use Psr\Http\Message\RequestInterface;
 
 /*
  * Copyright 2016 Stormpath, Inc.
@@ -17,14 +19,14 @@ namespace Stormpath\Http;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-abstract class AbstractHttpMessage implements HttpMessage
+interface Psr7RequestExecutor
 {
-
-    public function hasBody() {
-
-        $body = getBody();
-        return $body != null && strlen($body) != 0;
-
-    }
-
+    /**
+     * Executes a PSR-7 Request
+     *
+     * @param  RequestInterface $reques
+     * @param  integer          $redirectsLimit
+     * @return Psr\Http\Message\ResponseInterface
+     */
+    public function executeRequest(RequestInterface $request, $redirectsLimit = 10);
 }
