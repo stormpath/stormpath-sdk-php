@@ -33,6 +33,8 @@ use Stormpath\Http\Authc\StormpathBasicAuthentication;
 use Stormpath\Resource\Resource;
 use Stormpath\Stormpath;
 use Stormpath\Util\Magic;
+use Stormpath\Http\Authc\SAuthc1RequestSigner;
+use Stormpath\Http\Authc\BasicRequestSigner;
 
 function toObject($properties)
 {
@@ -114,7 +116,7 @@ class Client extends Magic
      * @param $baseUrl optional parameter for specifying the base URL when not using the default one
      *         (https://api.stormpath.com/v1).
      */
-    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME, HttpClient $httpClient = null, MessageFactory $messageFactory = null, UriFactory $uriFactory = null)
+    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, RequestSigner $requestSigner = null, $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME, HttpClient $httpClient = null, MessageFactory $messageFactory = null, UriFactory $uriFactory = null)
     {
         parent::__construct();
         self::$cacheManager = $cacheManager;
@@ -139,12 +141,22 @@ class Client extends Magic
 
         $this->cachePool = TaggablePSR6PoolAdapter::makeTaggable($cache);
 
-        if ($authenticationScheme === Stormpath::SAUTHC1_AUTHENTICATION_SCHEME) {
-            $auth = new SAuthc1Authentication($apiKey);
-        } elseif ($authenticationScheme === Stormpath::BASIC_AUTHENTICATION_SCHEME) {
-            $auth = new StormpathBasicAuthentication($apiKey);
+        if (!$requestSigner) {
+            if ($authenticationScheme === Stormpath::SAUTHC1_AUTHENTICATION_SCHEME) {
+                $auth = new SAuthc1Authentication($apiKey);
+            } elseif ($authenticationScheme === Stormpath::BASIC_AUTHENTICATION_SCHEME) {
+                $auth = new StormpathBasicAuthentication($apiKey);
+            } else {
+                throw new InvalidArgumentException("Unknown authentication scheme \"" . $authenticationScheme . "\"");
+            }
         } else {
-            throw new InvalidArgumentException("Unknown authentication scheme \"" . $authenticationScheme . "\"");
+            if ($requestSigner instanceOf SAuthc1RequestSigner) {
+                $auth = new SAuthc1Authentication($apiKey);
+            } elseif ($requestSigner instanceOf BasicRequestSigner) {
+                $auth = new StormpathBasicAuthentication($apiKey);
+            } else {
+                throw new InvalidArgumentException("Unknown RequestSigner \"" . get_class($requestSigner) . "\" passed. Instead of passing a request signer, pass the \$authenticationScheme parameter.");
+            }
         }
 
         $this->dataStore = new DefaultDataStore($apiKey, $auth, $this->cachePool, $httpClient, $messageFactory, $uriFactory, $baseUrl);

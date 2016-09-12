@@ -305,6 +305,7 @@ class ClientBuilder extends Magic
             $this->cacheManager,
             $this->cacheManagerOptions,
             $this->baseURL,
+            null,
             $this->authenticationScheme
         );
 
