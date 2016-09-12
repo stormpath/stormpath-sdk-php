@@ -19,13 +19,17 @@ namespace Stormpath;
  */
 
 use Cache\Taggable\TaggablePSR6PoolAdapter;
+use Http\Client\HttpClient;
+use Http\Message\MessageFactory;
+use Http\Message\UriFactory;
 use Stormpath\Cache\CacheManager;
 use Stormpath\Cache\CachePSR6Adapter;
 use Stormpath\Cache\PSR6CacheManagerInterface;
 use Stormpath\DataStore\DefaultDataStore;
 use Stormpath\Exceptions\Cache\InvalidCacheManagerException;
 use Stormpath\Exceptions\Cache\InvalidLegacyCacheManagerException;
-use Stormpath\Http\Psr7\Psr7RequestExecutor;
+use Stormpath\Http\Authc\SAuthc1Authentication;
+use Stormpath\Http\Authc\StormpathBasicAuthentication;
 use Stormpath\Resource\Resource;
 use Stormpath\Stormpath;
 use Stormpath\Util\Magic;
@@ -110,7 +114,7 @@ class Client extends Magic
      * @param $baseUrl optional parameter for specifying the base URL when not using the default one
      *         (https://api.stormpath.com/v1).
      */
-    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, Psr7RequestExecutor $requestExecutor = null)
+    public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME, HttpClient $httpClient = null, MessageFactory $messageFactory = null, UriFactory $uriFactory = null)
     {
         parent::__construct();
         self::$cacheManager = $cacheManager;
@@ -134,7 +138,16 @@ class Client extends Magic
         }
 
         $this->cachePool = TaggablePSR6PoolAdapter::makeTaggable($cache);
-        $this->dataStore = new DefaultDataStore($requestExecutor, $apiKey, $this->cachePool, $baseUrl);
+
+        if ($authenticationScheme === Stormpath::SAUTHC1_AUTHENTICATION_SCHEME) {
+            $auth = new SAuthc1Authentication($apiKey);
+        } elseif ($authenticationScheme === Stormpath::BASIC_AUTHENTICATION_SCHEME) {
+            $auth = new StormpathBasicAuthentication($apiKey);
+        } else {
+            throw new InvalidArgumentException("Unknown authentication scheme \"" . $authenticationScheme . "\"");
+        }
+
+        $this->dataStore = new DefaultDataStore($apiKey, $auth, $this->cachePool, $httpClient, $messageFactory, $uriFactory, $baseUrl);
     }
 
     public static function get($href, $className, $path = null, array $options = array())

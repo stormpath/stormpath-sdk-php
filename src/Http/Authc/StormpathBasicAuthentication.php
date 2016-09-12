@@ -18,11 +18,12 @@ namespace Stormpath\Http\Authc;
  * limitations under the License.
  */
 
+use Http\Message\Authentication;
 use Psr\Http\Message\RequestInterface;
 use Stormpath\ApiKey;
 use Stormpath\Stormpath;
 
-class BasicRequestSigner implements RequestSigner
+class StormpathBasicAuthentication implements Authentication
 {
     const AUTHORIZATION_HEADER = 'Authorization';
     const STORMPATH_DATE_HEADER = 'X-Stormpath-Date';
@@ -33,13 +34,20 @@ class BasicRequestSigner implements RequestSigner
 
     const NL = "\n";
 
-    public function sign(RequestInterface $request, ApiKey $apiKey)
+    private $apiKey;
+
+    public function __construct(ApiKey $apiKey)
+    {
+        $this->apiKey = $apiKey;
+    }
+
+    public function authenticate(RequestInterface $request)
     {
         date_default_timezone_set(self::TIME_ZONE);
         $date = new \DateTime();
         $timeStamp = $date->format(self::TIMESTAMP_FORMAT);
 
-        $authorizationHeader = base64_encode($apiKey->getId() . ":" . $apiKey->getSecret());
+        $authorizationHeader = base64_encode($this->apiKey->getId() . ":" . $this->apiKey->getSecret());
 
         return $request
             ->withHeader(self::STORMPATH_DATE_HEADER, $timeStamp)

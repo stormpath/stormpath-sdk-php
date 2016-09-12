@@ -20,13 +20,20 @@ namespace Stormpath\DataStore;
 
 use Cache\Taggable\TaggableItemInterface;
 use Cache\Taggable\TaggablePoolInterface;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Uri;
+use Http\Client\Common\PluginClient;
+use Http\Client\Common\Plugin\AuthenticationPlugin;
+use Http\Client\Common\Plugin\RedirectPlugin;
+use Http\Client\HttpClient;
+use Http\Discovery\HttpClientDiscovery;
+use Http\Discovery\MessageFactoryDiscovery;
+use Http\Discovery\UriFactoryDiscovery;
+use Http\Message\Authentication;
+use Http\Message\MessageFactory;
+use Http\Message\UriFactory;
 use Stormpath\ApiKey;
 use Stormpath\Cache\Cacheable;
 use Stormpath\Cache\PSR6CacheKeyTrait;
 use Stormpath\Cache\Tags\CacheTagExtractor;
-use Stormpath\Http\Psr7\Psr7RequestExecutor;
 use Stormpath\Resource\CustomData;
 use Stormpath\Resource\Directory;
 use Stormpath\Resource\Error;
@@ -39,19 +46,30 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 {
     use PSR6CacheKeyTrait;
 
-    private $requestExecutor;
     private $resourceFactory;
     private $baseUrl;
     protected $cachePool;
+    protected $httpClient;
+    protected $messageFactory;
+    protected $uriFactory;
 
     private $apiKey;
 
     const DEFAULT_SERVER_HOST = 'api.stormpath.com';
     const DEFAULT_API_VERSION = '1';
 
-    public function __construct(Psr7RequestExecutor $requestExecutor, ApiKey $apiKey, TaggablePoolInterface $cachePool, $baseUrl = null)
+    public function __construct(ApiKey $apiKey, Authentication $authentication, TaggablePoolInterface $cachePool, HttpClient $httpClient = null, MessageFactory $messageFactory = null, UriFactory $uriFactory = null, $baseUrl = null)
     {
-        $this->requestExecutor = $requestExecutor;
+        $authenticationPlugin = new AuthenticationPlugin($authentication);
+        $redirectPlugin = new RedirectPlugin();
+
+        $this->httpClient = new PluginClient(
+            $httpClient ?: HttpClientDiscovery::find(),
+            [$authenticationPlugin, $redirectPlugin]
+        );
+        $this->uriFactory = $uriFactory ?: UriFactoryDiscovery::find();
+        $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
+
         $this->resourceFactory = new DefaultResourceFactory($this);
         $this->cachePool = $cachePool;
 
@@ -221,6 +239,10 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     private function executeRequest($httpMethod, $href, $body = '', array $query = array())
     {
+        if ($href == null) {
+            throw new \InvalidArgumentException("Cannot execute request against empty URL");
+        }
+
         $headers = [];
         $headers['Accept'] = 'application/json';
 
@@ -243,14 +265,10 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             }
         }
 
-        $uri = new Uri($href);
-        foreach ($query as $key => $value) {
-            $uri = Uri::withQueryValue($uri, $key, $value);
-        }
-
-        $request = new Request($httpMethod, $uri, $headers, $body);
-
-        $response = $this->requestExecutor->executeRequest($request);
+        $uri = $this->uriFactory->createUri($href);
+        $uri = $uri->withQuery(self::appendQueryValues($uri->getQuery(), $query));
+        $request = $this->messageFactory->createRequest($httpMethod, $uri, $headers, $body);
+        $response = $this->httpClient->sendRequest($request);
 
         $result = $response->getBody() ? json_decode($response->getBody()) : null;
 
@@ -275,6 +293,49 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         return $result;
 
+    }
+
+    /**
+     * Adapted from Guzzle PSR-7, by Michael Dowling et al.
+     * Licensed under the MIT license
+     *
+     * Any existing query string values that exactly match the provided key are
+     * removed and replaced with the key value pair in the dictionary.
+     *
+     * A value of null will set the query string key without a value, e.g. "key"
+     * instead of "key=value".
+     *
+     * @param string $currentQuery The current query string
+     * @param array $queryDictionary A key-value array of query parameters to append to the query string
+     *
+     * @return string
+     */
+    protected static function appendQueryValues($currentQuery, $queryDictionary)
+    {
+        if ($currentQuery == '') {
+            $result = [];
+        } else {
+            $decodedKeys = array_map('rawurldecode', array_keys($queryDictionary));
+
+            $result = array_filter(explode('&', $currentQuery), function ($part) use ($decodedKeys) {
+                return in_array(rawurldecode(explode('=', $part)[0]), $decodedKeys);
+            });
+        }
+
+        foreach ($queryDictionary as $key => $value) {
+            // Query string separators ("=", "&") within the key or value need to be encoded
+            // (while preventing double-encoding) before setting the query string. All other
+            // chars that need percent-encoding will be encoded by withQuery().
+            $key = strtr($key, ['=' => '%3D', '&' => '%26']);
+
+            if ($value !== null) {
+                $result[] = $key . '=' . strtr($value, ['=' => '%3D', '&' => '%26']);
+            } else {
+                $result[] = $key;
+            }
+        }
+
+        return implode('&', $result);
     }
 
     private function saveResource($href, Resource $resource, $returnType, array $query = array())
