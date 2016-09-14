@@ -28,6 +28,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
     private static $groups;
     private static $account;
     private static $inited;
+	private static $time;
     private static $application;
 
     protected static function init() {
@@ -44,6 +45,10 @@ class AccountTest extends \Stormpath\Tests\TestCase {
                                                                         'password' => 'superP4ss'));
 
         self::$directory->createAccount(self::$account);
+		self::$time = microtime();
+	    $cd = self::$account->customData;
+	    $cd->unitTest = self::$time;
+	    $cd->save();
 
         self:$groups = array();
 
@@ -429,16 +434,8 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
 		$client = Client::getInstance();
 
-		$accounts = $client->tenant->accounts->setSearch(['customData.unitTest'=>'unit Test']);
-		$this->assertEquals(0, $accounts->size);
-
-
-		$cd = self::$account->customData;
-		$cd->unitTest = "unit Test";
-		$cd->save();
 		usleep(100);
-
-		$accounts = $client->tenant->accounts->setSearch(['customData.unitTest'=>'unit Test']);
+		$accounts = $client->tenant->accounts->setSearch(['customData.unitTest' => self::$time]);
 		$this->assertEquals(1, $accounts->size);
 
 
