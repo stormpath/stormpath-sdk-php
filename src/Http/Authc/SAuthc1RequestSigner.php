@@ -45,8 +45,8 @@ class SAuthc1RequestSigner implements RequestSigner
     public function sign(Request $request, ApiKey $apiKey)
     {
 
-        date_default_timezone_set(self::TIME_ZONE);
         $date = new \DateTime();
+        $date->setTimezone(new \DateTimeZone(self::TIME_ZONE));
         $timeStamp = $date->format(self::TIMESTAMP_FORMAT);
         $dateStamp = $date->format(self::DATE_FORMAT);
 
