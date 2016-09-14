@@ -20,16 +20,12 @@ namespace Stormpath;
 use Stormpath\Cache\ArrayCacheManager;
 use Stormpath\Cache\MemcachedCacheManager;
 use Stormpath\Cache\NullCacheManager;
-use Stormpath\Cache\RedisCacheManager;
 use Stormpath\Cache\PSR6CacheManagerInterface;
-use Stormpath\Cache\Exceptions\InvalidCacheManagerException;
-use Stormpath\Http\Authc\SAuthc1RequestSigner;
+use Stormpath\Cache\RedisCacheManager;
 use Stormpath\Http\DefaultRequest;
 use Stormpath\Http\HttpClientRequestExecutor;
 use Stormpath\Http\Request;
 use Stormpath\Util\Magic;
-use Stormpath\Util\Spyc;
-use Stormpath\Util\YAMLUtil;
 
 /**
  * A <a href="http://en.wikipedia.org/wiki/Builder_pattern">Builder design pattern</a> implementation used to
@@ -57,7 +53,7 @@ class ClientBuilder extends Magic
     private $apiKeySecretPropertyName = "apiKey.secret";
     private $apiKeyProperties;
     private $apiKeyFileLocation;
-    private $cacheManager = NULL;
+    private $cacheManager = null;
     private $cacheManagerOptions = array();
     private $baseURL;
     private $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
@@ -216,7 +212,7 @@ class ClientBuilder extends Magic
 
     public function setCacheManager($cacheManager)
     {
-        if ($cacheManager instanceOf PSR6CacheManagerInterface) {
+        if ($cacheManager instanceof PSR6CacheManagerInterface) {
             $this->cacheManager = $cacheManager;
         } else {
             switch ($cacheManager) {
@@ -240,10 +236,10 @@ class ClientBuilder extends Magic
         return $this;
     }
 
-    public function setCacheManagerOptions(Array $cacheManagerOptions = array())
+    public function setCacheManagerOptions(array $cacheManagerOptions = array())
     {
         $this->cacheManagerOptions = $this->setCacheOptionsArray($cacheManagerOptions);
-        if(!$this->cacheManager) {
+        if (!$this->cacheManager) {
             $this->setCacheManager($this->cacheManagerOptions['cachemanager']);
         }
         return $this;
@@ -278,30 +274,25 @@ class ClientBuilder extends Magic
     {
         $apiKeyProperties = null;
 
-        if ($this->apiKeyProperties)
-        {
+        if ($this->apiKeyProperties) {
 
             $apiKeyProperties = parse_ini_string($this->apiKeyProperties);
 
-        } else
-        {
+        } else {
 
             // need to load the properties file
             $apiKeyProperties = $this->getFileExtract();
 
-            if (!$apiKeyProperties)
-            {
+            if (!$apiKeyProperties) {
                 throw new \InvalidArgumentException('No API Key file could be found or loaded from a file location. ' .
                     'Please  configure the "apiKeyFileLocation" property or alternatively configure a ' .
                     "PHP 'ini' compliant string, by setting the 'apiKeyProperties' property.");
             }
         }
 
-        if (!$this->cacheManager)
-        {
+        if (!$this->cacheManager) {
             $this->setCacheManagerOptions();
         }
-
 
         $apiKeyId = $this->getRequiredPropertyValue($apiKeyProperties, 'apiKeyId', $this->apiKeyIdPropertyName);
 
@@ -309,15 +300,13 @@ class ClientBuilder extends Magic
 
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
 
-        $signer = $this->resolveSigner();
-        $requestSigner = new $signer;
-
         return new Client(
             $apiKey,
             $this->cacheManager,
             $this->cacheManagerOptions,
             $this->baseURL,
-            $requestSigner
+            null,
+            $this->authenticationScheme
         );
 
     }
@@ -332,8 +321,7 @@ class ClientBuilder extends Magic
     {
         $result = array_key_exists($propertyName, $apiKeyProperties) ? $apiKeyProperties[$propertyName] : false;
 
-        if (!$result)
-        {
+        if (!$result) {
             throw new \InvalidArgumentException("There is no '$propertyName' property in the " .
                 "configured apiKey file or properties string.  You can either specify that property or " .
                 "configure the '$masterName' PropertyName value on the ClientBuilder to specify a " .
@@ -346,8 +334,7 @@ class ClientBuilder extends Magic
     private function getFileExtract()
     {
         // @codeCoverageIgnoreStart
-        if (stripos($this->apiKeyFileLocation, 'http') === 0)
-        {
+        if (stripos($this->apiKeyFileLocation, 'http') === 0) {
             $request = new DefaultRequest(Request::METHOD_GET, $this->apiKeyFileLocation);
 
             $executor = new HttpClientRequestExecutor;
@@ -355,20 +342,17 @@ class ClientBuilder extends Magic
             try {
                 $response = $executor->executeRequest($request);
 
-                if (!$response->isError())
-                {
+                if (!$response->isError()) {
                     return parse_ini_string($response->getBody());
 
                 }
-            } catch (Exception $e)
-            {
+            } catch (Exception $e) {
                 return false;
             }
         }
         // @codeCoverageIgnoreEnd
 
-        if ($this->apiKeyFileLocation)
-        {
+        if ($this->apiKeyFileLocation) {
             return parse_ini_file($this->apiKeyFileLocation);
         }
     }
@@ -384,25 +368,25 @@ class ClientBuilder extends Magic
             'regions' => array(
                 'accounts' => array(
                     'ttl' => 60,
-                    'tti' => 120
+                    'tti' => 120,
                 ),
                 'applications' => array(
                     'ttl' => 60,
-                    'tti' => 120
+                    'tti' => 120,
                 ),
                 'directories' => array(
                     'ttl' => 60,
-                    'tti' => 120
+                    'tti' => 120,
                 ),
                 'groups' => array(
                     'ttl' => 60,
-                    'tti' => 120
+                    'tti' => 120,
                 ),
                 'tenants' => array(
                     'ttl' => 60,
-                    'tti' => 120
+                    'tti' => 120,
                 ),
-            )
+            ),
         );
         return array_replace($defaults, $overrides);
     }
@@ -411,30 +395,23 @@ class ClientBuilder extends Magic
     {
         $notCoreClass = true;
 
-        if(class_exists($cacheManager))
+        if (class_exists($cacheManager)) {
             $notCoreClass = class_implements($cacheManager) == 'Stormpath\Cache\CacheManager';
+        }
 
-        if(class_exists($cacheManager) && $notCoreClass) return $cacheManager;
+        if (class_exists($cacheManager) && $notCoreClass) {
+            return $cacheManager;
+        }
 
-        if(strpos($cacheManager, 'CacheManager')) {
+        if (strpos($cacheManager, 'CacheManager')) {
             $cacheManagerPath = "{$cacheManager}";
         } else {
             $cacheManagerPath = "Stormpath\\Cache\\{$cacheManager}CacheManager";
         }
 
-
-        if(class_exists($cacheManagerPath)) return $cacheManagerPath;
-
-    }
-
-    private function resolveSigner()
-    {
-        $signer = "\\Stormpath\\Http\\Authc\\" . $this->authenticationScheme . "RequestSigner";
-
-        if(!class_exists($signer))
-            throw new \InvalidArgumentException('Authentication Scheme is not supported.');
-
-        return new $signer;
+        if (class_exists($cacheManagerPath)) {
+            return $cacheManagerPath;
+        }
 
     }
 }

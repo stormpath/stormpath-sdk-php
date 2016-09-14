@@ -18,37 +18,10 @@ namespace Stormpath\Http\Authc;
  * limitations under the License.
  */
 
-use Stormpath\ApiKey;
-use Stormpath\Http\Request;
-use Stormpath\Stormpath;
-
+/**
+ * @deprecated Pass the $authenticationScheme option to Client/ClientBuilder instead
+ */
 class BasicRequestSigner implements RequestSigner
 {
-    const AUTHORIZATION_HEADER   = 'Authorization';
-    const STORMPATH_DATE_HEADER  = 'X-Stormpath-Date';
-    const AUTHENTICATION_SCHEME  = Stormpath::BASIC_AUTHENTICATION_SCHEME;
 
-    const TIMESTAMP_FORMAT       = 'Ymd\THms\Z';
-    const TIME_ZONE              = 'UTC';
-
-    const NL                     = "\n";
-
-    public function sign(Request $request, ApiKey $apiKey)
-    {
-        date_default_timezone_set(self::TIME_ZONE);
-        $date = new \DateTime();
-        $timeStamp = $date->format(self::TIMESTAMP_FORMAT);
-
-        $requestHeaders = $request->getHeaders();
-
-        unset($requestHeaders[self::STORMPATH_DATE_HEADER]);
-        unset($requestHeaders[self::AUTHORIZATION_HEADER]);
-
-        $authorizationHeader = base64_encode($apiKey->getId() . ":" . $apiKey->getSecret());
-
-        $requestHeaders[self::STORMPATH_DATE_HEADER] = $timeStamp;
-        $requestHeaders[self::AUTHORIZATION_HEADER] = self::AUTHENTICATION_SCHEME . " " . $authorizationHeader;
-
-        $request->setHeaders($requestHeaders);
-    }
 }
