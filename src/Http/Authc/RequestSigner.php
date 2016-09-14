@@ -18,11 +18,10 @@ namespace Stormpath\Http\Authc;
  * limitations under the License.
  */
 
-use Stormpath\ApiKey;
-use Stormpath\Http\Request;
-
+/**
+ * @deprecated Pass the $authenticationScheme option to Client/ClientBuilder instead
+ */
 interface RequestSigner
 {
-    public function sign(Request $request, ApiKey $apiKey);
-}
 
+}
