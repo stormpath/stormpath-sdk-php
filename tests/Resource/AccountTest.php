@@ -397,32 +397,52 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $tokens = self::$account->refreshTokens;
         $this->assertInstanceOf('Stormpath\Resource\RefreshTokenList', $tokens);
     }
-    
 
-    public function testAddingCustomData()
-    {
-        $cd = self::$account->customData;
 
-        $cd->unitTest = "unit Test";
-        $cd->save();
+	public function testAddingCustomData()
+	{
+		$cd = self::$account->customData;
 
-        $account = \Stormpath\Resource\Account::get(self::$account->href);
-        $customData = $account->customData;
-        $this->assertEquals('unit Test', $customData->unitTest);
+		$cd->unitTest = "unit Test";
+		$cd->save();
 
-        $customData = self::$account->customData;
-        $customData->locations = array('BuildingA', 'BuildingB');
-        $customData->save();
+		$account = \Stormpath\Resource\Account::get(self::$account->href);
+		$customData = $account->customData;
+		$this->assertEquals('unit Test', $customData->unitTest);
 
-        $this->assertEquals(array('BuildingA', 'BuildingB'), $customData->locations);
+		$customData = self::$account->customData;
+		$customData->locations = array('BuildingA', 'BuildingB');
+		$customData->save();
 
-        $customData->locations = array('BuildingA', 'BuildingB', 'BuildingC');
-        $customData->save();
+		$this->assertEquals(array('BuildingA', 'BuildingB'), $customData->locations);
 
-        $newClient = self::newClientInstance();
-        $customData = $newClient->getDataStore()->getResource($customData->href, Stormpath::CUSTOM_DATA);
-        $this->assertEquals(array('BuildingA', 'BuildingB', 'BuildingC'), $customData->locations);
-    }
+		$customData->locations = array('BuildingA', 'BuildingB', 'BuildingC');
+		$customData->save();
+
+		$newClient = self::newClientInstance();
+		$customData = $newClient->getDataStore()->getResource($customData->href, Stormpath::CUSTOM_DATA);
+		$this->assertEquals(array('BuildingA', 'BuildingB', 'BuildingC'), $customData->locations);
+	}
+
+	public function testCustomDataSearch()
+	{
+
+		$client = Client::getInstance();
+
+		$accounts = $client->tenant->accounts->setSearch(['customData.unitTest'=>'unit Test']);
+		$this->assertEquals(0, $accounts->size);
+
+
+		$cd = self::$account->customData;
+		$cd->unitTest = "unit Test";
+		$cd->save();
+		usleep(100);
+
+		$accounts = $client->tenant->accounts->setSearch(['customData.unitTest'=>'unit Test']);
+		$this->assertEquals(1, $accounts->size);
+
+
+	}
 
     public function testUpdatingCustomData()
     {
