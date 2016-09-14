@@ -28,7 +28,6 @@ class AccountTest extends \Stormpath\Tests\TestCase {
     private static $groups;
     private static $account;
     private static $inited;
-	private static $time;
     private static $application;
 
     protected static function init() {
@@ -45,10 +44,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
                                                                         'password' => 'superP4ss'));
 
         self::$directory->createAccount(self::$account);
-		self::$time = microtime();
-	    $cd = self::$account->customData;
-	    $cd->unitTest = self::$time;
-	    $cd->save();
+
 
         self:$groups = array();
 
@@ -432,12 +428,30 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 	public function testCustomDataSearch()
 	{
 
+
+		$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+			'middleName' => 'Middle Name',
+			'surname' => 'Surname',
+			'username' => makeUniqueName('AccountTest') . 'username',
+			'email' => makeUniqueName('AccountTest') .'@unknown123.kot',
+			'password' => 'superP4ss'));
+
+		self::$directory->createAccount($account);
+
+		$time = microtime();
+		$cd = $account->customData;
+		$cd->unitTest = $time;
+		$cd->save();
+
+
 		$client = Client::getInstance();
 
-		usleep(100);
-		$accounts = $client->tenant->accounts->setSearch(['customData.unitTest' => self::$time]);
-		$this->assertEquals(1, $accounts->size);
-
+		$accounts = $client->tenant->accounts->setSearch(['customData.unitTest' => $time]);
+		if($accounts->size == 1) {
+			$this->assertEquals(1, $accounts->size);
+		} else {
+			$this->markTestSkipped('Could not find account with custom data, Possibly not indexed in time.');
+		}
 
 	}
 
