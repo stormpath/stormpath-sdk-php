@@ -52,8 +52,8 @@ class SAuthc1Authentication implements Authentication
 
     public function authenticate(RequestInterface $request)
     {
-        date_default_timezone_set(self::TIME_ZONE);
         $date = new \DateTime();
+	    $date->setTimezone(new \DateTimeZone(self::TIME_ZONE));
         $timeStamp = $date->format(self::TIMESTAMP_FORMAT);
         $dateStamp = $date->format(self::DATE_FORMAT);
 
