@@ -4,7 +4,7 @@ namespace Stormpath\Tests\Authc\Api;
 use Stormpath\Authc\Api\OAuthPasswordRequestAuthenticator;
 use Stormpath\Tests\TestCase;
 
-class OAuthPasswordAuthenticationResult extends TestCase
+class OAuthPasswordAuthenticationTest extends TestCase
 {
     public static $account;
 
@@ -41,16 +41,11 @@ class OAuthPasswordAuthenticationResult extends TestCase
         self::$application->createAccount(self::$account);
     }
 
+	/** @test */
+	public function
+	{
 
-    /**
-     * @test
-     */
-    public function it_returns_oauth_token_resource_on_successful_authentication()
-    {
-        $auth = new OAuthPasswordRequestAuthenticator(self::$application);
-        $tokens = $auth->authenticate(self::$account->username, 'superP4ss');
-        var_dump($tokens);
-    }
+	}
 
 
     public static function tearDownAfterClass()
