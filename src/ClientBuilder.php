@@ -300,6 +300,8 @@ class ClientBuilder extends Magic
 
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
 
+        Client::$apiKeyProperties = "apiKey.id=".$apiKeyId."\napiKey.secret=".$apiKeySecret;
+
         return new Client(
             $apiKey,
             $this->cacheManager,

@@ -160,6 +160,8 @@ class Client extends Magic
         }
 
         $this->dataStore = new DefaultDataStore($apiKey, $auth, $this->cachePool, $httpClient, $messageFactory, $uriFactory, $baseUrl);
+
+
     }
 
     public static function get($href, $className, $path = null, array $options = array())
@@ -242,6 +244,14 @@ class Client extends Magic
     public static function tearDown()
     {
         static::$instance = NULL;
+        static::$apiKeyFileLocation;
+        static::$apiKeyProperties;
+        static::$apiKeyIdPropertyName = "apiKey.id";
+        static::$apiKeySecretPropertyName = "apiKey.secret";
+        static::$baseUrl;
+        static::$cacheManager = 'Array';
+        static::$cacheManagerOptions = array();
+        static::$authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
     }
 
 

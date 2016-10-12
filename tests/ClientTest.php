@@ -91,9 +91,7 @@ class ClientTest extends TestCase {
     /** @test */
     public function the_options_array_is_cleared_after_each_request()
     {
-        $client = \Stormpath\Client::getInstance();
-
-        $tenant = $client->getDataStore()->getResource('/tenants/current', Stormpath::TENANT, ['expand'=>'applications']);
+        $tenant = self::$client->getDataStore()->getResource('/tenants/current', Stormpath::TENANT, ['expand'=>'applications']);
 
 
         foreach($tenant->getApplications() as $application) {

@@ -36,7 +36,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
         {
             return;
         }
-
         $apiKeyProperties = null;
         $apiKeyFileLocation = null;
         if (array_key_exists(self::STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION, $_SERVER) or array_key_exists(self::STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION, $_ENV))
@@ -110,6 +109,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         $resource = self::$client->dataStore->create($parentHref, $resource, get_class($resource), $options);
+
         return $resource;
     }
 

@@ -36,10 +36,14 @@ class Stormpath
     const ATTRIBUTE_STATEMENT_MAPPING_RULES             = 'Stormpath\Saml\AttributeStatementMappingRules';
     const AUTHENTICATION_RESULT                         = 'AuthenticationResult';
     const BASIC_LOGIN_ATTEMPT                           = 'BasicLoginAttempt';
+    const CHALLENGE                                     = 'Stormpath\Mfa\Challenge';
+    const CHALLENGE_LIST                                = 'Stormpath\Mfa\ChallengeList';
     const CUSTOM_DATA                                   = 'CustomData';
     const DIRECTORY                                     = 'Directory';
     const DIRECTORY_LIST                                = 'DirectoryList';
     const EMAIL_VERIFICATION_TOKEN                      = 'EmailVerificationToken';
+    const FACTOR                                        = 'Stormpath\Mfa\Factor';
+    const FACTOR_LIST                                   = 'Stormpath\Mfa\FactorList';
     const FACEBOOK_PROVIDER                             = 'FacebookProvider';
     const FACEBOOK_PROVIDER_DATA                        = "FacebookProviderData";
     const GITHUB_PROVIDER                               = 'GithubProvider';
@@ -59,6 +63,8 @@ class Stormpath
     const PASSWORD_POLICY                               = 'Stormpath\Directory\PasswordPolicy';
     const PASSWORD_RESET_TOKEN                          = 'PasswordResetToken';
     const PASSWORD_STRENGTH                             = 'Stormpath\Directory\PasswordStrength';
+    const PHONE                                         = 'Stormpath\Mfa\Phone';
+    const PHONE_LIST                                    = 'Stormpath\Mfa\PhoneList';
     const PROVIDER                                      = 'Provider';
     const PROVIDER_ACCOUNT_ACCESS                       = 'ProviderAccountAccess';
     const PROVIDER_ACCOUNT_RESULT                       = 'ProviderAccountResult';
@@ -69,6 +75,8 @@ class Stormpath
     const MODELED_EMAIL_TEMPLATE_LIST                   = 'Stormpath\Mail\ModeledEmailTemplateList';
     const SAML_PROVIDER                                 = 'SamlProvider';
     const SAML_PROVIDER_DATA                            = 'SamlProviderData';
+    const SMS_CHALLENGE                                 = 'Stormpath\Mfa\SmsChallenge';
+    const SMS_FACTOR                                    = 'Stormpath\Mfa\SmsFactor';
     const TENANT                                        = 'Tenant';
     const UNMODELED_EMAIL_TEMPLATE                      = 'Stormpath\Mail\UnmodeledEmailTemplate';
     const UNMODELED_EMAIL_TEMPLATE_LIST                 = 'Stormpath\Mail\UnmodeledEmailTemplateList';
@@ -79,6 +87,15 @@ class Stormpath
     const DISABLED                                      = 'DISABLED';
     const UNVERIFIED                                    = 'UNVERIFIED';
     const LOCKED                                        = 'LOCKED';
+    const CREATED                                       = 'CREATED';
+    const WAITING                                       = 'WAITING';
+    const SUCCESS                                       = 'SUCCESS';
+    const FAILED                                        = 'FAILED';
+    const DENIED                                        = 'DENIED';
+    const CANCELLED                                     = 'CANCELLED';
+    const EXPIRED                                       = 'EXPIRED';
+    const ERROR                                         = 'ERROR';
+    const UNDELIVERED                                   = 'UNDELIVERED';
 
     const OFFSET                                        = 'offset';
     const LIMIT                                         = 'limit';
@@ -95,6 +112,8 @@ class Stormpath
     const MIME_PLAIN_TEXT                               = 'text/plain';
     const MIME_HTML                                     = 'text/html';
 
+    const MFA_CHALLENGE_CODE_PLACEHOLDER                = '${code}';
+
     public static $Statuses             = array(self::DISABLED => self::DISABLED,
                                             self::ENABLED => self::ENABLED);
 
@@ -109,5 +128,6 @@ class Stormpath
     public static $MimeTypes            = array(
                                             self::MIME_PLAIN_TEXT => self::MIME_PLAIN_TEXT,
                                             self::MIME_HTML => self::MIME_HTML);
+
 
 }

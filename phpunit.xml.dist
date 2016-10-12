@@ -6,6 +6,7 @@
     <testsuites>
         <testsuite name="Stormpath SDK Test Suite">
             <directory suffix="Test.php">./tests</directory>
+            <exclude>./tests/Mfa/Physical</exclude>
         </testsuite>
     </testsuites>
 

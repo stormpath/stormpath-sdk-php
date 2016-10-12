@@ -36,7 +36,7 @@ class Resource extends Magic
     public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null, array $options = array())
     {
         parent::__construct();
-        $this->dataStore = $dataStore;
+        $this->dataStore = $dataStore ?: \Stormpath\Client::getInstance()->getDataStore();
         $this->setProperties($properties);
         $this->options = $options;
     }
