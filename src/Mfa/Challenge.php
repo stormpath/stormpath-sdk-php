@@ -36,7 +36,6 @@ abstract class Challenge extends InstanceResource implements Deletable
 
     const PATH          = "challenges";
 
-    public abstract static function instantiate($properties = null);
 
     public abstract function validate($code);
 
