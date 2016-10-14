@@ -21,8 +21,10 @@ namespace Stormpath\Tests\Mfa;
 use PHPUnit_Framework_Assert;
 use ReflectionClass;
 use Stormpath\Mfa\Factor;
+use Stormpath\Mfa\SmsFactor;
 use Stormpath\Resource\Account;
 use Stormpath\Resource\Resource;
+use Stormpath\Stormpath;
 use Stormpath\Tests\TestCase;
 
 class FactorTest extends TestCase

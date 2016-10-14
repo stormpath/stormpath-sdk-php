@@ -143,5 +143,13 @@ class SmsFactorTest extends TestCase
             ]));
     }
 
+    /** @test */
+    public function instantiating_sms_factor_has_default_type()
+    {
+        $factor = SmsFactor::instantiate();
+        $this->assertInstanceOf(Stormpath::SMS_FACTOR, $factor);
+        $this->assertEquals('sms', $factor->getType());
+    }
+
 
 }

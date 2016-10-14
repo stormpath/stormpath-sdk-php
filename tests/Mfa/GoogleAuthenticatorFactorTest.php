@@ -207,5 +207,12 @@ class GoogleAuthenticatorFactorTest extends TestCase
             ]));
     }
 
+    /** @test */
+    public function instantiating_sms_factor_has_default_type()
+    {
+        $factor = GoogleAuthenticatorFactor::instantiate();
+        $this->assertInstanceOf(Stormpath::GOOGLE_AUTHENTICATOR_FACTOR, $factor);
+        $this->assertEquals('google-authenticator', $factor->getType());
+    }
 
 }
