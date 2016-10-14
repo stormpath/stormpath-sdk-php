@@ -36,6 +36,17 @@ class SmsFactor extends Factor
         $this->setType('sms');
     }
 
+    public static function get($href, array $options = array())
+    {
+        return Client::get($href, Stormpath::SMS_FACTOR, self::PATH, $options);
+    }
+
+    public static function instantiate($properties = [])
+    {
+        $properties = array_merge($properties, ['type'=>'sms']);
+        return Client::instantiate(Stormpath::SMS_FACTOR, $properties);
+    }
+
 
     /**
      * Gets the phone resource property.

@@ -23,6 +23,7 @@ use Stormpath\Stormpath;
 
 class ChallengeList extends AbstractCollectionResource {
 
+
     /**
      * Returns the class name for the Challenge.
      *

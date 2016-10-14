@@ -24,6 +24,7 @@ use Stormpath\Mfa\Factor;
 use Stormpath\Mfa\FactorList;
 use Stormpath\Mfa\Phone;
 use Stormpath\Mfa\PhoneList;
+use Stormpath\Mfa\SmsFactor;
 use Stormpath\Stormpath;
 
 class Account extends InstanceResource implements Deletable
@@ -226,7 +227,7 @@ class Account extends InstanceResource implements Deletable
     {
         $href = $this->getHref() . '/' . $factor::PATH;
 
-        if(null !== $factor->getChallenge()) {
+        if($factor instanceof SmsFactor && null !== $factor->getChallenge()) {
             $href .= '?challenge=true';
         }
 

@@ -92,6 +92,19 @@ abstract class Factor extends InstanceResource implements Deletable
     }
 
     /**
+     * Sets the status property.
+     *
+     * @param string $status The status of the object.
+     * @return self
+     */
+    public function setStatus($status)
+    {
+        $this->setProperty(self::STATUS, $status);
+
+        return $this;
+    }
+
+    /**
      * Gets the verificationStatus property.
      *
      * @return string

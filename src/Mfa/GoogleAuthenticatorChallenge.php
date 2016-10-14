@@ -21,47 +21,18 @@ namespace Stormpath\Mfa;
 use Stormpath\Client;
 use Stormpath\Stormpath;
 
-class SmsChallenge extends Challenge
+class GoogleAuthenticatorChallenge extends Challenge
 {
-
-    const MESSAGE = "message";
 
 
     public static function get($href, array $options = array())
     {
-        return Client::get($href, Stormpath::SMS_CHALLENGE, self::PATH, $options);
+        return Client::get($href, Stormpath::GOOGLE_AUTHENTICATOR_CHALLENGE, self::PATH, $options);
     }
 
     public static function instantiate($properties = null)
     {
-        return Client::instantiate(Stormpath::SMS_CHALLENGE, $properties);
-    }
-
-    /**
-     * Gets the message property.
-     *
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->getProperty(self::MESSAGE);
-    }
-
-    /**
-     * Sets the message property.
-     *
-     * @param string $message The message of the object.
-     * @return self
-     */
-    public function setMessage($message)
-    {
-        if(!strpos($message, Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER)) {
-            throw new \InvalidArgumentException('The message must contain a code placeholder: ' . Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER);
-        }
-
-        $this->setProperty(self::MESSAGE, $message);
-
-        return $this;
+        return Client::instantiate(Stormpath::GOOGLE_AUTHENTICATOR_CHALLENGE, $properties);
     }
 
     /**
@@ -74,7 +45,7 @@ class SmsChallenge extends Challenge
     {
         $this->setCode($code);
 
-        $returnedChallenge = $this->getDataStore()->save($this, Stormpath::SMS_CHALLENGE);
+        $returnedChallenge = $this->getDataStore()->save($this, Stormpath::GOOGLE_AUTHENTICATOR_CHALLENGE);
 
         if($returnedChallenge->getStatus() == Stormpath::SUCCESS) {
             return $returnedChallenge;

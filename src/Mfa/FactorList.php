@@ -28,6 +28,8 @@ class FactorList extends AbstractCollectionResource
         switch(strtolower($properties->type)) {
             case 'sms' :
                 return $this->dataStore->instantiate(Stormpath::SMS_FACTOR, $properties);
+            case 'google-authenticator' :
+                return $this->dataStore->instantiate(Stormpath::GOOGLE_AUTHENTICATOR_FACTOR, $properties);
         }
 
         return $this->dataStore->instantiate($className, $properties);

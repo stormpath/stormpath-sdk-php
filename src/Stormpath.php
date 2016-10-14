@@ -48,6 +48,8 @@ class Stormpath
     const FACEBOOK_PROVIDER_DATA                        = "FacebookProviderData";
     const GITHUB_PROVIDER                               = 'GithubProvider';
     const GITHUB_PROVIDER_DATA                          = "GithubProviderData";
+    const GOOGLE_AUTHENTICATOR_CHALLENGE                = 'Stormpath\Mfa\GoogleAuthenticatorChallenge';
+    const GOOGLE_AUTHENTICATOR_FACTOR                   = 'Stormpath\Mfa\GoogleAuthenticatorFactor';
     const GOOGLE_PROVIDER                               = 'GoogleProvider';
     const GOOGLE_PROVIDER_DATA                          = "GoogleProviderData";
     const GRANT_AUTHENTICATION_TOKEN                    = "GrantAuthenticationToken";
