@@ -268,6 +268,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $uri = $this->uriFactory->createUri($href);
         $uri = $uri->withQuery(self::appendQueryValues($uri->getQuery(), $query));
         $request = $this->messageFactory->createRequest($httpMethod, $uri, $headers, $body);
+
         $response = $this->httpClient->sendRequest($request);
 
         $result = $response->getBody() ? json_decode($response->getBody()) : null;
