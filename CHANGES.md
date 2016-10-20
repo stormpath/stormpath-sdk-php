@@ -2,6 +2,15 @@ stormpath-sdk-php Changelog
 ===========================
 
 
+Version 1.17.0
+--------------
+
+Released on October 20, 2016
+
+ - Added MFA 
+ - Converted HTTP requests to using psr-7
+ - General Updates and bug fixes
+
 Version 1.16.0
 --------------
 
