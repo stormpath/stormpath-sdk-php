@@ -1,8 +1,5 @@
 <?php
-
-namespace Stormpath\Http;
-
-/*
+/**
  * Copyright 2016 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +13,20 @@ namespace Stormpath\Http;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
-interface RequestExecutor
+
+namespace Stormpath\Tests\Mfa;
+
+use Stormpath\Mfa\FactorList;
+use Stormpath\Tests\TestCase;
+
+class FactorListTest extends TestCase
 {
-
-    public function executeRequest(Request $request, $redirectsLimit = 10);
-
+    /** @test */
+    public function returns_correct_item_class_name()
+    {
+        $factorList = new FactorList();
+        $this->assertEquals(\Stormpath\Stormpath::FACTOR, $factorList->getItemClassName());
+    }
 }

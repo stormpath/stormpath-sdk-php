@@ -1,7 +1,4 @@
 <?php
-
-namespace Stormpath\Http;
-
 /*
  * Copyright 2016 Stormpath, Inc.
  *
@@ -17,26 +14,19 @@ namespace Stormpath\Http;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-interface Request extends HttpMessage {
 
+namespace Stormpath\Tests\Mfa;
 
-    const METHOD_GET    = 'GET';
-    const METHOD_POST   = 'POST';
-    const METHOD_DELETE = 'DELETE';
+use Stormpath\Mfa\PhoneList;
+use Stormpath\Tests\TestCase;
 
-    public function getMethod();
+class PhoneListTest extends TestCase
+{
+    /** @test */
+    public function returns_correct_item_class_name()
+    {
+        $phoneList = new PhoneList();
+        $this->assertEquals(\Stormpath\Stormpath::PHONE, $phoneList->getItemClassName());
+    }
 
-    public function getResourceUrl();
-
-    public function getQueryString();
-
-    public function setQueryString(array $queryString);
-
-    public function setBody($body, $length);
-
-    function toStrQueryString($canonical);
-
-    function setResourceUrl($resourceUrl);
-
-    public function getApiKey();
 }

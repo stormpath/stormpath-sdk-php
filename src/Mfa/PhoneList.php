@@ -1,8 +1,5 @@
 <?php
-
-namespace Stormpath\Http;
-
-/*
+/**
  * Copyright 2016 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,16 +13,21 @@ namespace Stormpath\Http;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ *
  */
-interface Response extends HttpMessage
+
+
+namespace Stormpath\Mfa;
+
+use Stormpath\Resource\AbstractCollectionResource;
+use Stormpath\Stormpath;
+
+class PhoneList extends AbstractCollectionResource
 {
 
-    public function  getHttpStatus();
-
-    public function  isError();
-
-    public function  isServerError();
-
-    public function  isClientError();
-
+    function getItemClassName()
+    {
+        return Stormpath::PHONE;
+    }
 }

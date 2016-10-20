@@ -25,6 +25,7 @@ class Tenant extends InstanceResource
 {
     const NAME          = "name";
     const KEY           = "key";
+    const ACCOUNTS      = "accounts";
     const APPLICATIONS  = "applications";
     const CUSTOM_DATA   = "customData";
     const DIRECTORIES   = "directories";
@@ -80,6 +81,11 @@ class Tenant extends InstanceResource
     public function getDirectories(array $options = array())
     {
         return $this->getResourceProperty(self::DIRECTORIES, Stormpath::DIRECTORY_LIST, $options);
+    }
+
+    public function getAccounts(array $options = [])
+    {
+    	return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT_LIST, $options);
     }
 
     public function getCustomData(array $options = array())

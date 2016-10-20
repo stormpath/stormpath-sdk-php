@@ -18,25 +18,52 @@
 namespace Stormpath\Tests\Resource;
 
 use Stormpath\Client;
+use Stormpath\Mfa\Phone;
+use Stormpath\Mfa\PhoneList;
+use Stormpath\Resource\Account;
+use Stormpath\Resource\Application;
+use Stormpath\Resource\Directory;
+use Stormpath\Resource\Expansion;
+use Stormpath\Resource\Group;
+use Stormpath\Resource\GroupList;
 use Stormpath\Stormpath;
 
 class AccountTest extends \Stormpath\Tests\TestCase {
 
     const GROUPS_COUNT = 45;
 
+    /**
+     * @var Directory
+     */
     private static $directory;
+
+    /**
+     * @var GroupList
+     */
     private static $groups;
+
+    /**
+     * @var Account
+     */
     private static $account;
+
+    /**
+     * @var boolean
+     */
     private static $inited;
+
+    /**
+     * @var Application
+     */
     private static $application;
 
     protected static function init() {
 
-        self::$directory = \Stormpath\Resource\Directory::instantiate(array('name' => makeUniqueName('AccountTest Directory')));
+        self::$directory = Directory::instantiate(array('name' => makeUniqueName('AccountTest Directory')));
 
-        self::createResource(\Stormpath\Resource\Directory::PATH, self::$directory);
+        self::createResource(Directory::PATH, self::$directory);
 
-        self::$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+        self::$account = Account::instantiate(array('givenName' => 'Account Name',
                                                                         'middleName' => 'Middle Name',
                                                                         'surname' => 'Surname',
                                                                         'username' => makeUniqueName('AccountTest') . 'username',
@@ -45,12 +72,13 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
         self::$directory->createAccount(self::$account);
 
+
         self:$groups = array();
 
         $groupsCount = 0;
         while($groupsCount < self::GROUPS_COUNT)
         {
-            $group = \Stormpath\Resource\Group::instantiate(array('name' => " $groupsCount Group Name " . phpversion(), 'description' => "The Group Description $groupsCount"));
+            $group = Group::instantiate(array('name' => " $groupsCount Group Name " . phpversion(), 'description' => "The Group Description $groupsCount"));
             self::$directory->createGroup($group);
             self::$account->addGroup($group);
             $groups[$groupsCount] = $group;
@@ -80,30 +108,30 @@ class AccountTest extends \Stormpath\Tests\TestCase {
     public function testGet() {
 
         // get it from full href
-        $account = \Stormpath\Resource\Account::get(self::$account->href);
+        $account = Account::get(self::$account->href);
 
         $this->assertInstanceOf('Stormpath\Resource\Account', $account);
         $this->assertEquals('Account Name', $account->givenName);
 
-        $path = \Stormpath\Resource\Account::PATH;
+        $path = Account::PATH;
 
         //get it from id (ACCOUNT_ID)
         $accountId =  substr($account->href, strpos($account->href, $path) + strlen($path) + 1);
-        $account = \Stormpath\Resource\Account::get($accountId);
+        $account = Account::get($accountId);
 
         $this->assertInstanceOf('Stormpath\Resource\Account', $account);
         $this->assertEquals('Account Name', $account->givenName);
 
         //get it from path with no slash (accounts/ACCOUNT_ID)
         $accountPath =  substr($account->href, strpos($account->href, $path));
-        $account = \Stormpath\Resource\Account::get($accountPath);
+        $account = Account::get($accountPath);
 
         $this->assertInstanceOf('Stormpath\Resource\Account', $account);
         $this->assertEquals('Account Name', $account->givenName);
 
         //get it from path with slash (/accounts/ACCOUNT_ID)
         $accountPath =  substr($account->href, strpos($account->href, "/$path"));
-        $account = \Stormpath\Resource\Account::get($accountPath);
+        $account = Account::get($accountPath);
 
         $this->assertInstanceOf('Stormpath\Resource\Account', $account);
         $this->assertEquals('Account Name', $account->givenName);
@@ -115,36 +143,36 @@ class AccountTest extends \Stormpath\Tests\TestCase {
      */
     public function testGetNotFound()
     {
-        \Stormpath\Resource\Account::get('unknown');
+        Account::get('unknown');
     }
 
     public function testGetOptions() {
 
         $options = array('expand' => 'groups(offset:5,limit:30)');
-        $account = \Stormpath\Resource\Account::get(self::$account->href, $options);
+        $account = Account::get(self::$account->href, $options);
 
         // testing that the groups collection was successfully expanded
         $this->assertEquals(30, count($account->groups->currentPage->items));
 
         //testing some expansion use cases
-        $expansion = new \Stormpath\Resource\Expansion();
+        $expansion = new Expansion();
         $expansion->addProperty('groupMemberships', array('limit' => 2));
-        $account = \Stormpath\Resource\Account::get(self::$account->href, $expansion->toExpansionArray());
+        $account = Account::get(self::$account->href, $expansion->toExpansionArray());
         $this->assertEquals(2, $account->groupMemberships->currentPage->limit);
 
         $expansion->addProperty('groupMemberships', array('offset' => 1));
-        $account = \Stormpath\Resource\Account::get(self::$account->href, $expansion->toExpansionArray());
+        $account = Account::get(self::$account->href, $expansion->toExpansionArray());
         $this->assertEquals(1, $account->groupMemberships->currentPage->offset);
 
         $expansion->addProperty('groupMemberships', array('limit' => 10, 'offset' => 2));
         $expansion->addProperty('directory');
-        $account = \Stormpath\Resource\Account::get(self::$account->href, $expansion->toExpansionArray());
+        $account = Account::get(self::$account->href, $expansion->toExpansionArray());
         $this->assertEquals(10, $account->groupMemberships->currentPage->limit);
         $this->assertEquals(2, $account->groupMemberships->currentPage->offset);
         $this->assertEquals(3, count(array_intersect(array('name', 'description', 'status'), $account->directory->propertyNames)));
 
         $expansion = '?expand = directory,groupMemberships';
-        $account = \Stormpath\Resource\Account::get(self::$account->href . $expansion);
+        $account = Account::get(self::$account->href . $expansion);
         $this->assertEquals(25, $account->groupMemberships->currentPage->limit);
         $this->assertEquals(0, $account->groupMemberships->currentPage->offset);
         $this->assertEquals(3, count(array_intersect(array('name', 'description', 'status'), $account->directory->propertyNames)));
@@ -157,7 +185,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
         // bad expansion format
         $options = array('expand' => 'groups(5,30)');
-        \Stormpath\Resource\Account::get(self::$account->href, $options);
+        Account::get(self::$account->href, $options);
     }
 
     public function testGetters()
@@ -167,12 +195,14 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $this->assertEquals('Middle Name', $account->middleName);
         $this->assertEquals('Surname', $account->surname);
         $this->assertEquals('Account Name Middle Name Surname', $account->fullName);
-        $this->assertEquals(\Stormpath\Stormpath::ENABLED, $account->status);
+        $this->assertEquals(Stormpath::ENABLED, $account->status);
         $this->assertContains('username', $account->username);
         $this->assertContains('@unknown123.kot', $account->email);
         $this->assertInstanceOf('\Stormpath\Resource\Tenant', $account->tenant);
         $this->assertEquals(self::$client->tenant->name, $account->tenant->name);
         $this->assertInstanceOf('\Stormpath\Resource\Directory', $account->directory);
+        $this->assertInstanceOf(\Stormpath\Mfa\PhoneList::class, $account->phones);
+        $this->assertInstanceOf(\Stormpath\Mfa\FactorList::class, $account->factors);
         $this->assertEquals(self::$directory->name, $account->directory->name);
         $account->emailVerificationToken;
 
@@ -198,7 +228,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
     public function testSetters()
     {
-        $account = \Stormpath\Resource\Account::instantiate();
+        $account = Account::instantiate();
 
         $this->assertInstanceOf('\Stormpath\Resource\Account', $account);
 
@@ -213,7 +243,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $this->assertEquals('Account Name', $account->givenName);
         $this->assertEquals('Middle Name', $account->middleName);
         $this->assertEquals('Surname', $account->surname);
-        $this->assertEquals(\Stormpath\Stormpath::UNVERIFIED, $account->status);
+        $this->assertEquals(Stormpath::UNVERIFIED, $account->status);
         $this->assertEquals('username', $account->username);
         $this->assertEquals('email@unknown123.kot', $account->email);
     }
@@ -285,7 +315,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $groups->order = \Stormpath\Resource\Order::format(array('name'), 'desc');
         $search = new \Stormpath\Resource\Search();
         $groups->search = $search->setFilter(9);
-        $groups->expansion = \Stormpath\Resource\Expansion::format(array('directory'));
+        $groups->expansion = Expansion::format(array('directory'));
 
         $this->assertGroupOptions($groups);
 
@@ -356,7 +386,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
     public function testAddGroup()
     {
 
-        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+        $account = Account::instantiate(array('givenName' => 'Account Name',
                                                                   'middleName' => 'Middle Name',
                                                                   'surname' => 'Surname',
                                                                   'username' => makeUniqueName('AccountTest testAddGroup') . 'username',
@@ -365,7 +395,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
         self::$directory->createAccount($account);
 
-        $group = \Stormpath\Resource\Group::instantiate(array('name' => makeUniqueName('AccountTest testAddGroup') . "Group Name"));
+        $group = Group::instantiate(array('name' => makeUniqueName('AccountTest testAddGroup') . "Group Name"));
         self::$directory->createGroup($group);
 
         $account->addGroup($group);
@@ -382,7 +412,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
      */
     public function testAddGroupNonExistent()
     {
-        self::$account->addGroup(\Stormpath\Resource\Group::instantiate());
+        self::$account->addGroup(Group::instantiate());
     }
 
 
@@ -397,32 +427,62 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $tokens = self::$account->refreshTokens;
         $this->assertInstanceOf('Stormpath\Resource\RefreshTokenList', $tokens);
     }
-    
 
-    public function testAddingCustomData()
-    {
-        $cd = self::$account->customData;
 
-        $cd->unitTest = "unit Test";
-        $cd->save();
+	public function testAddingCustomData()
+	{
+		$cd = self::$account->customData;
 
-        $account = \Stormpath\Resource\Account::get(self::$account->href);
-        $customData = $account->customData;
-        $this->assertEquals('unit Test', $customData->unitTest);
+		$cd->unitTest = "unit Test";
+		$cd->save();
 
-        $customData = self::$account->customData;
-        $customData->locations = array('BuildingA', 'BuildingB');
-        $customData->save();
+		$account = Account::get(self::$account->href);
+		$customData = $account->customData;
+		$this->assertEquals('unit Test', $customData->unitTest);
 
-        $this->assertEquals(array('BuildingA', 'BuildingB'), $customData->locations);
+		$customData = self::$account->customData;
+		$customData->locations = array('BuildingA', 'BuildingB');
+		$customData->save();
 
-        $customData->locations = array('BuildingA', 'BuildingB', 'BuildingC');
-        $customData->save();
+		$this->assertEquals(array('BuildingA', 'BuildingB'), $customData->locations);
 
-        $newClient = self::newClientInstance();
-        $customData = $newClient->getDataStore()->getResource($customData->href, Stormpath::CUSTOM_DATA);
-        $this->assertEquals(array('BuildingA', 'BuildingB', 'BuildingC'), $customData->locations);
-    }
+		$customData->locations = array('BuildingA', 'BuildingB', 'BuildingC');
+		$customData->save();
+
+		$newClient = self::newClientInstance();
+		$customData = $newClient->getDataStore()->getResource($customData->href, Stormpath::CUSTOM_DATA);
+		$this->assertEquals(array('BuildingA', 'BuildingB', 'BuildingC'), $customData->locations);
+	}
+
+	public function testCustomDataSearch()
+	{
+
+
+		$account = Account::instantiate(array('givenName' => 'Account Name',
+			'middleName' => 'Middle Name',
+			'surname' => 'Surname',
+			'username' => makeUniqueName('AccountTest') . 'username',
+			'email' => makeUniqueName('AccountTest') .'@unknown123.kot',
+			'password' => 'superP4ss'));
+
+		self::$directory->createAccount($account);
+
+		$time = microtime();
+		$cd = $account->customData;
+		$cd->unitTest = $time;
+		$cd->save();
+
+
+		$client = Client::getInstance();
+
+		$accounts = $client->tenant->accounts->setSearch(['customData.unitTest' => $time]);
+		if($accounts->size == 1) {
+			$this->assertEquals(1, $accounts->size);
+		} else {
+			$this->markTestSkipped('Could not find account with custom data, Possibly not indexed in time.');
+		}
+
+	}
 
     public function testUpdatingCustomData()
     {
@@ -431,12 +491,12 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $cd->unitTest = "some change";
         $cd->save();
 
-        $account = \Stormpath\Resource\Account::get(self::$account->href);
+        $account = Account::get(self::$account->href);
         $customData = $account->customData;
         $this->assertEquals('some change', $customData->unitTest);
 
         // testing for issue #47
-        $account = \Stormpath\Resource\Account::instantiate(array(
+        $account = Account::instantiate(array(
             'givenName' => 'Account Name',
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
@@ -507,7 +567,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
     public function testDelete()
     {
 
-        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+        $account = Account::instantiate(array('givenName' => 'Account Name',
                                                                   'middleName' => 'Middle Name',
                                                                   'surname' => 'Surname',
                                                                   'username' => makeUniqueName('AccountTest testDelete') . 'username',
@@ -518,7 +578,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
         $href = $account->href;
 
-        $account = \Stormpath\Resource\Account::get($href);
+        $account = Account::get($href);
 
         // make sure the account exists before deleting
         $this->assertInstanceOf('Stormpath\Resource\Account', $account);
@@ -527,13 +587,13 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $account->delete();
 
         // should throw the expected exception after deleting
-        \Stormpath\Resource\Account::get($href);
+        Account::get($href);
     }
 
 
     public function testShouldBeAbleToGetAccountViaHTMLFragment()
     {
-        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+        $account = Account::instantiate(array('givenName' => 'Account Name',
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
             'username' => makeUniqueName('AccountTest testShouldBeAbleToGetAccountViaHtmlFragment') . 'username',
@@ -546,7 +606,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
         $hrefParts = array_reverse(explode('/',$account->href));
 
-        $acct = \Stormpath\Resource\Account::get($hrefParts[0]);
+        $acct = Account::get($hrefParts[0]);
 
         $this->assertInstanceOf('\Stormpath\Resource\Account', $account);
         $this->assertEquals($href, $acct->href);
@@ -566,10 +626,10 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         // SomePassw0rd!
         $username = makeUniqueName('AccountTest testImportingAPasswordViaStaticCreates') . 'username';
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingAPasswordViaStaticCreates'), 'description' => 'Description of Main App', 'status' => 'enabled'));
-        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
+        self::$application = Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingAPasswordViaStaticCreates'), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(Application::PATH, self::$application, array('createDirectory' => true));
 
-        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+        $account = Account::instantiate(array('givenName' => 'Account Name',
                                                                   'middleName' => 'Middle Name',
                                                                   'surname' => 'Surname',
                                                                   'username' => $username,
@@ -592,8 +652,8 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $username = makeUniqueName('AccountTest testImportingAPasswordViaStandardCreates') . 'username';
         $client = Client::getInstance();
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingAPasswordViaStandardCreates'), 'description' => 'Description of Main App', 'status' => 'enabled'));
-        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
+        self::$application = Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingAPasswordViaStandardCreates'), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
         $account->email = 'john.smith@example.com';
@@ -619,8 +679,8 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $username = makeUniqueName('AccountTest testImportingSelfCreatedPasswordWithMD5') . 'username';
         $client = Client::getInstance();
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingSelfCreatedPasswordWithMD5'), 'description' => 'Description of Main App', 'status' => 'enabled'));
-        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
+        self::$application = Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingSelfCreatedPasswordWithMD5'), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
         $account->email = 'john.smith@example.com';
@@ -645,8 +705,8 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $username = makeUniqueName('AccountTest testImportingSelfCreatedPasswordWithSHA512') . 'username';
         $client = Client::getInstance();
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingSelfCreatedPasswordWithSHA512'), 'description' => 'Description of Main App', 'status' => 'enabled'));
-        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
+        self::$application = Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingSelfCreatedPasswordWithSHA512'), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
         $account->email = 'john.smith@example.com';
@@ -675,8 +735,8 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $username = makeUniqueName('AccountTest testImportingInvalidPasswordTypeShouldThrowException') . 'username';
         $client = Client::getInstance();
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingInvalidPasswordTypeShouldThrowException'), 'description' => 'Description of Main App', 'status' => 'enabled'));
-        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
+        self::$application = Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingInvalidPasswordTypeShouldThrowException'), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
         $account->email = 'john.smith@example.com';
@@ -705,8 +765,8 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $username = makeUniqueName('AccountTest testImportingInvalidPasswordFormat') . 'username';
         $client = Client::getInstance();
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingInvalidPasswordFormat'), 'description' => 'Description of Main App', 'status' => 'enabled'));
-        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
+        self::$application = Application::instantiate(array('name' => 'Main App for passwordImport' .makeUniqueName('AccountTest testImportingInvalidPasswordFormat'), 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
         $account->email = 'john.smith@example.com';
@@ -728,7 +788,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
     /** @test */
     public function a_password_modified_at_date_is_available()
     {
-        $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+        $account = Account::instantiate(array('givenName' => 'Account Name',
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
             'username' => makeUniqueName('AccountTest testAddGroup') . 'username',
@@ -744,6 +804,83 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 
         $account->delete();
     }
+
+    /** @test */
+    public function a_phone_can_be_added_to_an_account()
+    {
+        $account = Account::instantiate(array('givenName' => 'Account Name',
+            'middleName' => 'Middle Name',
+            'surname' => 'Surname',
+            'username' => makeUniqueName('AccountTest phone') . 'username',
+            'email' => makeUniqueName('AccountTest phone') .'@mailinator.com',
+            'password' => 'superP4ss'));
+
+        $account = self::$directory->createAccount($account);
+
+        $phone = Phone::instantiate([
+            'name' => 'test phone number',
+            'description' => 'Test Phone',
+            'number' => '(888) 391-5282'
+        ]);
+
+        /** @var PhoneList $phoneList */
+        $phoneList = $account->getPhones();
+
+        $this->assertEquals(0, $phoneList->getSize(), 'The account already has phones');
+
+        $addedPhone = $account->addPhone($phone);
+
+        $phoneList = $account->getPhones();
+
+        $this->assertEquals(1, $phoneList->getSize(), 'The account does not contain exactly 1 phone');
+
+        $this->assertInstanceOf(
+            Stormpath::PHONE,
+            $addedPhone,
+            'Adding a phone to an account did not return a phone object'
+        );
+
+        $account->delete();
+    }
+
+    /** @test */
+    public function a_phone_can_be_removed_from_an_account()
+    {
+        $account = Account::instantiate(array('givenName' => 'Account Name',
+            'middleName' => 'Middle Name',
+            'surname' => 'Surname',
+            'username' => makeUniqueName('AccountTest phone') . 'username',
+            'email' => makeUniqueName('AccountTest phone') .'@mailinator.com',
+            'password' => 'superP4ss'));
+
+        $account = self::$directory->createAccount($account);
+
+        $phone = Phone::instantiate([
+            'name' => 'test phone number',
+            'description' => 'Test Phone',
+            'number' => '(888) 391-5282'
+        ]);
+
+        /** @var PhoneList $phoneList */
+        $phoneList = $account->getPhones();
+
+        $this->assertEquals(0, $phoneList->getSize(), 'The account already has phones');
+
+        $addedPhone = $account->addPhone($phone);
+
+        $phoneList = $account->getPhones();
+
+        $this->assertEquals(1, $phoneList->getSize(), 'The account does not contain exactly 1 phone');
+
+        $addedPhone->delete();
+
+        $phoneList = $account->getPhones();
+
+        $this->assertEquals(0, $phoneList->getSize(), 'The account has 1 or more phones');
+
+        $account->delete();
+    }
+    
 
 
     public function tearDown()

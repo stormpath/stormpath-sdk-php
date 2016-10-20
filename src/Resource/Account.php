@@ -20,12 +20,18 @@ namespace Stormpath\Resource;
 
 use Stormpath\Authc\Api\ApiKeyEncryptionOptions;
 use Stormpath\Client;
+use Stormpath\Mfa\Factor;
+use Stormpath\Mfa\FactorList;
+use Stormpath\Mfa\Phone;
+use Stormpath\Mfa\PhoneList;
+use Stormpath\Mfa\SmsFactor;
 use Stormpath\Stormpath;
 
 class Account extends InstanceResource implements Deletable
 {
     const USERNAME                 = "username";
     const EMAIL                    = "email";
+    const FACTORS                  = "factors";
     const PASSWORD                 = "password";
     const GIVEN_NAME               = "givenName";
     const MIDDLE_NAME              = "middleName";
@@ -39,6 +45,7 @@ class Account extends InstanceResource implements Deletable
     const FULL_NAME                = "fullName";
     const TENANT                   = "tenant";
     const PROVIDER_DATA			   = "providerData";
+    const PHONES                   = "phones";
     const ACCESS_TOKENS            = "accessTokens";
     const REFRESH_TOKENS           = "refreshTokens";
     const PASSWORD_MODIFIED_AT     = "passwordModifiedAt";
@@ -183,6 +190,51 @@ class Account extends InstanceResource implements Deletable
 
         return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
     }
+
+    /**
+     * Gets the phones resource property.
+     *
+     * @param array $options array of options.
+     * @return PhoneList
+     */
+    public function getPhones(array $options = [])
+    {
+        return $this->getResourceProperty(self::PHONES, Stormpath::PHONE_LIST, $options);
+    }
+
+    /**
+     * @param Phone $phone
+     * @param array $options
+     */
+    public function addPhone(Phone $phone, $options = [])
+    {
+        return $this->getDataStore()->create($this->getHref() . '/' . $phone::PATH,
+            $phone, Stormpath::PHONE, $options);
+    }
+
+    /**
+     * Gets the factors resource property.
+     *
+     * @param array $options array of options.
+     * @return FactorList
+     */
+    public function getFactors(array $options = [])
+    {
+        return $this->getResourceProperty(self::FACTORS, Stormpath::FACTOR_LIST, $options);
+    }
+
+    public function addFactor(Factor $factor, $options = [])
+    {
+        $href = $this->getHref() . '/' . $factor::PATH;
+
+        if($factor instanceof SmsFactor && null !== $factor->getChallenge()) {
+            $href .= '?challenge=true';
+        }
+
+        return $this->getDataStore()->create($href,
+            $factor, get_class($factor), $options);
+    }
+
 
     public function getPasswordModifedAt()
     {

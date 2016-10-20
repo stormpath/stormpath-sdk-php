@@ -1,8 +1,5 @@
 <?php
-
-namespace Stormpath\Http;
-
-/*
+/**
  * Copyright 2016 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +13,24 @@ namespace Stormpath\Http;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
-abstract class AbstractHttpMessage implements HttpMessage
-{
 
-    public function hasBody() {
+namespace Stormpath\Mfa;
 
-        $body = getBody();
-        return $body != null && strlen($body) != 0;
+use Stormpath\Resource\AbstractCollectionResource;
+use Stormpath\Stormpath;
 
+class ChallengeList extends AbstractCollectionResource {
+
+
+    /**
+     * Returns the class name for the Challenge.
+     *
+     * @return string
+     */
+    function getItemClassName()
+    {
+        return Stormpath::CHALLENGE;
     }
-
 }

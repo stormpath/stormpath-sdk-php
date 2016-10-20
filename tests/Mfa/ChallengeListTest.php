@@ -1,7 +1,4 @@
 <?php
-
-namespace Stormpath\Http;
-
 /*
  * Copyright 2016 Stormpath, Inc.
  *
@@ -17,13 +14,19 @@ namespace Stormpath\Http;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-interface HttpMessage {
 
-    public function getHeaders();
+namespace Stormpath\Tests\Challenge;
 
-    public function setHeaders(array $headers);
+use Stormpath\Mfa\ChallengeList;
+use Stormpath\Tests\TestCase;
 
-    public function hasBody();
+class ChallengeListTest extends TestCase
+{
+    /** @test */
+    public function returns_correct_item_class_name()
+    {
+        $challengeList = new ChallengeList();
+        $this->assertEquals(\Stormpath\Stormpath::CHALLENGE, $challengeList->getItemClassName());
+    }
 
-    public function getBody();
 }
