@@ -52,4 +52,5 @@ class UserAgentTest extends \PHPUnit_Framework_TestCase {
 
 
     }
+
 }

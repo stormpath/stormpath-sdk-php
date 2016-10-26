@@ -212,6 +212,7 @@ class Client extends Magic
                               setApiKeyIdPropertyName(self::$apiKeyIdPropertyName)->
                               setApiKeySecretPropertyName(self::$apiKeySecretPropertyName)->
                               setCacheManager(self::$cacheManager)->
+	                          setIntegration(self::$integration)->
                               setCacheManagerOptions(self::$cacheManagerOptions)->
                               setBaseURL(self::$baseUrl)->
                               setAuthenticationScheme(self::$authenticationScheme)->
@@ -219,6 +220,11 @@ class Client extends Magic
         }
 
         return self::$instance;
+    }
+
+    public function setIntegration($integration)
+    {
+    	self::$integration = $integration;
     }
 
     public function getTenant(array $options = array())
@@ -244,6 +250,7 @@ class Client extends Magic
     public static function tearDown()
     {
         static::$instance = NULL;
+	    static::$integration = null;
         static::$apiKeyFileLocation;
         static::$apiKeyProperties;
         static::$apiKeyIdPropertyName = "apiKey.id";
