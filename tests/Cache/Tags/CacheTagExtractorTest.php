@@ -9,8 +9,8 @@ class CacheTagExtractorTest extends \PHPUnit_Framework_TestCase
         $docJson = <<<EOJ
 {
   "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM",
-  "username": "magnus+stormpathtest@fervo.se",
-  "email": "magnus+stormpathtest@fervo.se",
+  "username": "magnus+stormpathtest@testmail.stormpath.com",
+  "email": "magnus+stormpathtest@testmail.stormpath.com",
   "givenName": "Magnus",
   "middleName": null,
   "surname": "Nordlander",
@@ -112,8 +112,8 @@ EOJ;
         $docJson = <<<EOJ
 {
   "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM",
-  "username": "magnus+stormpathtest@fervo.se",
-  "email": "magnus+stormpathtest@fervo.se",
+  "username": "magnus+stormpathtest@testmail.stormpath.com",
+  "email": "magnus+stormpathtest@testmail.stormpath.com",
   "givenName": "Magnus",
   "middleName": null,
   "surname": "Nordlander",
@@ -249,8 +249,8 @@ EOJ;
         $docJson = <<<EOJ
 {
   "href": "https://api.stormpath.com/v1/accounts/3VuAsUL9zeBGZRtB48fVZM",
-  "username": "magnus+stormpathtest@fervo.se",
-  "email": "magnus+stormpathtest@fervo.se",
+  "username": "magnus+stormpathtest@testmail.stormpath.com",
+  "email": "magnus+stormpathtest@testmail.stormpath.com",
   "givenName": "Magnus",
   "middleName": null,
   "surname": "Nordlander",

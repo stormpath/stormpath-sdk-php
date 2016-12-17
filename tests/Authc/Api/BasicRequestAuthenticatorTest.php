@@ -38,7 +38,7 @@ class BasicRequestAuthenticatorTest extends TestCase
                 'middleName' => 'BasicRequestAuthenticatorTest',
                 'surname' => 'Test',
                 'username' => makeUniqueName('BasicRequestAuthenticatorTest'),
-                'email' => makeUniqueName('BasicRequestAuthenticatorTest') .'@unknown123.kot',
+                'email' => makeUniqueName('BasicRequestAuthenticatorTest') .'@testmail.stormpath.com',
                 'password' => 'superP4ss'
 
             )

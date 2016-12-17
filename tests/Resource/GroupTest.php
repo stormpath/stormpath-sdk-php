@@ -92,7 +92,7 @@ class GroupTest extends \Stormpath\Tests\TestCase {
     {
         $group = self::$group;
 
-        $email = makeUniqueName('GroupTest addAccount') .'@unknown123.kot';
+        $email = makeUniqueName('GroupTest addAccount') .'@testmail.stormpath.com';
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
                                                                   'email' => $email,

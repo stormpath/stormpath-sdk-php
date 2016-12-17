@@ -33,7 +33,7 @@ class OAuthPasswordAuthenticationResult extends TestCase
                 'middleName' => 'BasicRequestAuthenticator',
                 'surname' => 'Test',
                 'username' => md5(time() . microtime() . uniqid()) . 'username',
-                'email' => md5(time() . microtime() . uniqid()) . '@unknown123.kot',
+                'email' => md5(time() . microtime() . uniqid()) . '@testmail.stormpath.com',
                 'password' => 'superP4ss'
 
             )

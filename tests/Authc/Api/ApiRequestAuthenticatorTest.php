@@ -38,7 +38,7 @@ class ApiRequestAuthenticatorTest extends TestCase
                 'middleName' => 'ApiRequestAuthenticatorTest',
                 'surname' => 'Test',
                 'username' => makeUniqueName('ApiRequestAuthenticatorTest'),
-                'email' => makeUniqueName('ApiRequestAuthenticatorTest') .'@unknown123.kot',
+                'email' => makeUniqueName('ApiRequestAuthenticatorTest') .'@testmail.stormpath.com',
                 'password' => 'superP4ss'
 
             )

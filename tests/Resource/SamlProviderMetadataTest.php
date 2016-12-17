@@ -42,7 +42,7 @@ class SamlProviderMetadataTest extends TestCase
     /** @test */
     public function it_can_get_the_entity_id()
     {
-        $this->assertEquals('urn:stormpath:directory:'.self::$directoryId.':provider:sp', self::$metadata->getEntityId());
+        $this->assertEquals(self::$directory->href, self::$metadata->getEntityId());
     }
 
     /** @test */
