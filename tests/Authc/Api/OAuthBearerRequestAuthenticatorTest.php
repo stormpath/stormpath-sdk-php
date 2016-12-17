@@ -40,7 +40,7 @@ class OAuthBearerRequestAuthenticatorTest extends TestCase
                 'middleName' => 'OAuthBearerRequestAuthenticatorTest',
                 'surname' => 'Test',
                 'username' => makeUniqueName('OAuthBearerRequestAuthenticatorTest'),
-                'email' => makeUniqueName('OAuthBearerRequestAuthenticatorTest') .'@unknown123.kot',
+                'email' => makeUniqueName('OAuthBearerRequestAuthenticatorTest') .'@testmail.stormpath.com',
                 'password' => 'superP4ss'
 
             )

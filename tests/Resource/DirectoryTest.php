@@ -98,7 +98,7 @@ class DirectoryTest extends \Stormpath\Tests\TestCase {
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                    'surname' => 'Surname',
-                                                                   'email' => makeUniqueName('DirectoryTest createAccount') . '@unknown123.kot',
+                                                                   'email' => makeUniqueName('DirectoryTest createAccount') . '@testmail.stormpath.com',
                                                                    'password' => 'superP4ss'));
 
         $directory->createAccount($account, array('registrationWorkflowEnabled' => false));

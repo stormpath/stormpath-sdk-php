@@ -166,7 +166,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
                         'code'=>'11001',
                         'developerMessage'=>'testing',
                         'message'=>'testing message',
-                        'moreInfo'=>'mailto:support@stormpath.com',
+                        'moreInfo'=>'mailto:support@testmail.stormpath.com',
                         'status'=>401)
                 )
             ),
@@ -237,7 +237,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
             'username' => makeUniqueName('ApplicationTest createAccount') . 'username',
-            'email' => makeUniqueName('ApplicationTest createAccount') .'@unknown123.kot',
+            'email' => makeUniqueName('ApplicationTest createAccount') .'@testmail.stormpath.com',
             'password' => 'superP4ss'));
 
         self::$directory->createAccount(self::$account);
@@ -352,7 +352,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
                                                                   'username' => makeUniqueName('ApplicationTest testCreateAccount') . 'username',
-                                                                  'email' => makeUniqueName('ApplicationTest testCreateAccount') .'@unknown123.kot',
+                                                                  'email' => makeUniqueName('ApplicationTest testCreateAccount') .'@testmail.stormpath.com',
                                                                   'password' => 'superP4ss'));
 
         $application->createAccount($account);
@@ -371,7 +371,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
             'surname' => 'Surname',
             'username' => makeUniqueName('ApplicationTest testCreateAccountWithCustomData') . 'username',
-            'email' => makeUniqueName('ApplicationTest testCreateAccountWithCustomData') .'@unknown123.kot',
+            'email' => makeUniqueName('ApplicationTest testCreateAccountWithCustomData') .'@testmail.stormpath.com',
             'password' => 'superP4ss'));
 
         $customData = $account->customData;
@@ -422,7 +422,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
     public function testSendPasswordResetEmail()
     {
         $application = self::$application;
-        $email = makeUniqueName('ApplicationTest SendPasswordReset') .'@unknown123.kot';
+        $email = makeUniqueName('ApplicationTest SendPasswordReset') .'@testmail.stormpath.com';
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
@@ -459,7 +459,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
         $accountStoreMappingB = \Stormpath\Resource\AccountStoreMapping::instantiate(array('accountStore' => $groupB));
         $application->createAccountStoreMapping($accountStoreMappingB);
 
-        $email = makeUniqueName('ApplicationTest SendPassword') .'@unknown123.kot';
+        $email = makeUniqueName('ApplicationTest SendPassword') .'@testmail.stormpath.com';
         $account = \Stormpath\Resource\Account::instantiate(array(
             'givenName' => 'Account Name',
             'surname' => 'Surname',
@@ -509,7 +509,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
 
     public function testCanResetPasswordFromSPToken()
     {
-        $email = makeUniqueName('ApplicationTest SendPassword') .'@unknown123.kot';
+        $email = makeUniqueName('ApplicationTest SendPassword') .'@testmail.stormpath.com';
         $account = \Stormpath\Resource\Account::instantiate(array(
             'givenName' => 'Account Name',
             'surname' => 'Surname',
@@ -542,7 +542,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
         $application = \Stormpath\Resource\Application::instantiate(array('name' => makeUniqueName('ApplicationTest'), 'description' => 'Description of Main App', 'status' => 'enabled'));
         self::createResource(\Stormpath\Resource\Application::PATH, $application, array('createDirectory' => true));
 
-        $email = makeUniqueName('ApplicationTest SendPassword') .'@unknown123.kot';
+        $email = makeUniqueName('ApplicationTest SendPassword') .'@testmail.stormpath.com';
         $account = \Stormpath\Resource\Account::instantiate(array(
             'givenName' => 'Account Name',
             'surname' => 'Surname',
@@ -581,7 +581,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
         $this->assertEquals('ENABLED', $policy->verificationEmailStatus);
 
         $username = makeUniqueName('ApplicationTest sendVerificaiton');
-        $emailAddress = $username . '@unknown123.kot';
+        $emailAddress = $username . '@testmail.stormpath.com';
         $account = Account::instantiate(array(
             'givenName' => 'Account Name',
             'middleName' => 'Middle Name',
@@ -632,7 +632,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
     public function testAuthenticate()
     {
         $application = self::$application;
-        $email = makeUniqueName('ApplicationTest testAuth') . '@unknown123.kot';
+        $email = makeUniqueName('ApplicationTest testAuth') . '@testmail.stormpath.com';
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
@@ -667,7 +667,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
     public function testAuthenticateWithAccountStore()
     {
         $application = self::$application;
-        $email = makeUniqueName('ApplicationTest authWithAcctStore') . '@unknown123.kot';
+        $email = makeUniqueName('ApplicationTest authWithAcctStore') . '@testmail.stormpath.com';
 
         $groupA = new \stdClass();
         $groupA->name = makeUniqueName('ApplicationTest AuthWithAcctStore A');
@@ -779,7 +779,7 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
             'givenName' => 'Account Name',
             'surname' => 'Surname',
             'username' => makeUniqueName('ApplicationTest ApiKeyMgt'),
-            'email' => makeUniqueName('ApplicationTest ApiKeyMgt') .'@unknown123.kot',
+            'email' => makeUniqueName('ApplicationTest ApiKeyMgt') .'@testmail.stormpath.com',
             'password' => 'superP4ss'));
 
         $application->createAccount($account);

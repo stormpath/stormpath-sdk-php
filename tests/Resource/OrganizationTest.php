@@ -234,7 +234,7 @@ class OrganizationTest extends TestCase
     {
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
             'surname' => 'Surname',
-            'email' => makeUniqueName('DirectoryTest createAccount') . '@unknown123.kot',
+            'email' => makeUniqueName('DirectoryTest createAccount') . '@testmail.stormpath.com',
             'password' => 'superP4ss'));
 
         $organization = Organization::instantiate([

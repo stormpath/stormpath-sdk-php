@@ -36,7 +36,7 @@ class UnmodeledEmailTemplateTest extends TestCase
             'name' => 'My Email',
             'description' => 'My Description',
             'fromName' => 'John Doe',
-            'fromEmailAddress' => 'john.doe@email.com',
+            'fromEmailAddress' => 'john.doe@testmail.stormpath.com',
             'subject' => 'Your Password has been changed!',
             'textBody' => 'Your password has been successfully changed',
             'htmlBody' => 'Your password has been <b>successfully</b> changed',
@@ -143,11 +143,11 @@ class UnmodeledEmailTemplateTest extends TestCase
     /** @test */
     public function from_email_address_is_settable()
     {
-        static::$modeledEmailTemplate->setFromEmailAddress('john.doe.jr@example.com');
-        $this->assertEquals('john.doe.jr@example.com', static::$modeledEmailTemplate->getFromEmailAddress());
+        static::$modeledEmailTemplate->setFromEmailAddress('john.doe.jr@testmail.stormpath.com');
+        $this->assertEquals('john.doe.jr@testmail.stormpath.com', static::$modeledEmailTemplate->getFromEmailAddress());
 
-        static::$modeledEmailTemplate->fromEmailAddress = 'john.doe@example.com';
-        $this->assertEquals('john.doe@example.com', static::$modeledEmailTemplate->getFromEmailAddress());
+        static::$modeledEmailTemplate->fromEmailAddress = 'john.doe@testmail.stormpath.com';
+        $this->assertEquals('john.doe@testmail.stormpath.com', static::$modeledEmailTemplate->getFromEmailAddress());
     }
 
     /** @test */

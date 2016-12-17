@@ -37,7 +37,7 @@ class GroupMembershipTest extends \Stormpath\Tests\TestCase {
 
         self::$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                         'surname' => 'Surname',
-                                                                        'email' => makeUniqueName('GroupMembershipTest') .'@unknown123.kot',
+                                                                        'email' => makeUniqueName('GroupMembershipTest') .'@testmail.stormpath.com',
                                                                         'password' => 'superP4ss'));
 
         self::$directory->createAccount(self::$account);
@@ -82,7 +82,7 @@ class GroupMembershipTest extends \Stormpath\Tests\TestCase {
 
         $this->assertInstanceOf('\Stormpath\Resource\GroupMembership', $groupMembership);
         $this->assertContains('Main_Group', $groupMembership->group->name);
-        $this->assertContains('@unknown123.kot', $groupMembership->account->email);
+        $this->assertContains('@testmail.stormpath.com', $groupMembership->account->email);
     }
 
     public function testCreate()
@@ -93,7 +93,7 @@ class GroupMembershipTest extends \Stormpath\Tests\TestCase {
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
-                                                                  'email' => makeUniqueName('GroupMembershipTest testCreate') .'@unknown12345.kot',
+                                                                  'email' => makeUniqueName('GroupMembershipTest testCreate') .'@testmail.stormpath.com',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
@@ -107,7 +107,7 @@ class GroupMembershipTest extends \Stormpath\Tests\TestCase {
 
         $this->assertInstanceOf('\Stormpath\Resource\GroupMembership', $groupMembership);
         $this->assertContains('testCreate', $groupMembership->group->name);
-        $this->assertContains('@unknown12345.kot', $groupMembership->account->email);
+        $this->assertContains('@testmail.stormpath.com', $groupMembership->account->email);
 
     }
 
@@ -122,7 +122,7 @@ class GroupMembershipTest extends \Stormpath\Tests\TestCase {
 
         $account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
                                                                   'surname' => 'Surname',
-                                                                  'email' => makeUniqueName('GroupMembershipTest testDelete') .'@unknown12345678.kot',
+                                                                  'email' => makeUniqueName('GroupMembershipTest testDelete') .'@testmail.stormpath.com',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
@@ -133,7 +133,7 @@ class GroupMembershipTest extends \Stormpath\Tests\TestCase {
 
         $this->assertInstanceOf('\Stormpath\Resource\GroupMembership', $groupMembership);
         $this->assertContains('testDelete', $groupMembership->group->name);
-        $this->assertContains('@unknown12345678.kot', $groupMembership->account->email);
+        $this->assertContains('@testmail.stormpath.com', $groupMembership->account->email);
 
         $href = $groupMembership->href;
 
