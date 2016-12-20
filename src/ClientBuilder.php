@@ -54,6 +54,7 @@ class ClientBuilder extends Magic
     private $apiKeyProperties;
     private $apiKeyFileLocation;
     private $cacheManager = null;
+	private $integration = null;
     private $cacheManagerOptions = array();
     private $baseURL;
     private $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
@@ -302,7 +303,7 @@ class ClientBuilder extends Magic
 
         Client::$apiKeyProperties = "apiKey.id=".$apiKeyId."\napiKey.secret=".$apiKeySecret;
 
-        return new Client(
+        $client = new Client(
             $apiKey,
             $this->cacheManager,
             $this->cacheManagerOptions,
@@ -310,7 +311,15 @@ class ClientBuilder extends Magic
             null,
             $this->authenticationScheme
         );
+	    $client->setIntegration($this->integration);
+		return $client;
 
+    }
+
+    public function setIntegration($integration = null)
+    {
+        $this->integration = $integration;
+	    return $this;
     }
 
     public function setBaseURL($baseURL)

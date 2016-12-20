@@ -17,6 +17,7 @@
 
 
 use Stormpath\Stormpath;
+use Stormpath\Util\UserAgentBuilder;
 
 class ClientTest extends TestCase {
 
@@ -99,6 +100,44 @@ class ClientTest extends TestCase {
         }
 
     }
+
+	/** @test */
+	public function a_client_can_have_the_integration_set()
+	{
+		$clientBuilder = new \Stormpath\ClientBuilder();
+
+		$builder = new \Stormpath\ClientBuilder();
+		$client = $builder
+			->setApiKeyProperties( "apiKey.id=123\napiKey.secret=abc" )
+			->setIntegration( "test-integration/0.1.0" )
+			->build();
+
+		$userAgent = new UserAgentBuilder;
+
+		$userAgent = $userAgent->setOsVersion('osVersion')
+			->setPhpVersion('phpVersion')
+			->setOsName('osName')
+			->build();
+
+		$this->assertContains('test-integration/0.1.0', $userAgent);
+	}
+
+	/** @test */
+	public function a_client_can_have_the_integration_set_statically()
+	{
+
+		\Stormpath\Client::$apiKeyProperties = "apiKey.id=123\napiKey.secret=abc";
+		\Stormpath\Client::$integration = "test-integration/0.1.0";
+
+		$userAgent = new UserAgentBuilder;
+
+		$userAgent = $userAgent->setOsVersion('osVersion')
+			->setPhpVersion('phpVersion')
+			->setOsName('osName')
+			->build();
+
+		$this->assertContains('test-integration/0.1.0', $userAgent);
+	}
 
 
 }

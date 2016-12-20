@@ -39,7 +39,7 @@ class OAuthClientCredentialsAuthenticationTest extends TestCase
                 'middleName' => 'BasicRequestAuthenticator',
                 'surname' => 'Test',
                 'username' => makeUniqueName('OAuthClientCredentialsAuthenticationTest'),
-                'email' => makeUniqueName('OAuthClientCredentialsAuthenticationTest') .'@unknown123.kot',
+                'email' => makeUniqueName('OAuthClientCredentialsAuthenticationTest') .'@testmail.stormpath.com',
                 'password' => 'superP4ss'
 
             )

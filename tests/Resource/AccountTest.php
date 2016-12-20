@@ -67,7 +67,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
                                                                         'middleName' => 'Middle Name',
                                                                         'surname' => 'Surname',
                                                                         'username' => makeUniqueName('AccountTest') . 'username',
-                                                                        'email' => makeUniqueName('AccountTest') .'@unknown123.kot',
+                                                                        'email' => makeUniqueName('AccountTest') .'@testmail.stormpath.com',
                                                                         'password' => 'superP4ss'));
 
         self::$directory->createAccount(self::$account);
@@ -197,7 +197,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $this->assertEquals('Account Name Middle Name Surname', $account->fullName);
         $this->assertEquals(Stormpath::ENABLED, $account->status);
         $this->assertContains('username', $account->username);
-        $this->assertContains('@unknown123.kot', $account->email);
+        $this->assertContains('@testmail.stormpath.com', $account->email);
         $this->assertInstanceOf('\Stormpath\Resource\Tenant', $account->tenant);
         $this->assertEquals(self::$client->tenant->name, $account->tenant->name);
         $this->assertInstanceOf('\Stormpath\Resource\Directory', $account->directory);
@@ -237,7 +237,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $account->surname = 'Surname';
         $account->status = 'unverified';
         $account->username = 'username';
-        $account->email = 'email@unknown123.kot';
+        $account->email = 'email@testmail.stormpath.com';
         $account->password = 'superP4ssword';
 
         $this->assertEquals('Account Name', $account->givenName);
@@ -245,7 +245,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         $this->assertEquals('Surname', $account->surname);
         $this->assertEquals(Stormpath::UNVERIFIED, $account->status);
         $this->assertEquals('username', $account->username);
-        $this->assertEquals('email@unknown123.kot', $account->email);
+        $this->assertEquals('email@testmail.stormpath.com', $account->email);
     }
 
     public function testSave()
@@ -253,13 +253,13 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         try {
             $account = self::$account;
             $account->username = 'changed_username';
-            $account->email = 'changed_email@unknown123.kot';
+            $account->email = 'changed_email@testmail.stormpath.com';
             $account->password = 'changedPassw0rd';
 
             $account->save();
 
             $this->assertEquals('changed_username', $account->username);
-            $this->assertEquals('changed_email@unknown123.kot', $account->email);
+            $this->assertEquals('changed_email@testmail.stormpath.com', $account->email);
         } catch(\Exception $e) {
             var_dump($e);
         }
@@ -390,7 +390,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
                                                                   'middleName' => 'Middle Name',
                                                                   'surname' => 'Surname',
                                                                   'username' => makeUniqueName('AccountTest testAddGroup') . 'username',
-                                                                  'email' => makeUniqueName('AccountTest testAddGroup') .'@unknown123.kot',
+                                                                  'email' => makeUniqueName('AccountTest testAddGroup') .'@testmail.stormpath.com',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
@@ -454,35 +454,35 @@ class AccountTest extends \Stormpath\Tests\TestCase {
 		$this->assertEquals(array('BuildingA', 'BuildingB', 'BuildingC'), $customData->locations);
 	}
 
-	public function testCustomDataSearch()
-	{
-
-
-		$account = Account::instantiate(array('givenName' => 'Account Name',
-			'middleName' => 'Middle Name',
-			'surname' => 'Surname',
-			'username' => makeUniqueName('AccountTest') . 'username',
-			'email' => makeUniqueName('AccountTest') .'@unknown123.kot',
-			'password' => 'superP4ss'));
-
-		self::$directory->createAccount($account);
-
-		$time = microtime();
-		$cd = $account->customData;
-		$cd->unitTest = $time;
-		$cd->save();
-
-
-		$client = Client::getInstance();
-
-		$accounts = $client->tenant->accounts->setSearch(['customData.unitTest' => $time]);
-		if($accounts->size == 1) {
-			$this->assertEquals(1, $accounts->size);
-		} else {
-			$this->markTestSkipped('Could not find account with custom data, Possibly not indexed in time.');
-		}
-
-	}
+//	public function testCustomDataSearch()
+//	{
+//
+//
+//		$account = Account::instantiate(array('givenName' => 'Account Name',
+//			'middleName' => 'Middle Name',
+//			'surname' => 'Surname',
+//			'username' => makeUniqueName('AccountTest') . 'username',
+//			'email' => makeUniqueName('AccountTest') .'@testmail.stormpath.com',
+//			'password' => 'superP4ss'));
+//
+//		self::$directory->createAccount($account);
+//
+//		$time = microtime();
+//		$cd = $account->customData;
+//		$cd->unitTest = $time;
+//		$cd->save();
+//
+//
+//		$client = Client::getInstance();
+//
+//		$accounts = $client->tenant->accounts->setSearch(['customData.unitTest' => $time]);
+//		if($accounts->size == 1) {
+//			$this->assertEquals(1, $accounts->size);
+//		} else {
+//			$this->markTestSkipped('Could not find account with custom data, Possibly not indexed in time.');
+//		}
+//
+//	}
 
     public function testUpdatingCustomData()
     {
@@ -501,7 +501,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
             'username' => makeUniqueName('AccountTest testUpdatingCustomData').'username',
-            'email' => makeUniqueName('AccountTest testUpdatingCustomData').'@unknown123.kot',
+            'email' => makeUniqueName('AccountTest testUpdatingCustomData').'@testmail.stormpath.com',
             'password' => '123quEso'));
         self::$directory->createAccount($account);
 
@@ -571,7 +571,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
                                                                   'middleName' => 'Middle Name',
                                                                   'surname' => 'Surname',
                                                                   'username' => makeUniqueName('AccountTest testDelete') . 'username',
-                                                                  'email' => makeUniqueName('AccountTest testDelete') .'@unknown123.kot',
+                                                                  'email' => makeUniqueName('AccountTest testDelete') .'@testmail.stormpath.com',
                                                                   'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
@@ -597,7 +597,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
             'username' => makeUniqueName('AccountTest testShouldBeAbleToGetAccountViaHtmlFragment') . 'username',
-            'email' => makeUniqueName('AccountTest testShouldBeAbleToGetAccountViaHtmlFragment') .'@unknown123.kot',
+            'email' => makeUniqueName('AccountTest testShouldBeAbleToGetAccountViaHtmlFragment') .'@testmail.stormpath.com',
             'password' => 'superP4ss'));
 
         self::$directory->createAccount($account);
@@ -633,7 +633,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
                                                                   'middleName' => 'Middle Name',
                                                                   'surname' => 'Surname',
                                                                   'username' => $username,
-                                                                  'email' => makeUniqueName('AccountTest testImportingAPasswordViaStaticCreates') .'@unknown123.kot',
+                                                                  'email' => makeUniqueName('AccountTest testImportingAPasswordViaStaticCreates') .'@testmail.stormpath.com',
                                                                   'password' => '$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.'));
 
         self::$application->createAccount($account, array('passwordFormat'=>'mcf'));
@@ -656,7 +656,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         self::createResource(Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
-        $account->email = 'john.smith@example.com';
+        $account->email = 'john.smith@testmail.stormpath.com';
         $account->givenName = 'John';
         $account->password ='$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.';
         $account->surname = 'Smith';
@@ -683,7 +683,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         self::createResource(Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
-        $account->email = 'john.smith@example.com';
+        $account->email = 'john.smith@testmail.stormpath.com';
         $account->givenName = 'John';
         $account->password = '$stormpath2$MD5$1$NzEyN2ZhYzdkZTAyMjJlMGQyMWYxMWRmZmY2YjA1MWI=$K18Ak0YikAFrqgglhIaY5g==';
         $account->surname = 'Smith';
@@ -709,7 +709,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         self::createResource(Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
-        $account->email = 'john.smith@example.com';
+        $account->email = 'john.smith@testmail.stormpath.com';
         $account->givenName = 'John';
         $account->password = '$stormpath2$SHA-512$1$ZFhBRmpFSnEwVEx2ekhKS0JTMDJBNTNmcg==$Q+sGFg9e+pe9QsUdfnbJUMDtrQNf27ezTnnGllBVkQpMRc9bqH6WkyE3y0svD/7cBk8uJW9Wb3dolWwDtDLFjg==';
         $account->surname = 'Smith';
@@ -739,7 +739,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         self::createResource(Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
-        $account->email = 'john.smith@example.com';
+        $account->email = 'john.smith@testmail.stormpath.com';
         $account->givenName = 'John';
         $account->password ='$INVALID$04$RZPSLGUz3dRdm7aRfxOeYuKeueSPW2YaTpRkszAA31wcPpyg6zkGy';
         $account->surname = 'Smith';
@@ -769,7 +769,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
         self::createResource(Application::PATH, self::$application, array('createDirectory' => true));
 
         $account = $client->dataStore->instantiate(\Stormpath\Stormpath::ACCOUNT);
-        $account->email = 'john.smith@example.com';
+        $account->email = 'john.smith@testmail.stormpath.com';
         $account->givenName = 'John';
         $account->password ='$2a$08$VbNS17zvQNYtMyfRiYXxWuec2F2y3SuLB/e7hU8RWdcCxxluUB3m.';
         $account->surname = 'Smith';
@@ -792,7 +792,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
             'username' => makeUniqueName('AccountTest testAddGroup') . 'username',
-            'email' => makeUniqueName('AccountTest testAddGroup') .'@unknown123.kot',
+            'email' => makeUniqueName('AccountTest testAddGroup') .'@testmail.stormpath.com',
             'password' => 'superP4ss'));
 
         $account = self::$directory->createAccount($account);
@@ -812,7 +812,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
             'username' => makeUniqueName('AccountTest phone') . 'username',
-            'email' => makeUniqueName('AccountTest phone') .'@mailinator.com',
+            'email' => makeUniqueName('AccountTest phone') .'@testmail.stormpath.com',
             'password' => 'superP4ss'));
 
         $account = self::$directory->createAccount($account);
@@ -850,7 +850,7 @@ class AccountTest extends \Stormpath\Tests\TestCase {
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
             'username' => makeUniqueName('AccountTest phone') . 'username',
-            'email' => makeUniqueName('AccountTest phone') .'@mailinator.com',
+            'email' => makeUniqueName('AccountTest phone') .'@testmail.stormpath.com',
             'password' => 'superP4ss'));
 
         $account = self::$directory->createAccount($account);

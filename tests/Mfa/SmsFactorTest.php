@@ -128,7 +128,7 @@ class SmsFactorTest extends TestCase
                 'middleName' => 'Middle Name',
                 'surname' => 'Surname',
                 'username' => makeUniqueName('AccountTest smsFactor') . 'username',
-                'email' => makeUniqueName('AccountTest smsFactor') .'@mailinator.com',
+                'email' => makeUniqueName('AccountTest smsFactor') .'@testmail.stormpath.com',
                 'password' => 'superP4ss!'
             ])
         );

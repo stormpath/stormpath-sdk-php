@@ -18,7 +18,7 @@
 
 namespace Stormpath\Oauth;
 
-use JWT;
+use Firebase\JWT\JWT;
 use Stormpath\Resource\Application;
 use Stormpath\Stormpath;
 

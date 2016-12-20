@@ -16,7 +16,7 @@ class PasswordRefreshGrantTest extends \Stormpath\Tests\TestCase
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
             'username' => md5(time().microtime().uniqid()) . 'username',
-            'email' => md5(time().microtime().uniqid()) .'@unknown123.kot',
+            'email' => md5(time().microtime().uniqid()) .'@testmail.stormpath.com',
             'password' => 'superP4ss'));
 
         self::$application->createAccount(self::$account);

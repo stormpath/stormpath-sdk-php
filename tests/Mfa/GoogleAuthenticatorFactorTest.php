@@ -53,7 +53,7 @@ class GoogleAuthenticatorFactorTest extends TestCase
             "accountName" => "",
             "issuer" => "",
             "secret" => "JBSWY3DPEHPK3PXP",
-            "keyUri" => "otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example", //?
+            "keyUri" => "otpauth://totp/Example:alice@testmail.stormpath.com?secret=JBSWY3DPEHPK3PXP&issuer=Example", //?
             "base64QRImage" => "qrcode",
             "account" => [
                 "href" => "https://api.stormpath.com/v1/accounts/3w9hThWQ3uAT46sMuWY6dw"
@@ -139,11 +139,11 @@ class GoogleAuthenticatorFactorTest extends TestCase
     /** @test */
     public function account_name_is_settable()
     {
-        static::$testable->setAccountName('support@stormpath.com');
-        static::assertEquals('support@stormpath.com', static::$testable->getAccountName());
+        static::$testable->setAccountName('support@testmail.stormpath.com');
+        static::assertEquals('support@testmail.stormpath.com', static::$testable->getAccountName());
 
-        static::$testable->accountName = 'php@stormpath.com';
-        static::assertEquals('php@stormpath.com', static::$testable->getAccountName());
+        static::$testable->accountName = 'php@testmail.stormpath.com';
+        static::assertEquals('php@testmail.stormpath.com', static::$testable->getAccountName());
     }
 
 
@@ -161,7 +161,7 @@ class GoogleAuthenticatorFactorTest extends TestCase
         $account = $this->setupNewAccount();
 
         $gaFactor = new GoogleAuthenticatorFactor();
-        $gaFactor->accountName = 'brian@stormpath.com';
+        $gaFactor->accountName = 'brian@testmail.stormpath.com';
         $gaFactor->issuer = 'php-test';
         $gaFactor->status = Stormpath::ENABLED;
 
@@ -172,7 +172,7 @@ class GoogleAuthenticatorFactorTest extends TestCase
         $this->assertNull($factor->mostRecentChallenge);
         $this->assertEquals(Stormpath::ENABLED, $factor->status);
         $this->assertEquals(Stormpath::UNVERIFIED, $factor->verificationStatus);
-        $this->assertEquals('brian@stormpath.com', $factor->accountName);
+        $this->assertEquals('brian@testmail.stormpath.com', $factor->accountName);
         $this->assertEquals('php-test', $factor->issuer);
 
         $account->directory->delete();
@@ -192,7 +192,7 @@ class GoogleAuthenticatorFactorTest extends TestCase
                 'middleName' => 'Middle Name',
                 'surname' => 'Surname',
                 'username' => makeUniqueName('AccountTest smsFactor') . 'username',
-                'email' => makeUniqueName('AccountTest smsFactor') .'@mailinator.com',
+                'email' => makeUniqueName('AccountTest smsFactor') .'@testmail.stormpath.com',
                 'password' => 'superP4ss!'
             ])
         );
