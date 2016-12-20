@@ -2,6 +2,14 @@ stormpath-sdk-php Changelog
 ===========================
 
 
+Version 1.17.2
+--------------
+
+Released on Dec 20, 2016
+
+ - Update JWT Library to 4.0
+ - Change all test emails to testmail.stormpath.com
+ 
 Version 1.17.1
 --------------
 
