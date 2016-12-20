@@ -17,7 +17,7 @@
 
 namespace Stormpath\Authc\Api;
 
-use JWT;
+use Firebase\JWT\JWT;
 use Stormpath\Client;
 
 class Request

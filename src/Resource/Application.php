@@ -18,7 +18,7 @@ namespace Stormpath\Resource;
  * limitations under the License.
  */
 
-use JWT;
+use Firebase\JWT\JWT;
 use Stormpath\Authc\Api\ApiKeyEncryptionOptions;
 use Stormpath\Authc\AuthenticationRequest;
 use Stormpath\Authc\BasicAuthenticator;

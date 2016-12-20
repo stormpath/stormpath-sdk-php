@@ -18,7 +18,7 @@
 namespace Stormpath\Tests\Resource;
 
 
-use JWT;
+use Firebase\JWT\JWT;
 use Stormpath\Client;
 use Stormpath\Resource\Account;
 use Stormpath\Resource\Application;
