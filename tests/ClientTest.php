@@ -89,18 +89,6 @@ class ClientTest extends TestCase {
 
     }
 
-    /** @test */
-    public function the_options_array_is_cleared_after_each_request()
-    {
-        $tenant = self::$client->getDataStore()->getResource('/tenants/current', Stormpath::TENANT, ['expand'=>'applications']);
-
-
-        foreach($tenant->getApplications() as $application) {
-            $this->assertEmpty($application->getAccounts()->getOptions());
-        }
-
-    }
-
 	/** @test */
 	public function a_client_can_have_the_integration_set()
 	{
