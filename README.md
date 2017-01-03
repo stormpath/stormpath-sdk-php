@@ -69,6 +69,6 @@ If you feel the contributions require document changes as well, or the contribut
 
 ## Copyright
 
-Copyright &copy; 2013-2016 Stormpath, Inc. and contributors.
+Copyright &copy; 2013-2017 Stormpath, Inc. and contributors.
 
 This project is open-source via the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).

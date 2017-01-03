@@ -1,9 +1,6 @@
 <?php
-
-namespace Stormpath\Util;
-
-/*
- * Copyright 2016 Stormpath, Inc.
+/**
+ * Copyright 2017 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +13,13 @@ namespace Stormpath\Util;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
+
+namespace Stormpath\Util;
 
 class Version
 {
-    const SDK_VERSION = '1.17.2';
+    const SDK_VERSION = '1.18.0';
 
 }

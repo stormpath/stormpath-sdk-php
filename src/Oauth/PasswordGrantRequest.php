@@ -1,6 +1,6 @@
 <?php
-/*
- * Copyright 2016 Stormpath, Inc.
+/**
+ * Copyright 2017 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 
@@ -38,6 +39,11 @@ class PasswordGrantRequest
      */
     private $password;
 
+	/**
+	 * @var
+	 */
+	private $orgNameKey;
+
     /**
      * @var
      */
@@ -48,11 +54,12 @@ class PasswordGrantRequest
      */
     private $grant_type = 'password';
 
-    public function __construct($login, $password)
+    public function __construct($login, $password, $orgNameKey = null)
     {
 
         $this->login = $login;
         $this->password = $password;
+        $this->orgNameKey = $orgNameKey;
     }
 
     /**
@@ -80,6 +87,14 @@ class PasswordGrantRequest
     public function getLogin()
     {
         return $this->login;
+    }
+
+	/**
+	 * @return string
+	 */
+    public function getOrgNameKey()
+    {
+    	return $this->orgNameKey;
     }
 
     /**

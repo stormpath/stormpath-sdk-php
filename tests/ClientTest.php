@@ -1,6 +1,6 @@
-<?php namespace Stormpath\Tests;
-/*
- * Copyright 2016 Stormpath, Inc.
+<?php
+/**
+ * Copyright 2017 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
+namespace Stormpath\Tests;
 
 use Stormpath\Stormpath;
 use Stormpath\Util\UserAgentBuilder;
@@ -86,18 +88,6 @@ class ClientTest extends TestCase {
         \Stormpath\Client::tearDown();
         $client = \Stormpath\Client::getInstance();
         $this->assertInstanceOf('Cache\Taggable\TaggablePoolInterface', $client->getCachePool());
-
-    }
-
-    /** @test */
-    public function the_options_array_is_cleared_after_each_request()
-    {
-        $tenant = self::$client->getDataStore()->getResource('/tenants/current', Stormpath::TENANT, ['expand'=>'applications']);
-
-
-        foreach($tenant->getApplications() as $application) {
-            $this->assertEmpty($application->getAccounts()->getOptions());
-        }
 
     }
 
