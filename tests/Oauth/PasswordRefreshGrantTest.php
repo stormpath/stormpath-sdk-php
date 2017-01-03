@@ -149,6 +149,7 @@ class PasswordRefreshGrantTest extends \Stormpath\Tests\TestCase
 		$this->assertTrue(is_integer($token->getExpiresIn()));
 
 		// Open Access Token to see if org exists
+		\Firebase\JWT\JWT::$leeway = 1;
 		$decoded = \Firebase\JWT\JWT::decode($token->getAccessTokenString(), Client::getInstance()->getDataStore()->getApiKey()->getSecret(), ['HS256']);
 
 		$this->assertTrue(property_exists($decoded, 'org'));

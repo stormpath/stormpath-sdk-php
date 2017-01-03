@@ -119,7 +119,12 @@ class Client extends Magic
     public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, RequestSigner $requestSigner = null, $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME, HttpClient $httpClient = null, MessageFactory $messageFactory = null, UriFactory $uriFactory = null)
     {
         parent::__construct();
-        self::$cacheManager = $cacheManager;
+
+	    if(version_compare(PHP_VERSION, \Stormpath\Util\Version::PHP_VERSION_MIN, '<')) {
+		    @trigger_error('The Stormpath PHP SDK has deprecated your version of PHP `'.PHP_VERSION.'`. Please update to at PHP Version ' . \Stormpath\Util\Version::PHP_VERSION_MIN, E_USER_DEPRECATED);
+	    }
+
+	    self::$cacheManager = $cacheManager;
         self::$cacheManagerOptions = $cacheManagerOptions;
 
         if (is_string($cacheManager)) { // Legacy cache manager
