@@ -1,12 +1,6 @@
 <?php
-
-namespace Stormpath\Authc\Api;
-
-use phpseclib\Crypt\AES as ModernAES;
-use Crypt_AES as OldAES;
-
-/*
- * Copyright 2016 Stormpath, Inc.
+/**
+ * Copyright 2017 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +13,13 @@ use Crypt_AES as OldAES;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
+
+namespace Stormpath\Authc\Api;
+
+use phpseclib\Crypt\AES as ModernAES;
+use Crypt_AES as OldAES;
 
 class ApiKeyEncryptionUtils
 {
