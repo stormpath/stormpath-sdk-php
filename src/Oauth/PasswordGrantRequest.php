@@ -38,6 +38,11 @@ class PasswordGrantRequest
      */
     private $password;
 
+	/**
+	 * @var
+	 */
+	private $orgNameKey;
+
     /**
      * @var
      */
@@ -48,11 +53,12 @@ class PasswordGrantRequest
      */
     private $grant_type = 'password';
 
-    public function __construct($login, $password)
+    public function __construct($login, $password, $orgNameKey = null)
     {
 
         $this->login = $login;
         $this->password = $password;
+        $this->orgNameKey = $orgNameKey;
     }
 
     /**
@@ -80,6 +86,14 @@ class PasswordGrantRequest
     public function getLogin()
     {
         return $this->login;
+    }
+
+	/**
+	 * @return string
+	 */
+    public function getOrgNameKey()
+    {
+    	return $this->orgNameKey;
     }
 
     /**

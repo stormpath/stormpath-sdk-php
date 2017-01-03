@@ -36,7 +36,8 @@ class PasswordGrantAuthenticator
         $passwordGrantAuthenticationAttempt = new PasswordGrantAuthenticationAttempt();
         $passwordGrantAuthenticationAttempt->setLogin($passwordGrantRequest->getLogin())
                                          ->setPassword($passwordGrantRequest->getPassword())
-                                         ->setGrantType($passwordGrantRequest->getGrantType());
+                                         ->setGrantType($passwordGrantRequest->getGrantType())
+                                         ->setOrganizationNameKey($passwordGrantRequest->getOrgNameKey());
         if($passwordGrantRequest->getAccountStore() != null)
             $passwordGrantAuthenticationAttempt->setAccountStore($passwordGrantRequest->getAccountStore());
 

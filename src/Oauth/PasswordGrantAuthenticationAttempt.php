@@ -28,6 +28,7 @@ class PasswordGrantAuthenticationAttempt extends Resource
     const LOGIN                 = 'username';
     const PASSWORD              = 'password';
     const ACCOUNT_STORE_HREF    = 'accountStore';
+	const ORGANIZATION_NAME_KEY = 'organizationNameKey';
     const GRANT_TYPE            = 'grant_type';
 
 
@@ -60,6 +61,16 @@ class PasswordGrantAuthenticationAttempt extends Resource
         $this->setProperty(self::GRANT_TYPE, $grantType);
 
         return $this;
+    }
+
+	/**
+	 * @param string $organizationNameKey
+	 * @return $this
+	 */
+    public function setOrganizationNameKey($organizationNameKey) {
+    	$this->setProperty(self::ORGANIZATION_NAME_KEY, $organizationNameKey);
+
+	    return $this;
     }
 
     /**
