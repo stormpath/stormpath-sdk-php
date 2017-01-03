@@ -21,5 +21,5 @@ namespace Stormpath\Util;
 class Version
 {
     const SDK_VERSION = '1.18.0';
-
+	const PHP_VERSION_MIN = '5.6.0';
 }
