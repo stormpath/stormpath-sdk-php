@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Mfa;
@@ -25,18 +24,17 @@ class FactorList extends AbstractCollectionResource
 {
     protected function toResource($className, \stdClass $properties)
     {
-        switch(strtolower($properties->type)) {
-            case 'sms' :
+        switch (strtolower($properties->type)) {
+            case 'sms':
                 return $this->dataStore->instantiate(Stormpath::SMS_FACTOR, $properties);
-            case 'google-authenticator' :
+            case 'google-authenticator':
                 return $this->dataStore->instantiate(Stormpath::GOOGLE_AUTHENTICATOR_FACTOR, $properties);
         }
 
         return $this->dataStore->instantiate($className, $properties);
-
     }
 
-    function getItemClassName()
+    public function getItemClassName()
     {
         return Stormpath::FACTOR;
     }

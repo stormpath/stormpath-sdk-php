@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Authc\Api;
@@ -22,7 +21,6 @@ use Stormpath\Exceptions\RequestAuthenticatorException;
 
 class ApiRequestAuthenticator extends InternalRequestAuthenticator implements RequestAuthenticator
 {
-
     public function authenticate(Request $request)
     {
         $authenticator = null;
@@ -34,18 +32,17 @@ class ApiRequestAuthenticator extends InternalRequestAuthenticator implements Re
                 } else {
                     $authenticator = new BasicRequestAuthenticator($this->application);
                 }
-            } else if ($request->isBearerAuthorization()) {
+            } elseif ($request->isBearerAuthorization()) {
                 $authenticator = new OAuthBearerRequestAuthenticator($this->application);
             }
-
         }
 
-        if($authenticator) {
+        if ($authenticator) {
             $result = $authenticator->authenticate($request);
             $application = $result->getApplication();
             $apiKey = $result->getApiKey();
             $accessToken = null;
-            if(method_exists($result, 'getAccessToken')) {
+            if (method_exists($result, 'getAccessToken')) {
                 $accessToken = $result->getAccessToken();
             }
 

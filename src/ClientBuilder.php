@@ -13,10 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath;
+
 use Stormpath\Cache\ArrayCacheManager;
 use Stormpath\Cache\MemcachedCacheManager;
 use Stormpath\Cache\NullCacheManager;
@@ -37,7 +37,7 @@ use Stormpath\Util\Magic;
  * <p/>
  * Example usage:
  * <code>
- * $location = '/home/jsmith/.stormpath/apiKey.properties';
+ * $location = '/home/jsmith/.stormpath/apiKey.properties';.
  *
  * $clientBuilder = new ClientBuilder;
  * $client = $clientBuilder->setApiKeyFileLocation($location)->build();
@@ -45,16 +45,16 @@ use Stormpath\Util\Magic;
  * <p/>
  * You may load files from the filesystem or URLs by specifying the file location.
  *
- * @see setApiKeyFileLocation() for more information.
+ * @see setApiKeyFileLocation() for more information
  */
 class ClientBuilder extends Magic
 {
-    private $apiKeyIdPropertyName = "apiKey.id";
-    private $apiKeySecretPropertyName = "apiKey.secret";
+    private $apiKeyIdPropertyName = 'apiKey.id';
+    private $apiKeySecretPropertyName = 'apiKey.secret';
     private $apiKeyProperties;
     private $apiKeyFileLocation;
     private $cacheManager = null;
-	private $integration = null;
+    private $integration = null;
     private $cacheManagerOptions = array();
     private $baseURL;
     private $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
@@ -85,7 +85,7 @@ class ClientBuilder extends Magic
      * Assuming you were using these default property names, your <i>ClientBuilder</i> usage might look like the
      * following:
      * <pre>
-     * $location = "/home/jsmith/.stormpath/apiKey.properties";
+     * $location = "/home/jsmith/.stormpath/apiKey.properties";.
      *
      * $clientBuilder = new ClientBuilder;
      * $client = $clientBuilder->setApiKeyFileLocation($location)->build();
@@ -114,13 +114,14 @@ class ClientBuilder extends Magic
      * </pre>
      *
      * @param apiKeyFileLocation the file or url location of the API Key file to load when
-     *                 constructing the API Key to use for communicating with the Stormpath REST API.
+     *                 constructing the API Key to use for communicating with the Stormpath REST API
      *
-     * @return the ClientBuilder instance for method chaining.
+     * @return the ClientBuilder instance for method chaining
      */
     public function setApiKeyFileLocation($apiKeyFileLocation)
     {
         $this->apiKeyFileLocation = $apiKeyFileLocation;
+
         return $this;
     }
 
@@ -149,12 +150,15 @@ class ClientBuilder extends Magic
      *           $clientBuilder->setApiKeyIdPropertyName('stormpath.apiKey.id');
      *
      * </code>
-     * @param string $apiKeyIdPropertyName the name used to query for the API Key Id from an ini content.
-     * @return the ClientBuilder instance for method chaining.
+     *
+     * @param string $apiKeyIdPropertyName the name used to query for the API Key Id from an ini content
+     *
+     * @return the ClientBuilder instance for method chaining
      */
     public function setApiKeyIdPropertyName($apiKeyIdPropertyName)
     {
         $this->apiKeyIdPropertyName = $apiKeyIdPropertyName;
+
         return $this;
     }
 
@@ -183,12 +187,15 @@ class ClientBuilder extends Magic
      *           $clientBuilder->setApiKeySecretPropertyName('stormpath.apiKey.secret');
      *
      * </code>
-     * @param string $apiKeySecretPropertyName the name used to query for the API Key Secret from an ini content.
-     * @return the ClientBuilder instance for method chaining.
+     *
+     * @param string $apiKeySecretPropertyName the name used to query for the API Key Secret from an ini content
+     *
+     * @return the ClientBuilder instance for method chaining
      */
     public function setApiKeySecretPropertyName($apiKeySecretPropertyName)
     {
         $this->apiKeySecretPropertyName = $apiKeySecretPropertyName;
+
         return $this;
     }
 
@@ -200,14 +207,14 @@ class ClientBuilder extends Magic
      * The string contents and property name overrides functions are the same as described in the
      * {@link setApiKeyFileLocation} API Documentation.
      *
-     * @param $apiKeyProperties the PHP ini string to use to load the API Key ID and Secret.
+     * @param $apiKeyProperties the PHP ini string to use to load the API Key ID and Secret
      *
-     * @return the ClientBuilder instance for method chaining.
-     *
+     * @return the ClientBuilder instance for method chaining
      */
     public function setApiKeyProperties($apiKeyProperties)
     {
         $this->apiKeyProperties = $apiKeyProperties;
+
         return $this;
     }
 
@@ -218,16 +225,16 @@ class ClientBuilder extends Magic
         } else {
             switch ($cacheManager) {
                 case 'Array':
-                    $this->cacheManager = new ArrayCacheManager;
+                    $this->cacheManager = new ArrayCacheManager();
                     break;
                 case 'Memcached':
-                    $this->cacheManager = new MemcachedCacheManager;
+                    $this->cacheManager = new MemcachedCacheManager();
                     break;
                 case 'Redis':
-                    $this->cacheManager = new RedisCacheManager;
+                    $this->cacheManager = new RedisCacheManager();
                     break;
                 case 'Null':
-                    $this->cacheManager = new NullCacheManager;
+                    $this->cacheManager = new NullCacheManager();
                     break;
                 default: // Legacy cache
                     $this->cacheManager = $this->qualifyCacheManager($cacheManager);
@@ -243,6 +250,7 @@ class ClientBuilder extends Magic
         if (!$this->cacheManager) {
             $this->setCacheManager($this->cacheManagerOptions['cachemanager']);
         }
+
         return $this;
     }
 
@@ -251,16 +259,16 @@ class ClientBuilder extends Magic
      * Allows you to define which authentication scheme to use for the Client.  By default, the SAuthc1
      * scheme will be used.  For environments that manipulate your applications request headers,
      * you would want to change this to basic.  Otherwise, the default option will be fine.
-     * <p/>
+     * <p/>.
      *
-     * @param $authenticationScheme set the scheme you want to use for signing your request.
+     * @param $authenticationScheme set the scheme you want to use for signing your request
      *
-     * @return the ClientBuilder instance for method chaining.
-     *
+     * @return the ClientBuilder instance for method chaining
      */
     public function setAuthenticationScheme($authenticationScheme)
     {
         $this->authenticationScheme = $authenticationScheme;
+
         return $this;
     }
 
@@ -269,24 +277,22 @@ class ClientBuilder extends Magic
      * current configuration state.
      *
      * @return a new Client instance based on the ClientBuilder's
-     * current configuration state.
+     *           current configuration state
      */
     public function build()
     {
         $apiKeyProperties = null;
 
         if ($this->apiKeyProperties) {
-
             $apiKeyProperties = parse_ini_string($this->apiKeyProperties);
-
         } else {
 
             // need to load the properties file
             $apiKeyProperties = $this->getFileExtract();
 
             if (!$apiKeyProperties) {
-                throw new \InvalidArgumentException('No API Key file could be found or loaded from a file location. ' .
-                    'Please  configure the "apiKeyFileLocation" property or alternatively configure a ' .
+                throw new \InvalidArgumentException('No API Key file could be found or loaded from a file location. '.
+                    'Please  configure the "apiKeyFileLocation" property or alternatively configure a '.
                     "PHP 'ini' compliant string, by setting the 'apiKeyProperties' property.");
             }
         }
@@ -301,7 +307,7 @@ class ClientBuilder extends Magic
 
         $apiKey = new ApiKey($apiKeyId, $apiKeySecret);
 
-        Client::$apiKeyProperties = "apiKey.id=".$apiKeyId."\napiKey.secret=".$apiKeySecret;
+        Client::$apiKeyProperties = 'apiKey.id='.$apiKeyId."\napiKey.secret=".$apiKeySecret;
 
         $client = new Client(
             $apiKey,
@@ -311,20 +317,22 @@ class ClientBuilder extends Magic
             null,
             $this->authenticationScheme
         );
-	    $client->setIntegration($this->integration);
-		return $client;
+        $client->setIntegration($this->integration);
 
+        return $client;
     }
 
     public function setIntegration($integration = null)
     {
         $this->integration = $integration;
-	    return $this;
+
+        return $this;
     }
 
     public function setBaseURL($baseURL)
     {
         $this->baseURL = $baseURL;
+
         return $this;
     }
 
@@ -333,10 +341,10 @@ class ClientBuilder extends Magic
         $result = array_key_exists($propertyName, $apiKeyProperties) ? $apiKeyProperties[$propertyName] : false;
 
         if (!$result) {
-            throw new \InvalidArgumentException("There is no '$propertyName' property in the " .
-                "configured apiKey file or properties string.  You can either specify that property or " .
-                "configure the '$masterName' PropertyName value on the ClientBuilder to specify a " .
-                "custom property name.");
+            throw new \InvalidArgumentException("There is no '$propertyName' property in the ".
+                'configured apiKey file or properties string.  You can either specify that property or '.
+                "configure the '$masterName' PropertyName value on the ClientBuilder to specify a ".
+                'custom property name.');
         }
 
         return $result;
@@ -348,14 +356,13 @@ class ClientBuilder extends Magic
         if (stripos($this->apiKeyFileLocation, 'http') === 0) {
             $request = new DefaultRequest(Request::METHOD_GET, $this->apiKeyFileLocation);
 
-            $executor = new HttpClientRequestExecutor;
+            $executor = new HttpClientRequestExecutor();
 
             try {
                 $response = $executor->executeRequest($request);
 
                 if (!$response->isError()) {
                     return parse_ini_string($response->getBody());
-
                 }
             } catch (Exception $e) {
                 return false;
@@ -399,6 +406,7 @@ class ClientBuilder extends Magic
                 ),
             ),
         );
+
         return array_replace($defaults, $overrides);
     }
 
@@ -423,6 +431,5 @@ class ClientBuilder extends Magic
         if (class_exists($cacheManagerPath)) {
             return $cacheManagerPath;
         }
-
     }
 }

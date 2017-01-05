@@ -13,16 +13,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-
 
 namespace Stormpath\Oauth;
 
-
 class RefreshGrantRequest
 {
-    private $grant_type = "refresh_token";
+    private $grant_type = 'refresh_token';
     private $refresh_token;
 
     public function __construct($refreshToken)
@@ -30,11 +27,13 @@ class RefreshGrantRequest
         $this->refresh_token = $refreshToken;
     }
 
-    public function getRefreshToken() {
+    public function getRefreshToken()
+    {
         return $this->refresh_token;
     }
 
-    public function getGrantType() {
+    public function getGrantType()
+    {
         return $this->grant_type;
     }
 }

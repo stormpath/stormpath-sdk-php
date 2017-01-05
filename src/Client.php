@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath;
@@ -31,7 +30,6 @@ use Stormpath\Exceptions\Cache\InvalidLegacyCacheManagerException;
 use Stormpath\Http\Authc\SAuthc1Authentication;
 use Stormpath\Http\Authc\StormpathBasicAuthentication;
 use Stormpath\Resource\Resource;
-use Stormpath\Stormpath;
 use Stormpath\Util\Magic;
 use Stormpath\Http\Authc\SAuthc1RequestSigner;
 use Stormpath\Http\Authc\BasicRequestSigner;
@@ -60,7 +58,7 @@ function toObject($properties)
  * For example:
  * <pre>
  * $accessId = //<a href="http://docs.stormpath.com/console/product-guide/#manage-api-keys">Your Stormpath API Key's Access ID</a>
- * $secret = //<a href="http://docs.stormpath.com/console/product-guide/#manage-api-keys">Your Stormpath API Key's Secret</a>
+ * $secret = //<a href="http://docs.stormpath.com/console/product-guide/#manage-api-keys">Your Stormpath API Key's Secret</a>.
  *
  * //create the Client instance:
  * $client = new Client(new ApiKey($accessId, $secret));
@@ -81,14 +79,13 @@ function toObject($properties)
  */
 class Client extends Magic
 {
-
     public static $apiKeyFileLocation;
 
     public static $apiKeyProperties;
 
-    public static $apiKeyIdPropertyName = "apiKey.id";
+    public static $apiKeyIdPropertyName = 'apiKey.id';
 
-    public static $apiKeySecretPropertyName = "apiKey.secret";
+    public static $apiKeySecretPropertyName = 'apiKey.secret';
 
     public static $baseUrl;
 
@@ -111,37 +108,36 @@ class Client extends Magic
      * See the class-level PHPDoc for a usage example.
      *
      * @param $apiKey the Stormpath account API Key that will be used to authenticate the client with
-     *               Stormpath's REST API.
-     *
+     *               Stormpath's REST API
      * @param $baseUrl optional parameter for specifying the base URL when not using the default one
-     *         (https://api.stormpath.com/v1).
+     *         (https://api.stormpath.com/v1)
      */
     public function __construct(ApiKey $apiKey, $cacheManager, $cacheManagerOptions, $baseUrl = null, RequestSigner $requestSigner = null, $authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME, HttpClient $httpClient = null, MessageFactory $messageFactory = null, UriFactory $uriFactory = null)
     {
         parent::__construct();
 
-	    if(version_compare(PHP_VERSION, \Stormpath\Util\Version::PHP_VERSION_MIN, '<')) {
-		    @trigger_error('The Stormpath PHP SDK has deprecated your version of PHP `'.PHP_VERSION.'`. Please update to at PHP Version ' . \Stormpath\Util\Version::PHP_VERSION_MIN, E_USER_DEPRECATED);
-	    }
+        if (version_compare(PHP_VERSION, \Stormpath\Util\Version::PHP_VERSION_MIN, '<')) {
+            @trigger_error('The Stormpath PHP SDK has deprecated your version of PHP `'.PHP_VERSION.'`. Please update to at PHP Version '.\Stormpath\Util\Version::PHP_VERSION_MIN, E_USER_DEPRECATED);
+        }
 
-	    self::$cacheManager = $cacheManager;
+        self::$cacheManager = $cacheManager;
         self::$cacheManagerOptions = $cacheManagerOptions;
 
         if (is_string($cacheManager)) { // Legacy cache manager
             $legacyCache = new $cacheManager($cacheManagerOptions);
 
-            if ($legacyCache instanceOf CacheManager) {
+            if ($legacyCache instanceof CacheManager) {
                 $cache = $legacyCache->getCache();
                 $cache = new CachePSR6Adapter($cache);
-            } else if ($legacyCache instanceOf PSR6CacheManagerInterface) {
+            } elseif ($legacyCache instanceof PSR6CacheManagerInterface) {
                 $cache = $legacyCache->getCachePool($cacheManagerOptions);
             } else {
                 throw new InvalidLegacyCacheManagerException("Legacy cache manager is not an instance of Stormpath\Cache\CacheManager");
             }
-        } elseif ($cacheManager instanceOf PSR6CacheManagerInterface) {
+        } elseif ($cacheManager instanceof PSR6CacheManagerInterface) {
             $cache = $cacheManager->getCachePool($cacheManagerOptions);
         } else {
-            throw new InvalidCacheManagerException("Invalid cache manager");
+            throw new InvalidCacheManagerException('Invalid cache manager');
         }
 
         $this->cachePool = TaggablePSR6PoolAdapter::makeTaggable($cache);
@@ -152,29 +148,25 @@ class Client extends Magic
             } elseif ($authenticationScheme === Stormpath::BASIC_AUTHENTICATION_SCHEME) {
                 $auth = new StormpathBasicAuthentication($apiKey);
             } else {
-                throw new InvalidArgumentException("Unknown authentication scheme \"" . $authenticationScheme . "\"");
+                throw new InvalidArgumentException('Unknown authentication scheme "'.$authenticationScheme.'"');
             }
         } else {
-            if ($requestSigner instanceOf SAuthc1RequestSigner) {
+            if ($requestSigner instanceof SAuthc1RequestSigner) {
                 $auth = new SAuthc1Authentication($apiKey);
-            } elseif ($requestSigner instanceOf BasicRequestSigner) {
+            } elseif ($requestSigner instanceof BasicRequestSigner) {
                 $auth = new StormpathBasicAuthentication($apiKey);
             } else {
-                throw new InvalidArgumentException("Unknown RequestSigner \"" . get_class($requestSigner) . "\" passed. Instead of passing a request signer, pass the \$authenticationScheme parameter.");
+                throw new InvalidArgumentException('Unknown RequestSigner "'.get_class($requestSigner).'" passed. Instead of passing a request signer, pass the $authenticationScheme parameter.');
             }
         }
 
         $this->dataStore = new DefaultDataStore($apiKey, $auth, $this->cachePool, $httpClient, $messageFactory, $uriFactory, $baseUrl);
-
-
     }
 
     public static function get($href, $className, $path = null, array $options = array())
     {
-
         $resultingHref = $href;
-        if ($path and stripos($href, $path) === false)
-        {
+        if ($path and stripos($href, $path) === false) {
             $resultingHref = is_numeric(stripos($href, $path)) ? $href : "$path/$href";
         }
 
@@ -195,7 +187,7 @@ class Client extends Magic
     public static function verifyEmailToken($token)
     {
         //TODO: enable auto discovery via Tenant resource (should be just /emailVerificationTokens)
-        $href = "/accounts/emailVerificationTokens/" . $token;
+        $href = '/accounts/emailVerificationTokens/'.$token;
 
         $tokenProperties = new \stdClass();
         $hrefName = Resource::HREF_PROP_NAME;
@@ -209,15 +201,14 @@ class Client extends Magic
 
     public static function getInstance()
     {
-        if (!self::$instance)
-        {
+        if (!self::$instance) {
             $builder = new ClientBuilder();
             self::$instance = $builder->setApiKeyFileLocation(self::$apiKeyFileLocation)->
                               setApiKeyProperties(self::$apiKeyProperties)->
                               setApiKeyIdPropertyName(self::$apiKeyIdPropertyName)->
                               setApiKeySecretPropertyName(self::$apiKeySecretPropertyName)->
                               setCacheManager(self::$cacheManager)->
-	                          setIntegration(self::$integration)->
+                              setIntegration(self::$integration)->
                               setCacheManagerOptions(self::$cacheManagerOptions)->
                               setBaseURL(self::$baseUrl)->
                               setAuthenticationScheme(self::$authenticationScheme)->
@@ -229,7 +220,7 @@ class Client extends Magic
 
     public function setIntegration($integration)
     {
-    	self::$integration = $integration;
+        self::$integration = $integration;
     }
 
     public function getTenant(array $options = array())
@@ -254,19 +245,15 @@ class Client extends Magic
 
     public static function tearDown()
     {
-        static::$instance = NULL;
-	    static::$integration = null;
+        static::$instance = null;
+        static::$integration = null;
         static::$apiKeyFileLocation;
         static::$apiKeyProperties;
-        static::$apiKeyIdPropertyName = "apiKey.id";
-        static::$apiKeySecretPropertyName = "apiKey.secret";
+        static::$apiKeyIdPropertyName = 'apiKey.id';
+        static::$apiKeySecretPropertyName = 'apiKey.secret';
         static::$baseUrl;
         static::$cacheManager = 'Array';
         static::$cacheManagerOptions = array();
         static::$authenticationScheme = Stormpath::SAUTHC1_AUTHENTICATION_SCHEME;
     }
-
-
-
-
 }

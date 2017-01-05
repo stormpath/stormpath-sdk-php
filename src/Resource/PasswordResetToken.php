@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -22,10 +21,10 @@ use Stormpath\Stormpath;
 
 class PasswordResetToken extends Resource
 {
-    const EMAIL = "email";
-    const ACCOUNT = "account";
-    const ACCOUNT_STORE = "accountStore";
-    const PASSWORD = "password";
+    const EMAIL = 'email';
+    const ACCOUNT = 'account';
+    const ACCOUNT_STORE = 'accountStore';
+    const PASSWORD = 'password';
 
     // @codeCoverageIgnoreStart
     public function getEmail()

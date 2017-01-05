@@ -13,15 +13,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Cache;
 
 use Cache\Adapter\Void\VoidCachePool;
 
-class NullCacheManager implements PSR6CacheManagerInterface {
-
+class NullCacheManager implements PSR6CacheManagerInterface
+{
     public function getCachePool($options)
     {
         return new VoidCachePool();

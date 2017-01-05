@@ -13,9 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-
 
 namespace Stormpath\Oauth;
 
@@ -25,7 +23,7 @@ class PasswordGrantAuthenticator
 {
     private $application;
 
-    const OAUTH_TOKEN_PATH  = '/oauth/token';
+    const OAUTH_TOKEN_PATH = '/oauth/token';
 
     public function __construct(Application $application)
     {
@@ -39,17 +37,18 @@ class PasswordGrantAuthenticator
                                          ->setPassword($passwordGrantRequest->getPassword())
                                          ->setGrantType($passwordGrantRequest->getGrantType())
                                          ->setOrganizationNameKey($passwordGrantRequest->getOrgNameKey());
-        if($passwordGrantRequest->getAccountStore() != null)
+        if ($passwordGrantRequest->getAccountStore() != null) {
             $passwordGrantAuthenticationAttempt->setAccountStore($passwordGrantRequest->getAccountStore());
+        }
 
         $grantResult = $this->application->dataStore->create(
-            $this->application->getHref() . self::OAUTH_TOKEN_PATH,
+            $this->application->getHref().self::OAUTH_TOKEN_PATH,
             $passwordGrantAuthenticationAttempt,
             \Stormpath\Stormpath::GRANT_AUTHENTICATION_TOKEN
         );
 
         $builder = new OauthGrantAuthenticationResultBuilder($grantResult);
-        return $builder->build();
 
+        return $builder->build();
     }
 }

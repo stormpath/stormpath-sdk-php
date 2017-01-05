@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Mfa;
@@ -25,12 +24,11 @@ use Stormpath\Stormpath;
 
 class GoogleAuthenticatorFactor extends Factor
 {
-
-    const ISSUER                = "issuer";
-    const SECRET                = "secret";
-    const OTP_KEY_URI           = "keyUri";
-    const ACCOUNT_NAME          = "accountName";
-    const BASE_64_QR_IMAGE      = "base64QRImage";
+    const ISSUER = 'issuer';
+    const SECRET = 'secret';
+    const OTP_KEY_URI = 'keyUri';
+    const ACCOUNT_NAME = 'accountName';
+    const BASE_64_QR_IMAGE = 'base64QRImage';
 
     public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null, array $options = array())
     {
@@ -46,7 +44,8 @@ class GoogleAuthenticatorFactor extends Factor
 
     public static function instantiate($properties = [])
     {
-        $properties = array_merge($properties, ['type'=>'google_authenticator']);
+        $properties = array_merge($properties, ['type' => 'google_authenticator']);
+
         return Client::instantiate(Stormpath::GOOGLE_AUTHENTICATOR_FACTOR, $properties);
     }
 
@@ -58,12 +57,13 @@ class GoogleAuthenticatorFactor extends Factor
     public function getIssuer()
     {
         return $this->getProperty(self::ISSUER);
-    } 
-    
+    }
+
     /**
      * Sets the issuer property.
      *
-     * @param string $issuer The issuer of the object.
+     * @param string $issuer The issuer of the object
+     *
      * @return self
      */
     public function setIssuer($issuer)
@@ -73,7 +73,6 @@ class GoogleAuthenticatorFactor extends Factor
         return $this;
     }
 
-
     /**
      * Gets the secret property.
      *
@@ -82,8 +81,8 @@ class GoogleAuthenticatorFactor extends Factor
     public function getSecret()
     {
         return $this->getProperty(self::SECRET);
-    } 
-    
+    }
+
     /**
      * Gets the keyUri property.
      *
@@ -107,7 +106,8 @@ class GoogleAuthenticatorFactor extends Factor
     /**
      * Sets the accountName property.
      *
-     * @param string $accountName The accountName of the object.
+     * @param string $accountName The accountName of the object
+     *
      * @return self
      */
     public function setAccountName($accountName)
@@ -127,11 +127,11 @@ class GoogleAuthenticatorFactor extends Factor
         return $this->getProperty(self::BASE_64_QR_IMAGE);
     }
 
-
     /**
      * Gets the mostRecentChallenge resource property.
      *
-     * @param array $options array of options.
+     * @param array $options array of options
+     *
      * @return Challenge
      */
     public function getMostRecentChallenge(array $options = [])
@@ -144,13 +144,12 @@ class GoogleAuthenticatorFactor extends Factor
         $googleAuthenticatorChallenge = new GoogleAuthenticatorChallenge();
         $googleAuthenticatorChallenge->setCode($code);
 
-        $returnedChallenge = $this->getDataStore()->create($this->href . '/challenges', $googleAuthenticatorChallenge, Stormpath::GOOGLE_AUTHENTICATOR_CHALLENGE);
+        $returnedChallenge = $this->getDataStore()->create($this->href.'/challenges', $googleAuthenticatorChallenge, Stormpath::GOOGLE_AUTHENTICATOR_CHALLENGE);
 
-        if($returnedChallenge->getStatus() == Stormpath::SUCCESS) {
+        if ($returnedChallenge->getStatus() == Stormpath::SUCCESS) {
             return $returnedChallenge;
         }
 
         return false;
     }
-
 }

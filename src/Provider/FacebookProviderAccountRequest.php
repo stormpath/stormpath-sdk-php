@@ -13,52 +13,45 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Provider;
 
-use Stormpath\DataStore\DataStore;
 use Stormpath\Resource\FacebookProviderData;
-use Stormpath\Resource\GoogleProviderData;
 use Stormpath\Resource\ProviderData;
 use Stormpath\Stormpath;
 
 class FacebookProviderAccountRequest implements ProviderAccountRequest
 {
-    const ACCESS_TOKEN  = 'accessToken';
-    const CODE          = 'code';
+    const ACCESS_TOKEN = 'accessToken';
+    const CODE = 'code';
 
     private $options;
 
-    function __construct(array $options = array())
+    public function __construct(array $options = array())
     {
         $this->options = $options;
     }
 
     /**
      * Loads a given instance of ProviderData with the properties
-     * stored internally in the request
+     * stored internally in the request.
      *
      * @param ProviderData $providerData the instance to load with data
+     *
      * @return ProviderData the given instance with properties set
      */
-    function getProviderData()
+    public function getProviderData()
     {
         $providerData = new FacebookProviderData();
 
         $providerData->providerId = FacebookProviderData::PROVIDER_ID;
 
-        if (isset($this->options[self::CODE]))
-        {
+        if (isset($this->options[self::CODE])) {
             $providerData->code = $this->options[self::CODE];
-        }
-        else if (isset($this->options[self::ACCESS_TOKEN]))
-        {
+        } elseif (isset($this->options[self::ACCESS_TOKEN])) {
             $providerData->accessToken = $this->options[self::ACCESS_TOKEN];
-        }
-        else
-        {
+        } else {
             throw new \InvalidArgumentException('Either code or accessToken must be set for FacebookProviderAccountRequest');
         }
 

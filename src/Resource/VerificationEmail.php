@@ -13,20 +13,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
 
-use Stormpath\Client;
 use Stormpath\Stormpath;
 
 class VerificationEmail extends Resource
 {
-    const LOGIN         = 'login';
+    const LOGIN = 'login';
     const ACCOUNT_STORE = 'accountStore';
 
-    const PATH          = 'verificationEmails';
+    const PATH = 'verificationEmails';
 
     public function getLogin()
     {
@@ -47,6 +45,4 @@ class VerificationEmail extends Resource
     {
         $this->setResourceProperty(self::ACCOUNT_STORE, $accountStore);
     }
-
-
 }

@@ -13,17 +13,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
 
 class FacebookProviderData extends ProviderData
 {
-    const PROVIDER_ID   = 'facebook';
+    const PROVIDER_ID = 'facebook';
 
-    const CODE          = 'code';
-    const ACCESS_TOKEN  = 'accessToken';
+    const CODE = 'code';
+    const ACCESS_TOKEN = 'accessToken';
     const REFRESH_TOKEN = 'refreshToken';
 
     public function getCode()
@@ -55,5 +54,4 @@ class FacebookProviderData extends ProviderData
     {
         $this->setProperty(self::REFRESH_TOKEN, $refreshToken);
     }
-
 }

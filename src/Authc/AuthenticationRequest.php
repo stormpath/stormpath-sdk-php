@@ -13,20 +13,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Authc;
 
-interface AuthenticationRequest {
+interface AuthenticationRequest
+{
+    public function getPrincipals();
 
-    function getPrincipals();
+    public function getCredentials();
 
-    function getCredentials();
+    public function getHost();
 
-    function getHost();
+    public function clear();
 
-    function clear();
-
-    function getAccountStore();
+    public function getAccountStore();
 }

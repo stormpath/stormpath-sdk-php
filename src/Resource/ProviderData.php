@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -22,10 +21,10 @@ use Stormpath\Stormpath;
 
 class ProviderData extends Resource
 {
-    const PROVIDER_ID   = 'providerId';
-    const CREATED_AT    = 'createdAt';
-    const MODIFIED_AT   = 'modifiedAt';
-    
+    const PROVIDER_ID = 'providerId';
+    const CREATED_AT = 'createdAt';
+    const MODIFIED_AT = 'modifiedAt';
+
     public function getProviderId()
     {
         return $this->getProperty(self::PROVIDER_ID);
@@ -40,7 +39,7 @@ class ProviderData extends Resource
     {
         return $this->getProperty(self::CREATED_AT);
     }
-    
+
     public function setCreatedAt($createdAt)
     {
         $this->setProperty(self::CREATED_AT, $createdAt);
@@ -50,7 +49,7 @@ class ProviderData extends Resource
     {
         return $this->getProperty(self::CREATED_AT);
     }
-    
+
     public function setModifiedAt($modifiedAt)
     {
         $this->setProperty(self::CREATED_AT, $modifiedAt);

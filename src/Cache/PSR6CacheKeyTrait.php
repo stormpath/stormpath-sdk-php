@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Cache;
@@ -30,10 +29,11 @@ trait PSR6CacheKeyTrait
             $query = http_build_query($query);
         }
         $key = $href.'?'.$query;
-        if(!empty($options)) {
-            $key .= '_' . implode('_',$options);
+        if (!empty($options)) {
+            $key .= '_'.implode('_', $options);
         }
         $key = preg_replace('/[^0-9A-Za-z\_\.]/', '', $key);
+
         return $key;
     }
 }

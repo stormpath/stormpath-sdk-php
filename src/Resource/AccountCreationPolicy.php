@@ -13,23 +13,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
 
 use Stormpath\Stormpath;
 
-class AccountCreationPolicy extends InstanceResource implements Saveable {
-
-    const WELCOME_EMAIL_STATUS                  = 'welcomeEmailStatus';
-    const EMAIL_DOMAIN_WHITELIST                = 'emailDomainWhitelist';
-    const EMAIL_DOMAIN_BLACKLIST                = 'emailDomainBlacklist';
-    const WELCOME_EMAIL_TEMPLATES               = 'welcomeEmailTemplates';
-    const VERIFICATION_EMAIL_STATUS             = 'verificationEmailStatus';
-    const VERIFICATION_EMAIL_TEMPLATES          = 'verificationEmailTemplates';
-    const VERIFICATION_SUCCESS_EMAIL_STATUS     = 'verificationSuccessEmailStatus';
-    const VERIFICATION_SUCCESS_EMAIL_TEMPLATES  = 'verificationSuccessEmailTemplates';
+class AccountCreationPolicy extends InstanceResource implements Saveable
+{
+    const WELCOME_EMAIL_STATUS = 'welcomeEmailStatus';
+    const EMAIL_DOMAIN_WHITELIST = 'emailDomainWhitelist';
+    const EMAIL_DOMAIN_BLACKLIST = 'emailDomainBlacklist';
+    const WELCOME_EMAIL_TEMPLATES = 'welcomeEmailTemplates';
+    const VERIFICATION_EMAIL_STATUS = 'verificationEmailStatus';
+    const VERIFICATION_EMAIL_TEMPLATES = 'verificationEmailTemplates';
+    const VERIFICATION_SUCCESS_EMAIL_STATUS = 'verificationSuccessEmailStatus';
+    const VERIFICATION_SUCCESS_EMAIL_TEMPLATES = 'verificationSuccessEmailTemplates';
 
     public function setVerificationEmailStatus($status)
     {
@@ -77,7 +76,7 @@ class AccountCreationPolicy extends InstanceResource implements Saveable {
     }
 
     /**
-     * Gets the emailDomainWhitelist property
+     * Gets the emailDomainWhitelist property.
      *
      * @return array
      */
@@ -88,7 +87,9 @@ class AccountCreationPolicy extends InstanceResource implements Saveable {
 
     public function addEmailDomainWhitelist($domain)
     {
-        if(!is_string($domain)) throw new \InvalidArgumentException('Domain must be a string');
+        if (!is_string($domain)) {
+            throw new \InvalidArgumentException('Domain must be a string');
+        }
 
         $whitelist = $this->getProperty(self::EMAIL_DOMAIN_WHITELIST);
         $whitelist[] = $domain;
@@ -100,30 +101,29 @@ class AccountCreationPolicy extends InstanceResource implements Saveable {
         $whitelist = $this->getProperty(self::EMAIL_DOMAIN_WHITELIST);
 
         $key = array_search($domain, $whitelist);
-        if($key !== false) {
+        if ($key !== false) {
             unset($whitelist[$key]);
         }
 
         $this->setEmailDomainWhitelist(array_unique($whitelist));
     }
-    
+
     /**
-     * Sets the emailDomainWhitelist property
+     * Sets the emailDomainWhitelist property.
      *
      * @param  $emailDomainWhitelist The emailDomainWhitelist of the object
+     *
      * @return self
      */
     public function setEmailDomainWhitelist($emailDomainWhitelist)
     {
         $this->setProperty(self::EMAIL_DOMAIN_WHITELIST, $emailDomainWhitelist);
-        
-        return $this; 
-    } 
-    
-    
+
+        return $this;
+    }
 
     /**
-     * Gets the emailDomainBlacklist property
+     * Gets the emailDomainBlacklist property.
      *
      * @return
      */
@@ -132,10 +132,11 @@ class AccountCreationPolicy extends InstanceResource implements Saveable {
         return $this->getProperty(self::EMAIL_DOMAIN_BLACKLIST);
     }
 
-
     public function addEmailDomainBlacklist($domain)
     {
-        if(!is_string($domain)) throw new \InvalidArgumentException('Domain must be a string');
+        if (!is_string($domain)) {
+            throw new \InvalidArgumentException('Domain must be a string');
+        }
 
         $blacklist = $this->getProperty(self::EMAIL_DOMAIN_BLACKLIST);
         $blacklist[] = $domain;
@@ -147,7 +148,7 @@ class AccountCreationPolicy extends InstanceResource implements Saveable {
         $blacklist = $this->getProperty(self::EMAIL_DOMAIN_BLACKLIST);
 
         $key = array_search($domain, $blacklist);
-        if($key !== false) {
+        if ($key !== false) {
             unset($blacklist[$key]);
         }
 
@@ -155,9 +156,10 @@ class AccountCreationPolicy extends InstanceResource implements Saveable {
     }
 
     /**
-     * Sets the emailDomainBlacklist property
+     * Sets the emailDomainBlacklist property.
      *
      * @param  $emailDomainBlacklist The emailDomainBlacklist of the object
+     *
      * @return self
      */
     public function setEmailDomainBlacklist($emailDomainBlacklist)
@@ -166,8 +168,4 @@ class AccountCreationPolicy extends InstanceResource implements Saveable {
 
         return $this;
     }
-
-
-
-
 }

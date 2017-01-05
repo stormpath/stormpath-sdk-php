@@ -13,22 +13,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-
 
 namespace Stormpath\Resource;
 
-
-use Stormpath\Resource\InstanceResource;
-
 class GrantAuthenticationToken extends InstanceResource
 {
-    const ACCESS_TOKEN          = 'access_token';
-    const REFRESH_TOKEN         = 'refresh_token';
-    const TOKEN_TYPE            = 'token_type';
-    const EXPIRES_IN            = 'expires_in';
-    const ACCESS_TOKEN_HREF     = 'stormpath_access_token_href';
+    const ACCESS_TOKEN = 'access_token';
+    const REFRESH_TOKEN = 'refresh_token';
+    const TOKEN_TYPE = 'token_type';
+    const EXPIRES_IN = 'expires_in';
+    const ACCESS_TOKEN_HREF = 'stormpath_access_token_href';
 
     public function getAccessToken()
     {
@@ -59,6 +54,7 @@ class GrantAuthenticationToken extends InstanceResource
     {
         $props = new \stdClass();
         $props->href = $this->getAccessTokenHref();
+
         return $this->getDataStore()->instantiate('AccessToken', $props);
     }
 
@@ -66,8 +62,7 @@ class GrantAuthenticationToken extends InstanceResource
     {
         $props = new \stdClass();
         $props->href = $this->getAccessTokenHref();
+
         return $this->getDataStore()->instantiate('RefreshToken', $props);
     }
-
-
 }

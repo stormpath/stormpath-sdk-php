@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -23,18 +22,18 @@ use Stormpath\Stormpath;
 
 class Directory extends AccountStore implements Deletable
 {
-    const NAME        = "name";
-    const DESCRIPTION = "description";
-    const STATUS      = "status";
-    const ACCOUNTS    = "accounts";
-    const GROUPS      = "groups";
-    const TENANT      = "tenant";
-    const PROVIDER    = "provider";
-    const CUSTOM_DATA = "customData";
-    const PASSWORD_POLICY = "passwordPolicy";
-    const ACCOUNT_CREATION_POLICY = "accountCreationPolicy";
+    const NAME = 'name';
+    const DESCRIPTION = 'description';
+    const STATUS = 'status';
+    const ACCOUNTS = 'accounts';
+    const GROUPS = 'groups';
+    const TENANT = 'tenant';
+    const PROVIDER = 'provider';
+    const CUSTOM_DATA = 'customData';
+    const PASSWORD_POLICY = 'passwordPolicy';
+    const ACCOUNT_CREATION_POLICY = 'accountCreationPolicy';
 
-    const PATH        = "directories";
+    const PATH = 'directories';
 
     public static function get($href, array $options = array())
     {
@@ -50,8 +49,7 @@ class Directory extends AccountStore implements Deletable
     {
         $directory = $properties;
 
-        if (!($directory instanceof Directory))
-        {
+        if (!($directory instanceof self)) {
             $directory = self::instantiate($properties);
         }
 
@@ -82,8 +80,7 @@ class Directory extends AccountStore implements Deletable
     {
         $value = $this->getProperty(self::STATUS);
 
-        if ($value)
-        {
+        if ($value) {
             $value = strtoupper($value);
         }
 
@@ -93,8 +90,7 @@ class Directory extends AccountStore implements Deletable
     public function setStatus($status)
     {
         $uprStatus = strtoupper($status);
-        if (array_key_exists($uprStatus, Stormpath::$Statuses))
-        {
+        if (array_key_exists($uprStatus, Stormpath::$Statuses)) {
             $this->setProperty(self::STATUS, Stormpath::$Statuses[$uprStatus]);
         }
     }
@@ -127,9 +123,9 @@ class Directory extends AccountStore implements Deletable
 
     public function getCustomData(array $options = array())
     {
-        $customData =  $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
+        $customData = $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
 
-        if(!$customData) {
+        if (!$customData) {
             $customData = new CustomData();
             $this->setProperty(self::CUSTOM_DATA, $customData);
         }
@@ -162,8 +158,8 @@ class Directory extends AccountStore implements Deletable
         return $this->getResourceProperty(self::PASSWORD_POLICY, Stormpath::PASSWORD_POLICY, $options);
     }
 
-    public function delete() {
-
+    public function delete()
+    {
         $this->getDataStore()->delete($this);
     }
 }

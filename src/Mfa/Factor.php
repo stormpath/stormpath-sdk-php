@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Mfa;
@@ -25,16 +24,16 @@ use Stormpath\Stormpath;
 
 abstract class Factor extends InstanceResource implements Deletable
 {
-    const PATH  = 'factors';
+    const PATH = 'factors';
 
-    const TYPE  = 'type';
+    const TYPE = 'type';
     const CREATED_AT = 'createdAt';
-    const MODIFIED_AT   = 'modifiedAt';
-    const STATUS        = 'status';
-    const VERIFICATION_STATUS   = 'verificationStatus';
-    const ACCOUNT               = 'account';
-    const CHALLENGES            = 'challenges';
-    const MOST_RECENT_CHALLENGE = "mostRecentChallenge";
+    const MODIFIED_AT = 'modifiedAt';
+    const STATUS = 'status';
+    const VERIFICATION_STATUS = 'verificationStatus';
+    const ACCOUNT = 'account';
+    const CHALLENGES = 'challenges';
+    const MOST_RECENT_CHALLENGE = 'mostRecentChallenge';
 
     /**
      * Gets the type property.
@@ -44,22 +43,21 @@ abstract class Factor extends InstanceResource implements Deletable
     public function getType()
     {
         return $this->getProperty(self::TYPE);
-    } 
-    
+    }
+
     /**
      * Sets the type property.
      *
-     * @param string $type The type of the object.
+     * @param string $type The type of the object
+     *
      * @return self
      */
     protected function setType($type)
     {
         $this->setProperty(self::TYPE, $type);
-        
-        return $this; 
-    } 
-    
-    
+
+        return $this;
+    }
 
     /**
      * Gets the createdAt property.
@@ -94,7 +92,8 @@ abstract class Factor extends InstanceResource implements Deletable
     /**
      * Sets the status property.
      *
-     * @param string $status The status of the object.
+     * @param string $status The status of the object
+     *
      * @return self
      */
     public function setStatus($status)
@@ -117,7 +116,8 @@ abstract class Factor extends InstanceResource implements Deletable
     /**
      * Gets the account resource property.
      *
-     * @param array $options array of options.
+     * @param array $options array of options
+     *
      * @return Account
      */
     public function getAccount(array $options = [])
@@ -128,7 +128,8 @@ abstract class Factor extends InstanceResource implements Deletable
     /**
      * Gets the challenges resource property.
      *
-     * @param array $options array of options.
+     * @param array $options array of options
+     *
      * @return ChallengeList
      */
     public function getChallenges(array $options = [])
@@ -139,17 +140,14 @@ abstract class Factor extends InstanceResource implements Deletable
     /**
      * Gets the mostRecentChallenge resource property.
      *
-     * @param array $options array of options.
+     * @param array $options array of options
+     *
      * @return Challenge
      */
-    public abstract function getMostRecentChallenge(array $options = []);
-
+    abstract public function getMostRecentChallenge(array $options = []);
 
     public function delete()
     {
         return $this->getDataStore()->delete($this);
     }
-
-
-
 }

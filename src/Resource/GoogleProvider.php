@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -32,8 +31,7 @@ class GoogleProvider extends Provider
 
     public static function get($href, array $options = array())
     {
-        if (substr($href, 0 - strlen(self::PATH)) != self::PATH)
-        {
+        if (substr($href, 0 - strlen(self::PATH)) != self::PATH) {
             $href = $href.'/'.self::PATH;
         }
 

@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Mfa;
@@ -25,16 +24,16 @@ use Stormpath\Stormpath;
 
 class Phone extends Resource implements Deletable
 {
-    const PATH                  = "phones";
+    const PATH = 'phones';
 
-    const CREATED_AT            = "createdAt";
-    const MODIFIED_AT           = "modifiedAt";
-    const STATUS                = "status";
-    const VERIFICATION_STATUS   = "verificationStatus";
-    const ACCOUNT               = "account";
-    const PHONE_NUMBER          = "number";
-    const DESCRIPTION           = "description";
-    const NAME                  = "name";
+    const CREATED_AT = 'createdAt';
+    const MODIFIED_AT = 'modifiedAt';
+    const STATUS = 'status';
+    const VERIFICATION_STATUS = 'verificationStatus';
+    const ACCOUNT = 'account';
+    const PHONE_NUMBER = 'number';
+    const DESCRIPTION = 'description';
+    const NAME = 'name';
 
     public static function instantiate($properties = null)
     {
@@ -53,7 +52,8 @@ class Phone extends Resource implements Deletable
     /**
      * Sets the name property.
      *
-     * @param string $name The name of the object.
+     * @param string $name The name of the object
+     *
      * @return self
      */
     public function setName($name)
@@ -62,8 +62,6 @@ class Phone extends Resource implements Deletable
 
         return $this;
     }
-
-
 
     /**
      * Gets the description property.
@@ -78,7 +76,8 @@ class Phone extends Resource implements Deletable
     /**
      * Sets the description property.
      *
-     * @param string $description The description of the object.
+     * @param string $description The description of the object
+     *
      * @return self
      */
     public function setDescription($description)
@@ -87,8 +86,6 @@ class Phone extends Resource implements Deletable
 
         return $this;
     }
-
-
 
     /**
      * Gets the number property.
@@ -99,19 +96,20 @@ class Phone extends Resource implements Deletable
     {
         return $this->getProperty(self::PHONE_NUMBER);
     }
-    
+
     /**
      * Sets the number property.
      *
-     * @param string|int $number The number of the object.
+     * @param string|int $number The number of the object
+     *
      * @return self
      */
     public function setNumber($number)
     {
         $this->setProperty(self::PHONE_NUMBER, $number);
-        
-        return $this; 
-    } 
+
+        return $this;
+    }
 
     /**
      * Gets the number property.
@@ -126,15 +124,14 @@ class Phone extends Resource implements Deletable
     /**
      * Sets the number property.
      *
-     * @param string|int $phoneNumber The phoneNumber of the object.
+     * @param string|int $phoneNumber The phoneNumber of the object
+     *
      * @return self
      */
     public function setPhoneNumber($phoneNumber)
     {
         return $this->setNumber($phoneNumber);
     }
-
-
 
     /**
      * Gets the verificationStatus property.
@@ -178,8 +175,6 @@ class Phone extends Resource implements Deletable
 
     /**
      * Delete this instance of phone from Stormpath.
-     *
-     * @return void
      */
     public function delete()
     {

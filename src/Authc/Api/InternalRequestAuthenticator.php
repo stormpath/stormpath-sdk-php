@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Authc\Api;
@@ -21,8 +20,8 @@ namespace Stormpath\Authc\Api;
 use Stormpath\Exceptions\RequestAuthenticatorException;
 use Stormpath\Resource\Application;
 
-abstract class InternalRequestAuthenticator {
-
+abstract class InternalRequestAuthenticator
+{
     protected $application;
 
     public function __construct(Application $application)
@@ -32,7 +31,6 @@ abstract class InternalRequestAuthenticator {
 
     /**
      * @param Request $request
-     * @return null
      */
     protected function getApiKeyById(Request $request)
     {
@@ -42,24 +40,29 @@ abstract class InternalRequestAuthenticator {
     /**
      * @param Request $request
      * @param $apiKey
+     *
      * @throws RequestAuthenticatorException
      */
     protected function isValidApiKey(Request $request, $apiKey)
     {
-        if ($apiKey->getStatus() == 'DISABLED')
+        if ($apiKey->getStatus() == 'DISABLED') {
             throw new RequestAuthenticatorException('The API Key is not allowed to make this request.');
+        }
 
-        if($request->getScheme() == 'Bearer')
+        if ($request->getScheme() == 'Bearer') {
             return true;
+        }
 
-        if ($apiKey === null || !!($request->getApiSecret() != $apiKey->getSecret()))
+        if ($apiKey === null || (bool) ($request->getApiSecret() != $apiKey->getSecret())) {
             throw new RequestAuthenticatorException('The API Key is not valid for this request.');
+        }
 
         return true;
     }
 
     /**
      * @param $account
+     *
      * @throws RequestAuthenticatorException
      */
     protected function isValidAccount($account)
@@ -70,5 +73,4 @@ abstract class InternalRequestAuthenticator {
 
         return true;
     }
-
 }

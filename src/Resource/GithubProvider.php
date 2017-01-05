@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -24,14 +23,13 @@ use Stormpath\Stormpath;
 
 class GithubProvider extends Provider
 {
-    const CLIENT_ID             = 'clientId';
-    const CLIENT_SECRET         = 'clientSecret';
-    const GITHUB_PROVIDER_ID    = 'github';
+    const CLIENT_ID = 'clientId';
+    const CLIENT_SECRET = 'clientSecret';
+    const GITHUB_PROVIDER_ID = 'github';
 
     public static function get($href, array $options = array())
     {
-        if (substr($href, 0 - strlen(self::PATH)) != self::PATH)
-        {
+        if (substr($href, 0 - strlen(self::PATH)) != self::PATH) {
             $href = $href.'/'.self::PATH;
         }
 
@@ -68,5 +66,4 @@ class GithubProvider extends Provider
     {
         $this->setProperty(self::CLIENT_SECRET, $clientSecret);
     }
-
 }

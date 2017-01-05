@@ -13,35 +13,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Authc\Api;
 
-use Stormpath\Exceptions\RequestAuthenticatorException;
-
 class BasicRequestAuthenticator extends InternalRequestAuthenticator implements RequestAuthenticator
 {
-
     public function authenticate(Request $request)
     {
-        if (!$this->application)
+        if (!$this->application) {
             throw new \InvalidArgumentException('The application must be set.');
+        }
 
         $apiKey = $this->getApiKeyById($request);
 
-        if($this->isValidApiKey($request, $apiKey))
-        {
+        if ($this->isValidApiKey($request, $apiKey)) {
             $account = $apiKey->account;
         }
 
-        if($this->isValidAccount($account))
-        {
+        if ($this->isValidAccount($account)) {
             return new BasicAuthenticationResult($this->application, $apiKey);
         }
-
-
     }
-
-
 }

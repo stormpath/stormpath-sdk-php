@@ -13,16 +13,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-
 
 namespace Stormpath\Oauth;
 
-
 class ExchangeIdSiteTokenRequest
 {
-    private $grant_type = "id_site_token";
+    private $grant_type = 'id_site_token';
     private $token;
 
     public function __construct($Token)
@@ -30,11 +27,13 @@ class ExchangeIdSiteTokenRequest
         $this->token = $Token;
     }
 
-    public function getToken() {
+    public function getToken()
+    {
         return $this->token;
     }
 
-    public function getGrantType() {
+    public function getGrantType()
+    {
         return $this->grant_type;
     }
 }

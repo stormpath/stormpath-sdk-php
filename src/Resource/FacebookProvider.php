@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -24,14 +23,13 @@ use Stormpath\Stormpath;
 
 class FacebookProvider extends Provider
 {
-    const CLIENT_ID             = 'clientId';
-    const CLIENT_SECRET         = 'clientSecret';
-    const FACEBOOK_PROVIDER_ID  = 'facebook';
+    const CLIENT_ID = 'clientId';
+    const CLIENT_SECRET = 'clientSecret';
+    const FACEBOOK_PROVIDER_ID = 'facebook';
 
     public static function get($href, array $options = array())
     {
-        if (substr($href, 0 - strlen(self::PATH)) != self::PATH)
-        {
+        if (substr($href, 0 - strlen(self::PATH)) != self::PATH) {
             $href = $href.'/'.self::PATH;
         }
 
@@ -71,6 +69,7 @@ class FacebookProvider extends Provider
 
     /**
      * @deprecated 1.11.0.beta
+     *
      * @return string
      */
     public function getRedirectUri()
@@ -80,11 +79,11 @@ class FacebookProvider extends Provider
 
     /**
      * @deprecated 1.11.0.beta
+     *
      * @param $redirectUri
      */
     public function setRedirectUri($redirectUri)
     {
         $this->setProperty(self::REDIRECT_URI, $redirectUri);
     }
-
 }

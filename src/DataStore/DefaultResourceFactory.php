@@ -13,17 +13,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\DataStore;
 
 use Stormpath\Saml\AttributeStatementMappingRuleBuilder;
-use Stormpath\Saml\AttributeStatementMappingRulesBuilder;
 
 class DefaultResourceFactory implements ResourceFactory
 {
-
     private $dataStore;
 
     const RESOURCE_PATH = 'Stormpath\Resource\\';
@@ -35,19 +32,17 @@ class DefaultResourceFactory implements ResourceFactory
 
     public function instantiate($className, array $constructorArgs)
     {
-
         $class = new \ReflectionClass($this->qualifyClassName($className));
 
         array_unshift($constructorArgs, $this->dataStore);
 
         $newClass = $class->newInstanceArgs($constructorArgs);
 
-        if($class->hasConstant ( "CUSTOM_DATA" ))
-        {
+        if ($class->hasConstant('CUSTOM_DATA')) {
             $newClass->customData;
         }
 
-        if($newClass instanceof \Stormpath\Resource\SamlProvider) {
+        if ($newClass instanceof \Stormpath\Resource\SamlProvider) {
             $newClass = $this->convertSamlAttributeStatementMappingRules($newClass);
         }
 
@@ -60,19 +55,17 @@ class DefaultResourceFactory implements ResourceFactory
             return $className;
         }
 
-        if (strpos($className, self::RESOURCE_PATH) === false)
-        {
-            return self::RESOURCE_PATH .$className;
+        if (strpos($className, self::RESOURCE_PATH) === false) {
+            return self::RESOURCE_PATH.$className;
         }
 
         return $className;
-
     }
 
     private function convertSamlAttributeStatementMappingRules($newClass)
     {
         $mappingRules = $newClass->getAttributeStatementMappingRules();
-        if(null === $mappingRules) {
+        if (null === $mappingRules) {
             return $newClass;
         }
 
@@ -80,7 +73,7 @@ class DefaultResourceFactory implements ResourceFactory
         $newItems = [];
 
         $itemBuilder = new AttributeStatementMappingRuleBuilder();
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $newItems[] = $itemBuilder->setName($item->name)
                 ->setNameFormat($item->nameFormat)
                 ->setAccountAttributes($item->accountAttributes)
@@ -88,7 +81,7 @@ class DefaultResourceFactory implements ResourceFactory
         }
 
         $newClass->getAttributeStatementMappingRules()->items = $newItems;
+
         return $newClass;
     }
-
 }

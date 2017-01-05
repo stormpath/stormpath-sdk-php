@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -23,14 +22,15 @@ use Stormpath\Stormpath;
 /** @since 1.13.0 */
 class SamlProviderData extends InstanceResource
 {
-    const ENTITY_ID                                 = 'entityId';
-    const X509_SIGNING_CERT                         = 'x509SigningCert';
-    const ASSERTION_CONSUMER_SERVICE_POST_ENDPOINT  = 'assertionConsumerServicePostEndpoint';
+    const ENTITY_ID = 'entityId';
+    const X509_SIGNING_CERT = 'x509SigningCert';
+    const ASSERTION_CONSUMER_SERVICE_POST_ENDPOINT = 'assertionConsumerServicePostEndpoint';
 
     /**
-     * This returns the value of the Entity Id from the IdP XML
+     * This returns the value of the Entity Id from the IdP XML.
      *
      * @since 1.13.0
+     *
      * @return string
      */
     public function getEntityId()
@@ -45,7 +45,9 @@ class SamlProviderData extends InstanceResource
      * retrieve it.
      *
      * @since 1.13.0
+     *
      * @param array $options
+     *
      * @return null|\Stormpath\Resource\X509SigningCert
      */
     public function getX509SigningCert(array $options = [])
@@ -57,7 +59,9 @@ class SamlProviderData extends InstanceResource
      * This is the location the IdP will send its response to.
      *
      * @since 1.13.0
+     *
      * @param array $options
+     *
      * @return null|\Stormpath\Resource\AssertionConsumerServicePostEndpoint
      */
     public function getAssertionConsumerServicePostEndpoint(array $options = [])

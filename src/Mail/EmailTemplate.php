@@ -13,27 +13,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
+
 namespace Stormpath\Mail;
 
 use Stormpath\Resource\InstanceResource;
 
 abstract class EmailTemplate extends InstanceResource
 {
-    const NAME                  = "name";
-    const SUBJECT               = "subject";
-    const FROM_NAME             = "fromName";
-    const TEXT_BODY             = "textBody";
-    const HTML_BODY             = "htmlBody";
-    const MIME_TYPE             = "mimeType";
-    const DESCRIPTION           = "description";
-    const FROM_EMAIL_ADDRESS    = "fromEmailAddress";
+    const NAME = 'name';
+    const SUBJECT = 'subject';
+    const FROM_NAME = 'fromName';
+    const TEXT_BODY = 'textBody';
+    const HTML_BODY = 'htmlBody';
+    const MIME_TYPE = 'mimeType';
+    const DESCRIPTION = 'description';
+    const FROM_EMAIL_ADDRESS = 'fromEmailAddress';
 
-    const PATH = "emailTemplates";
+    const PATH = 'emailTemplates';
 
     /**
-     * Gets the href property
+     * Gets the href property.
      *
      * @return
      */
@@ -43,7 +43,7 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Gets the name property
+     * Gets the name property.
      *
      * @return string
      */
@@ -53,9 +53,10 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Sets the name property
+     * Sets the name property.
      *
      * @param string $name The name of the object
+     *
      * @return self
      */
     public function setName($name)
@@ -66,7 +67,7 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Gets the description property
+     * Gets the description property.
      *
      * @return string
      */
@@ -76,9 +77,10 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Sets the description property
+     * Sets the description property.
      *
      * @param string $description The description of the object
+     *
      * @return self
      */
     public function setDescription($description)
@@ -89,7 +91,7 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Gets the fromName property
+     * Gets the fromName property.
      *
      * @return string
      */
@@ -99,9 +101,10 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Sets the fromName property
+     * Sets the fromName property.
      *
      * @param string $fromName The fromName of the object
+     *
      * @return self
      */
     public function setFromName($fromName)
@@ -112,7 +115,7 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Gets the fromEmailAddress property
+     * Gets the fromEmailAddress property.
      *
      * @return string
      */
@@ -122,9 +125,10 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Sets the fromEmailAddress property
+     * Sets the fromEmailAddress property.
      *
      * @param string $fromEmailAddress The fromEmailAddress of the object
+     *
      * @return self
      */
     public function setFromEmailAddress($fromEmailAddress)
@@ -135,7 +139,7 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Gets the subject property
+     * Gets the subject property.
      *
      * @return string
      */
@@ -145,9 +149,10 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Sets the subject property
+     * Sets the subject property.
      *
      * @param string $subject The subject of the object
+     *
      * @return self
      */
     public function setSubject($subject)
@@ -158,7 +163,7 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Gets the textBody property
+     * Gets the textBody property.
      *
      * @return string
      */
@@ -168,9 +173,10 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Sets the textBody property
+     * Sets the textBody property.
      *
      * @param string $textBody The textBody of the object
+     *
      * @return self
      */
     public function setTextBody($textBody)
@@ -181,7 +187,7 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Gets the htmlBody property
+     * Gets the htmlBody property.
      *
      * @return string
      */
@@ -191,9 +197,10 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Sets the htmlBody property
+     * Sets the htmlBody property.
      *
      * @param string $htmlBody The htmlBody of the object
+     *
      * @return self
      */
     public function setHtmlBody($htmlBody)
@@ -204,7 +211,7 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Gets the mimeType property
+     * Gets the mimeType property.
      *
      * @return string
      */
@@ -214,9 +221,10 @@ abstract class EmailTemplate extends InstanceResource
     }
 
     /**
-     * Sets the mimeType property
+     * Sets the mimeType property.
      *
      * @param string $mimeType The mimeType of the object
+     *
      * @return self
      */
     public function setMimeType($mimeType)
@@ -225,5 +233,4 @@ abstract class EmailTemplate extends InstanceResource
 
         return $this;
     }
-
 }

@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Cache;
@@ -21,8 +20,8 @@ namespace Stormpath\Cache;
 use Cache\Adapter\Redis\RedisCachePool;
 use Redis;
 
-class RedisCacheManager implements PSR6CacheManagerInterface {
-
+class RedisCacheManager implements PSR6CacheManagerInterface
+{
     public function getCachePool($options)
     {
         $redis = new Redis();

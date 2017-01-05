@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Mfa;
@@ -23,8 +22,6 @@ use Stormpath\Stormpath;
 
 class GoogleAuthenticatorChallenge extends Challenge
 {
-
-
     public static function get($href, array $options = array())
     {
         return Client::get($href, Stormpath::GOOGLE_AUTHENTICATOR_CHALLENGE, self::PATH, $options);
@@ -38,8 +35,9 @@ class GoogleAuthenticatorChallenge extends Challenge
     /**
      * Validate the current Challenge.
      *
-     * @param string $code The code to validate the challenge with.
-     * @return SmsChallenge|boolean
+     * @param string $code The code to validate the challenge with
+     *
+     * @return SmsChallenge|bool
      */
     public function validate($code)
     {
@@ -47,12 +45,10 @@ class GoogleAuthenticatorChallenge extends Challenge
 
         $returnedChallenge = $this->getDataStore()->save($this, Stormpath::GOOGLE_AUTHENTICATOR_CHALLENGE);
 
-        if($returnedChallenge->getStatus() == Stormpath::SUCCESS) {
+        if ($returnedChallenge->getStatus() == Stormpath::SUCCESS) {
             return $returnedChallenge;
         }
 
         return false;
     }
-
-
 }

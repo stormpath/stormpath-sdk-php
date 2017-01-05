@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -22,11 +21,12 @@ use Stormpath\DataStore\InternalDataStore;
 
 class BasicLoginAttempt extends Resource
 {
-    const TYPE = "type";
-    const VALUE = "value";
-    const ACCOUNT_STORE = "accountStore";
+    const TYPE = 'type';
+    const VALUE = 'value';
+    const ACCOUNT_STORE = 'accountStore';
 
-    public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null) {
+    public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null)
+    {
         parent::__construct($dataStore, $properties);
         $this->setProperty(self::TYPE, 'basic');
     }

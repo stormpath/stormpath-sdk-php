@@ -14,7 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -24,22 +23,22 @@ use Stormpath\Stormpath;
 
 class Organization extends AccountStore implements Deletable
 {
-    const ACCOUNTS                          = 'accounts';
-    const ACCOUNT_STORE_MAPPINGS            = 'accountStoreMappings';
-    const CREATED_AT                        = 'createdAt';
-    const CUSTOM_DATA                       = 'customData';
-    const DEFAULT_ACCOUNT_STORE_MAPPING     = 'defaultAccountStoreMapping';
-    const DEFAULT_GROUP_STORE_MAPPING       = 'defaultGroupStoreMapping';
-    const DESCRIPTION                       = 'description';
-    const GROUPS                            = 'groups';
-    const HREF                              = 'href';
-    const MODIFIED_AT                       = 'modifiedAt';
-    const NAME                              = 'name';
-    const NAME_KEY                          = 'nameKey';
-    const STATUS                            = 'status';
-    const TENANT                            = 'tenant';
+    const ACCOUNTS = 'accounts';
+    const ACCOUNT_STORE_MAPPINGS = 'accountStoreMappings';
+    const CREATED_AT = 'createdAt';
+    const CUSTOM_DATA = 'customData';
+    const DEFAULT_ACCOUNT_STORE_MAPPING = 'defaultAccountStoreMapping';
+    const DEFAULT_GROUP_STORE_MAPPING = 'defaultGroupStoreMapping';
+    const DESCRIPTION = 'description';
+    const GROUPS = 'groups';
+    const HREF = 'href';
+    const MODIFIED_AT = 'modifiedAt';
+    const NAME = 'name';
+    const NAME_KEY = 'nameKey';
+    const STATUS = 'status';
+    const TENANT = 'tenant';
 
-    const PATH                              = 'organizations';
+    const PATH = 'organizations';
 
     public static function get($href, array $options = array())
     {
@@ -55,8 +54,7 @@ class Organization extends AccountStore implements Deletable
     {
         $organization = $properties;
 
-        if (!($organization instanceof Organization))
-        {
+        if (!($organization instanceof self)) {
             $organization = self::instantiate($properties);
         }
 
@@ -93,17 +91,17 @@ class Organization extends AccountStore implements Deletable
 
     public function getDefaultAccountStoreMapping(array $options = [])
     {
-    	return $this->getResourceProperty(self::DEFAULT_ACCOUNT_STORE_MAPPING, Stormpath::ACCOUNT_STORE, $options);
+        return $this->getResourceProperty(self::DEFAULT_ACCOUNT_STORE_MAPPING, Stormpath::ACCOUNT_STORE, $options);
     }
 
     public function getDefaultGroupStoreMapping(array $options = [])
     {
-    	return $this->getResourceProperty(self::DEFAULT_GROUP_STORE_MAPPING, Stormpath::GROUP, $options);
+        return $this->getResourceProperty(self::DEFAULT_GROUP_STORE_MAPPING, Stormpath::GROUP, $options);
     }
 
     public function getDescription()
     {
-    	return $this->getProperty(self::DESCRIPTION);
+        return $this->getProperty(self::DESCRIPTION);
     }
 
     public function setDescription($description)
@@ -113,45 +111,44 @@ class Organization extends AccountStore implements Deletable
 
     public function getGroups(array $options = [])
     {
-    	return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST, $options);
+        return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST, $options);
     }
 
     public function getHref()
     {
-    	return $this->getProperty(self::HREF);
+        return $this->getProperty(self::HREF);
     }
-    
+
     public function getModifiedAt()
     {
-    	return $this->getProperty(self::MODIFIED_AT);
+        return $this->getProperty(self::MODIFIED_AT);
     }
-    
+
     public function getName()
     {
-    	return $this->getProperty(self::NAME);
+        return $this->getProperty(self::NAME);
     }
 
     public function setName($name)
     {
         $this->setProperty(self::NAME, $name);
     }
-    
+
     public function getNameKey()
     {
-    	return $this->getProperty(self::NAME_KEY);
+        return $this->getProperty(self::NAME_KEY);
     }
 
     public function setNameKey($nameKey)
     {
         $this->setProperty(self::NAME_KEY, $nameKey);
     }
-    
+
     public function getStatus()
     {
         $value = $this->getProperty(self::STATUS);
 
-        if ($value)
-        {
+        if ($value) {
             $value = strtoupper($value);
         }
 
@@ -161,20 +158,19 @@ class Organization extends AccountStore implements Deletable
     public function setStatus($status)
     {
         $uprStatus = strtoupper($status);
-        if (array_key_exists($uprStatus, Stormpath::$AccountStatuses))
-        {
+        if (array_key_exists($uprStatus, Stormpath::$AccountStatuses)) {
             $this->setProperty(self::STATUS, Stormpath::$AccountStatuses[$uprStatus]);
         }
     }
-    
+
     public function getTenant(array $options = [])
     {
-    	return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
+        return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
     }
 
     public function createOrganizationAccountStoreMapping(AccountStoreMapping $accountStoreMapping, array $options = array())
     {
-        return $this->getDataStore()->create("/organizationAccountStoreMappings", $accountStoreMapping, Stormpath::ACCOUNT_STORE_MAPPING);
+        return $this->getDataStore()->create('/organizationAccountStoreMappings', $accountStoreMapping, Stormpath::ACCOUNT_STORE_MAPPING);
     }
 
     public function delete()

@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Directory;
@@ -24,25 +23,24 @@ use Stormpath\Stormpath;
 
 class PasswordStrength extends InstanceResource
 {
-    const HREF              = "href";
-    const MIN_LENGTH        = "minLength";
-    const MAX_LENGTH        = "maxLength";
-    const MIN_NUMERIC       = "minNumeric";
-    const MIN_SYMBOL        = "minSymbol";
-    const MIN_DIACRITIC     = "minDiacritic";
-    const PREVENT_REUSE     = "preventReuse";
-    const MIN_LOWER_CASE    = "minLowerCase";
-    const MIN_UPPER_CASE    = "minUpperCase";
+    const HREF = 'href';
+    const MIN_LENGTH = 'minLength';
+    const MAX_LENGTH = 'maxLength';
+    const MIN_NUMERIC = 'minNumeric';
+    const MIN_SYMBOL = 'minSymbol';
+    const MIN_DIACRITIC = 'minDiacritic';
+    const PREVENT_REUSE = 'preventReuse';
+    const MIN_LOWER_CASE = 'minLowerCase';
+    const MIN_UPPER_CASE = 'minUpperCase';
 
-    const PATH              = "strength";
-
+    const PATH = 'strength';
 
     public static function get($href, array $options = [])
     {
         return Client::get($href, Stormpath::PASSWORD_STRENGTH, self::PATH, $options);
     }
     /**
-     * Gets the href property
+     * Gets the href property.
      *
      * @return string
      */
@@ -51,9 +49,9 @@ class PasswordStrength extends InstanceResource
         return $this->getProperty(self::HREF);
     }
     /**
-     * Gets the minLength property
+     * Gets the minLength property.
      *
-     * @return integer
+     * @return int
      */
     public function getMinLength()
     {
@@ -61,9 +59,10 @@ class PasswordStrength extends InstanceResource
     }
 
     /**
-     * Sets the minLength property
+     * Sets the minLength property.
      *
-     * @param integer $minLength The minLength of the object
+     * @param int $minLength The minLength of the object
+     *
      * @return self
      */
     public function setMinLength($minLength)
@@ -73,57 +72,58 @@ class PasswordStrength extends InstanceResource
         return $this;
     }
 
-
     /**
-     * Gets the maxLength property
+     * Gets the maxLength property.
      *
-     * @return integer
+     * @return int
      */
     public function getMaxLength()
     {
         return $this->getProperty(self::MAX_LENGTH);
     }
-    
+
     /**
-     * Sets the maxLength property
+     * Sets the maxLength property.
      *
-     * @param integer $maxLength The maxLength of the object
+     * @param int $maxLength The maxLength of the object
+     *
      * @return self
      */
     public function setMaxLength($maxLength)
     {
         $this->setProperty(self::MAX_LENGTH, $maxLength);
-        
-        return $this; 
+
+        return $this;
     }
 
     /**
-     * Gets the minLowerCase property
+     * Gets the minLowerCase property.
      *
-     * @return integer
+     * @return int
      */
     public function getMinLowerCase()
     {
         return $this->getProperty(self::MIN_LOWER_CASE);
     }
-    
+
     /**
-     * Sets the minLowerCase property
+     * Sets the minLowerCase property.
      *
-     * @param integer $minLowerCase The minLowerCase of the object
+     * @param int $minLowerCase The minLowerCase of the object
+     *
      * @return self
      */
     public function setMinLowerCase($minLowerCase)
     {
         $this->setProperty(self::MIN_LOWER_CASE, $minLowerCase);
-        
-        return $this; 
+
+        return $this;
     }
 
     /**
-     * Gets the minUpperCase property
+     * Gets the minUpperCase property.
      *
-     * @return integer
+     * @return int
      */
     public function getMinUpperCase()
     {
@@ -131,9 +131,10 @@ class PasswordStrength extends InstanceResource
     }
 
     /**
-     * Sets the minUpperCase property
+     * Sets the minUpperCase property.
      *
-     * @param integer $minUpperCase The minUpperCase of the object
+     * @param int $minUpperCase The minUpperCase of the object
+     *
      * @return self
      */
     public function setMinUpperCase($minUpperCase)
@@ -144,9 +145,9 @@ class PasswordStrength extends InstanceResource
     }
 
     /**
-     * Gets the minNumeric property
+     * Gets the minNumeric property.
      *
-     * @return integer
+     * @return int
      */
     public function getMinNumeric()
     {
@@ -154,9 +155,10 @@ class PasswordStrength extends InstanceResource
     }
 
     /**
-     * Sets the minNumeric property
+     * Sets the minNumeric property.
      *
-     * @param integer $minNumeric The minNumeric of the object
+     * @param int $minNumeric The minNumeric of the object
+     *
      * @return self
      */
     public function setMinNumeric($minNumeric)
@@ -167,9 +169,9 @@ class PasswordStrength extends InstanceResource
     }
 
     /**
-     * Gets the minSymbol property
+     * Gets the minSymbol property.
      *
-     * @return integer
+     * @return int
      */
     public function getMinSymbol()
     {
@@ -177,9 +179,10 @@ class PasswordStrength extends InstanceResource
     }
 
     /**
-     * Sets the minSymbol property
+     * Sets the minSymbol property.
      *
-     * @param integer $minSymbol The minSymbol of the object
+     * @param int $minSymbol The minSymbol of the object
+     *
      * @return self
      */
     public function setMinSymbol($minSymbol)
@@ -190,9 +193,9 @@ class PasswordStrength extends InstanceResource
     }
 
     /**
-     * Gets the minDiacritic property
+     * Gets the minDiacritic property.
      *
-     * @return integer
+     * @return int
      */
     public function getMinDiacritic()
     {
@@ -200,9 +203,10 @@ class PasswordStrength extends InstanceResource
     }
 
     /**
-     * Sets the minDiacritic property
+     * Sets the minDiacritic property.
      *
-     * @param integer $minDiacritic The minDiacritic of the object
+     * @param int $minDiacritic The minDiacritic of the object
+     *
      * @return self
      */
     public function setMinDiacritic($minDiacritic)
@@ -213,9 +217,9 @@ class PasswordStrength extends InstanceResource
     }
 
     /**
-     * Gets the preventReuse property
+     * Gets the preventReuse property.
      *
-     * @return integer
+     * @return int
      */
     public function getPreventReuse()
     {
@@ -223,9 +227,10 @@ class PasswordStrength extends InstanceResource
     }
 
     /**
-     * Sets the preventReuse property
+     * Sets the preventReuse property.
      *
-     * @param integer $preventReuse The preventReuse of the object
+     * @param int $preventReuse The preventReuse of the object
+     *
      * @return self
      */
     public function setPreventReuse($preventReuse)
@@ -234,5 +239,4 @@ class PasswordStrength extends InstanceResource
 
         return $this;
     }
-
 }

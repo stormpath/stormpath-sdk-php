@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -24,10 +23,10 @@ use Stormpath\Stormpath;
 
 class GroupMembership extends Resource implements Deletable
 {
-    const ACCOUNT = "account";
-    const GROUP   = "group";
+    const ACCOUNT = 'account';
+    const GROUP = 'group';
 
-    const PATH    = "groupMemberships";
+    const PATH = 'groupMemberships';
 
     public static function get($href, array $options = array())
     {
@@ -43,8 +42,7 @@ class GroupMembership extends Resource implements Deletable
     {
         $groupMembership = $properties;
 
-        if (!($groupMembership instanceof GroupMembership))
-        {
+        if (!($groupMembership instanceof self)) {
             $groupMembership = self::instantiate($properties);
         }
 
@@ -81,16 +79,17 @@ class GroupMembership extends Resource implements Deletable
      * changed at any time.  It has the public modifier only as an implementation technique to be accessible to other
      * resource implementations.
      *
-     * @param $account the account to associate with the group.
-     * @param $group the group which will contain the account.
-     * @param $dataStore the datastore used to create the membership.
-     * @param $options the options to pass to the group membership creation.
-     * @return the created GroupMembership instance.
+     * @param $account the account to associate with the group
+     * @param $group the group which will contain the account
+     * @param $dataStore the datastore used to create the membership
+     * @param $options the options to pass to the group membership creation
+     *
+     * @return the created GroupMembership instance
      */
     public static function _create(Account $account, Group $group, InternalDataStore $dataStore, array $options = array())
     {
         //TODO: enable auto discovery
-        $href = '/' .self::PATH;
+        $href = '/'.self::PATH;
 
         $groupMembership = $dataStore->instantiate(Stormpath::GROUP_MEMBERSHIP);
         $groupMembership->setResourceProperty(self::ACCOUNT, $account);
@@ -98,5 +97,4 @@ class GroupMembership extends Resource implements Deletable
 
         return $dataStore->create($href, $groupMembership, Stormpath::GROUP_MEMBERSHIP, $options);
     }
-
 }

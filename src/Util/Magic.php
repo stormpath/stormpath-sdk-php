@@ -13,15 +13,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Util;
 
-class Magic {
-
+class Magic
+{
     /** @var array Hash of methods available to the class (provides fast isset() lookups) */
-    private  $methods;
+    private $methods;
 
     public function __construct()
     {
@@ -29,14 +28,15 @@ class Magic {
     }
 
     /**
-     * Magic "get" method
+     * Magic "get" method.
      *
      * @param string $property Property name
+     *
      * @return mixed|null Property value if it exists, null if not
      */
     public function __get($property)
     {
-        $method = 'get' .ucfirst($property);
+        $method = 'get'.ucfirst($property);
         if (isset($this->methods[$method])) {
             return $this->{$method}();
         }
@@ -45,14 +45,14 @@ class Magic {
     }
 
     /**
-     * Magic "set" method
+     * Magic "set" method.
      *
      * @param string $property Property name
-     * @param mixed $value Property value
+     * @param mixed  $value    Property value
      */
     public function __set($property, $value)
     {
-        $method = 'set' .ucfirst($property);
+        $method = 'set'.ucfirst($property);
         if (isset($this->methods[$method])) {
             $this->{$method}($value);
         }

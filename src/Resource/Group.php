@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -23,16 +22,16 @@ use Stormpath\Stormpath;
 
 class Group extends AccountStore implements Deletable
 {
-    const NAME                = "name";
-    const DESCRIPTION         = "description";
-    const STATUS              = "status";
-    const TENANT              = "tenant";
-    const DIRECTORY           = "directory";
-    const ACCOUNTS            = "accounts";
+    const NAME = 'name';
+    const DESCRIPTION = 'description';
+    const STATUS = 'status';
+    const TENANT = 'tenant';
+    const DIRECTORY = 'directory';
+    const ACCOUNTS = 'accounts';
     const ACCOUNT_MEMBERSHIPS = 'accountMemberships';
-    const CUSTOM_DATA         = "customData";
+    const CUSTOM_DATA = 'customData';
 
-    const PATH                = "groups";
+    const PATH = 'groups';
 
     public static function get($href, array $options = array())
     {
@@ -68,8 +67,7 @@ class Group extends AccountStore implements Deletable
     {
         $value = $this->getProperty(self::STATUS);
 
-        if ($value)
-        {
+        if ($value) {
             $value = strtoupper($value);
         }
 
@@ -79,8 +77,7 @@ class Group extends AccountStore implements Deletable
     public function setStatus($status)
     {
         $uprStatus = strtoupper($status);
-        if (array_key_exists($uprStatus, Stormpath::$Statuses))
-        {
+        if (array_key_exists($uprStatus, Stormpath::$Statuses)) {
             $this->setProperty(self::STATUS, Stormpath::$Statuses[$uprStatus]);
         }
     }
@@ -102,9 +99,9 @@ class Group extends AccountStore implements Deletable
 
     public function getCustomData(array $options = array())
     {
-        $customData =  $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
+        $customData = $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
 
-        if(!$customData) {
+        if (!$customData) {
             $customData = new CustomData();
             $this->setProperty(self::CUSTOM_DATA, $customData);
         }

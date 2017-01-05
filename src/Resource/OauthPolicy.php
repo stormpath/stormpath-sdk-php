@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -22,22 +21,22 @@ use Stormpath\Client;
 use Stormpath\Stormpath;
 
 /**
- * Class OauthPolicy
- * @package Stormpath\Resource
+ * Class OauthPolicy.
+ *
  * @since 1.11.0.beta
  */
 class OauthPolicy extends InstanceResource implements Saveable
 {
-    const ACCESS_TOKEN_TTL              = "accessTokenTtl";
-    const REFRESH_TOKEN_TTL             = "refreshTokenTtl";
-    const TOKEN_ENDPOINT                = "tokenEndpoint";
+    const ACCESS_TOKEN_TTL = 'accessTokenTtl';
+    const REFRESH_TOKEN_TTL = 'refreshTokenTtl';
+    const TOKEN_ENDPOINT = 'tokenEndpoint';
 
-    const PATH                          = "oAuthPolicies";
-
+    const PATH = 'oAuthPolicies';
 
     /**
      * @param $href
      * @param array $options
+     *
      * @return mixed
      */
     public static function get($href, array $options = array())
@@ -77,12 +76,8 @@ class OauthPolicy extends InstanceResource implements Saveable
         $this->setProperty(self::REFRESH_TOKEN_TTL, $ttl);
     }
 
-    /**
-     * @return null
-     */
     public function getTokenEndpoint()
     {
         return $this->getProperty(self::TOKEN_ENDPOINT);
     }
-
 }

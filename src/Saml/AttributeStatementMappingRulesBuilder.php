@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Saml;
@@ -22,7 +21,8 @@ class AttributeStatementMappingRulesBuilder
 {
     /**
      * @since 1.13.0
-     * @var array $attributeStatementMappingRules an array of all AttributeStatementMappingRule objects
+     *
+     * @var array an array of all AttributeStatementMappingRule objects
      */
     private $attributeStatementMappingRules = [];
 
@@ -33,13 +33,14 @@ class AttributeStatementMappingRulesBuilder
      * field values after a successful SAML login.
      *
      * @since 1.13.0
+     *
      * @param array $attributeStatementMappingRules an array of AttributeStatementMappingRule objects
+     *
      * @return AttributeStatementMappingRulesBuilder
      */
     public function setAttributeStatementMappingRules(array $attributeStatementMappingRules)
     {
-        foreach($attributeStatementMappingRules as $mappingRule)
-        {
+        foreach ($attributeStatementMappingRules as $mappingRule) {
             $this->addAttributeStatementMappingRule($mappingRule);
         }
 
@@ -52,14 +53,17 @@ class AttributeStatementMappingRulesBuilder
      * field values after a successful SAML login.
      *
      * @since 1.13.0
+     *
      * @param AttributeStatementMappingRule $attributeStatementMappingRule an instance of
-     *                                                                      AttributeStatementMappingRule
-     *                                                                      to be added to array of objects
+     *                                                                     AttributeStatementMappingRule
+     *                                                                     to be added to array of objects
+     *
      * @return AttributeStatementMappingRulesBuilder
      */
     public function addAttributeStatementMappingRule(AttributeStatementMappingRule $attributeStatementMappingRule)
     {
         $this->attributeStatementMappingRules[] = $attributeStatementMappingRule;
+
         return $this;
     }
 
@@ -74,6 +78,7 @@ class AttributeStatementMappingRulesBuilder
 
         $rules = new \Stormpath\Saml\AttributeStatementMappingRules();
         $rules->setItems($this->attributeStatementMappingRules);
+
         return $rules;
     }
 }

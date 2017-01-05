@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Directory;
@@ -24,14 +23,14 @@ use Stormpath\Stormpath;
 
 class PasswordPolicy extends InstanceResource
 {
-    const RESET_TOKEN_TTL               = "resetTokenTtl";
-    const PASSWORD_STRENGTH             = "strength";
-    const RESET_EMAIL_STATUS            = "resetEmailStatus";
-    const RESET_EMAIL_TEMPLATES         = "resetEmailTemplates";
-    const RESET_SUCCESS_EMAIL_STATUS    = "resetSuccessEmailStatus";
-    const RESET_SUCCESS_EMAIL_TEMPLATES = "resetSuccessEmailTemplates";
+    const RESET_TOKEN_TTL = 'resetTokenTtl';
+    const PASSWORD_STRENGTH = 'strength';
+    const RESET_EMAIL_STATUS = 'resetEmailStatus';
+    const RESET_EMAIL_TEMPLATES = 'resetEmailTemplates';
+    const RESET_SUCCESS_EMAIL_STATUS = 'resetSuccessEmailStatus';
+    const RESET_SUCCESS_EMAIL_TEMPLATES = 'resetSuccessEmailTemplates';
 
-    const PATH                          = 'passwordPolicies';
+    const PATH = 'passwordPolicies';
 
     public static function get($href, array $options = [])
     {
@@ -82,6 +81,4 @@ class PasswordPolicy extends InstanceResource
     {
         return $this->getResourceProperty(self::RESET_SUCCESS_EMAIL_TEMPLATES, Stormpath::UNMODELED_EMAIL_TEMPLATE_LIST, $options);
     }
-
-
 }

@@ -13,18 +13,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-
 namespace Stormpath\Oauth;
-
 
 use Stormpath\Resource\AccountStore;
 
 /**
- * Class PasswordGrantRequest
- * @package Stormpath\Oauth
+ * Class PasswordGrantRequest.
+ *
  * @since 1.11.0.beta
  */
 class PasswordGrantRequest
@@ -39,10 +36,10 @@ class PasswordGrantRequest
      */
     private $password;
 
-	/**
-	 * @var
-	 */
-	private $orgNameKey;
+    /**
+     * @var
+     */
+    private $orgNameKey;
 
     /**
      * @var
@@ -56,7 +53,6 @@ class PasswordGrantRequest
 
     public function __construct($login, $password, $orgNameKey = null)
     {
-
         $this->login = $login;
         $this->password = $password;
         $this->orgNameKey = $orgNameKey;
@@ -64,6 +60,7 @@ class PasswordGrantRequest
 
     /**
      * @param AccountStore $accountStore
+     *
      * @return $this
      */
     public function setAccountStore(AccountStore $accountStore)
@@ -89,12 +86,12 @@ class PasswordGrantRequest
         return $this->login;
     }
 
-	/**
-	 * @return string
-	 */
+    /**
+     * @return string
+     */
     public function getOrgNameKey()
     {
-    	return $this->orgNameKey;
+        return $this->orgNameKey;
     }
 
     /**

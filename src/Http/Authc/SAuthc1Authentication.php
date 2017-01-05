@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Http\Authc;
@@ -53,7 +52,7 @@ class SAuthc1Authentication implements Authentication
     public function authenticate(RequestInterface $request)
     {
         $date = new \DateTime();
-	    $date->setTimezone(new \DateTimeZone(self::TIME_ZONE));
+        $date->setTimezone(new \DateTimeZone(self::TIME_ZONE));
         $timeStamp = $date->format(self::TIMESTAMP_FORMAT);
         $dateStamp = $date->format(self::DATE_FORMAT);
 
@@ -66,7 +65,7 @@ class SAuthc1Authentication implements Authentication
         $hostHeader = $uri->getHost();
 
         if (!RequestUtils::isDefaultPort($uri)) {
-            $hostHeader .= ':' . $uri->getPort();
+            $hostHeader .= ':'.$uri->getPort();
         }
 
         $request = $request
@@ -82,24 +81,24 @@ class SAuthc1Authentication implements Authentication
         $signedHeadersString = $this->getSignedHeaders($request);
         $requestPayloadHashHex = $this->toHex($this->hashText($this->getRequestPayload($request)));
 
-        $canonicalRequest = $method . self::NL .
-        $canonicalResourcePath . self::NL .
-        $canonicalQueryString . self::NL .
-        $canonicalHeaderString . self::NL .
-        $signedHeadersString . self::NL .
+        $canonicalRequest = $method.self::NL.
+        $canonicalResourcePath.self::NL.
+        $canonicalQueryString.self::NL.
+        $canonicalHeaderString.self::NL.
+        $signedHeadersString.self::NL.
             $requestPayloadHashHex;
 
-        $id = $this->apiKey->getId() . '/' . $dateStamp . '/' . $nonce . '/' . self::ID_TERMINATOR;
+        $id = $this->apiKey->getId().'/'.$dateStamp.'/'.$nonce.'/'.self::ID_TERMINATOR;
 
         $canonicalRequestHashHex = $this->toHex($this->hashText($canonicalRequest));
 
-        $stringToSign = self::ALGORITHM . self::NL .
-        $timeStamp . self::NL .
-        $id . self::NL .
+        $stringToSign = self::ALGORITHM.self::NL.
+        $timeStamp.self::NL.
+        $id.self::NL.
             $canonicalRequestHashHex;
 
         // SAuthc1 uses a series of derived keys, formed by hashing different pieces of data
-        $kSecret = $this->toUTF8(self::AUTHENTICATION_SCHEME . $this->apiKey->getSecret());
+        $kSecret = $this->toUTF8(self::AUTHENTICATION_SCHEME.$this->apiKey->getSecret());
         $kDate = $this->internalSign($dateStamp, $kSecret, self::DEFAULT_ALGORITHM);
         $kNonce = $this->internalSign($nonce, $kDate, self::DEFAULT_ALGORITHM);
         $kSigning = $this->internalSign(self::ID_TERMINATOR, $kNonce, self::DEFAULT_ALGORITHM);
@@ -107,9 +106,9 @@ class SAuthc1Authentication implements Authentication
         $signature = $this->internalSign($this->toUTF8($stringToSign), $kSigning, self::DEFAULT_ALGORITHM);
         $signatureHex = $this->toHex($signature);
 
-        $authorizationHeader = self::AUTHENTICATION_SCHEME . ' ' .
-        $this->createNameValuePair(self::SAUTHC1_ID, $id) . ', ' .
-        $this->createNameValuePair(self::SAUTHC1_SIGNED_HEADERS, $signedHeadersString) . ', ' .
+        $authorizationHeader = self::AUTHENTICATION_SCHEME.' '.
+        $this->createNameValuePair(self::SAUTHC1_ID, $id).', '.
+        $this->createNameValuePair(self::SAUTHC1_SIGNED_HEADERS, $signedHeadersString).', '.
         $this->createNameValuePair(self::SAUTHC1_SIGNATURE, $signatureHex);
 
         return $request
@@ -120,6 +119,7 @@ class SAuthc1Authentication implements Authentication
     public function toHex($data)
     {
         $result = unpack('H*', $data);
+
         return $result[1];
     }
 
@@ -128,7 +128,7 @@ class SAuthc1Authentication implements Authentication
         $uri = $request->getUri();
         $queryString = $uri->getQuery();
 
-        if ($queryString === "") {
+        if ($queryString === '') {
             return $request;
         }
 
@@ -136,7 +136,7 @@ class SAuthc1Authentication implements Authentication
         $newParams = [];
         foreach ($params as $param) {
             $explodedPair = explode('=', $param);
-            $newParams[] = urlencode(trim(urldecode($explodedPair[0]))) . '=' . urlencode(trim(urldecode($explodedPair[1])));
+            $newParams[] = urlencode(trim(urldecode($explodedPair[0]))).'='.urlencode(trim(urldecode($explodedPair[1])));
         }
         sort($newParams);
         $newQueryString = implode('&', $newParams);
@@ -180,7 +180,7 @@ class SAuthc1Authentication implements Authentication
 
     private function createNameValuePair($name, $value)
     {
-        return $name . '=' . $value;
+        return $name.'='.$value;
     }
 
     private function canonicalizeResourcePath($resourcePath)
@@ -206,7 +206,7 @@ class SAuthc1Authentication implements Authentication
             $key = urldecode($pair[0]);
             $value = isset($pair[1]) ? urldecode($pair[1]) : '';
 
-            $canonicalPairs[] = RequestUtils::encodeUrl($key, false, true) . '=' . RequestUtils::encodeUrl($value, false, true);
+            $canonicalPairs[] = RequestUtils::encodeUrl($key, false, true).'='.RequestUtils::encodeUrl($value, false, true);
         }
 
         sort($canonicalPairs);
@@ -223,7 +223,7 @@ class SAuthc1Authentication implements Authentication
 
         foreach ($requestHeaders as $key => $val) {
             foreach ($val as $value) {
-                $result .= strtolower($key) . ':' . $value;
+                $result .= strtolower($key).':'.$value;
             }
 
             $result .= self::NL;
@@ -241,7 +241,7 @@ class SAuthc1Authentication implements Authentication
 
         foreach ($requestHeaders as $key => $val) {
             if ($result) {
-                $result .= ';' . $key;
+                $result .= ';'.$key;
             } else {
                 $result .= $key;
             }

@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Mfa;
@@ -23,9 +22,7 @@ use Stormpath\Stormpath;
 
 class SmsChallenge extends Challenge
 {
-
-    const MESSAGE = "message";
-
+    const MESSAGE = 'message';
 
     public static function get($href, array $options = array())
     {
@@ -50,13 +47,14 @@ class SmsChallenge extends Challenge
     /**
      * Sets the message property.
      *
-     * @param string $message The message of the object.
+     * @param string $message The message of the object
+     *
      * @return self
      */
     public function setMessage($message)
     {
-        if(!strpos($message, Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER)) {
-            throw new \InvalidArgumentException('The message must contain a code placeholder: ' . Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER);
+        if (!strpos($message, Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER)) {
+            throw new \InvalidArgumentException('The message must contain a code placeholder: '.Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER);
         }
 
         $this->setProperty(self::MESSAGE, $message);
@@ -67,8 +65,9 @@ class SmsChallenge extends Challenge
     /**
      * Validate the current Challenge.
      *
-     * @param string $code The code to validate the challenge with.
-     * @return SmsChallenge|boolean
+     * @param string $code The code to validate the challenge with
+     *
+     * @return SmsChallenge|bool
      */
     public function validate($code)
     {
@@ -76,12 +75,10 @@ class SmsChallenge extends Challenge
 
         $returnedChallenge = $this->getDataStore()->save($this, Stormpath::SMS_CHALLENGE);
 
-        if($returnedChallenge->getStatus() == Stormpath::SUCCESS) {
+        if ($returnedChallenge->getStatus() == Stormpath::SUCCESS) {
             return $returnedChallenge;
         }
 
         return false;
     }
-
-
 }

@@ -13,12 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Mfa;
 
-use Stormpath\Client;
 use Stormpath\Resource\Account;
 use Stormpath\Resource\Deletable;
 use Stormpath\Resource\InstanceResource;
@@ -26,18 +24,17 @@ use Stormpath\Stormpath;
 
 abstract class Challenge extends InstanceResource implements Deletable
 {
-    const CODE          = "code";
-    const FACTOR        = "factor";
-    const STATUS        = "status";
-    const ACCOUNT       = "account";
-    const MESSAGE       = "message";
-    const CREATED_AT    = "createdAt";
-    const MODIFIED_AT   = "modifiedAt";
+    const CODE = 'code';
+    const FACTOR = 'factor';
+    const STATUS = 'status';
+    const ACCOUNT = 'account';
+    const MESSAGE = 'message';
+    const CREATED_AT = 'createdAt';
+    const MODIFIED_AT = 'modifiedAt';
 
-    const PATH          = "challenges";
+    const PATH = 'challenges';
 
-
-    public abstract function validate($code);
+    abstract public function validate($code);
 
     /**
      * Gets the createdAt property.
@@ -72,7 +69,8 @@ abstract class Challenge extends InstanceResource implements Deletable
     /**
      * Gets the factor resource property.
      *
-     * @param array $options array of options.
+     * @param array $options array of options
+     *
      * @return Factor
      */
     public function getFactor(array $options = [])
@@ -83,7 +81,8 @@ abstract class Challenge extends InstanceResource implements Deletable
     /**
      * Sets the factor resource property.
      *
-     * @param Factor $factor The factor of the object.
+     * @param Factor $factor The factor of the object
+     *
      * @return self
      */
     public function setFactor(Factor $factor)
@@ -96,7 +95,8 @@ abstract class Challenge extends InstanceResource implements Deletable
     /**
      * Gets the account resource property.
      *
-     * @param array $options array of options.
+     * @param array $options array of options
+     *
      * @return Account
      */
     public function getAccount(array $options = [])
@@ -107,7 +107,8 @@ abstract class Challenge extends InstanceResource implements Deletable
     /**
      * Sets the account resource property.
      *
-     * @param Account $account The account of the object.
+     * @param Account $account The account of the object
+     *
      * @return self
      */
     public function setAccount(Account $account)
@@ -120,7 +121,8 @@ abstract class Challenge extends InstanceResource implements Deletable
     /**
      * Sets the code property.
      *
-     * @param string $code The code of the object.
+     * @param string $code The code of the object
+     *
      * @return self
      */
     public function setCode($code)
@@ -129,7 +131,6 @@ abstract class Challenge extends InstanceResource implements Deletable
 
         return $this;
     }
-
 
     /**
      * Delete the challenge.
@@ -140,5 +141,4 @@ abstract class Challenge extends InstanceResource implements Deletable
     {
         return $this->getDataStore()->delete($this);
     }
-
 }

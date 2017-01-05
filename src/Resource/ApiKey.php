@@ -14,28 +14,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
-
 
 use Stormpath\Authc\Api\ApiKeyEncryptionUtils;
 use Stormpath\Stormpath;
 
 class ApiKey extends InstanceResource implements Deletable
 {
-    const ID            = "id";
-    const SECRET        = "secret";
-    const STATUS        = "status";
-    
-    const NAME          = "name";
-    const DESCRIPTION   = "description";
+    const ID = 'id';
+    const SECRET = 'secret';
+    const STATUS = 'status';
 
-    const ACCOUNT       = "account";
-    const TENANT        = "tenant";
+    const NAME = 'name';
+    const DESCRIPTION = 'description';
 
-    const PATH          = "apiKeys";
+    const ACCOUNT = 'account';
+    const TENANT = 'tenant';
+
+    const PATH = 'apiKeys';
 
     private $apiKeyMetadata;
 
@@ -46,14 +44,12 @@ class ApiKey extends InstanceResource implements Deletable
 
     public function getSecret()
     {
-        if ($this->apiKeyMetadata && $this->apiKeyMetadata->isEncryptSecret())
-        {
+        if ($this->apiKeyMetadata && $this->apiKeyMetadata->isEncryptSecret()) {
             $secret = $this->getProperty(self::SECRET);
             $password = $this->getDataStore()->getApiKey()->getSecret();
+
             return ApiKeyEncryptionUtils::decrypt($secret, $password, $this->apiKeyMetadata);
-        }
-        else
-        {
+        } else {
             return $this->getProperty(self::SECRET);
         }
     }
@@ -82,11 +78,11 @@ class ApiKey extends InstanceResource implements Deletable
     {
         $this->apiKeyMetadata = $metadata;
     }
-    
+
     /**
-     * Gets the name property
+     * Gets the name property.
      *
-     * @return 
+     * @return
      */
     public function getName()
     {
@@ -94,9 +90,10 @@ class ApiKey extends InstanceResource implements Deletable
     }
 
     /**
-     * Sets the name property
+     * Sets the name property.
      *
      * @param string $name The name of the object
+     *
      * @return self
      */
     public function setName($name)
@@ -106,22 +103,21 @@ class ApiKey extends InstanceResource implements Deletable
         return $this;
     }
 
-
-    
     /**
-     * Gets the description property
+     * Gets the description property.
      *
-     * @return 
+     * @return
      */
     public function getDescription()
     {
         return $this->getProperty(self::DESCRIPTION);
-    } 
-    
+    }
+
     /**
-     * Sets the description property
+     * Sets the description property.
      *
      * @param string $description The description of the object
+     *
      * @return self
      */
     public function setDescription($description)
@@ -130,10 +126,6 @@ class ApiKey extends InstanceResource implements Deletable
 
         return $this;
     }
-
-
-    
-    
 
     public function delete()
     {

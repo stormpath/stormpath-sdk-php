@@ -13,23 +13,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
 
 class Provider extends Resource
 {
-    const CREATED_AT    = "createdAt";
-    const MODIFIED_AT   = "modifiedAt";
-    const PROVIDER_ID   = "providerId";
+    const CREATED_AT = 'createdAt';
+    const MODIFIED_AT = 'modifiedAt';
+    const PROVIDER_ID = 'providerId';
 
-    const PATH          = "provider";
+    const PATH = 'provider';
 
     /**
      * Returns the provider's created date.
      *
-     * @return the provider's created date.
+     * @return the provider's created date
      */
     public function getCreatedAt()
     {
@@ -37,7 +36,7 @@ class Provider extends Resource
     }
 
     /**
-     * Returns the provider's last modification date
+     * Returns the provider's last modification date.
      *
      * @return the provider's last modification date
      */
@@ -49,7 +48,7 @@ class Provider extends Resource
     /**
      * Getter for the Stormpath ID of the Provider (e.g. "facebook" or "google").
      *
-     * @return the Stormpath ID of the Provider.
+     * @return the Stormpath ID of the Provider
      */
     public function getProviderId()
     {

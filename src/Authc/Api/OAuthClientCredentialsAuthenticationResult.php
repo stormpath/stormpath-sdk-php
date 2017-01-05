@@ -13,15 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Authc\Api;
 
-use Stormpath\Resource\ApiKey;
-use Stormpath\Resource\Application;
-
 class OAuthClientCredentialsAuthenticationResult extends AuthenticatorResult
 {
-
 }

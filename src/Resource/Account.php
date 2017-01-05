@@ -14,7 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -30,28 +29,28 @@ use Stormpath\Stormpath;
 
 class Account extends InstanceResource implements Deletable
 {
-    const USERNAME                 = "username";
-    const EMAIL                    = "email";
-    const FACTORS                  = "factors";
-    const PASSWORD                 = "password";
-    const GIVEN_NAME               = "givenName";
-    const MIDDLE_NAME              = "middleName";
-    const SURNAME                  = "surname";
-    const STATUS                   = "status";
-    const GROUPS                   = "groups";
-    const CUSTOM_DATA              = "customData";
-    const DIRECTORY                = "directory";
-    const EMAIL_VERIFICATION_TOKEN = "emailVerificationToken";
-    const GROUP_MEMBERSHIPS        = "groupMemberships";
-    const FULL_NAME                = "fullName";
-    const TENANT                   = "tenant";
-    const PROVIDER_DATA			   = "providerData";
-    const PHONES                   = "phones";
-    const ACCESS_TOKENS            = "accessTokens";
-    const REFRESH_TOKENS           = "refreshTokens";
-    const PASSWORD_MODIFIED_AT     = "passwordModifiedAt";
+    const USERNAME = 'username';
+    const EMAIL = 'email';
+    const FACTORS = 'factors';
+    const PASSWORD = 'password';
+    const GIVEN_NAME = 'givenName';
+    const MIDDLE_NAME = 'middleName';
+    const SURNAME = 'surname';
+    const STATUS = 'status';
+    const GROUPS = 'groups';
+    const CUSTOM_DATA = 'customData';
+    const DIRECTORY = 'directory';
+    const EMAIL_VERIFICATION_TOKEN = 'emailVerificationToken';
+    const GROUP_MEMBERSHIPS = 'groupMemberships';
+    const FULL_NAME = 'fullName';
+    const TENANT = 'tenant';
+    const PROVIDER_DATA = 'providerData';
+    const PHONES = 'phones';
+    const ACCESS_TOKENS = 'accessTokens';
+    const REFRESH_TOKENS = 'refreshTokens';
+    const PASSWORD_MODIFIED_AT = 'passwordModifiedAt';
 
-    const PATH                     = "accounts";
+    const PATH = 'accounts';
 
     public static function get($href, array $options = array())
     {
@@ -122,8 +121,7 @@ class Account extends InstanceResource implements Deletable
     {
         $value = $this->getProperty(self::STATUS);
 
-        if ($value)
-        {
+        if ($value) {
             $value = strtoupper($value);
         }
 
@@ -133,15 +131,13 @@ class Account extends InstanceResource implements Deletable
     public function setStatus($status)
     {
         $uprStatus = strtoupper($status);
-        if (array_key_exists($uprStatus, Stormpath::$AccountStatuses))
-        {
+        if (array_key_exists($uprStatus, Stormpath::$AccountStatuses)) {
             $this->setProperty(self::STATUS, Stormpath::$AccountStatuses[$uprStatus]);
         }
     }
 
-
-    public function getFullName() {
-
+    public function getFullName()
+    {
         return $this->getProperty(self::FULL_NAME);
     }
 
@@ -152,9 +148,9 @@ class Account extends InstanceResource implements Deletable
 
     public function getCustomData(array $options = array())
     {
-        $customData =  $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
+        $customData = $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
 
-        if(!$customData) {
+        if (!$customData) {
             $customData = new CustomData();
             $this->setProperty(self::CUSTOM_DATA, $customData);
         }
@@ -187,15 +183,16 @@ class Account extends InstanceResource implements Deletable
         return $this->getResourceProperty(self::GROUP_MEMBERSHIPS, Stormpath::GROUP_MEMBERSHIP_LIST, $options);
     }
 
-    public function getTenant(array $options = array()) {
-
+    public function getTenant(array $options = array())
+    {
         return $this->getResourceProperty(self::TENANT, Stormpath::TENANT, $options);
     }
 
     /**
      * Gets the phones resource property.
      *
-     * @param array $options array of options.
+     * @param array $options array of options
+     *
      * @return PhoneList
      */
     public function getPhones(array $options = [])
@@ -209,14 +206,15 @@ class Account extends InstanceResource implements Deletable
      */
     public function addPhone(Phone $phone, $options = [])
     {
-        return $this->getDataStore()->create($this->getHref() . '/' . $phone::PATH,
+        return $this->getDataStore()->create($this->getHref().'/'.$phone::PATH,
             $phone, Stormpath::PHONE, $options);
     }
 
     /**
      * Gets the factors resource property.
      *
-     * @param array $options array of options.
+     * @param array $options array of options
+     *
      * @return FactorList
      */
     public function getFactors(array $options = [])
@@ -226,9 +224,9 @@ class Account extends InstanceResource implements Deletable
 
     public function addFactor(Factor $factor, $options = [])
     {
-        $href = $this->getHref() . '/' . $factor::PATH;
+        $href = $this->getHref().'/'.$factor::PATH;
 
-        if($factor instanceof SmsFactor && null !== $factor->getChallenge()) {
+        if ($factor instanceof SmsFactor && null !== $factor->getChallenge()) {
             $href .= '?challenge=true';
         }
 
@@ -236,39 +234,35 @@ class Account extends InstanceResource implements Deletable
             $factor, get_class($factor), $options);
     }
 
-
     public function getPasswordModifedAt()
     {
-        return $this->getProperty(self::PASSWORD_MODIFIED_AT );
+        return $this->getProperty(self::PASSWORD_MODIFIED_AT);
     }
-    
+
     public function getProviderData(array $options = array())
     {
-    	$value = $this->getProperty(self::PROVIDER_DATA);
-    	
-    	if ($value instanceof ProviderData)
-    	{
-    		return $value;
-    	}
-    	
-    	if ($value instanceof \stdClass)
-    	{
-    		$href = $value->href;
-    		
-    		if (empty($href))
-    		{
-    			throw new \InvalidArgumentException("providerData resource does not contain its required href property.");    			
-    		}
-    		
-    		$providerData = $this->getDataStore()->getResource($href, Stormpath::PROVIDER_DATA, array(
-                'propertyId' => 'providerId'
+        $value = $this->getProperty(self::PROVIDER_DATA);
+
+        if ($value instanceof ProviderData) {
+            return $value;
+        }
+
+        if ($value instanceof \stdClass) {
+            $href = $value->href;
+
+            if (empty($href)) {
+                throw new \InvalidArgumentException('providerData resource does not contain its required href property.');
+            }
+
+            $providerData = $this->getDataStore()->getResource($href, Stormpath::PROVIDER_DATA, array(
+                'propertyId' => 'providerId',
             ));
-    		$this->setProperty(self::PROVIDER_DATA, $providerData);
-    		
-    		return $providerData;
-    	}
-    	
-    	throw new \InvalidArgumentException("providerData does not match expected type ProviderData or stdClass");
+            $this->setProperty(self::PROVIDER_DATA, $providerData);
+
+            return $providerData;
+        }
+
+        throw new \InvalidArgumentException('providerData does not match expected type ProviderData or stdClass');
     }
 
     public function addGroup(Group $group, array $options = array())
@@ -276,8 +270,8 @@ class Account extends InstanceResource implements Deletable
         return GroupMembership::_create($this, $group, $this->getDataStore(), $options);
     }
 
-    public function delete() {
-
+    public function delete()
+    {
         $this->getDataStore()->delete($this);
     }
 
@@ -288,16 +282,19 @@ class Account extends InstanceResource implements Deletable
 
         $properties = new \stdClass();
 
-        if(isset($options['name'])) { $properties->name = $options['name']; }
-        if(isset($options['description'])) { $properties->description = $options['description']; }
+        if (isset($options['name'])) {
+            $properties->name = $options['name'];
+        }
+        if (isset($options['description'])) {
+            $properties->description = $options['description'];
+        }
 
         $apiKey = $this->getDataStore()->instantiate(Stormpath::API_KEY, $properties);
 
-        $apiKey = $this->getDataStore()->create($this->getHref() . '/' . ApiKey::PATH,
+        $apiKey = $this->getDataStore()->create($this->getHref().'/'.ApiKey::PATH,
             $apiKey, Stormpath::API_KEY, $options);
 
-        if ($apiKey)
-        {
+        if ($apiKey) {
             $apiKey->setApiKeyMetadata($apiKeyOptions);
         }
 

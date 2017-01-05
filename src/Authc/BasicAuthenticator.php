@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Authc;
@@ -23,7 +22,6 @@ use Stormpath\Stormpath;
 
 class BasicAuthenticator
 {
-
     private $dataStore;
 
     public function __construct(InternalDataStore $dataStore)
@@ -33,13 +31,11 @@ class BasicAuthenticator
 
     public function authenticate($parentHref, AuthenticationRequest $request, array $options = array())
     {
-        if (!$parentHref)
-        {
+        if (!$parentHref) {
             throw new \InvalidArgumentException('$parentHref argument must be specified');
         }
 
-        if (!($request instanceof UsernamePasswordRequest))
-        {
+        if (!($request instanceof UsernamePasswordRequest)) {
             throw new \InvalidArgumentException('Only UsernamePasswordRequest instances are supported.');
         }
 
@@ -49,7 +45,7 @@ class BasicAuthenticator
         $password = $request->getCredentials();
         $password = implode('', $password);
 
-        $value = $username .':' .$password;
+        $value = $username.':'.$password;
 
         $value = base64_encode($value);
 
@@ -60,7 +56,7 @@ class BasicAuthenticator
             $attempt->setAccountStore($request->getAccountStore());
         }
 
-        $href = $parentHref . '/loginAttempts';
+        $href = $parentHref.'/loginAttempts';
 
         return $this->dataStore->create($href, $attempt, Stormpath::AUTHENTICATION_RESULT, $options);
     }

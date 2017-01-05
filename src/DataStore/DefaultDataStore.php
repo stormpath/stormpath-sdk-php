@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\DataStore;
@@ -75,16 +74,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         $this->apiKey = $apiKey;
 
-
-        if(!$baseUrl)
-        {
-            $this->baseUrl = 'https://' . self::DEFAULT_SERVER_HOST . "/v" . self::DEFAULT_API_VERSION;
-
-        } else
-        {
-           $this->baseUrl = $baseUrl;
+        if (!$baseUrl) {
+            $this->baseUrl = 'https://'.self::DEFAULT_SERVER_HOST.'/v'.self::DEFAULT_API_VERSION;
+        } else {
+            $this->baseUrl = $baseUrl;
         }
-
     }
 
     /**
@@ -95,12 +89,12 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
      * implementation was known (Resource implementation classes are intentionally not exposed to SDK end-users).
      *
      * @param $className the Resource class name (as a String) to instantiate. This can be the fully qualified name or the
-     * simple name of the Resource (which is also the simple name of the .php file).
-     * @param object $properties the optional Properties of the Resource to instantiate.
+     * simple name of the Resource (which is also the simple name of the .php file)
+     * @param object $properties the optional Properties of the Resource to instantiate
      * @param array options the options to create the resource. This optional argument is useful to specify query strings,
-     * among other options.
+     * among other options
      *
-     * @return a new instance of the specified Resource.
+     * @return a new instance of the specified Resource
      */
     public function instantiate($className, \stdClass $properties = null, array $options = array())
     {
@@ -109,7 +103,6 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $resource = $this->resourceFactory->instantiate($className, $propertiesArr);
 
         return $resource;
-
     }
 
     /**
@@ -121,16 +114,15 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
      *
      * @param href  the resource URL of the resource to retrieve
      * @param class the <i>Resource</i> sub-interface to instantiate. This can be the fully qualified name or the
-     * simple name of the Resource (which is also the simple name of the .php file).
+     * simple name of the Resource (which is also the simple name of the .php file)
      * @param options the options to create the resource. This optional argument is useful to specify query strings,
-     * among other options.
+     * among other options
      *
-     * @return an instance of the specified class based on the data returned from the specified <i>href</i> URL.
+     * @return an instance of the specified class based on the data returned from the specified <i>href</i> URL
      */
     public function getResource($href, $className, array $options = array())
     {
-        if ($this->needsToBeFullyQualified($href))
-        {
+        if ($this->needsToBeFullyQualified($href)) {
             $href = $this->qualify($href);
         }
 
@@ -163,18 +155,14 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     public function create($parentHref, Resource $resource, $returnType, array $options = array())
     {
-
         $queryString = $this->getQueryString($options);
         $returnedResource = $this->saveResource($parentHref, $resource, $returnType, $queryString);
 
         $returnTypeClass = $this->resourceFactory->instantiate($returnType, array());
-        if ($resource instanceof $returnTypeClass)
-        {
+        if ($resource instanceof $returnTypeClass) {
             //ensure the caller's argument is updated with what is returned from the server:
             $resource->setProperties($this->toStdClass($returnedResource));
         }
-
-
 
         return $returnedResource;
     }
@@ -183,13 +171,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     {
         $href = $resource->getHref();
 
-        if (!strlen($href))
-        {
+        if (!strlen($href)) {
             throw new \InvalidArgumentException('save may only be called on objects that have already been persisted (i.e. they have an existing href).');
         }
 
-        if ($this->needsToBeFullyQualified($href))
-        {
+        if ($this->needsToBeFullyQualified($href)) {
             $href = $this->qualify($href);
         }
 
@@ -197,26 +183,25 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         $returnedResource = $this->saveResource($href, $resource, $returnType);
 
-
-
         //ensure the caller's argument is updated with what is returned from the server:
         $resource->setProperties($this->toStdClass($returnedResource));
 
         return $returnedResource;
-
     }
 
     public function delete(Resource $resource)
     {
         $delete = $this->executeRequest('DELETE', $resource->getHref());
         $this->removeResourceFromCache($resource);
+
         return $delete;
     }
 
     public function removeCustomDataItem(Resource $resource, $key)
     {
-        $delete = $this->executeRequest('DELETE', $resource->getHref() . '/' . $key);
+        $delete = $this->executeRequest('DELETE', $resource->getHref().'/'.$key);
         $this->removeResourceFromCache($resource);
+
         return $delete;
     }
 
@@ -229,24 +214,23 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     {
         $slashAdded = '';
 
-        if (!(stripos($href, '/') == 0))
-        {
+        if (!(stripos($href, '/') == 0)) {
             $slashAdded = '/';
         }
 
-        return $this->baseUrl .$slashAdded .$href;
+        return $this->baseUrl.$slashAdded.$href;
     }
 
     private function executeRequest($httpMethod, $href, $body = '', array $query = array())
     {
         if ($href == null) {
-            throw new \InvalidArgumentException("Cannot execute request against empty URL");
+            throw new \InvalidArgumentException('Cannot execute request against empty URL');
         }
 
         $headers = [];
         $headers['Accept'] = 'application/json';
 
-        $userAgentBuilder = new UserAgentBuilder;
+        $userAgentBuilder = new UserAgentBuilder();
         $headers['User-Agent'] = $userAgentBuilder->setOsName(php_uname('s'))
             ->setOsVersion(php_uname('r'))
             ->setPhpVersion(phpversion())
@@ -293,12 +277,11 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         }
 
         return $result;
-
     }
 
     /**
      * Adapted from Guzzle PSR-7, by Michael Dowling et al.
-     * Licensed under the MIT license
+     * Licensed under the MIT license.
      *
      * Any existing query string values that exactly match the provided key are
      * removed and replaced with the key value pair in the dictionary.
@@ -306,8 +289,8 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
      * A value of null will set the query string key without a value, e.g. "key"
      * instead of "key=value".
      *
-     * @param string $currentQuery The current query string
-     * @param array $queryDictionary A key-value array of query parameters to append to the query string
+     * @param string $currentQuery    The current query string
+     * @param array  $queryDictionary A key-value array of query parameters to append to the query string
      *
      * @return string
      */
@@ -330,7 +313,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $key = strtr($key, ['=' => '%3D', '&' => '%26']);
 
             if ($value !== null) {
-                $result[] = $key . '=' . strtr($value, ['=' => '%3D', '&' => '%26']);
+                $result[] = $key.'='.strtr($value, ['=' => '%3D', '&' => '%26']);
             } else {
                 $result[] = $key;
             }
@@ -341,8 +324,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     private function saveResource($href, Resource $resource, $returnType, array $query = array())
     {
-        if ($this->needsToBeFullyQualified($href))
-        {
+        if ($this->needsToBeFullyQualified($href)) {
             $href = $this->qualify($href);
         }
 
@@ -355,14 +337,12 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         //status. The resource factory does not provide a way to pass such information when instantiating a resource. Thus,
         //after the resource has been instantiated we are going to manipulate it before returning it in order to set the
         //"is new" status
-        if (isset($response) && isset($response->httpStatus))
-        {
-        	$httpStatus = $response->httpStatus;
-        	if ($returnType == Stormpath::PROVIDER_ACCOUNT_RESULT && ($httpStatus == 200 || $httpStatus == 201))
-        	{
-        		$response->newAccount = $httpStatus == 201;
-        	}
-        	unset($response->httpStatus);
+        if (isset($response) && isset($response->httpStatus)) {
+            $httpStatus = $response->httpStatus;
+            if ($returnType == Stormpath::PROVIDER_ACCOUNT_RESULT && ($httpStatus == 200 || $httpStatus == 201)) {
+                $response->newAccount = $httpStatus == 201;
+            }
+            unset($response->httpStatus);
         }
 
         $this->removeHrefFromCache($href);
@@ -370,7 +350,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $this->removeHrefFromCache($response->href);
         }
 
-        if($this->responseIsCacheable($response)) {
+        if ($this->responseIsCacheable($response)) {
             $this->addResponseToCache($response, http_build_query($query));
         }
 
@@ -379,8 +359,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     private function toStdClass(Resource $resource, $customData = false)
     {
-        if($resource instanceof \Stormpath\Resource\CustomData)
-        {
+        if ($resource instanceof \Stormpath\Resource\CustomData) {
             $customData = true;
         }
 
@@ -388,26 +367,17 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         $properties = new \stdClass();
 
-        foreach($propertyNames as $name)
-        {
-
+        foreach ($propertyNames as $name) {
             $property = $resource->getProperty($name);
 
             $nameIsCustomData = $name == CustomData::CUSTOMDATA_PROP_NAME;
             $nameIsDefaultModel = $name == 'defaultModel';
 
-            if ($property instanceof \Stormpath\Resource\CustomData)
-            {
+            if ($property instanceof \Stormpath\Resource\CustomData) {
                 $property = $this->toStdClass($property, true);
-            }
-
-            else if ($property instanceof \stdClass && $customData === false && !$nameIsCustomData && !$nameIsDefaultModel)
-            {
+            } elseif ($property instanceof \stdClass && $customData === false && !$nameIsCustomData && !$nameIsDefaultModel) {
                 $property = $this->toSimpleReference($name, $property);
-            }
-
-            else if ($property instanceof \Stormpath\Resource\Resource)
-            {
+            } elseif ($property instanceof \Stormpath\Resource\Resource) {
                 $property = $this->toStdClass($property);
             }
 
@@ -425,24 +395,21 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
         $classProperties = $class->getProperties();
 
-        foreach($classProperties as $prop) {
+        foreach ($classProperties as $prop) {
             $method = 'get'.ucfirst($prop->name);
-            if(method_exists($property, $method)) {
-
+            if (method_exists($property, $method)) {
                 $properties->{$prop->name} = $property->$method();
             }
         }
 
         return $properties;
-
     }
 
     private function toSimpleReference($propertyName, \stdClass $properties)
     {
         $hrefPropName = Resource::HREF_PROP_NAME;
 
-        if (!isset($properties->$hrefPropName))
-        {
+        if (!isset($properties->$hrefPropName)) {
             throw new \InvalidArgumentException("Nested resource '#{$propertyName}' must have an 'href' property.");
         }
 
@@ -455,32 +422,32 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         return $toReturn;
     }
 
-    private function getQueryString(array $options) {
-
+    private function getQueryString(array $options)
+    {
         $query = array();
 
         // All of the supported options are query strings right now,
         // so we just return the same array with the values converted
         // to string.
         foreach ($options as $key => $opt) {
-
-           $query[$key] = !is_bool($opt)? //only support a boolean or an object that has a __toString implementation
+            $query[$key] = !is_bool($opt) ? //only support a boolean or an object that has a __toString implementation
                           strval($opt) :
                           var_export($opt, true);
-
         }
 
         return $query;
     }
 
     /** This method is not for use by enduser.
-     *  The method will be removed without warning
+     *  The method will be removed without warning.
      *  at a future time.  */
-    public function getCachePool() {
+    public function getCachePool()
+    {
         return $this->cachePool;
     }
 
-    public function getApiKey() {
+    public function getApiKey()
+    {
         return $this->apiKey;
     }
 
@@ -492,7 +459,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
     protected function removeResourceFromCache($resource)
     {
         switch (true) {
-            case $resource instanceof Directory:
+            case $resource instanceof Directory :
                 $this->cachePool->clear();
                 break;
             default:
@@ -518,7 +485,7 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $item = $this->cachePool->getItem($this->createCacheKey($href, $options));
         }
 
-        if($this->responseIsCacheable($response, $options)) {
+        if ($this->responseIsCacheable($response, $options)) {
             $item->set($response);
 
             $cacheTags = CacheTagExtractor::extractCacheTags($response);

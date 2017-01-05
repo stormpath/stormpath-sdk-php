@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Mfa;
@@ -27,7 +26,6 @@ class SmsFactor extends Factor
 {
     const PHONE = 'phone';
     const CHALLENGE = 'challenge';
-
 
     public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null, array $options = array())
     {
@@ -43,34 +41,35 @@ class SmsFactor extends Factor
 
     public static function instantiate($properties = [])
     {
-        $properties = array_merge($properties, ['type'=>'sms']);
+        $properties = array_merge($properties, ['type' => 'sms']);
+
         return Client::instantiate(Stormpath::SMS_FACTOR, $properties);
     }
-
 
     /**
      * Gets the phone resource property.
      *
-     * @param array $options array of options.
+     * @param array $options array of options
+     *
      * @return Phone
      */
     public function getPhone(array $options = [])
     {
         $phone = $this->getProperty(self::PHONE);
+
         return $this->getResourceProperty(self::PHONE, Stormpath::PHONE, $options);
     }
 
     /**
      * Sets the phone property.
      *
-     * @param Phone|string $phone The phone of the object.
+     * @param Phone|string $phone The phone of the object
+     *
      * @return self
      */
     public function setPhone($phone)
     {
-        if( ! $phone instanceof Phone )
-        {
-
+        if (!$phone instanceof Phone) {
             $properties = new \stdClass();
             $properties->number = $phone;
             $phone = $this->getDataStore()->instantiate(
@@ -79,15 +78,15 @@ class SmsFactor extends Factor
             );
 
             $this->setProperty(self::PHONE, $phone);
+
             return $this;
         }
 
         $this->setResourceProperty(self::PHONE, $phone);
+
         return $this;
-
-
     }
-    
+
     /**
      * Gets the challenge property.
      *
@@ -96,22 +95,20 @@ class SmsFactor extends Factor
     public function getChallenge()
     {
         return $this->getProperty(self::CHALLENGE);
-    } 
-    
-    
+    }
 
     /**
      * Sets the challenge.
      *
-     * @param Challenge|string $challenge The challenge object.
+     * @param Challenge|string $challenge The challenge object
+     *
      * @return self
      */
     public function setChallenge($challenge)
     {
-        if( ! $challenge instanceof SmsChallenge )
-        {
-            if(!strpos($challenge, Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER)) {
-                throw new \InvalidArgumentException('The challenge message must have a challenge code placeholder: ' . Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER);
+        if (!$challenge instanceof SmsChallenge) {
+            if (!strpos($challenge, Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER)) {
+                throw new \InvalidArgumentException('The challenge message must have a challenge code placeholder: '.Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER);
             }
             $properties = new \stdClass();
             $properties->message = $challenge;
@@ -121,20 +118,20 @@ class SmsFactor extends Factor
             );
 
             $this->setProperty(self::CHALLENGE, $challenge);
+
             return $this;
         }
 
         $this->setResourceProperty(self::CHALLENGE, $challenge);
+
         return $this;
-
-
     }
-
 
     /**
      * Gets the mostRecentChallenge resource property.
      *
-     * @param array $options array of options.
+     * @param array $options array of options
+     *
      * @return Challenge
      */
     public function getMostRecentChallenge(array $options = [])
@@ -144,17 +141,16 @@ class SmsFactor extends Factor
 
     public function createChallenge($message = null)
     {
-        if(isset($message) &&
+        if (isset($message) &&
             !strpos($message, Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER)) {
-            throw new \InvalidArgumentException('The challenge message must have a challenge code placeholder: ' . Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER);
+            throw new \InvalidArgumentException('The challenge message must have a challenge code placeholder: '.Stormpath::MFA_CHALLENGE_CODE_PLACEHOLDER);
         }
         $challenge = new SmsChallenge();
 
-        if($message) {
+        if ($message) {
             $challenge->message = $message;
         }
 
-
-        return $this->getDataStore()->create($this->href . '/challenges', $challenge, Stormpath::SMS_CHALLENGE);
+        return $this->getDataStore()->create($this->href.'/challenges', $challenge, Stormpath::SMS_CHALLENGE);
     }
 }

@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Authc\Api;
@@ -58,7 +57,6 @@ class Request
         return $this;
     }
 
-
     public function hasAuthorizationHeader()
     {
         return isset($this->headers['HTTP_AUTHORIZATION']);
@@ -69,28 +67,35 @@ class Request
         $validGrantTypes = [
             'client_credentials',
             'password',
-            'refresh_token'
+            'refresh_token',
         ];
-        return !!(strpos($this->headers['REQUEST_URI'], '?grant_type=') && in_array($this->getGrantType(), $validGrantTypes));
+
+        return (bool) (strpos($this->headers['REQUEST_URI'], '?grant_type=') && in_array($this->getGrantType(), $validGrantTypes));
     }
 
     public function isBearerAuthorization()
     {
         $sandv = $this->getSchemeAndValue();
-        return !!($sandv[0]=='Bearer');
+
+        return (bool) ($sandv[0] == 'Bearer');
     }
 
     public function isBasicAuthorization()
     {
         $sandv = $this->getSchemeAndValue();
-        return !!($sandv[0]=='Basic');
+
+        return (bool) ($sandv[0] == 'Basic');
     }
 
     public function isPasswordGrantType()
     {
-        if (!$this->hasGrantType()) return false;
+        if (!$this->hasGrantType()) {
+            return false;
+        }
 
-        if ($this->getGrantType() != 'password') return false;
+        if ($this->getGrantType() != 'password') {
+            return false;
+        }
 
         return true;
     }
@@ -99,7 +104,7 @@ class Request
     {
         $queryString = $this->headers['QUERY_STRING'];
 
-        $query = explode('=',$queryString,2);
+        $query = explode('=', $queryString, 2);
 
         return $query[1];
     }
@@ -111,19 +116,19 @@ class Request
 
         $sandv = $this->getSchemeAndValue();
 
-        if($sandv[0] == 'Basic') {
-            $tokens = explode(":", $decoded, 2);
-        } else if($sandv[0] == 'Bearer') {
+        if ($sandv[0] == 'Basic') {
+            $tokens = explode(':', $decoded, 2);
+        } elseif ($sandv[0] == 'Bearer') {
             $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
             $token = JWT::decode($encodedAuthenticationTokens, $apiSecret, array('HS256'));
             $tokens = array($token->sub, null);
-
         } else {
             throw new \InvalidArgumentException('The Scheme is not valid');
         }
 
-        if(count($tokens) != 2)
+        if (count($tokens) != 2) {
             throw new \InvalidArgumentException('It appears the Authorization header is not formatted correctly.');
+        }
 
         return $tokens;
     }
@@ -132,29 +137,28 @@ class Request
     {
         $schemeAndValue = $this->getSchemeAndValue();
 
-        if(count($schemeAndValue) != 2)
+        if (count($schemeAndValue) != 2) {
             throw new \InvalidArgumentException('It seems your Authorization header is formatted incorrectly. Please
                                                  ensure it is formatted correctly and try again.');
+        }
 
         return $schemeAndValue[1];
-
-
     }
 
     public function getSchemeAndValue()
     {
-
-        if($this->headers === null)
+        if ($this->headers === null) {
             throw new \InvalidArgumentException('Uh Oh.  Something happened and the headers are not available.
                                                  Please try again and if you continue to have this issue, contact
                                                  support and let them know what you were trying to do.');
+        }
 
-
-        if(!isset($this->headers['HTTP_AUTHORIZATION']))
+        if (!isset($this->headers['HTTP_AUTHORIZATION'])) {
             throw new \InvalidArgumentException('You need to supply the authorization header as part of your request.
                                                  Please add the header and try again.');
+        }
 
-        return explode(" ", $this->headers['HTTP_AUTHORIZATION'], 2);
+        return explode(' ', $this->headers['HTTP_AUTHORIZATION'], 2);
     }
 
     public function getApiId()
@@ -174,8 +178,6 @@ class Request
 
     public static function tearDown()
     {
-        static::$request = NULL;
+        static::$request = null;
     }
-
-
 }

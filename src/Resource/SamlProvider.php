@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -26,14 +25,14 @@ use Stormpath\Stormpath;
 /** @since 1.13.0 */
 class SamlProvider extends Provider implements Saveable
 {
-    const SSO_LOGIN_URL                         = "ssoLoginUrl";
-    const SSO_LOGOUT_URL                        = "ssoLogoutUrl";
-    const ENCODED_X509_SIGNING_CERT             = "encodedX509SigningCert";
-    const REQUEST_SIGNATURE_ALGOITHM            = "requestSignatureAlgorithm";
-    const ATTRIBUTE_STATEMENT_MAPPING_RULES     = "attributeStatementMappingRules";
-    const SAML_PROVIDER_METADATA                = "serviceProviderMetadata";
+    const SSO_LOGIN_URL = 'ssoLoginUrl';
+    const SSO_LOGOUT_URL = 'ssoLogoutUrl';
+    const ENCODED_X509_SIGNING_CERT = 'encodedX509SigningCert';
+    const REQUEST_SIGNATURE_ALGOITHM = 'requestSignatureAlgorithm';
+    const ATTRIBUTE_STATEMENT_MAPPING_RULES = 'attributeStatementMappingRules';
+    const SAML_PROVIDER_METADATA = 'serviceProviderMetadata';
 
-    const SAML_PROVIDER_ID                      = "saml";
+    const SAML_PROVIDER_ID = 'saml';
 
     public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null)
     {
@@ -45,14 +44,15 @@ class SamlProvider extends Provider implements Saveable
      * Retreive a SAML Provider based on the Href.
      *
      * @since 1.13.0
+     *
      * @param string $href
-     * @param array $options
+     * @param array  $options
+     *
      * @return \Stormpath\Resource\SamlProvider
      */
     public static function get($href, array $options = [])
     {
-        if (substr($href, 0 - strlen(self::PATH)) != self::PATH)
-        {
+        if (substr($href, 0 - strlen(self::PATH)) != self::PATH) {
             $href = $href.'/'.self::PATH;
         }
 
@@ -63,7 +63,9 @@ class SamlProvider extends Provider implements Saveable
      * Create a new SAML Provider instance with properties.
      *
      * @since 1.13.0
+     *
      * @param array|null $properties
+     *
      * @return \Stormpath\Resource\SamlProvider
      */
     public static function instantiate($properties = null)
@@ -73,9 +75,10 @@ class SamlProvider extends Provider implements Saveable
 
     /**
      * The URL at the IdP to which SAML authentication requests should be sent.
-     * This is often called an “SSO URL”, “Login URL” or “Sign-in URL”
+     * This is often called an “SSO URL”, “Login URL” or “Sign-in URL”.
      *
      * @since 1.13.0
+     *
      * @return string
      */
     public function getSsoLoginUrl()
@@ -85,9 +88,10 @@ class SamlProvider extends Provider implements Saveable
 
     /**
      *  The URL at the IdP to which SAML logout requests should be sent.
-     * This is often called a “Logout URL”, “Global Logout URL” or “Single Logout URL”
+     * This is often called a “Logout URL”, “Global Logout URL” or “Single Logout URL”.
      *
      * @since 1.13.0
+     *
      * @return string
      */
     public function getSsoLogoutUrl()
@@ -101,6 +105,7 @@ class SamlProvider extends Provider implements Saveable
      * but Stormpath requires the text value.
      *
      * @since 1.13.0
+     *
      * @return string
      */
     public function getEncodedX509SigningCert()
@@ -113,6 +118,7 @@ class SamlProvider extends Provider implements Saveable
      * It will be either “RSA-SHA256” or “RSA-SHA1”.
      *
      * @since 1.13.0
+     *
      * @return string
      */
     public function getRequestSignatureAlgorithm()
@@ -124,7 +130,9 @@ class SamlProvider extends Provider implements Saveable
      * Get the Metadata for the SAML Provider.
      *
      * @since 1.13.0
+     *
      * @param array $options
+     *
      * @return \Stormpath\Resource\SamlProviderData
      */
     public function getServiceProviderMetadata(array $options = [])
@@ -136,7 +144,9 @@ class SamlProvider extends Provider implements Saveable
      * Get the Attribute Statement Mapping Rules for the SAML Provider.
      *
      * @since 1.13.0
+     *
      * @param array $options
+     *
      * @return \Stormpath\Saml\AttributeStatementMappingRules
      */
     public function getAttributeStatementMappingRules(array $options = [])
@@ -144,32 +154,37 @@ class SamlProvider extends Provider implements Saveable
         return $this->getResourceProperty(self::ATTRIBUTE_STATEMENT_MAPPING_RULES, Stormpath::ATTRIBUTE_STATEMENT_MAPPING_RULES, $options);
     }
 
-
     /**
      * Set the URL at the IdP to which SAML authentication requests should be sent.
-     * This is often called an “SSO URL”, “Login URL” or “Sign-in URL”
+     * This is often called an “SSO URL”, “Login URL” or “Sign-in URL”.
      *
      * @since 1.13.0
+     *
      * @param $ssoLoginUrl
+     *
      * @return self
      */
     public function setSsoLoginUrl($ssoLoginUrl)
     {
         $this->setProperty(self::SSO_LOGIN_URL, $ssoLoginUrl);
+
         return $this;
     }
 
     /**
      * Set the URL at the IdP to which SAML logout requests should be sent.
-     * This is often called a “Logout URL”, “Global Logout URL” or “Single Logout URL”
+     * This is often called a “Logout URL”, “Global Logout URL” or “Single Logout URL”.
      *
      * @since 1.13.0
+     *
      * @param $ssoLogoutUrl
+     *
      * @return self
      */
     public function setSsoLogoutUrl($ssoLogoutUrl)
     {
         $this->setProperty(self::SSO_LOGOUT_URL, $ssoLogoutUrl);
+
         return $this;
     }
 
@@ -179,12 +194,15 @@ class SamlProvider extends Provider implements Saveable
      * but Stormpath requires the text value.
      *
      * @since 1.13.0
+     *
      * @param $encodedX509SigningCert
+     *
      * @return self
      */
     public function setEncodedX509SigningCert($encodedX509SigningCert)
     {
         $this->setProperty(self::ENCODED_X509_SIGNING_CERT, $encodedX509SigningCert);
+
         return $this;
     }
 
@@ -193,12 +211,15 @@ class SamlProvider extends Provider implements Saveable
      * It will be either “RSA-SHA256” or “RSA-SHA1”.
      *
      * @since 1.13.0
+     *
      * @param $requestSignatureAlgorithm
+     *
      * @return self
      */
     public function setRequestSignatureAlgorithm($requestSignatureAlgorithm)
     {
         $this->setProperty(self::REQUEST_SIGNATURE_ALGOITHM, $requestSignatureAlgorithm);
+
         return $this;
     }
 
@@ -206,12 +227,15 @@ class SamlProvider extends Provider implements Saveable
      * Set the Attribute Statement Mapping Rules for the SAML Provider.
      *
      * @since 1.13.0
+     *
      * @param AttributeStatementMappingRules $attributeStatementMappingRules
+     *
      * @return self
      */
     public function setAttributeStatementMappingRules(AttributeStatementMappingRules $attributeStatementMappingRules)
     {
         $this->setProperty(self::ATTRIBUTE_STATEMENT_MAPPING_RULES, $attributeStatementMappingRules);
+
         return $this;
     }
 

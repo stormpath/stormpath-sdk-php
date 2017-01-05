@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -23,13 +22,13 @@ use Stormpath\Stormpath;
 
 class Tenant extends InstanceResource
 {
-    const NAME          = "name";
-    const KEY           = "key";
-    const ACCOUNTS      = "accounts";
-    const APPLICATIONS  = "applications";
-    const CUSTOM_DATA   = "customData";
-    const DIRECTORIES   = "directories";
-    const ORGANIZATIONS = "organizations";
+    const NAME = 'name';
+    const KEY = 'key';
+    const ACCOUNTS = 'accounts';
+    const APPLICATIONS = 'applications';
+    const CUSTOM_DATA = 'customData';
+    const DIRECTORIES = 'directories';
+    const ORGANIZATIONS = 'organizations';
 
     public static function get(array $options = array())
     {
@@ -85,14 +84,14 @@ class Tenant extends InstanceResource
 
     public function getAccounts(array $options = [])
     {
-    	return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT_LIST, $options);
+        return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT_LIST, $options);
     }
 
     public function getCustomData(array $options = array())
     {
-        $customData =  $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
+        $customData = $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
 
-        if(!$customData) {
+        if (!$customData) {
             $customData = new CustomData();
             $this->setProperty(self::CUSTOM_DATA, $customData);
         }
@@ -102,14 +101,14 @@ class Tenant extends InstanceResource
 
     public function getOrganizations(array $options = [])
     {
-    	return $this->getResourceProperty(self::ORGANIZATIONS, Stormpath::ORGANIZATION_LIST, $options);
+        return $this->getResourceProperty(self::ORGANIZATIONS, Stormpath::ORGANIZATION_LIST, $options);
     }
 
     // @codeCoverageIgnoreStart
     public function verifyEmailToken($token)
     {
         //TODO: enable auto discovery via Tenant resource (should be just /emailVerificationTokens)
-        $href = "/accounts/emailVerificationTokens/" . $token;
+        $href = '/accounts/emailVerificationTokens/'.$token;
 
         $tokenProperties = new \stdClass();
         $hrefName = Resource::HREF_PROP_NAME;

@@ -13,19 +13,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
 
-
-class CustomData extends InstanceResource implements Saveable {
-
-    const CUSTOMDATA_PROP_NAME = "customData";
+class CustomData extends InstanceResource implements Saveable
+{
+    const CUSTOMDATA_PROP_NAME = 'customData';
 
     public function __get($key)
     {
-       return $this->getProperty($key);
+        return $this->getProperty($key);
     }
 
     public function __set($key, $value)
@@ -45,11 +43,6 @@ class CustomData extends InstanceResource implements Saveable {
 
     public function remove($key)
     {
-
         return $this->getDataStore()->removeCustomDataItem($this, $key);
-
     }
-
-
-
 }

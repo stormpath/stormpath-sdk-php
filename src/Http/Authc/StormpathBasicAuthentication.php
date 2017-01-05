@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Http\Authc;
@@ -44,14 +43,14 @@ class StormpathBasicAuthentication implements Authentication
     public function authenticate(RequestInterface $request)
     {
         $date = new \DateTime();
-	    $date->setTimezone(new \DateTimeZone(self::TIME_ZONE));
+        $date->setTimezone(new \DateTimeZone(self::TIME_ZONE));
         $timeStamp = $date->format(self::TIMESTAMP_FORMAT);
 
-        $authorizationHeader = base64_encode($this->apiKey->getId() . ":" . $this->apiKey->getSecret());
+        $authorizationHeader = base64_encode($this->apiKey->getId().':'.$this->apiKey->getSecret());
 
         return $request
             ->withHeader(self::STORMPATH_DATE_HEADER, $timeStamp)
-            ->withHeader(self::AUTHORIZATION_HEADER, self::AUTHENTICATION_SCHEME . " " . $authorizationHeader)
+            ->withHeader(self::AUTHORIZATION_HEADER, self::AUTHENTICATION_SCHEME.' '.$authorizationHeader)
         ;
     }
 }

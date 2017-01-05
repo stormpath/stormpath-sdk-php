@@ -14,16 +14,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
 
-
 use Stormpath\DataStore\InternalDataStore;
 
-class PaginatedIterator implements \Iterator {
-
+class PaginatedIterator implements \Iterator
+{
     private $collectionResource;
     private $currentPage;
     private $currentItemIndex;
@@ -41,21 +39,24 @@ class PaginatedIterator implements \Iterator {
 
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the current element
+     * Return the current element.
+     *
      * @link http://php.net/manual/en/iterator.current.php
-     * @return mixed Can return any type.
+     *
+     * @return mixed Can return any type
      */
     public function current()
     {
         $items = $this->currentPage->getItems();
+
         return $items[$this->currentItemIndex];
     }
 
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
-     * Move forward to next element
+     * Move forward to next element.
+     *
      * @link http://php.net/manual/en/iterator.next.php
-     * @return void Any returned value is ignored.
      */
     public function next()
     {
@@ -64,9 +65,11 @@ class PaginatedIterator implements \Iterator {
 
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the key of the current element
+     * Return the key of the current element.
+     *
      * @link http://php.net/manual/en/iterator.key.php
-     * @return mixed scalar on success, or null on failure.
+     *
+     * @return mixed scalar on success, or null on failure
      */
     public function key()
     {
@@ -75,10 +78,12 @@ class PaginatedIterator implements \Iterator {
 
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
-     * Checks if current position is valid
+     * Checks if current position is valid.
+     *
      * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
-     * Returns true on success or false on failure.
+     *
+     * @return bool The return value will be casted to boolean and then evaluated.
+     *              Returns true on success or false on failure
      */
     public function valid()
     {
@@ -87,8 +92,7 @@ class PaginatedIterator implements \Iterator {
         $pageLimit = $this->currentPage->getLimit();
         $exhaustedLimit = $this->currentItemIndex == $pageLimit;
 
-        if (!$valid && $exhaustedLimit)
-        {
+        if (!$valid && $exhaustedLimit) {
             //if we're done with the current page, and we've exhausted the page limit (i.e. we've read a
             //full page), we will have to execute another request to check to see if another page exists.
             //We can't 'trust' the current page iterator to know if more results exist on the server since it
@@ -104,8 +108,7 @@ class PaginatedIterator implements \Iterator {
             $nextResource = $this->dataStore->getResource($this->collectionResource->getHref(), get_class($this->collectionResource), $this->options);
             $nextPage = $nextResource->getCurrentPage();
 
-            if (count($nextPage->getItems()))
-            {
+            if (count($nextPage->getItems())) {
                 $valid = true;
                 //update to reflect the new page:
                 $this->collectionResource = $nextResource;
@@ -119,13 +122,12 @@ class PaginatedIterator implements \Iterator {
 
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
-     * Rewind the Iterator to the first element
+     * Rewind the Iterator to the first element.
+     *
      * @link http://php.net/manual/en/iterator.rewind.php
-     * @return void Any returned value is ignored.
      */
     public function rewind()
     {
         $this->currentItemIndex = 0;
     }
-
 }

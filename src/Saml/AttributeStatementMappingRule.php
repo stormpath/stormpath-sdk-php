@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Saml;
@@ -21,7 +20,6 @@ namespace Stormpath\Saml;
 /** @since 1.13.0 */
 class AttributeStatementMappingRule
 {
-
     /**
      * @var
      */
@@ -51,19 +49,20 @@ class AttributeStatementMappingRule
      * accountAttributes collection.
      *
      * @since 1.13.0
-     * @return string SAML Attribute name, should have its value set on the specified Account fields.
+     *
+     * @return string SAML Attribute name, should have its value set on the specified Account fields
      */
     public function getName()
     {
         return $this->name;
     }
 
-
     /**
      * Returns the format for the SAML Attribute.
      *
      * @since 1.13.0
-     * @return string SAML format for the SAML Attribute.
+     *
+     * @return string SAML format for the SAML Attribute
      */
     public function getNameFormat()
     {
@@ -76,7 +75,8 @@ class AttributeStatementMappingRule
      * be set on all of the Stormpath account fields named in this array.
      *
      * @since 1.13.0
-     * @return array Stormpath account fields that should be updated.
+     *
+     * @return array Stormpath account fields that should be updated
      */
     public function getAccountAttributes()
     {
@@ -84,17 +84,17 @@ class AttributeStatementMappingRule
     }
 
     /**
-     * Prevents setting random values on the class.  We only need name, nameFormat, and accountAttributes
+     * Prevents setting random values on the class.  We only need name, nameFormat, and accountAttributes.
      *
      * @since 1.13.0
+     *
      * @param $attribute
      * @param $value
+     *
      * @throws \BadMethodCallException
      */
     public function __set($attribute, $value)
     {
         throw new \BadMethodCallException('You can not set properties directly on this class. Please use the Builder');
     }
-
-
 }

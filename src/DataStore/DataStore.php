@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\DataStore;
@@ -28,12 +27,12 @@ interface DataStore
      * implementation was known (Resource implementation classes are intentionally not exposed to SDK end-users).
      *
      * @param $className the Resource class name (as a String) to instantiate. This can be the fully qualified name or the
-     * simple name of the Resource (which is also the simple name of the .php file).
-     * @param object $properties the optional Properties of the Resource to instantiate.
+     * simple name of the Resource (which is also the simple name of the .php file)
+     * @param object $properties the optional Properties of the Resource to instantiate
      * @param array options the options to create the resource. This optional argument is useful to specify query strings,
-     * among other options.
+     * among other options
      *
-     * @return a new instance of the specified Resource.
+     * @return a new instance of the specified Resource
      */
     public function instantiate($className, \stdClass $properties = null, array $options = array());
 
@@ -46,10 +45,11 @@ interface DataStore
      *
      * @param href  the resource URL of the resource to retrieve
      * @param class the <i>Resource</i> sub-interface to instantiate. This can be the fully qualified name or the
-     * simple name of the Resource (which is also the simple name of the .php file).
+     * simple name of the Resource (which is also the simple name of the .php file)
      * @param array options the options to create the resource. This optional argument is useful to specify query strings,
-     * among other options.
-     * @return an instance of the specified class based on the data returned from the specified {@code href} URL.
+     * among other options
+     *
+     * @return an instance of the specified class based on the data returned from the specified {@code href} URL
      */
     public function getResource($href, $className, array $options = array());
 }

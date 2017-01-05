@@ -13,9 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-
 
 namespace Stormpath\Oauth;
 
@@ -23,24 +21,30 @@ use Stormpath\Resource\Resource;
 
 class ExchangeIdSiteTokenAttempt extends Resource
 {
-    const TOKEN             = 'token';
-    const GRANT_TYPE        = 'grant_type';
+    const TOKEN = 'token';
+    const GRANT_TYPE = 'grant_type';
 
-    public function setToken($token) {
+    public function setToken($token)
+    {
         $this->setProperty(self::TOKEN, $token);
+
         return $this;
     }
 
-    public function setGrantType($grantType) {
+    public function setGrantType($grantType)
+    {
         $this->setProperty(self::GRANT_TYPE, $grantType);
+
         return $this;
     }
 
-    public function getToken() {
+    public function getToken()
+    {
         return $this->getProperty(self::TOKEN);
     }
 
-    public function getGrantType() {
+    public function getGrantType()
+    {
         return $this->getProperty(self::REFRESH_TOKEN);
     }
 }

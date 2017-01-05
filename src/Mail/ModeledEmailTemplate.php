@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Mail;
@@ -24,7 +23,7 @@ class ModeledEmailTemplate extends EmailTemplate
     const LINK_BASE_URL = 'linkBaseUrl';
 
     /**
-     * Gets the defaultModel property
+     * Gets the defaultModel property.
      *
      * @return array
      */
@@ -34,9 +33,10 @@ class ModeledEmailTemplate extends EmailTemplate
     }
 
     /**
-     * Sets the defaultModel property
+     * Sets the defaultModel property.
      *
      * @param array $defaultModel The defaultModel of the object
+     *
      * @return self
      */
     public function setDefaultModel($defaultModel)
@@ -51,13 +51,13 @@ class ModeledEmailTemplate extends EmailTemplate
      * This is just a convenience method for getting the `linkBaseUrl` out of
      * the `default model` array.
      *
-     * @return null|string the URL the user will be taken to once they click on the URL received in the email.
+     * @return null|string the URL the user will be taken to once they click on the URL received in the email
      */
     public function getLinkBaseUrl()
     {
-        $defaultModel = (array)$this->getDefaultModel();
+        $defaultModel = (array) $this->getDefaultModel();
 
-        if(empty($defaultModel) || !key_exists(self::LINK_BASE_URL, $defaultModel)) {
+        if (empty($defaultModel) || !key_exists(self::LINK_BASE_URL, $defaultModel)) {
             return null;
         }
 
@@ -69,7 +69,8 @@ class ModeledEmailTemplate extends EmailTemplate
      * inside the email. For Example, in the reset password workflow, this url
      * should point to the form where the user can insert their new password.
      *
-     * @param string $linkBaseUrl the URL the user will be taken to once they click on the URL received in the email.
+     * @param string $linkBaseUrl the URL the user will be taken to once they click on the URL received in the email
+     *
      * @return $this
      */
     public function setLinkBaseUrl($linkBaseUrl)
@@ -92,7 +93,7 @@ class ModeledEmailTemplate extends EmailTemplate
      */
     public function save()
     {
-        if(null === $this->getLinkBaseUrl()) {
+        if (null === $this->getLinkBaseUrl()) {
             throw new \InvalidArgumentException('The defaultModel must contain the "linkBaseUrl" reserved property');
         }
 
@@ -100,5 +101,4 @@ class ModeledEmailTemplate extends EmailTemplate
 
         return;
     }
-
 }

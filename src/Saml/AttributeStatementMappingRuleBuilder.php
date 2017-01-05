@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Saml;
@@ -34,12 +33,15 @@ class AttributeStatementMappingRuleBuilder
      * Stormpath Account field names specified in the accountAttributes.
      *
      * @since 1.13.0
+     *
      * @param string $name
+     *
      * @return self
      */
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -50,15 +52,18 @@ class AttributeStatementMappingRuleBuilder
      *  urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
      *  urn:oasis:names:tc:SAML:2.0:nameid-format:transient
      *  urn:oasis:names:tc:SAML:2.0:attrname-format:basic
-     *  urn:oasis:names:tc:SAML:2.0:nameid-format:entity
+     *  urn:oasis:names:tc:SAML:2.0:nameid-format:entity.
      *
      * @since 1.13.0
+     *
      * @param string $nameFormat
+     *
      * @return self
      */
     public function setNameFormat($nameFormat)
     {
         $this->nameFormat = $nameFormat;
+
         return $this;
     }
 
@@ -68,12 +73,15 @@ class AttributeStatementMappingRuleBuilder
      * set on all of the Stormpath account fields named in this collection.
      *
      * @since 1.13.0
+     *
      * @param array $accountAttributes
+     *
      * @return self
      */
     public function setAccountAttributes(array $accountAttributes)
     {
         $this->accountAttributes = $accountAttributes;
+
         return $this;
     }
 
@@ -81,11 +89,11 @@ class AttributeStatementMappingRuleBuilder
      * Builds a new AttributeStatementMappingRule based on the current state of this builder.
      *
      * @since 1.13.0
-     * @return AttributeStatementMappingRule a new AttributeStatementMappingRule to be included in the AttributeStatementMappingRules for a Saml Provider.
+     *
+     * @return AttributeStatementMappingRule a new AttributeStatementMappingRule to be included in the AttributeStatementMappingRules for a Saml Provider
      */
     public function build()
     {
         return new AttributeStatementMappingRule($this->name, $this->nameFormat, $this->accountAttributes);
     }
-
 }

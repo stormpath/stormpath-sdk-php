@@ -13,42 +13,40 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-
 namespace Stormpath\Oauth;
-
 
 use Stormpath\Resource\AccountStore;
 use Stormpath\Resource\Resource;
 
 class PasswordGrantAuthenticationAttempt extends Resource
 {
-
-    const LOGIN                 = 'username';
-    const PASSWORD              = 'password';
-    const ACCOUNT_STORE_HREF    = 'accountStore';
-	const ORGANIZATION_NAME_KEY = 'organizationNameKey';
-    const GRANT_TYPE            = 'grant_type';
-
+    const LOGIN = 'username';
+    const PASSWORD = 'password';
+    const ACCOUNT_STORE_HREF = 'accountStore';
+    const ORGANIZATION_NAME_KEY = 'organizationNameKey';
+    const GRANT_TYPE = 'grant_type';
 
     /**
      * @param string $login
+     *
      * @return $this
      */
-    public function setLogin($login) {
+    public function setLogin($login)
+    {
         $this->setProperty(self::LOGIN, $login);
 
         return $this;
     }
 
-
     /**
      * @param string $password
+     *
      * @return $this
      */
-    public function setPassword($password) {
+    public function setPassword($password)
+    {
         $this->setProperty(self::PASSWORD, $password);
 
         return $this;
@@ -56,28 +54,33 @@ class PasswordGrantAuthenticationAttempt extends Resource
 
     /**
      * @param string $grantType
+     *
      * @return $this
      */
-    public function setGrantType($grantType) {
+    public function setGrantType($grantType)
+    {
         $this->setProperty(self::GRANT_TYPE, $grantType);
 
         return $this;
     }
 
-	/**
-	 * @param string $organizationNameKey
-	 * @return $this
-	 */
-    public function setOrganizationNameKey($organizationNameKey) {
-    	$this->setProperty(self::ORGANIZATION_NAME_KEY, $organizationNameKey);
+    /**
+     * @param string $organizationNameKey
+     *
+     * @return $this
+     */
+    public function setOrganizationNameKey($organizationNameKey)
+    {
+        $this->setProperty(self::ORGANIZATION_NAME_KEY, $organizationNameKey);
 
-	    return $this;
+        return $this;
     }
 
     /**
      * @param AccountStore $accountStore
      */
-    public function setAccountStore(AccountStore $accountStore) {
+    public function setAccountStore(AccountStore $accountStore)
+    {
         $this->setProperty(self::ACCOUNT_STORE_HREF, $accountStore->getHref());
 
         return $this;
@@ -86,28 +89,32 @@ class PasswordGrantAuthenticationAttempt extends Resource
     /**
      * @return string
      */
-    public function getLogin() {
+    public function getLogin()
+    {
         return $this->getProperty(self::LOGIN);
     }
 
     /**
      * @return string
      */
-    public function getPassword() {
+    public function getPassword()
+    {
         return $this->getProperty(self::PASSWORD);
     }
 
     /**
      * @return string
      */
-    public function getGrantType(){
+    public function getGrantType()
+    {
         return $this->getProperty(self::GRANT_TYPE);
     }
 
     /**
      * @return string
      */
-    public function getAccountStoreHref() {
+    public function getAccountStoreHref()
+    {
         return $this->getProperty(self::ACCOUNT_STORE_HREF);
     }
 }

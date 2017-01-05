@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -21,8 +20,8 @@ namespace Stormpath\Resource;
 use Stormpath\Stormpath;
 use Stormpath\Util\Magic;
 
-class Search extends Magic {
-
+class Search extends Magic
+{
     private $properties;
     private $filter;
 
@@ -36,72 +35,82 @@ class Search extends Magic {
     /**
      * Adds a 'starts with' criteria, from a property
      * name and a value, in the format of:
-     * 'propertyName=value*'
+     * 'propertyName=value*'.
      *
-     * @param string $name the property name.
-     * @param string $search the search value.
-     * @return $this for method chaining.
+     * @param string $name   the property name
+     * @param string $search the search value
+     *
+     * @return $this for method chaining
      */
     public function addStartsWith($name, $search)
     {
         $this->properties = array_replace($this->properties, array($name => "$search*"));
+
         return $this;
     }
 
     /**
      * Adds an 'ends with' criteria, from a property
      * name and a value, in the format of:
-     * 'propertyName=*value'
+     * 'propertyName=*value'.
      *
-     * @param string $name the property name.
-     * @param string $search the search value.
-     * @return $this for method chaining.
+     * @param string $name   the property name
+     * @param string $search the search value
+     *
+     * @return $this for method chaining
      */
     public function addEndsWith($name, $search)
     {
         $this->properties = array_replace($this->properties, array($name => "*$search"));
+
         return $this;
     }
 
     /**
      * Adds an 'equals' criteria, from a property
      * name and a value, in the format of:
-     * 'propertyName=value'
+     * 'propertyName=value'.
      *
-     * @param string $name the property name.
-     * @param string $search the search value.
-     * @return $this for method chaining.
+     * @param string $name   the property name
+     * @param string $search the search value
+     *
+     * @return $this for method chaining
      */
     public function addEquals($name, $search)
     {
         $this->properties = array_replace($this->properties, array($name => "$search"));
+
         return $this;
     }
 
     /**
      * Adds a 'match anywhere' criteria, from a property
      * name and a value, in the format of:
-     * 'propertyName=*value*'
+     * 'propertyName=*value*'.
      *
-     * @param string $name the property name.
-     * @param string $search the search value.
-     * @return $this for method chaining.
+     * @param string $name   the property name
+     * @param string $search the search value
+     *
+     * @return $this for method chaining
      */
     public function addMatchAnywhere($name, $search)
     {
         $this->properties = array_replace($this->properties, array($name => "*$search*"));
+
         return $this;
     }
 
     /**
      * Sets the filter of the search: q=value.
      *
-     * @param $filter the filter to set.
-     * @return $this for method chaining.
+     * @param $filter the filter to set
+     *
+     * @return $this for method chaining
      */
     public function setFilter($filter)
     {
         $this->filter = $filter;
+
         return $this;
     }
 
@@ -109,21 +118,21 @@ class Search extends Magic {
      * Creates an array with all the properties that were
      * set in the object, with the keys being the property names (or filter keyword 'q'),
      * their the corresponding values.
-     * @return array the created array.
-     * @throws \InvalidArgumentException if no properties were added to the object.
+     *
+     * @return array the created array
+     *
+     * @throws \InvalidArgumentException if no properties were added to the object
      */
     public function toSearchArray()
     {
         $filter = $this->filter;
-        if (!is_numeric($filter) and !is_bool($filter) and !$filter and !$this->properties)
-        {
-            throw new \InvalidArgumentException("At least one search criteria or a filter is required to convert the search to array.");
+        if (!is_numeric($filter) and !is_bool($filter) and !$filter and !$this->properties) {
+            throw new \InvalidArgumentException('At least one search criteria or a filter is required to convert the search to array.');
         }
 
         $searchArray = array();
 
-        if ($filter or is_bool($filter) or is_numeric($filter))
-        {
+        if ($filter or is_bool($filter) or is_numeric($filter)) {
             $searchArray[Stormpath::FILTER] = $filter;
         }
 
@@ -132,19 +141,18 @@ class Search extends Magic {
 
     /**
      * Creates the string representation of the search.
+     *
      * @return string the string representation of the object,
-     * with the key=value pairs separated by '&'.
+     *                with the key=value pairs separated by '&'
      */
     public function __toString()
     {
         $str = '';
-        foreach($this->toSearchArray() as $key => $value)
-        {
+        foreach ($this->toSearchArray() as $key => $value) {
             $str .= $str ? '&' : $str;
-            $str .= $key . '=' . $value;
+            $str .= $key.'='.$value;
         }
 
         return $str;
     }
-
 }

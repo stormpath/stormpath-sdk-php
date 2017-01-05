@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Authc\Api;
@@ -24,23 +23,21 @@ use Stormpath\Exceptions\RequestAuthenticatorException;
 
 class OAuthClientCredentialsRequestAuthenticator extends InternalRequestAuthenticator implements RequestAuthenticator
 {
-
     public function authenticate(Request $request)
     {
-        if (!$this->application)
+        if (!$this->application) {
             throw new \InvalidArgumentException('The application must be set.');
+        }
 
         $this->validateGrantType($request);
 
         $apiKey = $this->getApiKeyById($request);
 
-        if($this->isValidApiKey($request, $apiKey))
-        {
+        if ($this->isValidApiKey($request, $apiKey)) {
             $account = $apiKey->account;
         }
 
-        if($this->isValidAccount($account))
-        {
+        if ($this->isValidAccount($account)) {
             $token = $this->buildTokenResponse($apiKey);
 
             return new OAuthClientCredentialsAuthenticationResult($this->application, $apiKey, $token);
@@ -52,7 +49,7 @@ class OAuthClientCredentialsRequestAuthenticator extends InternalRequestAuthenti
         $token = array(
             'access_token' => $this->buildAccessToken($apiKey),
             'token_type' => 'bearer',
-            'expires_in' => time() + 3600
+            'expires_in' => time() + 3600,
         );
 
         return json_encode($token);
@@ -63,10 +60,10 @@ class OAuthClientCredentialsRequestAuthenticator extends InternalRequestAuthenti
         $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
         $jwt = JWT::encode(
             array(
-                "sub" => $apiKey->id,
-                "iss" => $this->application->getHref(),
-                "iat" => time(),
-                "exp" => time() + 3600
+                'sub' => $apiKey->id,
+                'iss' => $this->application->getHref(),
+                'iat' => time(),
+                'exp' => time() + 3600,
 
             ),
             $apiSecret
@@ -77,11 +74,12 @@ class OAuthClientCredentialsRequestAuthenticator extends InternalRequestAuthenti
 
     private function validateGrantType($request)
     {
-        if (!$request->isBasicAuthorization())
+        if (!$request->isBasicAuthorization()) {
             throw new RequestAuthenticatorException('The type of Authentication is incorrect!');
+        }
 
-        if (!$request->hasGrantType())
+        if (!$request->hasGrantType()) {
             throw new RequestAuthenticatorException('The grant_type query parameter must be used');
+        }
     }
-
 }

@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -33,22 +32,22 @@ use Stormpath\Util\UUID;
 
 class Application extends InstanceResource implements Deletable
 {
-    const NAME                          = "name";
-    const DESCRIPTION                   = "description";
-    const STATUS                        = "status";
-    const TENANT                        = "tenant";
-    const ACCOUNTS                      = "accounts";
-    const PASSWORD_RESET_TOKENS         = "passwordResetTokens";
-    const DEFAULT_ACCOUNT_STORE_MAPPING = "defaultAccountStoreMapping";
-    const DEFAULT_GROUP_STORE_MAPPING   = "defaultGroupStoreMapping";
-    const GROUPS                        = "groups";
-    const ACCOUNT_STORE_MAPPINGS        = "accountStoreMappings";
-    const LOGIN_ATTEMPTS                = "loginAttempts";
-    const OAUTH_POLICY                  = "oAuthPolicy";
-    const CUSTOM_DATA                   = "customData";
-    const AUTHORIZED_CALLBACK_URIS      = "authorizedCallbackUris";
+    const NAME = 'name';
+    const DESCRIPTION = 'description';
+    const STATUS = 'status';
+    const TENANT = 'tenant';
+    const ACCOUNTS = 'accounts';
+    const PASSWORD_RESET_TOKENS = 'passwordResetTokens';
+    const DEFAULT_ACCOUNT_STORE_MAPPING = 'defaultAccountStoreMapping';
+    const DEFAULT_GROUP_STORE_MAPPING = 'defaultGroupStoreMapping';
+    const GROUPS = 'groups';
+    const ACCOUNT_STORE_MAPPINGS = 'accountStoreMappings';
+    const LOGIN_ATTEMPTS = 'loginAttempts';
+    const OAUTH_POLICY = 'oAuthPolicy';
+    const CUSTOM_DATA = 'customData';
+    const AUTHORIZED_CALLBACK_URIS = 'authorizedCallbackUris';
 
-    const PATH                          = "applications";
+    const PATH = 'applications';
 
     public static function get($href, array $options = array())
     {
@@ -64,8 +63,7 @@ class Application extends InstanceResource implements Deletable
     {
         $application = $properties;
 
-        if (!($application instanceof Application))
-        {
+        if (!($application instanceof self)) {
             $application = self::instantiate($properties);
         }
 
@@ -96,8 +94,7 @@ class Application extends InstanceResource implements Deletable
     {
         $value = $this->getProperty(self::STATUS);
 
-        if ($value)
-        {
+        if ($value) {
             $value = strtoupper($value);
         }
 
@@ -107,8 +104,7 @@ class Application extends InstanceResource implements Deletable
     public function setStatus($status)
     {
         $uprStatus = strtoupper($status);
-        if (array_key_exists($uprStatus, Stormpath::$Statuses))
-        {
+        if (array_key_exists($uprStatus, Stormpath::$Statuses)) {
             $this->setProperty(self::STATUS, Stormpath::$Statuses[$uprStatus]);
         }
     }
@@ -118,12 +114,15 @@ class Application extends InstanceResource implements Deletable
      * user to. These should be URIs that you host yourself.
      *
      * @since 1.13.0
+     *
      * @param array $uris
+     *
      * @return self
      */
     public function setAuthorizedCallbackUris(array $uris = [])
     {
         $this->setProperty(self::AUTHORIZED_CALLBACK_URIS, $uris);
+
         return $this;
     }
 
@@ -132,6 +131,7 @@ class Application extends InstanceResource implements Deletable
      * your user to. These should be URIs that you host yourself.
      *
      * @since 1.13.0
+     *
      * @return array
      */
     public function getAuthorizedCallbackUris()
@@ -149,18 +149,18 @@ class Application extends InstanceResource implements Deletable
         return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT_LIST, $options);
     }
 
-    public function getDefaultAccountStoreMapping(array $options = array()) {
-
+    public function getDefaultAccountStoreMapping(array $options = array())
+    {
         return $this->getResourceProperty(self::DEFAULT_ACCOUNT_STORE_MAPPING, Stormpath::ACCOUNT_STORE_MAPPING, $options);
     }
 
-    public function getDefaultGroupStoreMapping(array $options = array()) {
-
+    public function getDefaultGroupStoreMapping(array $options = array())
+    {
         return $this->getResourceProperty(self::DEFAULT_GROUP_STORE_MAPPING, Stormpath::ACCOUNT_STORE_MAPPING, $options);
     }
 
-    public function getGroups(array $options = array()) {
-
+    public function getGroups(array $options = array())
+    {
         return $this->getResourceProperty(self::GROUPS, Stormpath::GROUP_LIST, $options);
     }
 
@@ -171,9 +171,9 @@ class Application extends InstanceResource implements Deletable
 
     public function getCustomData(array $options = array())
     {
-        $customData =  $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
+        $customData = $this->getResourceProperty(self::CUSTOM_DATA, Stormpath::CUSTOM_DATA, $options);
 
-        if(!$customData) {
+        if (!$customData) {
             $customData = new CustomData();
             $this->setProperty(self::CUSTOM_DATA, $customData);
         }
@@ -181,28 +181,28 @@ class Application extends InstanceResource implements Deletable
         return $customData;
     }
 
-    public function getAccountStoreMappings(array $options = array()) {
-
+    public function getAccountStoreMappings(array $options = array())
+    {
         return $this->getResourceProperty(self::ACCOUNT_STORE_MAPPINGS, Stormpath::ACCOUNT_STORE_MAPPING_LIST, $options);
     }
 
-    public function getLoginAttempts(array $options = array()) {
-
+    public function getLoginAttempts(array $options = array())
+    {
         return $this->getResourceProperty(self::LOGIN_ATTEMPTS, Stormpath::BASIC_LOGIN_ATTEMPT, $options);
     }
 
-    public function createAccount(Account $account, array $options = array()) {
-
-        return $this->getDataStore()->create($this->getHref() .'/'.Account::PATH, $account, Stormpath::ACCOUNT, $options);
+    public function createAccount(Account $account, array $options = array())
+    {
+        return $this->getDataStore()->create($this->getHref().'/'.Account::PATH, $account, Stormpath::ACCOUNT, $options);
     }
 
-    public function createGroup(Group $group, array $options = array()) {
-
-        return $this->getDataStore()->create($this->getHref() .'/'.Group::PATH, $group, Stormpath::GROUP, $options);
+    public function createGroup(Group $group, array $options = array())
+    {
+        return $this->getDataStore()->create($this->getHref().'/'.Group::PATH, $group, Stormpath::GROUP, $options);
     }
 
-    public function createAccountStoreMapping(AccountStoreMapping $accountStoreMapping, array $options = array()) {
-
+    public function createAccountStoreMapping(AccountStoreMapping $accountStoreMapping, array $options = array())
+    {
         return AccountStoreMapping::_create($accountStoreMapping, $this, $this->dataStore, $options);
     }
 
@@ -222,61 +222,65 @@ class Application extends InstanceResource implements Deletable
      * lookup directly against the specified AccountStore.  The AccountStore is usually discovered before calling this
      * method by inspecting a submitted tenant id or subdomain, e.g. http://ACCOUNT_STORE_NAME.foo.com </p>
      *
-     * @param $accountUsernameOrEmail a username or email address of an Account that may login to the application.
-     * @param $options options to pass to this request.
-     * @return the account corresponding to the specified username or email address.
+     * @param $accountUsernameOrEmail a username or email address of an Account that may login to the application
+     * @param $options options to pass to this request
+     *
+     * @return the account corresponding to the specified username or email address
+     *
      * @see #verifyPasswordResetToken()
      */
     public function sendPasswordResetEmail($accountUsernameOrEmail, array $options = array(), $returnTokenResource = false)
     {
         $passwordResetToken = $this->createPasswordResetToken($accountUsernameOrEmail, $options);
 
-        if ($returnTokenResource)
+        if ($returnTokenResource) {
             return $passwordResetToken;
+        }
 
         return $passwordResetToken->getAccount();
     }
 
-    /**
-     * Verifies a password reset token in a user-clicked link within an email.
-     * <p/>
-     * <h2>Base Link Configuration</h2>
-     * You need to define the <em>Base</em> link that will process HTTP requests when users click the link in the
-     * email as part of your Application's Workflow Configuration within the Stormpath UI Console.  It must be a URL
-     * served by your application's web servers.  For example:
-     * <pre>
-     * https://www.myApplication.com/passwordReset
-     * </pre>
-     * <h2>Runtime Link Processing</h2>
-     * When an application user clicks on the link in the email at runtime, your web server needs to process the request
-     * and look for an <i>spToken</i> request parameter.  You can then verify the <i>spToken</i>, and then finally
-     * change the Account's password.
-     * <p/>
-     * Usage Example:
-     * <p/>
-     * Browser:
-     * {@code GET https://www.myApplication/passwordReset?spToken=someTokenValueHere}
-     * <p/>
-     * Your code:
-     * <pre>
-     * $token = // get the spToken value from query string parameter
-     *
-     * $account = $application->verifyPasswordResetToken($token);
-     *
-     * //token has been verified - now set the new password with what the end-user submits:
-     * $account->setPassword(user_submitted_new_password);
-     * account->save();
-     * </pre>
-     *
-     * @param $token the verification token, usually obtained as a request parameter by your application.
-     * @param $options the options to pass to this request.
-     * @return the Account matching the specified token.
-     */
+/**
+ * Verifies a password reset token in a user-clicked link within an email.
+ * <p/>
+ * <h2>Base Link Configuration</h2>
+ * You need to define the <em>Base</em> link that will process HTTP requests when users click the link in the
+ * email as part of your Application's Workflow Configuration within the Stormpath UI Console.  It must be a URL
+ * served by your application's web servers.  For example:
+ * <pre>
+ * https://www.myApplication.com/passwordReset
+ * </pre>
+ * <h2>Runtime Link Processing</h2>
+ * When an application user clicks on the link in the email at runtime, your web server needs to process the request
+ * and look for an <i>spToken</i> request parameter.  You can then verify the <i>spToken</i>, and then finally
+ * change the Account's password.
+ * <p/>
+ * Usage Example:
+ * <p/>
+ * Browser:
+ * {@code GET https://www.myApplication/passwordReset?spToken=someTokenValueHere}
+ * <p/>
+ * Your code:
+ * <pre>
+ * $token = // get the spToken value from query string parameter.
+ *
+ * $account = $application->verifyPasswordResetToken($token);
+ *
+ * //token has been verified - now set the new password with what the end-user submits:
+ * $account->setPassword(user_submitted_new_password);
+ * account->save();
+ * </pre>
+ *
+ * @param $token the verification token, usually obtained as a request parameter by your application
+ * @param $options the options to pass to this request
+ *
+ * @return the Account matching the specified token
+ */
     // @codeCoverageIgnoreStart
     public function verifyPasswordResetToken($token, array $options = array())
     {
         $href = $this->getPasswordResetTokensHref();
-        $href .= '/' .$token;
+        $href .= '/'.$token;
 
         $passwordResetProps = new \stdClass();
 
@@ -293,7 +297,7 @@ class Application extends InstanceResource implements Deletable
     public function resetPassword($token, $password)
     {
         $href = $this->getPasswordResetTokensHref();
-        $href .= '/' .$token;
+        $href .= '/'.$token;
 
         $passwordResetProps = new PasswordResetToken();
         $passwordResetProps->password = $password;
@@ -314,107 +318,110 @@ class Application extends InstanceResource implements Deletable
      * <pre>
      * $request = new UsernamePasswordRequest($email, $submittedRawPlaintextPassword);
      * $account = $appToTest->authenticateAccount($request)->getAccount();
-     * </pre>
+     * </pre>.
      *
      * @param $request the authentication request representing an account's principals and credentials (e.g.
-     *                username/password) used to verify their identity.
-     * @param $options the options to pass to this request.
-     * @return the result of the authentication. The authenticated account can be obtained from the
-     *         <i>result</i>. {@link AuthenticationResult::getAccount()}.
+     *                username/password) used to verify their identity
+     * @param $options the options to pass to this request
      *
-     * @throws ResourceError if the authentication attempt fails.
+     * @return the result of the authentication. The authenticated account can be obtained from the
+     *             <i>result</i>. {@link AuthenticationResult::getAccount()}
+     *
+     * @throws ResourceError if the authentication attempt fails
      */
     public function authenticateAccount(AuthenticationRequest $request, array $options = array())
     {
         $basicAuthenticator = new BasicAuthenticator($this->getDataStore());
+
         return $basicAuthenticator->authenticate($this->getHref(), $request, $options);
     }
 
     /**
-     * @param string $username the username of the account to authenticate.
-     * @param string $password the raw password to authenticate.
-     * @param array $options the options to pass to this request.
-     * @return the result of the authentication.
+     * @param string $username the username of the account to authenticate
+     * @param string $password the raw password to authenticate
+     * @param array  $options  the options to pass to this request
+     *
+     * @return the result of the authentication
      *
      * @see #authenticateAccount()
      */
     public function authenticate($username, $password, array $options = array())
     {
         $request = new UsernamePasswordRequest($username, $password);
+
         return $this->authenticateAccount($request, $options);
     }
-
 
     /**
      * Generate the url for ID Site.
      *
      * @param array $options
+     *
      * @return string
+     *
      * @throws InvalidCallbackUriException
      */
     public function createIdSiteUrl(array $options = array())
     {
-        if( ! isset( $options['callbackUri'] ) )
+        if (!isset($options['callbackUri'])) {
             throw new InvalidCallbackUriException('Please provide a \'callbackUri\' in the $options array.');
+        }
 
-        $p = parse_url ( $this->href );
-        $base = $p['scheme'] . '://' . $p['host'];
+        $p = parse_url($this->href);
+        $base = $p['scheme'].'://'.$p['host'];
 
         $apiId = $this->getDataStore()->getApiKey()->getId();
         $apiSecret = $this->getDataStore()->getApiKey()->getSecret();
-        
+
         $token = array(
-            'jti'       => UUID::v4(),
-            'iat'       => microtime(true),
-            'iss'       => $apiId,  //API ID
-            'sub'       => $this->href,
-            'state'     => isset($options['state']) ? $options['state'] : '',
-            'path'      => isset($options['path']) ? $options['path'] : '/',
-            'cb_uri'    => $options['callbackUri']
+            'jti' => UUID::v4(),
+            'iat' => microtime(true),
+            'iss' => $apiId,  //API ID
+            'sub' => $this->href,
+            'state' => isset($options['state']) ? $options['state'] : '',
+            'path' => isset($options['path']) ? $options['path'] : '/',
+            'cb_uri' => $options['callbackUri'],
         );
 
-        if(isset($options['sp_token'])) {
+        if (isset($options['sp_token'])) {
             $token['sp_token'] = $options['sp_token'];
         }
-        
-        if(isset($options['organizationNameKey'])) {
+
+        if (isset($options['organizationNameKey'])) {
             $token['onk'] = $options['organizationNameKey'];
         }
 
-        if(isset($options['showOrganizationField'])) {
+        if (isset($options['showOrganizationField'])) {
             $token['sof'] = true;
         }
 
-        if(isset($options['useSubDomain'])) {
+        if (isset($options['useSubDomain'])) {
             $token['usd'] = true;
         }
 
-
-
-
         $jwt = JWT::encode($token, $apiSecret);
 
-        $redirectUrl = $base . "/sso";
+        $redirectUrl = $base.'/sso';
 
-        if(isset($options['logout']))
-            $redirectUrl .= "/logout";
+        if (isset($options['logout'])) {
+            $redirectUrl .= '/logout';
+        }
 
-        return $redirectUrl . "?jwtRequest=$jwt";
-
+        return $redirectUrl."?jwtRequest=$jwt";
     }
-
 
     /**
      * Handle the response from Stormpath and return a parsed JWT.
      *
      * @param $responseUri
+     *
      * @return \StdClass
+     *
      * @throws JWTUsedAlreadyException
      */
     public function handleIdSiteCallback($responseUri)
     {
-
-        $urlParse = parse_url ( $responseUri );
+        $urlParse = parse_url($responseUri);
 
         parse_str($urlParse['query'], $params);
         $token = isset($params['jwtResponse']) ? $params['jwtResponse'] : '';
@@ -432,8 +439,9 @@ class Application extends InstanceResource implements Deletable
         $nonceStore = new NonceStore($this->getDataStore());
         $nonceUsed = $nonceStore->getNonce($jwt->irt);
 
-        if($nonceUsed)
+        if ($nonceUsed) {
             throw new JWTUsedAlreadyException('The ID Site JWT has already been used.');
+        }
 
         $nonceStore->putNonce($jwt->irt);
 
@@ -445,7 +453,6 @@ class Application extends InstanceResource implements Deletable
             $account = null;
         }
 
-
         $return->account = $account;
         $return->state = $jwt->state;
         $return->isNew = $jwt->isNewSub;
@@ -454,10 +461,8 @@ class Application extends InstanceResource implements Deletable
         return $return;
     }
 
-
-
-    public function delete() {
-
+    public function delete()
+    {
         $this->getDataStore()->delete($this);
     }
 
@@ -468,11 +473,9 @@ class Application extends InstanceResource implements Deletable
         $passwordResetToken = $this->getDataStore()->instantiate(Stormpath::PASSWORD_RESET_TOKEN);
         $passwordResetToken->email = $accountUsernameOrEmail;
 
-        if (isset($options['accountStore']))
-        {
+        if (isset($options['accountStore'])) {
             $accountStore = $options['accountStore'];
-            if ($accountStore instanceof AccountStore)
-            {
+            if ($accountStore instanceof AccountStore) {
                 $passwordResetToken->setAccountStore($accountStore);
             }
         }
@@ -491,7 +494,6 @@ class Application extends InstanceResource implements Deletable
             $providerAccountAccess, Stormpath::PROVIDER_ACCOUNT_RESULT);
     }
 
-
     public function sendVerificationEmail($login, $options = array())
     {
         if ($login == null) {
@@ -499,28 +501,21 @@ class Application extends InstanceResource implements Deletable
         }
 
         $accountStore = null;
-        if (isset($options['accountStore']))
-        {
+        if (isset($options['accountStore'])) {
             $accountStore = $options['accountStore'];
-            if ($accountStore instanceof AccountStore)
-            {
+            if ($accountStore instanceof AccountStore) {
                 if ($accountStore != null && $accountStore->href == null) {
                     throw new \InvalidArgumentException("verificationEmailRequest's accountStore has been specified but its href is null.");
                 }
-            }
-            else
-            {
-                throw new \InvalidArgumentException("The value for accountStore in the \$options array should be an instance of \\Stormpath\\Resource\\AccountStore");
+            } else {
+                throw new \InvalidArgumentException('The value for accountStore in the $options array should be an instance of \\Stormpath\\Resource\\AccountStore');
             }
         }
-
-
 
         $verificationEmail = $this->getDataStore()->instantiate(Stormpath::VERIFICATION_EMAIL);
         $verificationEmail->login = $login;
 
-
-        $this->getDataStore()->create($this->getHref() . '/' . VerificationEmail::PATH,
+        $this->getDataStore()->create($this->getHref().'/'.VerificationEmail::PATH,
             $verificationEmail, Stormpath::VERIFICATION_EMAIL);
     }
 
@@ -530,19 +525,17 @@ class Application extends InstanceResource implements Deletable
         $apiKeyOptions = new ApiKeyEncryptionOptions($options);
         $options = array_merge($options, $apiKeyOptions->toArray());
 
-        $apiKeyList = $this->getDataStore()->getResource($this->getHref() . '/' . ApiKey::PATH,
+        $apiKeyList = $this->getDataStore()->getResource($this->getHref().'/'.ApiKey::PATH,
             Stormpath::API_KEY_LIST, $options);
 
         $iterator = $apiKeyList->iterator;
 
         $apiKey = $iterator->valid() ? $iterator->current() : null;
-        if ($apiKey)
-        {
+        if ($apiKey) {
             $apiKey->setApiKeyMetadata($apiKeyOptions);
         }
 
         return $apiKey;
-
     }
 
     // @codeCoverageIgnoreStart
@@ -550,8 +543,7 @@ class Application extends InstanceResource implements Deletable
     {
         $passwordResetTokensRef = $this->getProperty(self::PASSWORD_RESET_TOKENS);
 
-        if ($passwordResetTokensRef)
-        {
+        if ($passwordResetTokensRef) {
             $hrefName = self::HREF_PROP_NAME;
 
             return $passwordResetTokensRef->$hrefName;

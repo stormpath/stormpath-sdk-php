@@ -13,17 +13,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
 
 class GithubProviderData extends ProviderData
 {
-    const PROVIDER_ID   = 'github';
+    const PROVIDER_ID = 'github';
 
-    const ACCESS_TOKEN  = 'accessToken';
-    const CODE          = 'code';
+    const ACCESS_TOKEN = 'accessToken';
+    const CODE = 'code';
 
     public function getAccessToken()
     {
@@ -44,5 +43,4 @@ class GithubProviderData extends ProviderData
     {
         $this->setProperty(self::CODE, $code);
     }
-
 }

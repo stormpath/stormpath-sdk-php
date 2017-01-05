@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Cache;
@@ -50,8 +49,9 @@ class CachePSR6Adapter extends AbstractCachePool
 
     protected function storeItemInCache(CacheItemInterface $item, $ttl)
     {
-        $key  = $item->getKey();
+        $key = $item->getKey();
         $data = serialize([true, $item->get()]);
-        return $this->cache->put($key, $data, $ttl/60);
+
+        return $this->cache->put($key, $data, $ttl / 60);
     }
 }

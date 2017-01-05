@@ -13,12 +13,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-
 namespace Stormpath\Oauth;
-
 
 use Stormpath\Resource\GrantAuthenticationToken;
 
@@ -39,37 +36,45 @@ class OauthGrantAuthenticationResultBuilder
         $this->grantAuthenticationToken = $grantAuthenticationToken;
     }
 
-    public function getAccessToken() {
+    public function getAccessToken()
+    {
         return $this->accessToken;
     }
 
-    public function getAccessTokenString() {
+    public function getAccessTokenString()
+    {
         return $this->accessTokenString;
     }
 
-    public function getRefreshToken() {
+    public function getRefreshToken()
+    {
         return $this->refreshToken;
     }
 
-    public function getRefreshTokenString() {
+    public function getRefreshTokenString()
+    {
         return $this->refreshTokenString;
     }
 
-    public function getAccessTokenHref() {
+    public function getAccessTokenHref()
+    {
         return $this->accessTokenHref;
     }
 
-    public function getTokenType() {
+    public function getTokenType()
+    {
         return $this->tokenType;
     }
 
-    public function getExpiresIn() {
+    public function getExpiresIn()
+    {
         return $this->expiresIn;
     }
 
     public function setIsRefreshAuthGrantRequest($bool)
     {
         $this->isRefreshGrantAuthRequest = $bool;
+
         return $this;
     }
 

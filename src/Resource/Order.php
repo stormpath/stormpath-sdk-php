@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -21,26 +20,25 @@ namespace Stormpath\Resource;
 use Stormpath\Stormpath;
 use Stormpath\Util\Magic;
 
-class Order extends Magic {
-
+class Order extends Magic
+{
     private $properties;
     private $sort;
 
     /**
      * Constructs the Order object.
-     * @param null|array $properties optional argument containing
-     * the property names.
-     * @param null|string $sort optional property to determine the sorting (asc or desc).
+     *
+     * @param null|array  $properties optional argument containing
+     *                                the property names
+     * @param null|string $sort       optional property to determine the sorting (asc or desc)
      */
     public function __construct($properties = null, $sort = null)
     {
         parent::__construct();
         $this->properties = $properties ? $properties : array();
 
-        if (is_array($properties))
-        {
-            foreach($properties as $prop)
-            {
+        if (is_array($properties)) {
+            foreach ($properties as $prop) {
                 $this->addProperty($prop);
             }
         }
@@ -49,13 +47,13 @@ class Order extends Magic {
     }
 
     /**
-     * @param $name the property name of the order statement.
-     * @return $this for method chaining.
+     * @param $name the property name of the order statement
+     *
+     * @return $this for method chaining
      */
     public function addProperty($name)
     {
-        if ($name)
-        {
+        if ($name) {
             $this->properties = array_replace($this->properties, array($name => $name));
         }
 
@@ -65,13 +63,13 @@ class Order extends Magic {
     /**
      * Sets the sorting (asc or desc).
      *
-     * @param string $sort the sorting (asc or desc).
-     * @return $this for method chaining.
+     * @param string $sort the sorting (asc or desc)
+     *
+     * @return $this for method chaining
      */
     public function setSort($sort)
     {
-        if (array_key_exists($sort, Stormpath::$Sorts))
-        {
+        if (array_key_exists($sort, Stormpath::$Sorts)) {
             $this->sort = Stormpath::$Sorts[$sort];
         }
 
@@ -82,8 +80,9 @@ class Order extends Magic {
      * <p>Creates and return an order array, where the
      * key is the order keyword (orderBy), and the value
      * is the resulting string of all the added properties,
-     * and the sorting (if any).</p>
-     * @return array the constructed array.
+     * and the sorting (if any).</p>.
+     *
+     * @return array the constructed array
      */
     public function toOrderArray()
     {
@@ -93,16 +92,17 @@ class Order extends Magic {
     /**
      * Creates an Order object based on an array of property
      * names and an optional sort value.
-     * @param array $properties the property names.
-     * @param null|string $sort optional, asc or desc.
-     * @return Order the created order object.
+     *
+     * @param array       $properties the property names
+     * @param null|string $sort       optional, asc or desc
+     *
+     * @return Order the created order object
      */
-    public static function format(array $properties, $sort= null)
+    public static function format(array $properties, $sort = null)
     {
-        $order = new Order();
+        $order = new self();
 
-        foreach($properties as $prop)
-        {
+        foreach ($properties as $prop) {
             $order->addProperty($prop);
         }
 
@@ -113,20 +113,20 @@ class Order extends Magic {
 
     /**
      * Creates a formatted order string, without the 'orderBy' keyword.
-     * @return string the formatted order string, without the 'orderBy' keyword.
-     * @throws \InvalidArgumentException if no properties were added to the order object.
+     *
+     * @return string the formatted order string, without the 'orderBy' keyword
+     *
+     * @throws \InvalidArgumentException if no properties were added to the order object
      */
     public function __toString()
     {
-        if (!$this->properties)
-        {
-            throw new \InvalidArgumentException("At least one property needs to be set to convert the order statement to string.");
+        if (!$this->properties) {
+            throw new \InvalidArgumentException('At least one property needs to be set to convert the order statement to string.');
         }
 
         $statement = implode(',', $this->properties);
 
-        if ($this->sort)
-        {
+        if ($this->sort) {
             $statement .= " $this->sort";
         }
 

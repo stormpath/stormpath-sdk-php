@@ -13,19 +13,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
 
 class Error extends Resource
 {
-    const STATUS      = "status";
-    const CODE        = "code";
-    const MESSAGE     = "message";
-    const DEV_MESSAGE = "developerMessage";
-    const MORE_INFO   = "moreInfo";
-    const REQUEST_ID  = "requestId";
+    const STATUS = 'status';
+    const CODE = 'code';
+    const MESSAGE = 'message';
+    const DEV_MESSAGE = 'developerMessage';
+    const MORE_INFO = 'moreInfo';
+    const REQUEST_ID = 'requestId';
 
     public function __construct(\stdClass $properties)
     {
@@ -61,5 +60,4 @@ class Error extends Resource
     {
         return $this->getProperty(self::REQUEST_ID);
     }
-
 }

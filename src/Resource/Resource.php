@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Resource;
@@ -23,7 +22,6 @@ use Stormpath\Util\Magic;
 
 class Resource extends Magic
 {
-
     private $dataStore;
     private $properties;
     private $dirtyProperties;
@@ -31,7 +29,7 @@ class Resource extends Magic
     private $dirty;
     private $options;
 
-    const HREF_PROP_NAME = "href";
+    const HREF_PROP_NAME = 'href';
 
     public function __construct(InternalDataStore $dataStore = null, \stdClass $properties = null, array $options = array())
     {
@@ -45,34 +43,29 @@ class Resource extends Magic
     {
         $this->dirty = false;
 
-        $this->properties = new \stdClass;
-        $this->dirtyProperties = new \stdClass;
+        $this->properties = new \stdClass();
+        $this->dirtyProperties = new \stdClass();
 
-        if ($properties)
-        {
+        if ($properties) {
             $this->properties = $properties;
             $propertiesArr = (array) $properties;
             $hrefOnly = count($propertiesArr) == 1 and array_key_exists(self::HREF_PROP_NAME, $propertiesArr);
             $this->materialized = !$hrefOnly;
-        } else
-        {
+        } else {
             $this->materialized = false;
         }
     }
 
     public function getProperty($name)
     {
-        if (self::HREF_PROP_NAME != $name)
-        {
+        if (self::HREF_PROP_NAME != $name) {
             //not the href/id, must be a property that requires materialization:
-            if (!$this->isNew() and !$this->isMaterialized())
-            {
+            if (!$this->isNew() and !$this->isMaterialized()) {
                 // only materialize if the property hasn't been set previously (no need to execute a server
                 // request since we have the most recent value already):
                 $present = isset($this->dirtyProperties->$name);
 
-                if (!$present)
-                {
+                if (!$present) {
                     // exhausted present properties - we require a server call:
                     $this->materialize();
                 }
@@ -84,12 +77,9 @@ class Resource extends Magic
 
     public function getPropertyNames($retrieveDirtyProperties = false)
     {
-        if ($retrieveDirtyProperties and $this->isDirty() and !$this->isNew())
-        {
+        if ($retrieveDirtyProperties and $this->isDirty() and !$this->isNew()) {
             return $this->getDirtyPropertyNames();
-        }
-        else
-        {
+        } else {
             return array_keys((array) $this->properties);
         }
     }
@@ -97,12 +87,10 @@ class Resource extends Magic
     protected function getDirtyPropertyNames()
     {
         $names = array_keys((array) $this->dirtyProperties);
-        if (property_exists($this->properties, self::HREF_PROP_NAME))
-        {
+        if (property_exists($this->properties, self::HREF_PROP_NAME)) {
             array_push($names, self::HREF_PROP_NAME);
         }
-        if (property_exists($this->properties, CustomData::CUSTOMDATA_PROP_NAME))
-        {
+        if (property_exists($this->properties, CustomData::CUSTOMDATA_PROP_NAME)) {
             array_push($names, CustomData::CUSTOMDATA_PROP_NAME);
         }
 
@@ -142,27 +130,21 @@ class Resource extends Magic
 
         $href = self::HREF_PROP_NAME;
 
-        if ($value instanceof \stdClass)
-        {
+        if ($value instanceof \stdClass) {
             $href = $value->$href;
-
-        } else
-        {
+        } else {
             $href = false;
         }
 
-        if ($href)
-        {
+        if ($href) {
             return $this->dataStore->instantiate($className, $value, $this->options);
-
-        } elseif($value instanceof Resource) // in case we are getting a property that was set as a resource (for example: as an array value)
-        {
+        } elseif ($value instanceof self) { // in case we are getting a property that was set as a resource (for example: as an array value)
             return $value;
         }
     }
 
-    protected function setResourceProperty($name, Resource $resource) {
-
+    protected function setResourceProperty($name, Resource $resource)
+    {
         $href = $resource->getHref();
         $properties = new \stdClass();
         $properties->href = $href;
@@ -200,32 +182,31 @@ class Resource extends Magic
         $this->properties = $resource->properties;
 
         //retain dirty properties:
-        $this->properties = (object) array_merge((array)$this->properties, (array)$this->dirtyProperties);
+        $this->properties = (object) array_merge((array) $this->properties, (array) $this->dirtyProperties);
 
         $this->materialized = true;
     }
 
-    /**
-     * Returns {@code true} if the resource does not yet have an assigned 'href' property, {@code false} otherwise.
-     *
-     * @return {@code true} if the resource does not yet have an assigned 'href' property, {@code false} otherwise.
-     */
-     protected function isNew() {
+     /**
+      * Returns {@code true} if the resource does not yet have an assigned 'href' property, {@code false} otherwise.
+      *
+      * @return {@code true} if the resource does not yet have an assigned 'href' property, {@code false} otherwise
+      */
+     protected function isNew()
+     {
 
         //we can't call getHref() in here, otherwise we'll have an infinite loop:
         $prop = $this->readProperty(self::HREF_PROP_NAME);
 
-         if ($prop)
-         {
+         if ($prop) {
              return false;
          }
 
          return true;
-    }
+     }
 
     private function readProperty($name)
     {
         return property_exists($this->properties, $name) ? $this->properties->$name : null;
     }
-
 }

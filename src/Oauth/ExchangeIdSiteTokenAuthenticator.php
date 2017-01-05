@@ -13,18 +13,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-
 namespace Stormpath\Oauth;
-
 
 use Stormpath\Resource\Application;
 
 class ExchangeIdSiteTokenAuthenticator
 {
-    const OAUTH_TOKEN_PATH = "/oauth/token";
+    const OAUTH_TOKEN_PATH = '/oauth/token';
 
     /**
      * @var Application
@@ -43,12 +40,13 @@ class ExchangeIdSiteTokenAuthenticator
                 ->setToken($exchangeIdSiteTokenRequest->getToken());
 
         $grantResult = $this->application->dataStore->create(
-            $this->application->getHref() . self::OAUTH_TOKEN_PATH,
+            $this->application->getHref().self::OAUTH_TOKEN_PATH,
             $attempt,
             \Stormpath\Stormpath::GRANT_AUTHENTICATION_TOKEN
         );
 
         $builder = new OauthGrantAuthenticationResultBuilder($grantResult);
+
         return $builder->build();
     }
 }

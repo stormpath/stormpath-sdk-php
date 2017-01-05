@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 namespace Stormpath\Authc\Api;
@@ -23,7 +22,6 @@ use Stormpath\Resource\Application;
 
 class AuthenticatorResult
 {
-
     protected $application;
 
     protected $apiKey;
@@ -36,7 +34,7 @@ class AuthenticatorResult
 
         $this->apiKey = $apiKey;
 
-        if($accessToken) {
+        if ($accessToken) {
             $this->accessToken = $accessToken;
         }
     }
