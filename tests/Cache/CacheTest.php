@@ -165,6 +165,85 @@ class CacheTest extends TestCase
 
         $application->delete();
     }
+
+    /** @test */
+    public function cache_will_pay_attention_to_cache_manager_config_ttl_tti()
+    {
+	    $builder = new \Stormpath\ClientBuilder();
+
+
+	    $cacheOptions = array(
+		    'ttl' => 60, // This value is set in minutes
+		    'tti' => 120, // This value is set in minutes
+		    'regions' => array(
+			    'applications' => array(
+				    'ttl' => 5
+			    )
+		    ),
+	    );
+
+
+	    $client = $builder->setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
+		    setApiKeyProperties(\Stormpath\Client::$apiKeyProperties)->
+		    setApiKeyIdPropertyName(\Stormpath\Client::$apiKeyIdPropertyName)->
+		    setApiKeySecretPropertyName(\Stormpath\Client::$apiKeySecretPropertyName)->
+		    setCacheManager(\Stormpath\Client::$cacheManager)->
+		    setCacheManagerOptions($cacheOptions)->
+		    setBaseURL(\Stormpath\Client::$baseUrl)->
+		    build();
+
+	    $cachePool = $client->getCachePool();
+
+	    $application = $client->dataStore->create(
+		    '/' . \Stormpath\Resource\Application::PATH,
+		    \Stormpath\Resource\Application::instantiate([
+			    'name' => 'Another App for Cache TTI Test' . md5(time() . microtime() . uniqid())
+		    ]),
+		    \Stormpath\Stormpath::APPLICATION
+	    );
+
+	    $directory = $client->dataStore->create(
+		    '/' . \Stormpath\Resource\Directory::PATH,
+		    \Stormpath\Resource\Directory::instantiate([
+			    'name' => 'Another directory for Cache TTI Test' . md5(time() . microtime() . uniqid())
+		    ]),
+		    \Stormpath\Stormpath::DIRECTORY
+	    );
+
+
+	    $this->assertInstanceOf('Stormpath\Resource\Application', $application);
+	    $this->assertContains('Another App for Cache TTI Test', $application->name);
+
+	    $this->assertInstanceOf('Stormpath\Resource\Directory', $directory);
+	    $this->assertContains('Another directory for Cache TTI Test', $directory->name);
+
+	    $applicationItem = $cachePool->getItem($this->createCacheKey($application->href));
+	    $this->assertTrue($applicationItem->isHit());
+
+	    $directoryItem = $cachePool->getItem($this->createCacheKey($directory->href));
+	    $this->assertTrue($directoryItem->isHit());
+
+	    //For time shift, set a time that is 1 minute before ttl and 1 min after ttl
+	    $directoryTimeBefore = time() + (($cacheOptions['ttl']-1)*60);
+	    $directoryTimeAfter = time() + (($cacheOptions['ttl']+1)*60);
+
+	    $applicationTimeBefore = time() + (($cacheOptions['regions']['applications']['ttl']-1)*60);
+	    $applicationTimeAfter = time() + (($cacheOptions['regions']['applications']['ttl']+1)*60);
+
+	    //Test Directory ttl
+	    $expired = $directoryItem->getExpirationDate()->getTimestamp();
+	    $applicationTtl = $expired > $directoryTimeBefore && $expired < $directoryTimeAfter;
+	    $this->assertTrue($applicationTtl, 'Directory TTL is not within range of set ttl');
+
+	    //Test Application ttl
+	    $expired = $applicationItem->getExpirationDate()->getTimestamp();
+	    $applicationTtl = $expired > $applicationTimeBefore && $expired < $applicationTimeAfter;
+	    $this->assertTrue($applicationTtl, 'Application TTL is not within range of set ttl');
+
+	    $application->delete();
+
+    }
+
 }
 
 class CacheTestingMock extends Cacheable

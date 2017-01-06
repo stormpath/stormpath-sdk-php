@@ -34,6 +34,7 @@ use Stormpath\ApiKey;
 use Stormpath\Cache\Cacheable;
 use Stormpath\Cache\PSR6CacheKeyTrait;
 use Stormpath\Cache\Tags\CacheTagExtractor;
+use Stormpath\Client;
 use Stormpath\Resource\CustomData;
 use Stormpath\Resource\Directory;
 use Stormpath\Resource\Error;
@@ -525,6 +526,23 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
             $cacheTags = array_map([$this, 'normalizeHrefAsCacheTag'], $cacheTags);
 
             $item->setTags($cacheTags);
+
+
+	        $cacheOptions = Client::$cacheManagerOptions;
+
+	        $item->expiresAfter($cacheOptions['ttl'] * 60);
+
+	        if(key_exists('regions', $cacheOptions) ) {
+
+	        	$region = explode('/',$response->href)[4];
+		        if(key_exists($region, $cacheOptions['regions'])) {
+		        	$item->expiresAfter($cacheOptions['regions'][$region]['ttl'] * 60);
+		        }
+
+	        }
+
+
+
 
             $this->cachePool->save($item);
         }
