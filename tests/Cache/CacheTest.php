@@ -29,41 +29,47 @@ class CacheTest extends TestCase
 
     public function testGetFromCache()
     {
+		$application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Get ' . md5(time() . microtime() . uniqid())));
 
-        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Get '. md5(time().microtime().uniqid())));
-
-        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('Another App for Cache Get', $application->name);
-
-
-        // Get the application from cache and change the name of it.
-        $cachePool = Client::getInstance()->getCachePool();
-        $item = $cachePool->getItem($this->createCacheKey($application->href));
-        $this->assertTrue($item->isHit(), 'Application not found in cache');
-        $appInCache = $item->get();
-        $appInCache->name = 'Test';
-        $item->set($appInCache);
-        $item->expiresAfter(60);
-        $cachePool->save($item);
+		$this->assertInstanceOf('Stormpath\Resource\Application', $application);
+		$this->assertContains('Another App for Cache Get', $application->name);
 
 
-        // Because the app is already in cache, and we just changed the name... Lets
-        // get the application again like normal and see if the name is what we set.
-        $application = \Stormpath\Resource\Application::get($application->href);
+		// Get the application from cache and change the name of it.
+		$cachePool = Client::getInstance()->getCachePool();
+		$item = $cachePool->getItem($this->createCacheKey($application->href));
+		$this->assertTrue($item->isHit(), 'Application not found in cache');
 
-        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertEquals($appInCache->name, $application->name);
+	    $cachedItem = $item->get();
+
+		$appInCache = $cachedItem->getCachedItem();
+		$appInCache->name = 'Test';
+
+	    $cachedItem->setCachedItem($appInCache);
+
+		$item->set($cachedItem);
+		$item->expiresAfter(60);
+		$cachePool->save($item);
 
 
-        // Now lets delete the cache and see if it is the orig name from the api.
-        $cachePool->deleteItem($this->createCacheKey($application->href));
+		// Because the app is already in cache, and we just changed the name... Lets
+		// get the application again like normal and see if the name is what we set.
+		$application = \Stormpath\Resource\Application::get($application->href);
+
+		$this->assertInstanceOf('Stormpath\Resource\Application', $application);
+		$this->assertEquals($appInCache->name, $application->name);
 
 
-        $application = \Stormpath\Resource\Application::get($application->href);
-        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('Another App for Cache Get', $application->name);
+		// Now lets delete the cache and see if it is the orig name from the api.
+		$cachePool->deleteItem($this->createCacheKey($application->href));
 
-        $application->delete();
+
+		$application = \Stormpath\Resource\Application::get($application->href);
+		$this->assertInstanceOf('Stormpath\Resource\Application', $application);
+		$this->assertContains('Another App for Cache Get', $application->name);
+
+		$application->delete();
+
     }
 
     public function testDeletesFromCacheWhenResourceIsDeleted()
@@ -94,7 +100,7 @@ class CacheTest extends TestCase
 
         $item = $cachePool->getItem($this->createCacheKey($application->href));
         $this->assertTrue($item->isHit(), 'Application not found in cache');
-        $appInCache = $item->get();
+        $appInCache = $item->get()->getCachedItem();
 
 
         $this->assertContains('Test Update', $appInCache->name);

@@ -32,6 +32,7 @@ use Http\Message\MessageFactory;
 use Http\Message\UriFactory;
 use Stormpath\ApiKey;
 use Stormpath\Cache\Cacheable;
+use Stormpath\Cache\CacheItemWrapper;
 use Stormpath\Cache\PSR6CacheKeyTrait;
 use Stormpath\Cache\Tags\CacheTagExtractor;
 use Stormpath\Client;
@@ -138,12 +139,58 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         $queryString = $this->getQueryString($options);
 
         $item = $this->cachePool->getItem($this->createCacheKey($href, $options));
+	    $itemHit = $item->isHit();
 
-        if (!$item->isHit()) {
+	    $checkTTL = !! $item->getExpirationDate();
+	    $checkTTI = true;
+
+	    $cacheOptions = Client::$cacheManagerOptions;
+
+	    if ($itemHit) {
+
+		    // Check TTL
+		    if ($checkTTL) {
+			    $cacheExpires = $item->getExpirationDate()->getTimestamp();
+			    if($cacheExpires < time()) {
+			    	$checkTTI = false;
+				    $itemHit = false;
+			    }
+		    }
+
+		    // Check TTI
+		    if ($checkTTI) {
+		    	$lastAccessed = $item->get()->getMetaItem('lastAccessedAt');
+			    $requestedTti = ($cacheOptions['ttl']-1)*60;
+
+			    if(key_exists('regions', $cacheOptions) ) {
+
+				    $region = explode('/',$href)[4];
+				    if(key_exists($region, $cacheOptions['regions'])) {
+				    	if(key_exists('tti', $cacheOptions['regions'][$region])) {
+
+				    		$requestedTti = $cacheOptions['regions'][$region]['tti'];
+
+					    }
+				    }
+
+			    }
+
+			    if( time() > $lastAccessed + ($requestedTti*60) ) {
+			    	$itemHit = false;
+			    }
+		    }
+
+	    }
+
+        if (!$itemHit) {
             $data = $this->executeRequest('GET', $href, '', $queryString);
 
             if ($this->responseIsCacheable($data)) {
-                $item->set($data);
+	            $cacheItem = new CacheItemWrapper($data);
+
+	            $cacheItem->addMetaItem('lastAccessedAt', time());
+
+	            $item->set($cacheItem);
 
                 $cacheTags = CacheTagExtractor::extractCacheTags($data);
                 $cacheTags = array_map([$this, 'normalizeHrefAsCacheTag'], $cacheTags);
@@ -157,6 +204,10 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         }
 
         $resolver = DefaultClassNameResolver::getInstance();
+
+	    if($data instanceof CacheItemWrapper) {
+	    	$data = $data->getCachedItem();
+	    }
         $className = $resolver->resolve($className, $data, $options);
 
         return $this->resourceFactory->instantiate($className, array($data, $queryString));
@@ -520,7 +571,12 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
         }
 
         if($this->responseIsCacheable($response, $options)) {
-            $item->set($response);
+
+        	$cacheItem = new CacheItemWrapper($response);
+
+	        $cacheItem->addMetaItem('lastAccessedAt', time());
+
+            $item->set($cacheItem);
 
             $cacheTags = CacheTagExtractor::extractCacheTags($response);
             $cacheTags = array_map([$this, 'normalizeHrefAsCacheTag'], $cacheTags);
