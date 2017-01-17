@@ -56,5 +56,8 @@
         "phpunit/phpunit": "4.*",
         "symfony/debug": "*",
         "symfony/var-dumper": "*"
+    },
+    "suggest": {
+        "php": ">=5.6"
     }
 }

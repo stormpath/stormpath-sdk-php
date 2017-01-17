@@ -29,41 +29,47 @@ class CacheTest extends TestCase
 
     public function testGetFromCache()
     {
+		$application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Get ' . md5(time() . microtime() . uniqid())));
 
-        $application = \Stormpath\Resource\Application::create(array('name' => 'Another App for Cache Get '. md5(time().microtime().uniqid())));
-
-        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('Another App for Cache Get', $application->name);
-
-
-        // Get the application from cache and change the name of it.
-        $cachePool = Client::getInstance()->getCachePool();
-        $item = $cachePool->getItem($this->createCacheKey($application->href));
-        $this->assertTrue($item->isHit(), 'Application not found in cache');
-        $appInCache = $item->get();
-        $appInCache->name = 'Test';
-        $item->set($appInCache);
-        $item->expiresAfter(60);
-        $cachePool->save($item);
+		$this->assertInstanceOf('Stormpath\Resource\Application', $application);
+		$this->assertContains('Another App for Cache Get', $application->name);
 
 
-        // Because the app is already in cache, and we just changed the name... Lets
-        // get the application again like normal and see if the name is what we set.
-        $application = \Stormpath\Resource\Application::get($application->href);
+		// Get the application from cache and change the name of it.
+		$cachePool = Client::getInstance()->getCachePool();
+		$item = $cachePool->getItem($this->createCacheKey($application->href));
+		$this->assertTrue($item->isHit(), 'Application not found in cache');
 
-        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertEquals($appInCache->name, $application->name);
+	    $cachedItem = $item->get();
+
+		$appInCache = $cachedItem->getCachedItem();
+		$appInCache->name = 'Test';
+
+	    $cachedItem->setCachedItem($appInCache);
+
+		$item->set($cachedItem);
+		$item->expiresAfter(60);
+		$cachePool->save($item);
 
 
-        // Now lets delete the cache and see if it is the orig name from the api.
-        $cachePool->deleteItem($this->createCacheKey($application->href));
+		// Because the app is already in cache, and we just changed the name... Lets
+		// get the application again like normal and see if the name is what we set.
+		$application = \Stormpath\Resource\Application::get($application->href);
+
+		$this->assertInstanceOf('Stormpath\Resource\Application', $application);
+		$this->assertEquals($appInCache->name, $application->name);
 
 
-        $application = \Stormpath\Resource\Application::get($application->href);
-        $this->assertInstanceOf('Stormpath\Resource\Application', $application);
-        $this->assertContains('Another App for Cache Get', $application->name);
+		// Now lets delete the cache and see if it is the orig name from the api.
+		$cachePool->deleteItem($this->createCacheKey($application->href));
 
-        $application->delete();
+
+		$application = \Stormpath\Resource\Application::get($application->href);
+		$this->assertInstanceOf('Stormpath\Resource\Application', $application);
+		$this->assertContains('Another App for Cache Get', $application->name);
+
+		$application->delete();
+
     }
 
     public function testDeletesFromCacheWhenResourceIsDeleted()
@@ -94,7 +100,7 @@ class CacheTest extends TestCase
 
         $item = $cachePool->getItem($this->createCacheKey($application->href));
         $this->assertTrue($item->isHit(), 'Application not found in cache');
-        $appInCache = $item->get();
+        $appInCache = $item->get()->getCachedItem();
 
 
         $this->assertContains('Test Update', $appInCache->name);
@@ -165,6 +171,85 @@ class CacheTest extends TestCase
 
         $application->delete();
     }
+
+    /** @test */
+    public function cache_will_pay_attention_to_cache_manager_config_ttl_tti()
+    {
+	    $builder = new \Stormpath\ClientBuilder();
+
+
+	    $cacheOptions = array(
+		    'ttl' => 60, // This value is set in minutes
+		    'tti' => 120, // This value is set in minutes
+		    'regions' => array(
+			    'applications' => array(
+				    'ttl' => 5
+			    )
+		    ),
+	    );
+
+
+	    $client = $builder->setApiKeyFileLocation(\Stormpath\Client::$apiKeyFileLocation)->
+		    setApiKeyProperties(\Stormpath\Client::$apiKeyProperties)->
+		    setApiKeyIdPropertyName(\Stormpath\Client::$apiKeyIdPropertyName)->
+		    setApiKeySecretPropertyName(\Stormpath\Client::$apiKeySecretPropertyName)->
+		    setCacheManager(\Stormpath\Client::$cacheManager)->
+		    setCacheManagerOptions($cacheOptions)->
+		    setBaseURL(\Stormpath\Client::$baseUrl)->
+		    build();
+
+	    $cachePool = $client->getCachePool();
+
+	    $application = $client->dataStore->create(
+		    '/' . \Stormpath\Resource\Application::PATH,
+		    \Stormpath\Resource\Application::instantiate([
+			    'name' => 'Another App for Cache TTI Test' . md5(time() . microtime() . uniqid())
+		    ]),
+		    \Stormpath\Stormpath::APPLICATION
+	    );
+
+	    $directory = $client->dataStore->create(
+		    '/' . \Stormpath\Resource\Directory::PATH,
+		    \Stormpath\Resource\Directory::instantiate([
+			    'name' => 'Another directory for Cache TTI Test' . md5(time() . microtime() . uniqid())
+		    ]),
+		    \Stormpath\Stormpath::DIRECTORY
+	    );
+
+
+	    $this->assertInstanceOf('Stormpath\Resource\Application', $application);
+	    $this->assertContains('Another App for Cache TTI Test', $application->name);
+
+	    $this->assertInstanceOf('Stormpath\Resource\Directory', $directory);
+	    $this->assertContains('Another directory for Cache TTI Test', $directory->name);
+
+	    $applicationItem = $cachePool->getItem($this->createCacheKey($application->href));
+	    $this->assertTrue($applicationItem->isHit());
+
+	    $directoryItem = $cachePool->getItem($this->createCacheKey($directory->href));
+	    $this->assertTrue($directoryItem->isHit());
+
+	    //For time shift, set a time that is 1 minute before ttl and 1 min after ttl
+	    $directoryTimeBefore = time() + (($cacheOptions['ttl']-1)*60);
+	    $directoryTimeAfter = time() + (($cacheOptions['ttl']+1)*60);
+
+	    $applicationTimeBefore = time() + (($cacheOptions['regions']['applications']['ttl']-1)*60);
+	    $applicationTimeAfter = time() + (($cacheOptions['regions']['applications']['ttl']+1)*60);
+
+	    //Test Directory ttl
+	    $expired = $directoryItem->getExpirationDate()->getTimestamp();
+	    $applicationTtl = $expired > $directoryTimeBefore && $expired < $directoryTimeAfter;
+	    $this->assertTrue($applicationTtl, 'Directory TTL is not within range of set ttl');
+
+	    //Test Application ttl
+	    $expired = $applicationItem->getExpirationDate()->getTimestamp();
+	    $applicationTtl = $expired > $applicationTimeBefore && $expired < $applicationTimeAfter;
+	    $this->assertTrue($applicationTtl, 'Application TTL is not within range of set ttl');
+
+	    $application->delete();
+
+    }
+
 }
 
 class CacheTestingMock extends Cacheable

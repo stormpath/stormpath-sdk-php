@@ -16,10 +16,35 @@
  *
  */
 
-namespace Stormpath\Util;
+namespace Stormpath\Cache;
 
-class Version
-{
-    const SDK_VERSION = '1.19.0';
-	const PHP_VERSION_MIN = '5.6.0';
+class CacheItemWrapper {
+
+	protected $itemToCache;
+	protected $cachedItemMeta = [];
+
+	public function __construct($itemToCache) {
+		$this->itemToCache = $itemToCache;
+	}
+
+	public function setCachedItem($itemToCache) {
+		$this->itemToCache = $itemToCache;
+	}
+
+	public function getCachedItem() {
+		return $this->itemToCache;
+	}
+
+	public function addMetaItem($key, $value) {
+		$this->cachedItemMeta[$key] = $value;
+	}
+
+	public function getMetaItem($key) {
+		if(! key_exists($key, $this->cachedItemMeta)) {
+			return null;
+		}
+
+		return $this->cachedItemMeta[$key];
+	}
+
 }

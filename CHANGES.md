@@ -2,14 +2,21 @@ stormpath-sdk-php Changelog
 ===========================
 
 
-Version 1.18.0
+Version 1.19.0
 --------------
 
-Released on January 3, 2017
+Released on January 17, 2017
 
- - Happy New Year!
- - Added OrgNameKey to Password Grant Type (Resolves #61)
- - Update all copyright dates to 2017
+ - Added ability to set ttl and tti to cache.
+ 
+ Version 1.18.0
+ --------------
+ 
+ Released on January 3, 2017
+ 
+  - Happy New Year!
+  - Added OrgNameKey to Password Grant Type (Resolves #61)
+  - Update all copyright dates to 2017
  
 Version 1.17.2
 --------------
