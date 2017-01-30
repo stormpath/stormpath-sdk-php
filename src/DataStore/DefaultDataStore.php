@@ -311,7 +311,15 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
                 $arr = json_decode($body);
                 $arr = (array) $arr;
                 ksort($arr);
-                $body = http_build_query($arr);
+                $body = [];
+
+	            foreach($arr as $key => $value ) {
+	            	if($value) {
+			            $body[] = $key . '=' . $value;
+		            }
+	            }
+
+	            $body = implode('&', $body);
 
                 $headers['Content-Type'] = 'application/x-www-form-urlencoded';
             }

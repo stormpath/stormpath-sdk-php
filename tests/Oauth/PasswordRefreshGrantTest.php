@@ -159,6 +159,45 @@ class PasswordRefreshGrantTest extends \Stormpath\Tests\TestCase
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function special_characters_work_for_password_grant_types()
+	{
+		try {
+			$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+				'middleName' => 'Middle Name',
+				'surname' => 'Surname',
+				'username' => md5(time() . microtime() . uniqid()) . 'username',
+				'email' => md5(time() . microtime() . uniqid()) . '@testmail.stormpath.com',
+				'password' => '123456Abcdef*'));
+
+			self::$application->createAccount($account);
+
+			$passwordGrant = new \Stormpath\Oauth\PasswordGrantRequest($account->username, '123456Abcdef*');
+
+			$auth = new \Stormpath\Oauth\PasswordGrantAuthenticator(self::$application);
+			$token = $auth->authenticate($passwordGrant);
+
+			$this->assertInstanceOf('Stormpath\Oauth\OauthGrantAuthenticationResult', $token);
+			$this->assertInstanceOf('Stormpath\Resource\AccessToken', $token->getAccessToken());
+			$this->assertCount(3, explode('.', $token->getAccessTokenString()));
+			$this->assertInstanceOf('Stormpath\Resource\RefreshToken', $token->getRefreshToken());
+			$this->assertCount(3, explode('.', $token->getRefreshTokenString()));
+			$this->assertcontains('/accessTokens/', $token->getAccessTokenHref());
+			$this->assertEquals('Bearer', $token->getTokenType());
+			$this->assertTrue(is_integer($token->getExpiresIn()));
+
+		} catch (\Stormpath\Resource\ResourceError $re) {
+			var_dump($account->username);
+			var_dump($re);
+			$this->fail($re->getDeveloperMessage());
+		}
+
+
+		$account->delete();
+	}
+
     /**
      * @test
      */
