@@ -393,9 +393,6 @@ class Application extends InstanceResource implements Deletable
 		    $token['require_mfa'] = $options['require_mfa'];
 	    }
 
-
-
-
         $jwt = JWT::encode($token, $apiSecret);
 
         $redirectUrl = $base . "/sso";
