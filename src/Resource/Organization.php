@@ -73,7 +73,7 @@ class Organization extends AccountStore implements Deletable
 
     public function getAccounts(array $options = [])
     {
-        return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT, $options);
+        return $this->getResourceProperty(self::ACCOUNTS, Stormpath::ACCOUNT_LIST, $options);
     }
 
     public function getAccountStoreMappings(array $options = [])

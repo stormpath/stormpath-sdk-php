@@ -102,7 +102,7 @@ class OrganizationTest extends TestCase
         $this->assertNotNull(self::$organization->tenant);
         $this->assertNull(self::$organization->defaultAccountStoreMapping);
         $this->assertNull(self::$organization->defaultGroupStoreMapping);
-        $this->assertInstanceof('\Stormpath\Resource\Account', self::$organization->accounts);
+        $this->assertInstanceof('\Stormpath\Resource\AccountList', self::$organization->accounts);
         $this->assertInstanceOf('\Stormpath\Resource\GroupList', self::$organization->groups);
     }
 
