@@ -401,7 +401,6 @@ class Application extends InstanceResource implements Deletable
             $redirectUrl .= "/logout";
 
         return $redirectUrl . "?jwtRequest=$jwt";
-
     }
 
 
