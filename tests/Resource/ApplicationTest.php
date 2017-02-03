@@ -111,28 +111,47 @@ class ApplicationTest extends \Stormpath\Tests\TestCase {
         $this->assertContains('.stormpath.com/sso/logout?jwtRequest=', $redirectUrl);
     }
 
-    public function testCreateIdSiteURLWithNameKeySettings()
-    {
-        $application = \Stormpath\Resource\Application::get(self::$application->href);
+	public function testCreateIdSiteURLWithNameKeySettings()
+	{
+		$application = \Stormpath\Resource\Application::get(self::$application->href);
 
-        $redirectUrl = $application->createIdSiteUrl(array(
-            'callbackUri' => 'https://stormpath.com',
-            'state' => UUID::v4(),
-            'organizationNameKey' => 'testOrg',
-            'useSubDomain' => true,
-            'showOrganizationField' => true
-        ));
+		$redirectUrl = $application->createIdSiteUrl(array(
+			'callbackUri' => 'https://stormpath.com',
+			'state' => UUID::v4(),
+			'organizationNameKey' => 'testOrg',
+			'useSubDomain' => true,
+			'showOrganizationField' => true
+		));
 
-        $this->assertContains('.stormpath.com/sso?jwtRequest=', $redirectUrl);
-        $apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
-        $parts = explode('=',$redirectUrl);
-        JWT::$leeway = 10000;
-        $decoded = JWT::decode($parts[1], $apiSecret, ['HS256']);
+		$this->assertContains('.stormpath.com/sso?jwtRequest=', $redirectUrl);
+		$apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+		$parts = explode('=',$redirectUrl);
+		JWT::$leeway = 10000;
+		$decoded = JWT::decode($parts[1], $apiSecret, ['HS256']);
 
-        $this->assertEquals('testOrg', $decoded->onk);
-        $this->assertTrue($decoded->usd);
-        $this->assertTrue($decoded->sof);
-    }
+		$this->assertEquals('testOrg', $decoded->onk);
+		$this->assertTrue($decoded->usd);
+		$this->assertTrue($decoded->sof);
+	}
+
+	public function testCreateIdSiteURLWithMfaSettings()
+	{
+		$application = \Stormpath\Resource\Application::get(self::$application->href);
+
+		$redirectUrl = $application->createIdSiteUrl(array(
+			'callbackUri' => 'https://stormpath.com',
+			'state' => UUID::v4(),
+			'require_mfa' => ['sms']
+		));
+
+		$this->assertContains('.stormpath.com/sso?jwtRequest=', $redirectUrl);
+		$apiSecret = Client::getInstance()->getDataStore()->getApiKey()->getSecret();
+		$parts = explode('=',$redirectUrl);
+		JWT::$leeway = 10000;
+		$decoded = JWT::decode($parts[1], $apiSecret, ['HS256']);
+
+		$this->assertContains('sms', $decoded->require_mfa);
+	}
 
     /**
      * @expectedException \Stormpath\Exceptions\IdSite\InvalidCallbackUriException

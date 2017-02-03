@@ -385,9 +385,13 @@ class Application extends InstanceResource implements Deletable
             $token['sof'] = true;
         }
 
-        if(isset($options['useSubDomain'])) {
-            $token['usd'] = true;
-        }
+	    if(isset($options['useSubDomain'])) {
+		    $token['usd'] = true;
+	    }
+
+	    if(isset($options['require_mfa'])) {
+		    $token['require_mfa'] = $options['require_mfa'];
+	    }
 
 
 
