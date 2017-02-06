@@ -291,9 +291,21 @@ class DefaultDataStore extends Cacheable implements InternalDataStore
 
     private function executeRequest($httpMethod, $href, $body = '', array $query = array())
     {
+
         if ($href == null) {
             throw new \InvalidArgumentException("Cannot execute request against empty URL");
         }
+
+        // Base URL Pinning - issue #198
+	    $urlParts = parse_url($href);
+	    $baseUrlParts = parse_url($this->baseUrl);
+
+	    if(array_key_exists('host', $urlParts) && array_key_exists('host', $baseUrlParts)) {
+		    if ($urlParts['host'] !== $baseUrlParts['host']) {
+			    throw new \InvalidArgumentException("The HREF you are trying to access is not valid.  The HREF must be 
+		        the base url set when instantiating the Stormpath Client.");
+		    }
+	    }
 
         $headers = [];
         $headers['Accept'] = 'application/json';
